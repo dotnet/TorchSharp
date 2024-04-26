@@ -238,7 +238,7 @@ namespace TorchSharp
                     var fieldsByComponentName = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
                                                             .ToDictionary(field => field.ComponentName());
 
-                    foreach (var (name, param) in named_parameters(false).ToList()) {
+                    foreach (var (name, param) in named_parameters(false)) {
                         using var grad = param.grad;
                         if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
                             (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
@@ -253,13 +253,16 @@ namespace TorchSharp
                         // disable grad we would need to call .detach() on the moved tensor.
                         using (var d = torch.no_grad()) {
                             p = new Parameter(
-                                param.to(paramType, device ?? param.device).DetachFromDisposeScope(), param.requires_grad)
-                                .DetachFromDisposeScope() as Parameter;
+                                data: param.to(paramType, device ?? param.device),
+                                requires_grad: param.requires_grad);
+                            _ = p.DetachFromDisposeScope();
 
                             // Copy the gradient over as well, if it exists
                             if (grad is not null) {
-                                p.grad = grad.to(paramType, device ?? param.device)
+                                using var newGrad = grad
+                                    .to(paramType, device ?? param.device)
                                     .with_requires_grad(grad.requires_grad);
+                                p.grad = newGrad;
                             }
 
                             // Dispose the param
@@ -272,7 +275,7 @@ namespace TorchSharp
                             field.SetValue(this, p);
                     }
 
-                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
+                    foreach (var (name, buffer) in named_buffers(false)) {
                         if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
 
                         ScalarType bufferType =
