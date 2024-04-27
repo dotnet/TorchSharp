@@ -1343,10 +1343,11 @@ namespace TorchSharp
             public Tensor? grad {
                 get {
                     var res = NativeMethods.THSTensor_grad(Handle);
-                    CheckForErrors();
 
-                    if (res == IntPtr.Zero)
+                    if (res == IntPtr.Zero) {
+                        CheckForErrors();
                         return null;
+                    }
 
                     return new Tensor(res);
                 }
