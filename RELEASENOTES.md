@@ -12,6 +12,7 @@ __API Changes__:
 
 __Bug Fixes__:
 
+- #1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.
 
 # NuGet Version 0.102.4
 
