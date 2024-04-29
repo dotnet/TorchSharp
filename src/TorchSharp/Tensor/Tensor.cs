@@ -1352,7 +1352,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    _ = value?.DetachFromDisposeScope();
                     NativeMethods.THSTensor_set_grad(Handle, value?.Handle ?? IntPtr.Zero);
                     CheckForErrors();
                 }

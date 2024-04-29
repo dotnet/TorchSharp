@@ -254,14 +254,15 @@ namespace TorchSharp
                         // disable grad we would need to call .detach() on the moved tensor.
                         using (var d = torch.no_grad()) {
                             p = new Parameter(
-                                param.to(paramType, device ?? param.device).DetachFromDisposeScope(), param.requires_grad)
-                                .DetachFromDisposeScope() as Parameter;
+                                data: param.to(paramType, device ?? param.device),
+                                requires_grad: param.requires_grad);
+                            _ = p.DetachFromDisposeScope();
 
                             // Copy the gradient over as well, if it exists
                             if (grad is not null) {
-                                p.grad = grad.to(paramType, device ?? param.device)
-                                    .with_requires_grad(grad.requires_grad)
-                                    .MoveToOtherDisposeScope(p);
+                                using var newGrad = grad.to(paramType, device ?? param.device)
+                                    .with_requires_grad(grad.requires_grad);
+                                p.grad = newGrad;
                             }
 
                             // Dispose the param
