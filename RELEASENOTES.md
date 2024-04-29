@@ -10,7 +10,7 @@ __API Changes__:
 
 - #1266 Implicit operator from `Tensor` to `TensorIndex` has been added.
     - The implicit operator from `TensorIndex` to `Tensor` has been removed.
-    - The indexer that accepts tensors as the indices has been removed.
+    - The indexers that accepts tensors/longs as the indices have been removed.
 
 __Bug Fixes__:
 
