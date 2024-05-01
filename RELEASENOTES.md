@@ -10,6 +10,7 @@ __API Changes__:
 
 __Bug Fixes__:
 
+- Now `DisposeScopes` could be correctly disposed in a wrong order.
 
 # NuGet Version 0.102.4
 
