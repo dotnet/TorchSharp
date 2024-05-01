@@ -10,7 +10,7 @@ __API Changes__:
 
 __Bug Fixes__:
 
-- Now `DisposeScopes` could be correctly disposed in a wrong order.
+- #1303 Allow dispose scopes to be disposed out of LIFO order.
 
 # NuGet Version 0.102.4
 
