@@ -1415,6 +1415,12 @@ namespace TorchSharp
                 set { index_put_(value, indices); }
             }
 
+            [IndexerName("TensorItems")]
+            public Tensor this[params Tensor[] indices] {
+                get { return index(indices); }
+                set { index_put_(value, indices); }
+            }
+
             /// <summary>
             /// Tensor indexer.
             /// </summary>
@@ -1566,6 +1572,14 @@ namespace TorchSharp
                         }
                     }
                 }
+            }
+
+            /// <summary>
+            /// Index into the tensor using Python-like indexing expressions.
+            /// </summary>
+            public Tensor index(params Tensor[] indices)
+            {
+                return index(indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
 
             /// <summary>
