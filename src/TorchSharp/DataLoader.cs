@@ -89,14 +89,16 @@ namespace TorchSharp
 
             private static Dictionary<string, torch.Tensor> Collate(IEnumerable<Dictionary<string, torch.Tensor>> dic, torch.Device device)
             {
-                Dictionary<string, torch.Tensor> batch = new();
-                foreach (var x in dic.First().Keys) {
-                    var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
-                    if (t.device_type != device.type || t.device_index != device.index)
-                        t = t.to(device);
-                    batch[x] = t;
+                using (torch.NewDisposeScope()) {
+                    Dictionary<string, torch.Tensor> batch = new();
+                    foreach (var x in dic.First().Keys) {
+                        var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                        if (t.device_type != device.type || t.device_index != device.index)
+                            t = t.to(device);
+                        batch[x] = t.MoveToOuterDisposeScope();
+                    }
+                    return batch;
                 }
-                return batch;
             }
         }
 
@@ -143,14 +145,16 @@ namespace TorchSharp
 
             private static IList<torch.Tensor> Collate(IEnumerable<IList<torch.Tensor>> dic, torch.Device device)
             {
-                List<torch.Tensor> batch = new();
-                for (var x = 0; x < dic.First().Count; x++) {
-                    var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
-                    if (t.device_type != device.type || t.device_index != device.index)
-                        t = t.to(device);
-                    batch.Add(t);
+                using (torch.NewDisposeScope()) {
+                    List<torch.Tensor> batch = new();
+                    for (var x = 0; x < dic.First().Count; x++) {
+                        var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                        if (t.device_type != device.type || t.device_index != device.index)
+                            t = t.to(device);
+                        batch.Add(t.MoveToOuterDisposeScope());
+                    }
+                    return batch;
                 }
-                return batch;
             }
         }
 
