@@ -344,7 +344,7 @@ namespace TorchSharp
                         if (this.currentDisposables is not null) {
                             using (var collate_scope = DisposeScopeManager.NewDisposeScope()) {
                                 Current = collate_fn(items, device);
-                                currentDisposables = collate_scope.DisposablesView.ToList();
+                                currentDisposables.AddRange(collate_scope.DisposablesView);
                                 collate_scope.Detach(currentDisposables);
                             }
                         }
