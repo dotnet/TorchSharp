@@ -37,7 +37,7 @@ namespace TorchSharp
                 long size1 = tensors[0].shape[0];
                 if (!tensors.All(t => t.shape[0] == size1)) throw new ArgumentException("All tensors must have the same first dimension size.", nameof(tensors));
 
-                _tensors = tensors.Select(x => x.alias()).ToArray();
+                _tensors = tensors.Select(x => x.alias().DetachFromDisposeScope()).ToArray();
             }
 
             /// <summary>
