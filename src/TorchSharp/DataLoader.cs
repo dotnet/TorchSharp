@@ -352,6 +352,10 @@ namespace TorchSharp
                             Current = collate_fn(items, device);
                         }
 
+                        foreach (var item in items) {
+                            dataset.DisposeTensor(item);
+                        }
+
                         return true;
 
                         void ProcessPendingBatches()
