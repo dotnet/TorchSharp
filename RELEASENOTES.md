@@ -10,6 +10,7 @@ __API Changes__:
 
 __Bug Fixes__:
 
+- `torch.normal` will now correctly return a leaf tensor.
 
 # NuGet Version 0.102.4
 
