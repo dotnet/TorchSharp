@@ -18,7 +18,7 @@ namespace TorchSharp
         internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
 
         internal static DisposeScopeManager ThreadSingleton => (_threadSingleton ??= new DisposeScopeManager());
-        internal Stack<DisposeScope> DisposeScopeStack { get; } = new();
+        internal List<DisposeScope> DisposeScopeStack { get; } = new();
 
         public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
 
@@ -30,7 +30,7 @@ namespace TorchSharp
             }
 
             StatisticsInstance.CreatedInScopeCount++;
-            var current = DisposeScopeStack.Peek();
+            var current = DisposeScopeStack[DisposeScopeStack.Count - 1];
             current.Include(disposable);
             return current;
         }
@@ -42,15 +42,15 @@ namespace TorchSharp
 
         internal void RemoveDisposeScope(DisposeScope disposeScope)
         {
-            Debug.Assert(DisposeScopeStack.Count > 0);
-            Debug.Assert(DisposeScopeStack.Peek() == disposeScope);
-            DisposeScopeStack.Pop();
+            var index = DisposeScopeStack.LastIndexOf(disposeScope);
+            if (index is not -1)
+                DisposeScopeStack.RemoveAt(index);
         }
 
         private DisposeScope InnerNewDisposeScope()
         {
             var disposeScope = new DisposeScope(this);
-            DisposeScopeStack.Push(disposeScope);
+            DisposeScopeStack.Add(disposeScope);
             return disposeScope;
         }
     }

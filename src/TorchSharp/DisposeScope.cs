@@ -20,7 +20,8 @@ namespace TorchSharp
         {
             _disposeScopeManager = disposeScopeManager ?? throw new ArgumentNullException(nameof(disposeScopeManager));
             if (disposeScopeManager.DisposeScopeStack.Count > 0) {
-                OuterScope = disposeScopeManager.DisposeScopeStack.Peek();
+                OuterScope = disposeScopeManager.DisposeScopeStack[
+                    disposeScopeManager.DisposeScopeStack.Count - 1];
             }
         }
 
