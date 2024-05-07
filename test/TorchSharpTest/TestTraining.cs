@@ -55,7 +55,7 @@ namespace TorchSharp
 
                 using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
-                        var grad = param.grad();
+                        var grad = param.grad;
                         if (grad is not null) {
                             var update = grad.mul(learning_rate);
                             param.sub_(update);
@@ -99,7 +99,7 @@ namespace TorchSharp
 
                 using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
-                        var grad = param.grad();
+                        var grad = param.grad;
                         if (grad is not null) {
                             var update = grad.mul(learning_rate);
                             param.sub_(update);

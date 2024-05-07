@@ -136,9 +136,11 @@ namespace TorchSharp
 
                     foreach (var param in group.Parameters) {
 
-                        var grad = (maximize) ? -param.grad() : param.grad();
+                        var grad = param.grad;
 
                         if (grad is null) continue;
+
+                        if (maximize) grad = -grad;
 
                         if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
 
