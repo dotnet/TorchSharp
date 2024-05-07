@@ -4429,7 +4429,7 @@ namespace TorchSharp
                     Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
-                    var grad = x.grad();
+                    var grad = x.grad;
                     Assert.False(grad is null || grad.Handle == IntPtr.Zero);
                     var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
@@ -4448,7 +4448,7 @@ namespace TorchSharp
                     Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
-                    var grad = x.grad();
+                    var grad = x.grad;
                     Assert.False(grad is not null && grad.Handle == IntPtr.Zero);
                     var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {

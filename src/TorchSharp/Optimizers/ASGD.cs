@@ -145,7 +145,7 @@ namespace TorchSharp
 
                     foreach (var param in group.Parameters) {
 
-                        var grad = param.grad();
+                        var grad = param.grad;
 
                         if (grad is null) continue;
 

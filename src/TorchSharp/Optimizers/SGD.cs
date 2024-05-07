@@ -150,7 +150,7 @@ namespace TorchSharp
 
                         var state = (State)_state[param.handle];
 
-                        var grad = param.grad();
+                        var grad = param.grad;
 
                         if (grad is null) continue;
 

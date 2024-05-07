@@ -396,14 +396,9 @@ namespace TorchSharp
             public override void zero_grad()
             {
                 foreach (var g in _parameter_groups) {
-
                     foreach (var p in g.Parameters) {
-
-                        using var grad = p.grad();
-
-                        if (grad is null) continue;
-
-                        grad.zero_().Dispose();
+                        using var grad = p.grad;
+                        _ = grad?.zero_();
                     }
                 }
             }
