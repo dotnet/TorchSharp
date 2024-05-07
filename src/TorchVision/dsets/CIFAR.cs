@@ -93,9 +93,24 @@ namespace TorchSharp
                     lock (_httpClient) {
                         using var s = _httpClient.GetStreamAsync(netPath).Result;
                         using var fs = new FileStream(filePath, FileMode.CreateNew);
-                        s.CopyToAsync(fs).Wait();
+                        s.CopyTo(fs);
                     }
                 }
+            }
+
+            protected void DownloadFile(string file, string target, IEnumerable<string> baseUrls)
+            {
+                var exceptions = new List<Exception>();
+                foreach (var baseUrl in baseUrls) {
+                    try {
+                        DownloadFile(file, target, baseUrl);
+                        return;
+                    } catch (Exception e) {
+                        exceptions.Add(e);
+                        continue;
+                    }
+                }
+                throw new AggregateException($"Error downloading {file}", exceptions);
             }
 
             protected static string JoinPaths(string directory, string file)

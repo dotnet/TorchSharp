@@ -6,10 +6,17 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Breaking Changes__:
 
+- `torchvision.dataset.MNIST` will try more mirrors.
+    - The thrown exception might be changed when it fails to download `MNIST`, `FashionMNIST` or `KMNIST`.
+
 __API Changes__:
+
+- #1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.
+    - A potential memory leak caused by `set_grad` has been resolved.
 
 __Bug Fixes__:
 
+- #1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.
 - `torch.normal` will now correctly return a leaf tensor.
 
 # NuGet Version 0.102.4

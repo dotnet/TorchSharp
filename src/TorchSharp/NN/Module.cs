@@ -239,8 +239,10 @@ namespace TorchSharp
                                                             .ToDictionary(field => field.ComponentName());
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
+                        using var grad = param.grad;
+
                         if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
-                            (param.grad() is null || !param.grad().toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                            (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
                             continue;
 
                         Parameter p;
@@ -252,20 +254,19 @@ namespace TorchSharp
                         // disable grad we would need to call .detach() on the moved tensor.
                         using (var d = torch.no_grad()) {
                             p = new Parameter(
-                                param.to(paramType, device ?? param.device).DetachFromDisposeScope(), param.requires_grad)
-                                .DetachFromDisposeScope() as Parameter;
+                                data: param.to(paramType, device ?? param.device),
+                                requires_grad: param.requires_grad);
+                            _ = p.DetachFromDisposeScope();
 
                             // Copy the gradient over as well, if it exists
-                            var grad = param.grad();
                             if (grad is not null) {
-                                p.set_grad(grad.to(paramType, device ?? param.device)
-                                                .with_requires_grad(grad.requires_grad)
-                                                .MoveToOtherDisposeScope(p));
+                                using var newGrad = grad.to(paramType, device ?? param.device)
+                                    .with_requires_grad(grad.requires_grad);
+                                p.grad = newGrad;
                             }
 
-                            // Dispose the param and gradient
+                            // Dispose the param
                             param.Dispose();
-                            grad?.Dispose();
                         }
                         ConditionallyRegisterParameter(name, p);
 
@@ -360,11 +361,10 @@ namespace TorchSharp
                     CheckForErrors();
 
                     foreach (var (_, p) in named_parameters()) {
-                        var grad = p.grad();
+                        using var grad = p.grad;
                         if (grad is not null) {
                             if (set_to_none) {
-                                p.set_grad(null);
-                                grad.DetachFromDisposeScope().Dispose();
+                                p.grad = null;
                             } else {
                                 grad.zero_();
                             }
