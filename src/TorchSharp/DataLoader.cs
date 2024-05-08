@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Threading;
@@ -182,7 +181,7 @@ namespace TorchSharp
             /// <param name="batchSize">Size of batch</param>
             /// <param name="collate_fn">Callback to merge items make to a batch</param>
             /// <param name="device">device for output tensor</param>
-            /// <param name="shuffler">Shuffler for dataloader.</param>
+            /// <param name="shuffler">Shuffler for dataloader</param>
             /// <param name="num_worker">Count of worker</param>
             /// <param name="drop_last">
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.

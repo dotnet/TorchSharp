@@ -62,7 +62,7 @@ namespace TorchSharp
                 return this[index];
             }
 
-            private torch.Tensor[] _tensors;
+            readonly torch.Tensor[] _tensors;
 
             protected override void Dispose(bool disposing)
             {
