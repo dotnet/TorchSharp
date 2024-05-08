@@ -319,6 +319,8 @@ namespace TorchSharp
                             .Where(x => x.HasValue)
                             .Cast<long>()
                             .ToArray();
+                        if (indices.Length is 0)
+                            return false;
                         if (loader.drop_last && indices.Length < loader.batchSize) {
                             return false;
                         }
