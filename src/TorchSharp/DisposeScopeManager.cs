@@ -18,21 +18,20 @@ namespace TorchSharp
         internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
 
         internal static DisposeScopeManager ThreadSingleton => (_threadSingleton ??= new DisposeScopeManager());
-        internal List<DisposeScope> DisposeScopeStack { get; } = new();
+        internal DisposeScope? CurrentDisposeScope { get; set; } = null;
 
         public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
 
         internal DisposeScope? RegisterOnCurrentDisposeScope(IDisposable disposable)
         {
-            if (DisposeScopeStack.Count == 0) {
+            if (this.CurrentDisposeScope is null) {
                 StatisticsInstance.CreatedOutsideScopeCount++;
                 return null;
             }
 
             StatisticsInstance.CreatedInScopeCount++;
-            var current = DisposeScopeStack[DisposeScopeStack.Count - 1];
-            current.Include(disposable);
-            return current;
+            this.CurrentDisposeScope.Include(disposable);
+            return CurrentDisposeScope;
         }
 
         internal static DisposeScope NewDisposeScope()
@@ -42,16 +41,33 @@ namespace TorchSharp
 
         internal void RemoveDisposeScope(DisposeScope disposeScope)
         {
-            var index = DisposeScopeStack.LastIndexOf(disposeScope);
-            if (index is not -1)
-                DisposeScopeStack.RemoveAt(index);
+            var scope = this.CurrentDisposeScope;
+            if (object.ReferenceEquals(scope, disposeScope)) {
+                this.CurrentDisposeScope = scope.OuterScope;
+                return;
+            }
+            if (scope is null) {
+                return;
+            }
+
+            for (; ; ) {
+                var outerScope = scope.OuterScope;
+                if (object.ReferenceEquals(outerScope, disposeScope)) {
+                    scope.OuterScope = outerScope.OuterScope;
+                    return;
+                }
+
+                if (outerScope is null) {
+                    return;
+                }
+                scope = outerScope;
+            }
         }
 
         private DisposeScope InnerNewDisposeScope()
         {
-            var disposeScope = new DisposeScope(this);
-            DisposeScopeStack.Add(disposeScope);
-            return disposeScope;
+            this.CurrentDisposeScope = new DisposeScope(this);
+            return this.CurrentDisposeScope;
         }
     }
 }
