@@ -15,12 +15,6 @@ namespace TorchSharp
                 /// </summary>
                 public abstract class Dataset : Dataset<Dictionary<string, torch.Tensor>>
                 {
-                    public override void DisposeTensor(Dictionary<string, Tensor> tensor)
-                    {
-                        foreach (var t in tensor.Values) {
-                            t.Dispose();
-                        }
-                    }
                 }
 
                 /// <summary>
@@ -28,12 +22,6 @@ namespace TorchSharp
                 /// </summary>
                 public abstract class IterableDataset : Dataset<IList<Tensor>>
                 {
-                    public override void DisposeTensor(IList<Tensor> tensor)
-                    {
-                        foreach (var t in tensor) {
-                            t.Dispose();
-                        }
-                    }
                 }
 
                 /// <summary>
@@ -58,8 +46,6 @@ namespace TorchSharp
                     /// <param name="index">Index for tensor</param>
                     /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
                     public abstract T GetTensor(long index);
-
-                    public abstract void DisposeTensor(T tensor);
 
                     protected virtual void Dispose(bool disposing)
                     {

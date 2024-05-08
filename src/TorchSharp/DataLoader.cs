@@ -284,16 +284,17 @@ namespace TorchSharp
                 }
             }
 
-            private class DataLoaderEnumerator : IEnumerator<S>
+            sealed class DataLoaderEnumerator : IEnumerator<S>
             {
                 private readonly DataLoader<T, S> loader;
                 private IEnumerator<long> shuffler;
-                private List<IDisposable>? currentDisposables;
+                private IReadOnlyList<IDisposable> currentDisposables;
                 public DataLoaderEnumerator(DataLoader<T, S> loader)
                 {
                     this.loader = loader;
-                    if (loader.disposeBatch)
-                        this.currentDisposables = new List<IDisposable>();
+                    this.currentDisposables = Array.Empty<IDisposable>();
+                    // TODO: Use MemberNotNull instead.
+                    shuffler = null!;
                     Reset();
                 }
 
@@ -331,19 +332,14 @@ namespace TorchSharp
                                 tensors[i] = loader.dataset.GetTensor(indices[i]);
                             });
 
-                        if (this.currentDisposables is null) {
-                            current = loader.collate_fn(tensors, loader.device);
-                        }
-                        else {
-                            using (var collate_scope = DisposeScopeManager.NewDisposeScope()) {
-                                current = loader.collate_fn(tensors, loader.device);
-                                currentDisposables.AddRange(collate_scope.DisposablesView);
-                                collate_scope.Detach(currentDisposables);
-                            }
-                        }
+                        using var collate_scope = DisposeScopeManager.NewDisposeScope();
+                        current = loader.collate_fn(tensors, loader.device);
 
-                        foreach (var item in tensors) {
-                            loader.dataset.DisposeTensor(item);
+                        // TODO: Will be better if we have something like DetachAll
+                        var view = collate_scope.DisposablesView;
+                        collate_scope.Detach(view);
+                        if (loader.disposeBatch) {
+                            this.currentDisposables = view;
                         }
 
                         return true;
@@ -353,7 +349,6 @@ namespace TorchSharp
                 /// <summary>
                 /// Reset enumerator
                 /// </summary>
-                [MemberNotNull(nameof(shuffler))]
                 public void Reset()
                 {
                     DisposeCurrent();
@@ -377,11 +372,9 @@ namespace TorchSharp
 
                 private void DisposeCurrent()
                 {
-                    if (currentDisposables is null)
-                        return;
-                    foreach (var x in currentDisposables)
+                    foreach (var x in this.currentDisposables)
                         x.Dispose();
-                    currentDisposables.Clear();
+                    this.currentDisposables = Array.Empty<IDisposable>();
                 }
             }
         }

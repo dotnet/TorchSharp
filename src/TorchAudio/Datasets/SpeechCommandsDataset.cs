@@ -48,11 +48,6 @@ namespace TorchSharp
 
                 public override long Count => _walker.LongLength;
 
-                public override void DisposeTensor(SpeechCommandsDatasetItem tensor)
-                {
-                    tensor.waveform.Dispose();
-                }
-
                 public override SpeechCommandsDatasetItem GetTensor(long index)
                 {
                     var audioPath = _walker[index];

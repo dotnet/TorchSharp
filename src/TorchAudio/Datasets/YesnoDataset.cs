@@ -22,11 +22,6 @@ namespace TorchSharp
 
                 public override long Count => audioPathList.LongLength;
 
-                public override void DisposeTensor(YesnoDatasetItem tensor)
-                {
-                    tensor.waveform.Dispose();
-                }
-
                 public override YesnoDatasetItem GetTensor(long index)
                 {
                     var (waveform, sample_rate) = torchaudio.load(audioPathList[index]);
