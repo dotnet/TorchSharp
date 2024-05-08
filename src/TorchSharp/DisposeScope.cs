@@ -365,5 +365,21 @@ namespace TorchSharp
                 tensor.OwningDisposeScope = scope;
             }
         }
+
+        internal HashSet<IDisposable> DetachAllAndDispose()
+        {
+            var disposables = this.Disposables;
+            foreach (var disposable in this.Disposables) {
+                this._disposeScopeManager!.StatisticsInstance.DetachedFromScopeCount++;
+                if (disposable is torch.Tensor tensor) {
+                    tensor.OwningDisposeScope = null;
+                }
+            }
+
+            this.Disposables = new();
+            this.Dispose();
+
+            return disposables;
+        }
     }
 }

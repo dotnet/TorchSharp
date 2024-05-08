@@ -287,11 +287,10 @@ namespace TorchSharp
             {
                 private readonly DataLoader<T, S> loader;
                 private IEnumerator<long> shuffler;
-                private IReadOnlyList<IDisposable> currentDisposables;
+                private HashSet<IDisposable>? currentDisposables;
                 public DataLoaderEnumerator(DataLoader<T, S> loader)
                 {
                     this.loader = loader;
-                    this.currentDisposables = Array.Empty<IDisposable>();
                     // TODO: Use MemberNotNull instead.
                     shuffler = null!;
                     Reset();
@@ -333,14 +332,11 @@ namespace TorchSharp
                                 tensors[i] = loader.dataset.GetTensor(indices[i]);
                             });
 
-                        using var collate_scope = DisposeScopeManager.NewDisposeScope();
+                        using var collate_scope = torch.NewDisposeScope();
                         current = loader.collate_fn(tensors, loader.device);
-
-                        // TODO: Will be better if we have something like DetachAll
-                        var view = collate_scope.DisposablesView;
-                        collate_scope.Detach(view);
+                        var disposables = collate_scope.DetachAllAndDispose();
                         if (loader.disposeBatch) {
-                            this.currentDisposables = view;
+                            this.currentDisposables = disposables;
                         }
 
                         return true;
@@ -373,9 +369,11 @@ namespace TorchSharp
 
                 private void DisposeCurrent()
                 {
-                    foreach (var x in this.currentDisposables)
-                        x.Dispose();
-                    this.currentDisposables = Array.Empty<IDisposable>();
+                    if (this.currentDisposables is not null) {
+                        foreach (var x in this.currentDisposables)
+                            x.Dispose();
+                        this.currentDisposables = null;
+                    }
                 }
             }
         }
