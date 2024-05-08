@@ -571,10 +571,10 @@ namespace TorchSharp
                 loss.backward();
                 optimizer.step();
 
-                var grad1 = optimizer.parameters().ToArray()[0].grad();
+                var grad1 = optimizer.parameters().ToArray()[0].grad;
                 Assert.NotNull(grad1);
 
-                var grad2 = model.Weight.grad();
+                var grad2 = model.Weight.grad;
                 Assert.NotNull(grad2);
             }
         }
@@ -1198,7 +1198,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1217,7 +1217,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1235,7 +1235,7 @@ namespace TorchSharp
 
             example.backward();
 
-            var grads = x1.grad();
+            var grads = x1.grad;
             Assert.True(x1.requires_grad);
             Assert.NotNull(grads);
         }
@@ -1253,7 +1253,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1272,7 +1272,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1291,7 +1291,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1517,14 +1517,14 @@ namespace TorchSharp
                 // Build graph 1 on CUDA
                 torch.nn.functional.mse_loss(module.forward(torch.rand(10).cuda()), torch.rand(10).cuda()).backward();
 
-                Assert.Equal(DeviceType.CUDA, module.ln.weight!.grad()!.device_type);
-                Assert.Equal(DeviceType.CUDA, module.p.grad()!.device_type);
+                Assert.Equal(DeviceType.CUDA, module.ln.weight!.grad!.device_type);
+                Assert.Equal(DeviceType.CUDA, module.p.grad!.device_type);
 
                 // Move to CPU
                 module.to(torch.CPU);
 
-                Assert.Equal(DeviceType.CPU, module.ln.weight!.grad()!.device_type);
-                Assert.Equal(DeviceType.CPU, module.p.grad()!.device_type);
+                Assert.Equal(DeviceType.CPU, module.ln.weight!.grad!.device_type);
+                Assert.Equal(DeviceType.CPU, module.p.grad!.device_type);
 
                 // Build graph 2 on CPU.
                 // This should've crashed, saying something about the gradients being on the wrong device.
@@ -1545,7 +1545,7 @@ namespace TorchSharp
                     var resultBatch = rand(32, 1).to(aDevice);
                     aModule.to(aDevice);
                     foreach (var (name, p) in aModule.named_parameters()) {
-                        Console.WriteLine($"{name} {p.device} {p.grad()}");
+                        Console.WriteLine($"{name} {p.device} {p.grad}");
                     }
                     var aMseLoss = nn.MSELoss();
                     var optimizer = torch.optim.AdamW(aModule.parameters());
@@ -1570,7 +1570,7 @@ namespace TorchSharp
                     aModule.to(aDevice);
                     aModule.zero_grad();
                     foreach (var (name, p) in aModule.named_parameters()) {
-                        Console.WriteLine($"{name} {p.device} {p.grad()}");
+                        Console.WriteLine($"{name} {p.device} {p.grad}");
                     }
                     var aMseLoss = nn.MSELoss();
                     var optimizer = torch.optim.AdamW(aModule.parameters());
@@ -1600,18 +1600,18 @@ namespace TorchSharp
 
             module.zero_grad();
 
-            Assert.Null(module.p.grad());
-            Assert.Null(module.ln.weight!.grad());
-            Assert.Null(module.ln.bias!.grad());
+            Assert.Null(module.p.grad);
+            Assert.Null(module.ln.weight!.grad);
+            Assert.Null(module.ln.bias!.grad);
 
             // Build graph again, this time convert gradients to zero
             torch.nn.functional.mse_loss(module.forward(torch.rand(10)), torch.rand(10)).backward();
 
             module.zero_grad(false);
 
-            Assert.NotNull(module.p.grad());
-            Assert.NotNull(module.ln.weight!.grad());
-            Assert.NotNull(module.ln.bias!.grad());
+            Assert.NotNull(module.p.grad);
+            Assert.NotNull(module.ln.weight!.grad);
+            Assert.NotNull(module.ln.bias!.grad);
             
         }
 
