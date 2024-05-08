@@ -80,10 +80,10 @@ namespace TorchSharp
             var y = x1.pow(2) + 5 * x2;
 
             torch.autograd.backward(new[] { y }, new[] { torch.ones_like(y) });
-            Assert.Equal(x1.shape, x1.grad().shape);
-            Assert.Equal(x2.shape, x2.grad().shape);
-            Assert.Equal(2.0f*x1.item<float>(), x1.grad().item<float>());
-            Assert.Equal(5.0f, x2.grad().item<float>());
+            Assert.Equal(x1.shape, x1.grad.shape);
+            Assert.Equal(x2.shape, x2.grad.shape);
+            Assert.Equal(2.0f*x1.item<float>(), x1.grad.item<float>());
+            Assert.Equal(5.0f, x2.grad.item<float>());
         }
 
         [Fact]
@@ -96,10 +96,10 @@ namespace TorchSharp
             var y = x1.pow(2) + 5 * x2;
 
             y.backward(new[] { torch.ones_like(y) });
-            Assert.Equal(x1.shape, x1.grad().shape);
-            Assert.Equal(x2.shape, x2.grad().shape);
-            Assert.Equal(2.0f * x1.item<float>(), x1.grad().item<float>());
-            Assert.Equal(5.0f, x2.grad().item<float>());
+            Assert.Equal(x1.shape, x1.grad.shape);
+            Assert.Equal(x2.shape, x2.grad.shape);
+            Assert.Equal(2.0f * x1.item<float>(), x1.grad.item<float>());
+            Assert.Equal(5.0f, x2.grad.item<float>());
         }
 
         [Fact]

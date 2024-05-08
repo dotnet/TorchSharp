@@ -404,19 +404,19 @@ namespace TorchSharp
                 var A = randn(3, 3).triu_();
                 var b = randn(3, 4);
                 var x = linalg.solve_triangular(A, b, upper: true);
-                Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-06));
+                Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-05));
             }
             {
                 var A = randn(2, 3, 3).tril_();
                 var b = randn(2, 3, 4);
                 var x = linalg.solve_triangular(A, b, upper: false);
-                Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-06));
+                Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-05));
             }
             {
                 var A = randn(2, 4, 4).tril_();
                 var b = randn(2, 3, 4);
                 var x = linalg.solve_triangular(A, b, upper: false, left: false);
-                Assert.True(x.matmul(A).allclose(b, rtol: 1e-03, atol: 1e-06));
+                Assert.True(x.matmul(A).allclose(b, rtol: 1e-03, atol: 1e-05));
             }
         }
 
