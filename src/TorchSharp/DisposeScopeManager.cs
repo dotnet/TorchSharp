@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 #nullable enable
 namespace TorchSharp
@@ -15,43 +13,54 @@ namespace TorchSharp
     public class DisposeScopeManager
     {
         [ThreadStatic] private static DisposeScopeManager? _threadSingleton;
-        internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
-
         internal static DisposeScopeManager ThreadSingleton => (_threadSingleton ??= new DisposeScopeManager());
-        internal Stack<DisposeScope> DisposeScopeStack { get; } = new();
 
-        public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
+        internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
+        internal DisposeScope? CurrentDisposeScope { get; private set; } = null;
 
-        internal DisposeScope? RegisterOnCurrentDisposeScope(IDisposable disposable)
+        internal DisposeScope? RegisterOnCurrentDisposeScope(torch.Tensor tensor)
         {
-            if (DisposeScopeStack.Count == 0) {
+            if (this.CurrentDisposeScope is null) {
                 StatisticsInstance.CreatedOutsideScopeCount++;
                 return null;
             }
 
             StatisticsInstance.CreatedInScopeCount++;
-            var current = DisposeScopeStack.Peek();
-            current.Include(disposable);
-            return current;
-        }
-
-        internal static DisposeScope NewDisposeScope()
-        {
-            return ThreadSingleton.InnerNewDisposeScope();
+            this.CurrentDisposeScope.Disposables.Add(tensor);
+            return CurrentDisposeScope;
         }
 
         internal void RemoveDisposeScope(DisposeScope disposeScope)
         {
-            Debug.Assert(DisposeScopeStack.Count > 0);
-            Debug.Assert(DisposeScopeStack.Peek() == disposeScope);
-            DisposeScopeStack.Pop();
+            var scope = this.CurrentDisposeScope;
+            if (object.ReferenceEquals(scope, disposeScope)) {
+                this.CurrentDisposeScope = scope.OuterScope;
+                return;
+            }
+            if (scope is null) {
+                return;
+            }
+
+            for (; ; ) {
+                var outerScope = scope.OuterScope;
+                if (object.ReferenceEquals(outerScope, disposeScope)) {
+                    scope.OuterScope = outerScope.OuterScope;
+                    return;
+                }
+
+                if (outerScope is null) {
+                    return;
+                }
+                scope = outerScope;
+            }
         }
 
-        private DisposeScope InnerNewDisposeScope()
+        internal DisposeScope NewDisposeScope()
         {
-            var disposeScope = new DisposeScope(this);
-            DisposeScopeStack.Push(disposeScope);
-            return disposeScope;
+            this.CurrentDisposeScope = new DisposeScope(this);
+            return this.CurrentDisposeScope;
         }
+
+        public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
     }
 }
