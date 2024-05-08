@@ -7437,7 +7437,8 @@ namespace TorchSharp
         /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
         /// be automatically disposed once the dispose scope is disposed.
         /// </summary>
-        public static DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
+        public static DisposeScope NewDisposeScope() =>
+            DisposeScopeManager.ThreadSingleton.NewDisposeScope();
 
         /// <summary>
         /// Creates a new dispose scope for the current thread, wrapping an expression.

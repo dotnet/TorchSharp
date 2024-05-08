@@ -8,16 +8,27 @@ __Breaking Changes__:
 
 - `torchvision.dataset.MNIST` will try more mirrors.
     - The thrown exception might be changed when it fails to download `MNIST`, `FashionMNIST` or `KMNIST`.
+- `ObjectDisposedException` will now be thrown when trying to use the disposed dispose scopes.
+    - The constructor of dispose scopes is no longer `public`. Use `torch.NewDisposeScope` instead.
 
 __API Changes__:
 
 - #1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.
     - A potential memory leak caused by `set_grad` has been resolved.
+- `Include` method of dispose scopes has been removed. Use `Attach` instead.
 
 __Bug Fixes__:
 
 - #1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.
 - `torch.normal` will now correctly return a leaf tensor.
+- New options `disposeBatch` and `disposeDataset` have been added into `DataLoader`.
+    - The default collate functions will now always dispose the intermediate tensors, rather than wait for the next iteration.
+
+__Bug Fixes__:
+
+- `TensorDataset` will now keep the aliases detached from dispose scopes, to avoid the unexpected disposal.
+- `DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of drop last and the incorrect count of worker.
+- #1303 Allow dispose scopes to be disposed out of LIFO order.
 
 # NuGet Version 0.102.4
 
