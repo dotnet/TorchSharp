@@ -21,6 +21,13 @@ __Bug Fixes__:
 
 - #1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.
 - `torch.normal` will now correctly return a leaf tensor.
+- New options `disposeBatch` and `disposeDataset` have been added into `DataLoader`.
+    - The default collate functions will now always dispose the intermediate tensors, rather than wait for the next iteration.
+
+__Bug Fixes__:
+
+- `TensorDataset` will now keep the aliases detached from dispose scopes, to avoid the unexpected disposal.
+- `DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of drop last and the incorrect count of worker.
 - #1303 Allow dispose scopes to be disposed out of LIFO order.
 
 # NuGet Version 0.102.4
