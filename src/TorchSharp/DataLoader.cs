@@ -277,7 +277,7 @@ namespace TorchSharp
                 public bool MoveNext()
                 {
                     DisposeCurrent();
-                    using (var scope = DisposeScopeManager.NewDisposeScope()) {
+                    using (var scope = torch.NewDisposeScope()) {
                         if (!MoveNextValue()) return false;
 
                         var tensorIndexList = new List<long> { currentVal };
@@ -300,7 +300,7 @@ namespace TorchSharp
                         foreach (var task in tasks)
                             task.Wait();
 
-                        using (var collate_scope = DisposeScopeManager.NewDisposeScope()) {
+                        using (var collate_scope = torch.NewDisposeScope()) {
                             Current = collate_fn(items, device);
                             currentDisposables = collate_scope.DisposablesView.ToList();
                             collate_scope.Detach(currentDisposables);

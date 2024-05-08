@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 #nullable enable
 namespace TorchSharp
@@ -15,14 +13,12 @@ namespace TorchSharp
     public class DisposeScopeManager
     {
         [ThreadStatic] private static DisposeScopeManager? _threadSingleton;
-        internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
-
         internal static DisposeScopeManager ThreadSingleton => (_threadSingleton ??= new DisposeScopeManager());
-        internal DisposeScope? CurrentDisposeScope { get; set; } = null;
 
-        public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
+        internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
+        internal DisposeScope? CurrentDisposeScope { get; private set; } = null;
 
-        internal DisposeScope? RegisterOnCurrentDisposeScope(IDisposable disposable)
+        internal DisposeScope? RegisterOnCurrentDisposeScope(torch.Tensor tensor)
         {
             if (this.CurrentDisposeScope is null) {
                 StatisticsInstance.CreatedOutsideScopeCount++;
@@ -30,13 +26,8 @@ namespace TorchSharp
             }
 
             StatisticsInstance.CreatedInScopeCount++;
-            this.CurrentDisposeScope.Include(disposable);
+            this.CurrentDisposeScope.Disposables.Add(tensor);
             return CurrentDisposeScope;
-        }
-
-        internal static DisposeScope NewDisposeScope()
-        {
-            return ThreadSingleton.InnerNewDisposeScope();
         }
 
         internal void RemoveDisposeScope(DisposeScope disposeScope)
@@ -64,10 +55,12 @@ namespace TorchSharp
             }
         }
 
-        private DisposeScope InnerNewDisposeScope()
+        internal DisposeScope NewDisposeScope()
         {
             this.CurrentDisposeScope = new DisposeScope(this);
             return this.CurrentDisposeScope;
         }
+
+        public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
     }
 }

@@ -57,21 +57,6 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Includes a disposable in the scope - for tensors this is done automatically once the scope has been
-        /// created. Use this method to add additional disposables that should be disposed, but you typically
-        /// don't need to call this method.
-        /// </summary>
-        /// <param name="disposable">The disposable to keep in the scope</param>
-        /// <returns></returns>
-        public T Include<T>(T disposable) where T : IDisposable
-        {
-            if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
-            Disposables.Add(disposable);
-            return disposable;
-        }
-
-        /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
         /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
