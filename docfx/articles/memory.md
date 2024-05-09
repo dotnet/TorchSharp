@@ -395,6 +395,8 @@ class MyDataset : torch.utils.data.Dataset
 }
 ```
 
+Also, if you want a "`Lazy`" collate function, do not directly save the tensors that are passed in. And `DetachFromDisposeScope` does not work in this case because they have been moved to another list. Instead, you could create aliases for them.
+
 ## Links and resources
 
 These articles might give you ides about techniques to use to analyse memory. The code is in python but generally will translate across:
