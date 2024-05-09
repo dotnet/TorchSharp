@@ -396,12 +396,11 @@ namespace TorchSharp
                     Reset();
                 }
 
-                private long? MoveNextValue()
+                private static void DisposeAll(HashSet<IDisposable> disposables)
                 {
-                    if (!shuffler.MoveNext()) {
-                        return null;
+                    foreach (var disposable in disposables) {
+                        disposable.Dispose();
                     }
-                    return shuffler.Current;
                 }
 
                 /// <summary>
@@ -412,35 +411,42 @@ namespace TorchSharp
                 {
                     DisposeCurrent();
 
-                    using (var scope = torch.NewDisposeScope()) {
-                        var indices = Enumerable.Range(0, loader.batchSize)
-                            .Select(_ => MoveNextValue())
-                            .Where(x => x.HasValue)
-                            .Cast<long>()
-                            .ToArray();
-                        if (indices.Length is 0)
-                            return false;
-                        if (loader.drop_last && indices.Length < loader.batchSize) {
-                            return false;
-                        }
+                    var indices = Enumerable.Range(0, loader.batchSize)
+                        .Select(_ => shuffler.MoveNext() ? shuffler.Current : (long?)null)
+                        .Where(x => x.HasValue)
+                        .Cast<long>()
+                        .ToArray();
 
-                        var tensors = new T[indices.Length];
-                        Enumerable.Range(0, indices.Length)
-                            .AsParallel()
-                            .WithDegreeOfParallelism(loader.num_worker)
-                            .ForAll((i) => {
-                                tensors[i] = loader.dataset.GetTensor(indices[i]);
-                            });
+                    if (indices.Length is 0)
+                        return false;
 
-                        using var collate_scope = torch.NewDisposeScope();
-                        current = loader.collate_fn(tensors, loader.device);
-                        var disposables = collate_scope.DetachAllAndDispose();
-                        if (loader.disposeBatch) {
-                            this.currentDisposables = disposables;
-                        }
-
-                        return true;
+                    if (loader.drop_last && indices.Length < loader.batchSize) {
+                        return false;
                     }
+
+                    var tensors = new T[indices.Length];
+                    var getTensorDisposables = new HashSet<IDisposable>[indices.Length];
+                    Enumerable.Range(0, indices.Length)
+                        .AsParallel()
+                        .WithDegreeOfParallelism(loader.num_worker)
+                        .ForAll((i) => {
+                            using var getTensorScope = torch.NewDisposeScope();
+                            tensors[i] = loader.dataset.GetTensor(indices[i]);
+                            getTensorDisposables[i] = getTensorScope.DetachAllAndDispose();
+                        });
+
+                    using var collateScope = torch.NewDisposeScope();
+                    this.current = loader.collate_fn(tensors, loader.device);
+                    var collateDisposables = collateScope.DetachAllAndDispose();
+                    if (loader.disposeBatch) {
+                        this.currentDisposables = collateDisposables;
+                    }
+
+                    foreach (var set in getTensorDisposables) {
+                        DisposeAll(set);
+                    }
+
+                    return true;
                 }
 
                 /// <summary>
@@ -470,8 +476,7 @@ namespace TorchSharp
                 private void DisposeCurrent()
                 {
                     if (this.currentDisposables is not null) {
-                        foreach (var x in this.currentDisposables)
-                            x.Dispose();
+                        DisposeAll(this.currentDisposables);
                         this.currentDisposables = null;
                     }
                 }
