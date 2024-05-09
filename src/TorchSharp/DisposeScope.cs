@@ -219,14 +219,30 @@ namespace TorchSharp
 
         public void Attach(IDisposable disposable)
         {
+            _ = Attach((IEnumerable<IDisposable>)new[] { disposable });
+        }
+
+        public void Attach(params IDisposable[] disposables)
+        {
+            _ = Attach((IEnumerable<IDisposable>)disposables);
+        }
+
+        public IReadOnlyList<IDisposable> Attach(IEnumerable<IDisposable> disposables)
+        {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
-            if (disposable is torch.Tensor tensor) {
-                if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
-                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+
+            var result = new List<IDisposable>();
+            foreach (var disposable in disposables) {
+                if (disposable is torch.Tensor tensor) {
+                    if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                    }
                 }
+                AddToOther(this, disposable);
+                result.Add(disposable);
             }
-            AddToOther(this, disposable);
+            return result;
         }
 
         /// <summary>

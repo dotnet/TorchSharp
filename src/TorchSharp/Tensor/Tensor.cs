@@ -7378,6 +7378,12 @@ namespace TorchSharp
             DisposeScopeManager.ThreadSingleton.NewDisposeScope();
 
         /// <summary>
+        /// Get the current dispose scope for the current thread.
+        /// </summary>
+        public static DisposeScope? CurrentDisposeScope =>
+            DisposeScopeManager.ThreadSingleton.CurrentDisposeScope;
+
+        /// <summary>
         /// Creates a new dispose scope for the current thread, wrapping an expression.
         /// </summary>
         public static Tensor WrappedTensorDisposeScope(Func<Tensor> expr)
