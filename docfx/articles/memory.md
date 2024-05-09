@@ -351,7 +351,7 @@ foreach (var tensor in tensors)
 }
 ```
 
-Meanwhile, if you want do write a dataset on your own, you shall notice that data loaders will dispose the tensors got from `GetTensor` after collation. So a dataset like this will not work because the saved tensor is disposed:
+Meanwhile, when writing a dataset on your own, it should be noticed that the data loaders will dispose the tensors created in `GetTensor` after collation. So a dataset like this will not work because the saved tensor will be disposed:
 
 ```csharp
 using TorchSharp;
@@ -377,7 +377,7 @@ class MyDataset : torch.utils.data.Dataset
 }
 ```
 
-Since the actual technique to "catch" the tensors is just a simple dispose scope. So we can write the class like this to avoid the disposal:
+Since the actual technique to "catch" the tensors is just a simple dispose scope. So we can write like this to avoid the disposal:
 
 ```csharp
 class MyDataset : torch.utils.data.Dataset
@@ -393,8 +393,6 @@ class MyDataset : torch.utils.data.Dataset
 
     public override long Count => 3;
 }
-```
-
 ```
 
 ## Links and resources
