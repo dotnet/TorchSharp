@@ -40,7 +40,7 @@ namespace TorchSharp
         public IReadOnlyList<IDisposable> DisposablesView {
             get {
                 if (this._disposeScopeManager is null)
-                    throw new ObjectDisposedException("The dispose scope has been disposed.");
+                    throw new ObjectDisposedException(this.GetType().FullName);
                 return Disposables.ToArray();
             }
         }
@@ -51,7 +51,7 @@ namespace TorchSharp
         public int DisposablesCount {
             get {
                 if (this._disposeScopeManager is null)
-                    throw new ObjectDisposedException("The dispose scope has been disposed.");
+                    throw new ObjectDisposedException(this.GetType().FullName);
                 return Disposables.Count;
             }
         }
@@ -153,7 +153,7 @@ namespace TorchSharp
         public void MoveToOther(DisposeScope? scope, IEnumerable<IDisposable> disposables)
         {
             if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
+                throw new ObjectDisposedException(this.GetType().FullName);
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
                     AddToOther(scope, disposable);
@@ -206,7 +206,7 @@ namespace TorchSharp
         public void Detach(IEnumerable<IDisposable> disposables)
         {
             if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
+                throw new ObjectDisposedException(this.GetType().FullName);
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
                     _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
@@ -219,14 +219,30 @@ namespace TorchSharp
 
         public void Attach(IDisposable disposable)
         {
+            _ = Attach((IEnumerable<IDisposable>)new[] { disposable });
+        }
+
+        public void Attach(params IDisposable[] disposables)
+        {
+            _ = Attach((IEnumerable<IDisposable>)disposables);
+        }
+
+        public IReadOnlyList<IDisposable> Attach(IEnumerable<IDisposable> disposables)
+        {
             if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
-            if (disposable is torch.Tensor tensor) {
-                if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
-                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                throw new ObjectDisposedException(this.GetType().FullName);
+
+            var result = new List<IDisposable>();
+            foreach (var disposable in disposables) {
+                if (disposable is torch.Tensor tensor) {
+                    if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                    }
                 }
+                AddToOther(this, disposable);
+                result.Add(disposable);
             }
-            AddToOther(this, disposable);
+            return result;
         }
 
         /// <summary>
@@ -243,7 +259,7 @@ namespace TorchSharp
         public void DisposeEverythingBut(IEnumerable<IDisposable> inKeep)
         {
             if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
+                throw new ObjectDisposedException(this.GetType().FullName);
             // Avoiding multiple enumerations
             var oldList = Disposables;
             Disposables = inKeep.ToHashSet(ReferenceEqualityComparer<IDisposable>.Default);
@@ -336,7 +352,7 @@ namespace TorchSharp
         public void MarkAsDisposed(IDisposable disposable)
         {
             if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
+                throw new ObjectDisposedException(this.GetType().FullName);
             _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
             Disposables.Remove(disposable);
             if (disposable is torch.Tensor tensor) {
@@ -354,7 +370,7 @@ namespace TorchSharp
         private void AddToOther(DisposeScope? scope, IDisposable disposable)
         {
             if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException("The dispose scope has been disposed.");
+                throw new ObjectDisposedException(this.GetType().FullName);
             if (scope != null) {
                 scope.Disposables.Add(disposable);
             } else {

@@ -16,6 +16,8 @@ __API Changes__:
 - #1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.
     - A potential memory leak caused by `set_grad` has been resolved.
 - `Include` method of dispose scopes has been removed. Use `Attach` instead.
+- Two more `Attach` methods that accepts `IEnumerable<IDisposable>`s and arrays as the parameter have been added into dispose scopes.
+- A new property `torch.CurrentDisposeScope` has been added to provide the ability to get the current dispose scope.
 
 __Bug Fixes__:
 
@@ -27,7 +29,7 @@ __Bug Fixes__:
 __Bug Fixes__:
 
 - `TensorDataset` will now keep the aliases detached from dispose scopes, to avoid the unexpected disposal.
-- `DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of drop last and the incorrect count of worker.
+- `DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of `drop_last`, the incorrect count of worker, and the potential leak cause by multithreading.
 - #1303 Allow dispose scopes to be disposed out of LIFO order.
 
 # NuGet Version 0.102.4
