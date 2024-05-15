@@ -295,6 +295,107 @@ public override Tensor entropy() => torch.WrappedTensorDisposeScope(() => ((scal
 
 ```
 
+## Data loaders and datasets
+
+Sometimes we'd like to train our model in the following pattern:
+
+```csharp
+using var dataLoader = torch.utils.data.DataLoader(...);
+for (int epoch = 0; epoch < 100; epoch++)
+{
+    foreach (var batch in dataLoader)
+    {
+        using (torch.NewDisposeScope())
+        {
+            ...
+        }
+    }
+}
+```
+
+In this case, you may notice that `batch` (at least the first batch) is created outside the dispose scope, which would cause a potential memory leak.
+
+Of course we could manually dispose them. But actually we don't have to care about that, because the data loader will automatically dispose it before the next iteration.
+
+However this might cause another problem. For example, we will get disposed tensors when using Linq. The behavior could be modified by setting `disposeBatch` to `false`:
+
+```csharp
+using TorchSharp;
+
+using var dataset = torch.utils.data.TensorDataset(torch.zeros([3]));
+
+using var dataLoader1 = torch.utils.data.DataLoader(dataset, batchSize: 1);
+using var dataLoader2 = torch.utils.data.DataLoader(dataset, batchSize: 1, disposeBatch: false);
+
+Console.WriteLine(dataLoader1.First()[0].IsInvalid); // True
+Console.WriteLine(dataLoader2.First()[0].IsInvalid); // False
+```
+
+But those tensors would be detached from all the dispose scopes, even if the whole process is wrapped by a scope. (Otherwise it may lead to confusion since the iterations may not happen in the same dispose scope.) So don't forget to dispose them later or manually attach them to a scope. Also, be aware that enumerating the same `IEnumerable` twice could produce different instances:
+
+```csharp
+// DON'T DO THIS:
+using TorchSharp;
+
+using var dataset = torch.utils.data.TensorDataset(torch.zeros([3]));
+using var dataLoader = torch.utils.data.DataLoader(dataset, batchSize: 1, disposeBatch: false);
+
+var tensors = dataLoader.Select(x => x[0]);
+DoSomeThing(tensors.ToArray());
+
+foreach (var tensor in tensors)
+{
+    tensor.Dispose();
+    // DON'T DO THIS.
+    // The tensor is not the one you have passed into `DoSomeThing`.
+}
+```
+
+Meanwhile, when writing a dataset on your own, it should be noticed that the data loaders will dispose the tensors created in `GetTensor` after collation. So a dataset like this will not work because the saved tensor will be disposed:
+
+```csharp
+using TorchSharp;
+
+using var dataLoader = torch.utils.data.DataLoader(new MyDataset(), batchSize: 1);
+foreach (var _ in dataLoader) ;
+// System.InvalidOperationException:
+// Tensor invalid -- empty handle.
+
+class MyDataset : torch.utils.data.Dataset
+{
+    private torch.Tensor tensor = torch.zeros([]);
+    public override Dictionary<string, torch.Tensor> GetTensor(long index)
+    {
+        tensor = tensor + 1;
+        // The new tensor is attached to the dispose scope in the data loader,
+        // and it will be disposed after collation,
+        // so in the next iteration it becomes invalid.
+        return new() { ["tensor"] = tensor };
+    }
+
+    public override long Count => 3;
+}
+```
+
+Since the actual technique to "catch" the tensors is just a simple dispose scope. So we can write like this to avoid the disposal:
+
+```csharp
+class MyDataset : torch.utils.data.Dataset
+{
+    private torch.Tensor tensor = torch.zeros([]);
+    public override Dictionary<string, torch.Tensor> GetTensor(long index)
+    {
+        var previous = tensor;
+        tensor = (previous + 1).DetachFromDisposeScope();
+        previous.Dispose(); // Don't forget to dispose the previous one.
+        return new() { ["tensor"] = tensor };
+    }
+
+    public override long Count => 3;
+}
+```
+
+Also, if you want a "`Lazy`" collate function, do not directly save the tensors that are passed in. And `DetachFromDisposeScope` does not work in this case because they are kept in another list instead of dispose scopes, due to some multithreading issues. Instead, you could create aliases for them.
 
 ## Links and resources
 
