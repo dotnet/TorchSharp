@@ -60,7 +60,8 @@ namespace TorchSharp
                 ok = NativeLibrary.TryLoad(path, out var res);
                 if (!ok)
                     trace.AppendLine($"    Failed to load native component {path}");
-            } catch {
+            } catch (Exception exn) {
+                trace.AppendLine($"    Failed to load native component {path}: {exn.Message}");
                 ok = false;
             }
             return ok;
