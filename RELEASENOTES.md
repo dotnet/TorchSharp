@@ -25,6 +25,7 @@ __Bug Fixes__:
 - `torch.normal` will now correctly return a leaf tensor.
 - New options `disposeBatch` and `disposeDataset` have been added into `DataLoader`.
     - The default collate functions will now always dispose the intermediate tensors, rather than wait for the next iteration.
+    - The fields are now exposed as readonly properties.
 
 __Bug Fixes__:
 
