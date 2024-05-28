@@ -242,13 +242,13 @@ namespace TorchSharp.PInvoke
         internal static extern void THSNN_Module_dispose(torch.nn.Module.HType handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Module_to_device_dtype(torch.nn.Module.HType module, sbyte dtype, long deviceType, long deviceIndex);
+        internal static extern void THSNN_Module_to_device_dtype(torch.nn.Module.HType module, sbyte dtype, long deviceType, long deviceIndex, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Module_to_device(torch.nn.Module.HType module, long deviceType, long deviceIndex);
+        internal static extern void THSNN_Module_to_device(torch.nn.Module.HType module, long deviceType, long deviceIndex, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Module_to_dtype(torch.nn.Module.HType module, sbyte dtype);
+        internal static extern void THSNN_Module_to_dtype(torch.nn.Module.HType module, sbyte dtype, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);

@@ -783,9 +783,10 @@ namespace TorchSharp
             /// <summary>
             /// Moves the tensor data to the MPS device
             /// </summary>
-            public Tensor mps()
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor mps(bool non_blocking = false)
             {
-                var res = NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.MPS, -1, true);
+                var res = NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.MPS, -1, true, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
 
@@ -797,7 +798,9 @@ namespace TorchSharp
             /// Returns a copy of this object in CUDA memory.
             /// If this object is already in CUDA memory and on the correct device, then no copy is performed and the original object is returned.
             /// </summary>
-            public Tensor cuda(Device? device = null)
+            /// <param name="device">The target device</param>
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor cuda(Device? device = null, bool non_blocking = false)
             {
                 if (device is not null && device.type != DeviceType.CUDA) {
                     throw new ArgumentException("Not a CUDA device.", "device");
@@ -807,7 +810,7 @@ namespace TorchSharp
 
                 var res = device is null
                     ? NativeMethods.THSTensor_cuda(Handle)
-                    : NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.CUDA, device_index, false);
+                    : NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.CUDA, device_index, false, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -819,9 +822,10 @@ namespace TorchSharp
             /// <param name="type">The target type</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to_type(ScalarType type, bool copy = false, bool disposeAfter = false)
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to_type(ScalarType type, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
-                var res = NativeMethods.THSTensor_to_type(Handle, (sbyte)type, copy);
+                var res = NativeMethods.THSTensor_to_type(Handle, (sbyte)type, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 if (disposeAfter)
@@ -853,10 +857,11 @@ namespace TorchSharp
             /// <param name="deviceIndex">The optional device index.</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false, bool disposeAfter = false)
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
                 torch.InitializeDeviceType(deviceType);
-                var res = NativeMethods.THSTensor_to_device(Handle, (int)deviceType, deviceIndex, copy);
+                var res = NativeMethods.THSTensor_to_device(Handle, (int)deviceType, deviceIndex, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 if (disposeAfter)
@@ -872,10 +877,11 @@ namespace TorchSharp
             /// <param name="device">The target device</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(ScalarType type, torch.Device device, bool copy = false, bool disposeAfter = false)
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(ScalarType type, torch.Device device, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
                 torch.InitializeDevice(device);
-                var res = NativeMethods.THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy);
+                var res = NativeMethods.THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 if (disposeAfter)
@@ -889,8 +895,9 @@ namespace TorchSharp
             /// <param name="type">The target type</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
             /// <remarks>Alias for to_type</remarks>
-            public Tensor to(ScalarType type, bool copy = false, bool disposeAfter = false) => to_type(type, copy, disposeAfter);
+            public Tensor to(ScalarType type, bool copy = false, bool disposeAfter = false, bool non_blocking = false) => to_type(type, copy, disposeAfter, non_blocking);
 
             /// <summary>
             /// Moves the tensor data.
@@ -898,7 +905,8 @@ namespace TorchSharp
             /// <param name="device">A string denoting the target device.</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(string device, bool copy = false, bool disposeAfter = false) => to(new torch.Device(device), copy, disposeAfter);
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(string device, bool copy = false, bool disposeAfter = false, bool non_blocking = false) => to(new torch.Device(device), copy, disposeAfter, non_blocking);
 
             /// <summary>
             /// Moves the tensor data.
@@ -906,13 +914,15 @@ namespace TorchSharp
             /// <param name="device">The target device</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(torch.Device device, bool copy = false, bool disposeAfter = false) => to(device.type, device.index, copy, disposeAfter);
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(torch.Device device, bool copy = false, bool disposeAfter = false, bool non_blocking = false) => to(device.type, device.index, copy, disposeAfter, non_blocking);
 
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="other">The tensor serving as a template.</param>
-            public Tensor to(Tensor other) => to(other.dtype, other.device);
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(Tensor other, bool non_blocking = false) => to(other.dtype, other.device, non_blocking);
 
             public Tensor type(Func<Tensor, Tensor> typeFunc) => typeFunc(this);
 

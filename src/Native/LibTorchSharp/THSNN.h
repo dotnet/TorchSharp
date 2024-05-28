@@ -28,9 +28,9 @@ EXPORT_API(void)        THSNN_Module_register_buffer(const NNModule module, cons
 EXPORT_API(void)        THSNN_Module_register_parameter(const NNModule module, const char* name, const Tensor tensor, bool requires_grad);
 EXPORT_API(void)        THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule);
 EXPORT_API(void)        THSNN_Module_dispose(const NNModule module);
-EXPORT_API(void)        THSNN_Module_to_device(NNModule module, int64_t device, int64_t index);
-EXPORT_API(void)        THSNN_Module_to_dtype(NNModule module, int8_t dtype);
-EXPORT_API(void)        THSNN_Module_to_device_dtype(NNModule module, int8_t dtype, int64_t device, int64_t index);
+EXPORT_API(void)        THSNN_Module_to_device(NNModule module, int64_t device, int64_t index, const bool non_blocking);
+EXPORT_API(void)        THSNN_Module_to_dtype(NNModule module, int8_t dtype, const bool non_blocking);
+EXPORT_API(void)        THSNN_Module_to_device_dtype(NNModule module, int8_t dtype, int64_t device, int64_t index, const bool non_blocking);
 
 EXPORT_API(void)        THSNN_AnyModule_dispose(const NNAnyModule module);
 //EXPORT_API(NNModule)    THSNN_AnyModule_get(const NNAnyModule module);
