@@ -8375,5 +8375,67 @@ namespace TorchSharp
                 }
             }
         }
+
+        [Fact]
+        public void DefaultDTypeCreation()
+        {
+            var dt = torch.get_default_dtype();
+
+            var t = torch.zeros(5,5);
+            Assert.Equal(torch.float32, t.dtype);
+
+            try {
+                torch.set_default_dtype(torch.float64);              
+                
+                t = torch.zeros(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.ones(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.rand(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.randn(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.logspace(5, 15, 20);
+                Assert.Equal(torch.float64, t.dtype);
+            }
+            finally {
+                torch.set_default_dtype(dt);
+            }
+        }
+
+        [Fact]
+        public void DefaultDeviceCreation()
+        {
+            var dt = torch.get_default_device();
+
+            var t = torch.zeros(5,5);
+            Assert.Equal(DeviceType.CPU, t.device_type);
+
+            try {
+                torch.set_default_device(torch.META);              
+                
+                t = torch.zeros(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.ones(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.rand(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.randn(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.logspace(5, 15, 20);
+                Assert.Equal(DeviceType.META, t.device_type);
+            }
+            finally {
+                torch.set_default_device(dt);
+            }
+        }
     }
 }

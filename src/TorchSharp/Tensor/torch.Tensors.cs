@@ -61,8 +61,22 @@ namespace TorchSharp
         /// <returns></returns>
         [Pure]public static ScalarType get_default_dtype() => default_dtype;
 
+        [Pure]public static Device get_default_device() => default_device;
+
         // https://pytorch.org/docs/stable/generated/torch.set_default_tensor_type
         public static void set_default_tensor_type(Tensor t) => set_default_dtype(t.dtype);
+
+        public static void set_default_device(Device device) 
+        {
+            if (device == null) 
+                throw new ArgumentNullException(nameof(device));
+            default_device = device;
+        }
+
+        public static void set_default_device(string device)
+        {
+            set_default_device(new Device(device));
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.numel
         /// <summary>

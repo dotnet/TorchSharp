@@ -51,6 +51,10 @@ namespace TorchSharp
         /// </summary>
         public static Tensor bartlett_window(long len, bool periodic = true, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -74,6 +78,10 @@ namespace TorchSharp
         /// </summary>
         public static Tensor blackman_window(long len, bool periodic = true, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -98,6 +106,10 @@ namespace TorchSharp
         /// </summary>
         public static Tensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -121,6 +133,10 @@ namespace TorchSharp
         /// </summary>
         public static Tensor hann_window(long len, bool periodic = true, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -144,6 +160,10 @@ namespace TorchSharp
         /// </summary>
         public static Tensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.

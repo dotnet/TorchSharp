@@ -94,6 +94,10 @@ namespace TorchSharp
 
         private static Tensor _zeros(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
