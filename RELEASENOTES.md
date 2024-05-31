@@ -6,31 +6,33 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Breaking Changes__:
 
-- `torchvision.dataset.MNIST` will try more mirrors.
-    - The thrown exception might be changed when it fails to download `MNIST`, `FashionMNIST` or `KMNIST`.
-- `ObjectDisposedException` will now be thrown when trying to use the disposed dispose scopes.
-    - The constructor of dispose scopes is no longer `public`. Use `torch.NewDisposeScope` instead.
+`torchvision.dataset.MNIST` will try more mirrors. The thrown exception might be changed when it fails to download `MNIST`, `FashionMNIST` or `KMNIST`.<br/>
+`ObjectDisposedException` will now be thrown when trying to use a disposed dispose scopes.<br/>
+The constructor of dispose scopes is no longer `public`. Use `torch.NewDisposeScope` instead.<br/>
 
 __API Changes__:
 
-- #1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.
-    - A potential memory leak caused by `set_grad` has been resolved.
-- `Include` method of dispose scopes has been removed. Use `Attach` instead.
-- Two more `Attach` methods that accepts `IEnumerable<IDisposable>`s and arrays as the parameter have been added into dispose scopes.
-- A new property `torch.CurrentDisposeScope` has been added to provide the ability to get the current dispose scope.
+#1314 Grant read-only access to DataLoader attributes<br/>
+#1313 Add 'non_blocking' argument to tensor and module 'to()' signatures.<br/>
+#1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.<br/>
+A potential memory leak caused by `set_grad` has been resolved.<br/>
+`Include` method of dispose scopes has been removed. Use `Attach` instead.<br/>
+Two more `Attach` methods that accepts `IEnumerable<IDisposable>`s and arrays as the parameter have been added into dispose scopes.<br/>
+A new property `torch.CurrentDisposeScope` has been added to provide the ability to get the current dispose scope.<br/>
+Add module hooks that take no input/output arguments, just the module itself.<br/>
 
 __Bug Fixes__:
 
-- #1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.
-- `torch.normal` will now correctly return a leaf tensor.
-- New options `disposeBatch` and `disposeDataset` have been added into `DataLoader`.
-    - The default collate functions will now always dispose the intermediate tensors, rather than wait for the next iteration.
+#1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.<br/>
+torch.normal` will now correctly return a leaf tensor.<br/>
+New options `disposeBatch` and `disposeDataset` have been added into `DataLoader`.<br/>
+The default collate functions will now always dispose the intermediate tensors, rather than wait for the next iteration.<br/>
 
 __Bug Fixes__:
 
-- `TensorDataset` will now keep the aliases detached from dispose scopes, to avoid the unexpected disposal.
-- `DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of `drop_last`, the incorrect count of worker, and the potential leak cause by multithreading.
-- #1303 Allow dispose scopes to be disposed out of LIFO order.
+`TensorDataset` will now keep the aliases detached from dispose scopes, to avoid the unexpected disposal.<br/>
+`DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of `drop_last`, the incorrect count of worker, and the potential leak cause by multithreading.<br/>
+#1303 Allow dispose scopes to be disposed out of LIFO order.<br/>
 
 # NuGet Version 0.102.4
 
