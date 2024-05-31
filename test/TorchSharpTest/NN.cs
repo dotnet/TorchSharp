@@ -6583,5 +6583,45 @@ namespace TorchSharp
             lin1.call(input);
             Assert.Equal(1, counter);
         }
+
+        [Fact]
+        public void TestModulePreHooksGeneric()
+        {
+            var lin1 = torch.nn.Linear(100, 10);
+            var input = torch.randn(32, 100, 100);
+            var counter = 0;
+
+            var pre_hook = (Module<Tensor, Tensor> m) => { counter += 1;};
+
+            var handle = lin1.register_forward_pre_hook(pre_hook);
+
+            lin1.call(input);
+            Assert.Equal(1, counter);
+
+            handle.remove();
+
+            lin1.call(input);
+            Assert.Equal(1, counter);
+        }
+
+        [Fact]
+        public void TestModulePostHooksGeneric()
+        {
+            var lin1 = torch.nn.Linear(100, 10);
+            var input = torch.randn(32, 100, 100);
+            var counter = 0;
+
+            var hook = (Module<Tensor, Tensor> m) => { counter += 1;};
+
+            var handle = lin1.register_forward_hook(hook);
+
+            lin1.call(input);
+            Assert.Equal(1, counter);
+
+            handle.remove();
+
+            lin1.call(input);
+            Assert.Equal(1, counter);
+        }
     }
 }

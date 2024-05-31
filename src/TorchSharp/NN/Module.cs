@@ -1228,7 +1228,7 @@ namespace TorchSharp
             /// <summary>
             /// Represents a module that accepts 'hook' to the module logic.
             /// </summary>
-            public class HookableModule<TPreHook,TPostHook> : Module
+            public class HookableModule<TModule,TPreHook,TPostHook> : Module
             {
                 protected HookableModule(string name) : base(name) { }
 
@@ -1249,14 +1249,33 @@ namespace TorchSharp
                     return new HookRemover(this, key);
                 }
 
+                public HookRemover register_forward_hook(Action<TModule> hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    module_post_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                public HookRemover register_forward_pre_hook(Action<TModule> hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    module_pre_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
                 private void remove(string key)
                 {
                     if (pre_hooks.ContainsKey(key)) pre_hooks.Remove(key);
                     if (post_hooks.ContainsKey(key)) post_hooks.Remove(key);
+                    if (module_pre_hooks.ContainsKey(key)) module_pre_hooks.Remove(key);
+                    if (module_post_hooks.ContainsKey(key)) module_post_hooks.Remove(key);
                 }
 
                 protected Dictionary<string, TPreHook> pre_hooks = new Dictionary<string, TPreHook>();
                 protected Dictionary<string, TPostHook> post_hooks = new Dictionary<string, TPostHook>();
+
+                protected Dictionary<string, Action<TModule>> module_pre_hooks = new Dictionary<string, Action<TModule>>();
+                protected Dictionary<string, Action<TModule>> module_post_hooks = new Dictionary<string, Action<TModule>>();
 
                 /// <summary>
                 /// Used to remove a specific hook, following the PyTorch API design.
@@ -1264,7 +1283,7 @@ namespace TorchSharp
                 /// <remarks>The name and namespace of this class is not the same as in PyTorch, but serves the same purpose.</remarks>
                 public class HookRemover
                 {
-                    public HookRemover(HookableModule<TPreHook, TPostHook> module, string key)
+                    public HookRemover(HookableModule<TModule,TPreHook, TPostHook> module, string key)
                     {
                         this.module = module;
                         this.key = key;
@@ -1275,7 +1294,7 @@ namespace TorchSharp
                         module.remove(key);
                     }
 
-                    private HookableModule<TPreHook, TPostHook> module;
+                    private HookableModule<TModule,TPreHook, TPostHook> module;
                     private string key;
                 }
             }
@@ -1285,7 +1304,7 @@ namespace TorchSharp
             /// </summary>
             /// <typeparam name="T">The argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T, TResult> : HookableModule<Func<Module<T,TResult>, T, T>, Func<Module<T, TResult>, T, TResult, TResult>>, IModule<T, TResult>
+            public abstract class Module<T, TResult> : HookableModule<Module<T, TResult>, Func<Module<T,TResult>, T, T>, Func<Module<T, TResult>, T, TResult, TResult>>, IModule<T, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1305,6 +1324,10 @@ namespace TorchSharp
                 {
                     // Call pre-hooks, if available.
 
+                    foreach (var hook in module_pre_hooks.Values) {
+                        hook(this);
+                    }
+                    
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input);
                         if (modified is not null)
@@ -1321,6 +1344,10 @@ namespace TorchSharp
                             result = modified;
                     }
 
+                    foreach (var hook in module_post_hooks.Values) {
+                        hook(this);
+                    }
+
                     return result;
                 }
             }
@@ -1331,7 +1358,7 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, TResult> : HookableModule<Func<Module<T1, T2, TResult>, T1, T2, (T1, T2)?>, Func<Module<T1, T2, TResult>, T1, T2, TResult, TResult>>, IModule<T1, T2, TResult>
+            public abstract class Module<T1, T2, TResult> : HookableModule<Module<T1, T2, TResult>, Func<Module<T1, T2, TResult>, T1, T2, (T1, T2)?>, Func<Module<T1, T2, TResult>, T1, T2, TResult, TResult>>, IModule<T1, T2, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1351,6 +1378,10 @@ namespace TorchSharp
                 {
                     // Call pre-hooks, if available.
 
+                    foreach (var hook in module_pre_hooks.Values) {
+                        hook(this);
+                    }
+                    
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2);
                         if (modified.HasValue) {
@@ -1369,6 +1400,10 @@ namespace TorchSharp
                             result = modified;
                     }
 
+                    foreach (var hook in module_post_hooks.Values) {
+                        hook(this);
+                    }
+
                     return result;
                 }
             }
@@ -1380,7 +1415,7 @@ namespace TorchSharp
             /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, TResult> : HookableModule<Func<Module<T1, T2, T3, TResult>, T1, T2, T3, (T1, T2, T3)?>, Func<Module<T1, T2, T3, TResult>, T1, T2, T3, TResult, TResult>>, IModule<T1, T2, T3, TResult>
+            public abstract class Module<T1, T2, T3, TResult> : HookableModule<Module<T1, T2, T3, TResult>,Func<Module<T1, T2, T3, TResult>, T1, T2, T3, (T1, T2, T3)?>, Func<Module<T1, T2, T3, TResult>, T1, T2, T3, TResult, TResult>>, IModule<T1, T2, T3, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1400,6 +1435,10 @@ namespace TorchSharp
                 {
                     // Call pre-hooks, if available.
 
+                    foreach (var hook in module_pre_hooks.Values) {
+                        hook(this);
+                    }
+                    
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3);
                         if (modified.HasValue) {
@@ -1419,6 +1458,10 @@ namespace TorchSharp
                             result = modified;
                     }
 
+                    foreach (var hook in module_post_hooks.Values) {
+                        hook(this);
+                    }
+
                     return result;
                 }
             }
@@ -1431,7 +1474,7 @@ namespace TorchSharp
             /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, T4, TResult> : HookableModule<Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, (T1, T2, T3, T4)?>, Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, TResult, TResult>>, IModule<T1, T2, T3, T4, TResult>
+            public abstract class Module<T1, T2, T3, T4, TResult> : HookableModule<Module<T1, T2, T3, T4, TResult>, Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, (T1, T2, T3, T4)?>, Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, TResult, TResult>>, IModule<T1, T2, T3, T4, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1451,6 +1494,10 @@ namespace TorchSharp
                 {
                     // Call pre-hooks, if available.
 
+                    foreach (var hook in module_pre_hooks.Values) {
+                        hook(this);
+                    }
+                    
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3, input4);
                         if (modified.HasValue) {
@@ -1471,6 +1518,10 @@ namespace TorchSharp
                             result = modified;
                     }
 
+                    foreach (var hook in module_post_hooks.Values) {
+                        hook(this);
+                    }
+
                     return result;
                 }
             }
@@ -1484,7 +1535,7 @@ namespace TorchSharp
             /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, T4, T5,TResult> : HookableModule<Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, (T1, T2, T3, T4, T5)?>, Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, TResult>
+            public abstract class Module<T1, T2, T3, T4, T5,TResult> : HookableModule<Module<T1, T2, T3, T4, T5,TResult>, Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, (T1, T2, T3, T4, T5)?>, Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1504,6 +1555,10 @@ namespace TorchSharp
                 {
                     // Call pre-hooks, if available.
 
+                    foreach (var hook in module_pre_hooks.Values) {
+                        hook(this);
+                    }
+                    
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3, input4, input5);
                         if (modified.HasValue) {
@@ -1525,6 +1580,10 @@ namespace TorchSharp
                             result = modified;
                     }
 
+                    foreach (var hook in module_post_hooks.Values) {
+                        hook(this);
+                    }
+
                     return result;
                 }
             }
@@ -1539,7 +1598,7 @@ namespace TorchSharp
             /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T6">The sixth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, T4, T5, T6, TResult> : HookableModule<Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, (T1, T2, T3, T4, T5, T6)?>, Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, T6, TResult>
+            public abstract class Module<T1, T2, T3, T4, T5, T6, TResult> : HookableModule<Module<T1, T2, T3, T4, T5, T6, TResult>, Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, (T1, T2, T3, T4, T5, T6)?>, Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, T6, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1559,6 +1618,10 @@ namespace TorchSharp
                 {
                     // Call pre-hooks, if available.
 
+                    foreach (var hook in module_pre_hooks.Values) {
+                        hook(this);
+                    }
+                    
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3, input4, input5, input6);
                         if (modified.HasValue) {
@@ -1579,6 +1642,10 @@ namespace TorchSharp
                         var modified = hook(this, input1, input2, input3, input4, input5, input6, result);
                         if (modified is not null)
                             result = modified;
+                    }
+
+                    foreach (var hook in module_post_hooks.Values) {
+                        hook(this);
                     }
 
                     return result;
