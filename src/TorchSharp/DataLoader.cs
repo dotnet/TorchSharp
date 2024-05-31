@@ -264,15 +264,16 @@ namespace TorchSharp
         /// </summary>
         public class DataLoader<T, S> : IEnumerable<S>, IDisposable
         {
-            private readonly Dataset<T> dataset;
-            private readonly int batchSize;
-            private readonly bool drop_last;
-            private readonly Device device;
-            private readonly IEnumerable<long> shuffler;
-            private readonly int num_worker;
-            private readonly Func<IEnumerable<T>, torch.Device, S> collate_fn;
-            private readonly bool disposeBatch;
-            private readonly bool disposeDataset;
+            public Dataset<T> dataset { get; }
+            public int batch_size { get; }
+            public bool drop_last { get; }
+            public IEnumerable<long> sampler { get; }
+            public int num_workers { get; }
+            public Func<IEnumerable<T>, Device, S> collate_fn { get; }
+
+            public Device Device { get; }
+            public bool DisposeBatch { get; }
+            public bool DisposeDataset { get; }
 
             /// <summary>
             /// Pytorch style dataloader
@@ -305,14 +306,14 @@ namespace TorchSharp
                 bool disposeDataset = true)
             {
                 this.dataset = dataset;
-                this.batchSize = batchSize;
+                this.batch_size = batchSize;
                 this.drop_last = drop_last;
-                this.device = device ?? CPU;
-                this.shuffler = shuffler;
-                this.num_worker = Math.Max(num_worker, 1);
+                this.Device = device ?? CPU;
+                this.sampler = shuffler;
+                this.num_workers = Math.Max(num_worker, 1);
                 this.collate_fn = collate_fn;
-                this.disposeBatch = disposeBatch;
-                this.disposeDataset = disposeDataset;
+                this.DisposeBatch = disposeBatch;
+                this.DisposeDataset = disposeDataset;
             }
 
             /// <summary>
@@ -368,7 +369,7 @@ namespace TorchSharp
             /// <summary>
             /// Size of batch
             /// </summary>
-            public long Count => drop_last ? (dataset.Count / batchSize) : ((dataset.Count - 1) / batchSize + 1);
+            public long Count => drop_last ? (dataset.Count / batch_size) : ((dataset.Count - 1) / batch_size + 1);
 
             public void Dispose()
             {
@@ -378,7 +379,7 @@ namespace TorchSharp
 
             protected virtual void Dispose(bool disposing)
             {
-                if (disposing && disposeDataset) {
+                if (disposing && DisposeDataset) {
                     dataset.Dispose();
                 }
             }
@@ -411,7 +412,7 @@ namespace TorchSharp
                 {
                     DisposeCurrent();
 
-                    var indices = Enumerable.Range(0, loader.batchSize)
+                    var indices = Enumerable.Range(0, loader.batch_size)
                         .Select(_ => shuffler.MoveNext() ? shuffler.Current : (long?)null)
                         .Where(x => x.HasValue)
                         .Cast<long>()
@@ -420,7 +421,7 @@ namespace TorchSharp
                     if (indices.Length is 0)
                         return false;
 
-                    if (loader.drop_last && indices.Length < loader.batchSize) {
+                    if (loader.drop_last && indices.Length < loader.batch_size) {
                         return false;
                     }
 
@@ -428,7 +429,7 @@ namespace TorchSharp
                     var getTensorDisposables = new HashSet<IDisposable>[indices.Length];
                     Enumerable.Range(0, indices.Length)
                         .AsParallel()
-                        .WithDegreeOfParallelism(loader.num_worker)
+                        .WithDegreeOfParallelism(loader.num_workers)
                         .ForAll((i) => {
                             using var getTensorScope = torch.NewDisposeScope();
                             tensors[i] = loader.dataset.GetTensor(indices[i]);
@@ -436,9 +437,9 @@ namespace TorchSharp
                         });
 
                     using var collateScope = torch.NewDisposeScope();
-                    this.current = loader.collate_fn(tensors, loader.device);
+                    this.current = loader.collate_fn(tensors, loader.Device);
                     var collateDisposables = collateScope.DetachAllAndDispose();
-                    if (loader.disposeBatch) {
+                    if (loader.DisposeBatch) {
                         this.currentDisposables = collateDisposables;
                     }
 
@@ -456,7 +457,7 @@ namespace TorchSharp
                 {
                     DisposeCurrent();
                     shuffler?.Dispose();
-                    shuffler = loader.shuffler.GetEnumerator();
+                    shuffler = loader.sampler.GetEnumerator();
                 }
 
                 S? current;
