@@ -148,7 +148,11 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="device">The target device.</param>
                 /// <param name="dtype">The target element type.</param>
-                protected internal virtual Module _to(Device device, ScalarType dtype)
+                /// <param name="non_blocking">
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+                /// </param>
+                protected internal virtual Module _to(Device device, ScalarType dtype, bool non_blocking)
                 {
                     if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
                         throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
@@ -158,10 +162,10 @@ namespace TorchSharp
                     if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
 
                     InitializeDeviceType(device.type);
-                    THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
+                    THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index, non_blocking);
                     CheckForErrors();
 
-                    _toEpilog(device, dtype);
+                    _toEpilog(device, dtype, non_blocking);
 
                     return this;
                 }
@@ -171,8 +175,12 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
+                /// <param name="non_blocking">
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+                /// </param>
                 /// <returns></returns>
-                protected internal virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
+                protected internal virtual Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -181,10 +189,10 @@ namespace TorchSharp
                     if (deviceType != _deviceType || deviceIndex != _deviceIndex) {
 
                         InitializeDeviceType(deviceType);
-                        THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
+                        THSNN_Module_to_device(handle, (int)deviceType, deviceIndex, non_blocking);
                         CheckForErrors();
 
-                        _toEpilog(deviceType, deviceIndex);
+                        _toEpilog(deviceType, deviceIndex, non_blocking);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
@@ -199,40 +207,40 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                protected internal virtual Module _to(ScalarType dtype)
+                protected internal virtual Module _to(ScalarType dtype, bool non_blocking)
                 {
                     if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
                         throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
 
-                    THSNN_Module_to_dtype(handle, (sbyte)dtype);
+                    THSNN_Module_to_dtype(handle, (sbyte)dtype, non_blocking);
                     CheckForErrors();
 
-                    _toEpilog(dtype);
+                    _toEpilog(dtype, non_blocking);
 
                     return this;
                 }
 
-                protected void _toEpilog(ScalarType dtype)
+                protected void _toEpilog(ScalarType dtype, bool non_blocking)
                 {
-                    _toEpilog(dtype, null);
+                    _toEpilog(dtype, null, non_blocking);
                 }
 
-                protected void _toEpilog(Device device, ScalarType dtype)
+                protected void _toEpilog(Device device, ScalarType dtype, bool non_blocking)
                 {
-                    _toEpilog(dtype, device);
+                    _toEpilog(dtype, device, non_blocking);
                 }
 
-                protected void _toEpilog(DeviceType deviceType, int deviceIndex)
+                protected void _toEpilog(DeviceType deviceType, int deviceIndex, bool non_blocking)
                 {
-                    _toEpilog(null, new Device(deviceType, deviceIndex));
+                    _toEpilog(null, new Device(deviceType, deviceIndex), non_blocking);
                 }
 
-                private void _toEpilog(ScalarType? dtype, Device device)
+                private void _toEpilog(ScalarType? dtype, Device device, bool non_blocking)
                 {
                     foreach (var (_, sm) in named_children()) {
-                        if (device is null) sm._to(dtype.Value);
-                        else if (dtype is null) sm._to(device.type, device.index);
-                        else sm._to(device, dtype.Value);
+                        if (device is null) sm._to(dtype.Value, non_blocking);
+                        else if (dtype is null) sm._to(device.type, device.index, non_blocking);
+                        else sm._to(device, dtype.Value, non_blocking);
                     }
 
                     var fieldsByComponentName = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
@@ -299,11 +307,15 @@ namespace TorchSharp
                 /// Moves and converts the parameters and buffers.
                 /// </summary>
                 /// <param name="other">The tensor serving as a template.</param>
+                /// <param name="non_blocking">
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+                /// </param>
                 /// <returns></returns>
-                public Module _to(Tensor other)
+                public Module _to(Tensor other, bool non_blocking)
                 {
-                    _to(other.dtype);
-                    return _to(other.device_type, other.device_index);
+                    _to(other.dtype, non_blocking);
+                    return _to(other.device_type, other.device_index, non_blocking);
                 }
 
 
@@ -940,7 +952,7 @@ namespace TorchSharp
                             loadedParameters?.Add(key, found);
                         }
                     } finally {
-                        if (dt != DeviceType.CPU) _to(dt, di);
+                        if (dt != DeviceType.CPU) _to(dt, di, false);
                     }
 
                     return this;
@@ -1062,8 +1074,8 @@ namespace TorchSharp
                     T module = (T)this;
 
                     return device != null ?
-                       (dtype.HasValue ? (T)module._to(device, dtype.Value) : (T)module._to(device.type, device.index)) :
-                       (dtype.HasValue ? (T)module._to(dtype.Value) : module);
+                       (dtype.HasValue ? (T)module._to(device, dtype.Value, false) : (T)module._to(device.type, device.index, false)) :
+                       (dtype.HasValue ? (T)module._to(dtype.Value, false) : module);
                 }
 
                 protected void ClearModules() { _internal_submodules.clear(); }
@@ -1582,9 +1594,13 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to move</param>
         /// <param name="type">The target element type.</param>
-        public static T to<T>(this T module, torch.ScalarType type) where T : torch.nn.Module
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T to<T>(this T module, torch.ScalarType type, bool non_blocking = false) where T : torch.nn.Module
         {
-            return (T)module._to(type);
+            return (T)module._to(type, non_blocking);
         }
 
         /// <summary>
@@ -1593,9 +1609,13 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="device">The target device.</param>
         /// <param name="type">The target element type.</param>
-        public static T to<T>(this T module, torch.Device device, torch.ScalarType type) where T : torch.nn.Module
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T to<T>(this T module, torch.Device device, torch.ScalarType type, bool non_blocking = false) where T : torch.nn.Module
         {
-            return (T)module._to(device, type);
+            return (T)module._to(device, type, non_blocking);
         }
 
         /// <summary>
@@ -1604,9 +1624,13 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
         /// <param name="deviceIndex">The optional device index.</param>
-        public static T to<T>(this T module, DeviceType deviceType, int deviceIndex = -1) where T : torch.nn.Module
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T to<T>(this T module, DeviceType deviceType, int deviceIndex = -1, bool non_blocking = false) where T : torch.nn.Module
         {
-            return (T)module._to(deviceType, deviceIndex);
+            return (T)module._to(deviceType, deviceIndex, non_blocking);
         }
 
         /// <summary>
@@ -1614,20 +1638,28 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to move</param>"
         /// <param name="device">The target device</param>
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
         /// <returns></returns>
-        public static T to<T>(this T module, Device device) where T : torch.nn.Module => (T)module._to(device.type, device.index);
+        public static T to<T>(this T module, Device device, bool non_blocking = false) where T : torch.nn.Module => (T)module._to(device.type, device.index, non_blocking);
 
         /// <summary>
         /// Moves the parameters and buffers.
         /// </summary>
         /// <param name="module">The module to move</param>
         /// <param name="device">A string denoting the target device.</param>
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
         /// <returns></returns>
         /// <remarks>Relies on the Device constructor to parse the string.</remarks>
-        public static T to<T>(this T module, string device) where T : torch.nn.Module
+        public static T to<T>(this T module, string device, bool non_blocking = false) where T : torch.nn.Module
         {
             var dev = new Device(device);
-            return (T)module._to(dev.type, dev.index);
+            return (T)module._to(dev.type, dev.index, non_blocking);
         }
 
         /// <summary>
@@ -1635,16 +1667,20 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to move</param>
         /// <param name="other">The tensor serving as a template.</param>
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
         /// <returns></returns>
-        public static T to<T>(this T module, Tensor other) where T : torch.nn.Module
+        public static T to<T>(this T module, Tensor other, bool non_blocking = false) where T : torch.nn.Module
         {
-            return (T)module._to(other.device, other.dtype);
+            return (T)module._to(other.device, other.dtype, non_blocking);
         }
 
         /// <summary>
         /// Moves all model parameters and buffers to the CPU.
         /// </summary>
-        public static T cpu<T>(this T module) where T : torch.nn.Module => (T)module._to(DeviceType.CPU);
+        public static T cpu<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => (T)module._to(DeviceType.CPU, -1, non_blocking);
 
         /// <summary>
         /// Moves all model parameters and buffers to a GPU.
@@ -1653,79 +1689,131 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to move</param>
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
-        public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T cuda<T>(this T module, int deviceIndex = -1, bool non_blocking = false) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Bool`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @bool<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Bool);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @bool<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Bool);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Byte`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @byte<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Byte);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @byte<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Byte, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Int8`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @char<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int8);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @char<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int8, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Int16`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @short<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int16);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @short<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int16, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Int32`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @int<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int32);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @int<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int32, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Int64`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @long<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int64);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @long<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int64, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Float16`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T half<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float16);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T half<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Float16, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.BFloat16`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T bfloat16<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.BFloat16);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T bfloat16<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.BFloat16, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Float32`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @float<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float32);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @float<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Float32, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.Float64`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T @double<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float64);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T @double<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Float64, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.ComplexFloat32`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T cfloat<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat32);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T cfloat<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat32, non_blocking);
 
         /// <summary>
         /// Converts all model parameters and buffers to `ScalarType.ComplexFloat64`.
         /// </summary>
         /// <param name="module">The module to convert</param>
-        public static T cdouble<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat64);
+        /// <param name="non_blocking">
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+        /// </param>
+        public static T cdouble<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat64, non_blocking);
     }
 
     public static class FieldInfoExtensionMethods

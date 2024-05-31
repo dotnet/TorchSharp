@@ -641,7 +641,7 @@ namespace TorchSharp
         {
             var rel = Hardswish();
             foreach (var device in TestUtils.AvailableDevices()) {
-                var input = torch.from_array(new float[] { -3.5f, 0.6f, 3.25f }).to(device);
+                var input = torch.from_array(new float[] { -3.5f, 0.6f, 3.25f }).to(device, non_blocking: true);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 

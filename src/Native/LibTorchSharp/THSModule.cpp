@@ -25,29 +25,29 @@ void THSNN_Module_zero_grad(const NNModule module, bool set_to_none)
     (*module)->zero_grad(set_to_none);
 }
 
-void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)
+void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index, const bool non_blocking)
 {
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
     if (device == 13)
         dev = c10::kMPS;
-    (*module)->to(torch::Device(dev, index));
+    (*module)->to(torch::Device(dev, index), non_blocking);
 }
 
-void THSNN_Module_to_dtype(NNModule module, int8_t dtype)
+void THSNN_Module_to_dtype(NNModule module, int8_t dtype, const bool non_blocking)
 {
-    (*module)->to((at::ScalarType)dtype);
+    (*module)->to((at::ScalarType)dtype, non_blocking);
 }
 
-void THSNN_Module_to_device_dtype(NNModule module, int8_t dtype, int64_t device, int64_t index)
+void THSNN_Module_to_device_dtype(NNModule module, int8_t dtype, int64_t device, int64_t index, const bool non_blocking)
 {
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
     if (device == 13)
         dev = c10::kMPS;
-    (*module)->to(torch::Device(dev, index), (at::ScalarType)dtype);
+    (*module)->to(torch::Device(dev, index), (at::ScalarType)dtype, non_blocking);
 }
 
 void THSNN_Module_dispose(const NNModule module)

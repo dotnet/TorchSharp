@@ -235,21 +235,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            protected internal override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex, non_blocking); }
                 return this;
             }
 
@@ -479,21 +479,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            protected internal override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex, non_blocking); }
                 return this;
             }
 
@@ -716,21 +716,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            protected internal override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex, non_blocking); }
                 return this;
             }
 
@@ -953,21 +953,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            protected internal override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex, non_blocking); }
                 return this;
             }
 
@@ -1190,21 +1190,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            protected internal override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex, non_blocking); }
                 return this;
             }
 
@@ -1427,21 +1427,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            protected internal override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype, non_blocking); }
                 return this;
             }
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex, non_blocking); }
                 return this;
             }
 
