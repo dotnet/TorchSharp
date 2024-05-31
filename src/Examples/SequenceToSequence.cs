@@ -268,10 +268,10 @@ namespace TorchSharp.Examples
                 base.Dispose(disposing);
             }
 
-            protected override Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected override Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
                 this.device = new Device(deviceType, deviceIndex);
-                return base._to(deviceType, deviceIndex);
+                return base._to(deviceType, deviceIndex, non_blocking);
             }
         }
 

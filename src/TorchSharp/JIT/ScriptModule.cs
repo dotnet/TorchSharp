@@ -143,7 +143,7 @@ namespace TorchSharp
                     }
                 }
 
-                protected internal override nn.Module _to(Device device, ScalarType dtype)
+                protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
@@ -154,8 +154,8 @@ namespace TorchSharp
                     THSJIT_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
                     CheckForErrors();
 
-                    _toEpilog(device, dtype);
-                    _toScriptEpilog(device, dtype);
+                    _toEpilog(device, dtype, non_blocking);
+                    _toScriptEpilog(device, dtype, non_blocking);
                     return this;
                 }
 
@@ -164,8 +164,12 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
+                /// <param name="non_blocking">
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
+                /// </param>
                 /// <returns></returns>
-                protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+                protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -177,8 +181,8 @@ namespace TorchSharp
                         THSJIT_Module_to_device(handle, (int)deviceType, deviceIndex);
                         CheckForErrors();
 
-                        _toEpilog(deviceType, deviceIndex);
-                        _toScriptEpilog(deviceType, deviceIndex);
+                        _toEpilog(deviceType, deviceIndex, non_blocking);
+                        _toScriptEpilog(deviceType, deviceIndex, non_blocking);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
@@ -193,38 +197,38 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                protected internal override nn.Module _to(ScalarType dtype)
+                protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
                 {
                     THSJIT_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
-                    _toEpilog(dtype);
-                    _toScriptEpilog(dtype);
+                    _toEpilog(dtype, non_blocking);
+                    _toScriptEpilog(dtype, non_blocking);
 
                     return this;
                 }
 
-                protected void _toScriptEpilog(ScalarType dtype)
+                protected void _toScriptEpilog(ScalarType dtype, bool non_blocking)
                 {
-                    _toScriptEpilog(dtype, null);
+                    _toScriptEpilog(dtype, null, non_blocking);
                 }
 
-                protected void _toScriptEpilog(Device device, ScalarType dtype)
+                protected void _toScriptEpilog(Device device, ScalarType dtype, bool non_blocking)
                 {
-                    _toScriptEpilog(dtype, device);
+                    _toScriptEpilog(dtype, device, non_blocking);
                 }
 
-                protected void _toScriptEpilog(DeviceType deviceType, int deviceIndex)
+                protected void _toScriptEpilog(DeviceType deviceType, int deviceIndex, bool non_blocking)
                 {
-                    _toScriptEpilog(null, new Device(deviceType, deviceIndex));
+                    _toScriptEpilog(null, new Device(deviceType, deviceIndex), non_blocking);
                 }
 
-                private void _toScriptEpilog(ScalarType? dtype, Device device)
+                private void _toScriptEpilog(ScalarType? dtype, Device device, bool non_blocking)
                 {
                     foreach (var (name, buffer) in named_attributes(recurse: false)) {
                         if (name is null || !buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
 
-                        set_attribute(name, buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true));
+                        set_attribute(name, buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true, non_blocking: non_blocking));
                     }
                 }
 
