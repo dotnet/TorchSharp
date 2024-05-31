@@ -3930,11 +3930,11 @@ namespace TorchSharp
             var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
 
             if (torch.cuda.is_available()) {
-                var moved = input.to(ScalarType.Float32, torch.CUDA);
+                var moved = input.to(ScalarType.Float32, torch.CUDA, non_blocking: true);
                 Assert.Equal(ScalarType.Float32, moved.dtype);
                 Assert.Equal(DeviceType.CUDA, moved.device_type);
             } else {
-                var moved = input.to(ScalarType.Float32);
+                var moved = input.to(ScalarType.Float32, non_blocking: true);
                 Assert.Equal(ScalarType.Float32, moved.dtype);
                 Assert.Equal(DeviceType.CPU, moved.device_type);
             }
