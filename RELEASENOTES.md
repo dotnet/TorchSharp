@@ -12,6 +12,7 @@ The constructor of dispose scopes is no longer `public`. Use `torch.NewDisposeSc
 
 __API Changes__:
 
+#1317 How to set default device type in torchsharp.<br/>
 #1314 Grant read-only access to DataLoader attributes<br/>
 #1313 Add 'non_blocking' argument to tensor and module 'to()' signatures.<br/>
 #1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.<br/>
