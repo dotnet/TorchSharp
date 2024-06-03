@@ -28,10 +28,6 @@ namespace TorchSharp
         /// <param name="requires_grad"> If autograd should record operations on the returned tensor. Default: false.</param>
         public static Tensor arange(Scalar start, Scalar stop, Scalar step, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
 
             if (!dtype.HasValue) {
@@ -81,10 +77,6 @@ namespace TorchSharp
         /// </summary>
         public static Tensor eye(long rows, long columns = -1L, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -448,10 +440,6 @@ namespace TorchSharp
 
         public static Tensor from_file(string filename, bool? shared = null, long? size = 0, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -468,10 +456,6 @@ namespace TorchSharp
         /// </summary>
         public static Tensor linspace(double start, double end, long steps, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -493,10 +477,6 @@ namespace TorchSharp
         /// </summary>
         public static Tensor logspace(double start, double end, long steps, double @base = 10, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -599,7 +579,7 @@ namespace TorchSharp
 
         private static ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter> deleters;
         private static ScalarType default_dtype = ScalarType.Float32;
-        private static Device default_device = CPU;
+        private static Device default_device = new Device(DeviceType.CPU, -1);
 
         static torch()
         {

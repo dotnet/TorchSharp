@@ -98,10 +98,6 @@ namespace TorchSharp
         /// </summary>
         public static Tensor empty_strided(long[] size, long[] strides, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -134,10 +130,6 @@ namespace TorchSharp
         /// </summary>
         private static Tensor _empty(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            if (device is null)
-            {
-                device = get_default_device();
-            }
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.

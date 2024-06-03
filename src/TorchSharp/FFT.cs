@@ -350,10 +350,6 @@ namespace TorchSharp
             /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
             public static Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
             {
-                if (device is null)
-                {
-                    device = get_default_device();
-                }
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
                     // Determine the element type dynamically.
@@ -380,10 +376,6 @@ namespace TorchSharp
             /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
             public static Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
             {
-                if (device is null)
-                {
-                    device = get_default_device();
-                }
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
                     // Determine the element type dynamically.

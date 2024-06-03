@@ -880,7 +880,7 @@ namespace TorchSharp
             /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
             public Tensor to(ScalarType type, torch.Device device, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
-                torch.InitializeDevice(device);
+                device = torch.InitializeDevice(device);
                 var res = NativeMethods.THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
