@@ -298,8 +298,10 @@ namespace TorchSharp
 
         public static Device InitializeDevice(Device? device)
         {
-            if (device == null)
-                device = new Device(DeviceType.CPU, -1);
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             InitializeDeviceType(device.type);
             return device;
         }

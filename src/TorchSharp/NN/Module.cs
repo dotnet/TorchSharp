@@ -1063,8 +1063,10 @@ namespace TorchSharp
                     if (!dtype.HasValue)
                         dtype = get_default_dtype();
 
-                    if (device == null)
-                        device = torch.CPU;
+                    if (device is null)
+                    {
+                        device = get_default_device();
+                    }
 
                     return (device, dtype.Value);
                 }

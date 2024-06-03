@@ -579,6 +579,7 @@ namespace TorchSharp
 
         private static ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter> deleters;
         private static ScalarType default_dtype = ScalarType.Float32;
+        private static Device default_device = new Device(DeviceType.CPU, -1);
 
         static torch()
         {
