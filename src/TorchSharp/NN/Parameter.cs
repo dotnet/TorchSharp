@@ -29,7 +29,7 @@ namespace TorchSharp
                 var scope = data.OwningDisposeScope;
                 if (scope is not null) {
                     this.OwningDisposeScope = scope;
-                    scope.Include(this);
+                    scope.Attach(this);
                     scope.Detach(data);
                 }
             }

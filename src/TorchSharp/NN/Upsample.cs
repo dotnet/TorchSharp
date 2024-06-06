@@ -17,8 +17,8 @@ namespace TorchSharp
         {
             internal Upsample(long[]? size, double[]? scale_factor, UpsampleMode mode, bool? align_corners, bool? recompute_scale_factor) : base(nameof(Upsample))
             {
-                this.size = size;
-                this.scale_factor = scale_factor;
+                this._size = size;
+                this._scale_factor = scale_factor;
                 this.mode = mode;
                 this.align_corners = align_corners;
                 this.recompute_scale_factor = recompute_scale_factor;
@@ -31,7 +31,7 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor input)
             {
-                return torch.nn.functional.interpolate(input, size, scale_factor, (InterpolationMode)mode, align_corners, recompute_scale_factor ?? false);
+                return torch.nn.functional.interpolate(input, _size, _scale_factor, (InterpolationMode)mode, align_corners, recompute_scale_factor ?? false);
             }
 
             public bool? recompute_scale_factor { get; set; }

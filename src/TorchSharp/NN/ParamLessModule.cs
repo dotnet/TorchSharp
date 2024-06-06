@@ -24,11 +24,9 @@ namespace TorchSharp
 
             // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public override void register_buffer(string name, Tensor tensor, bool persistent = true)
             {
@@ -60,11 +58,10 @@ namespace TorchSharp
 
             // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
 
             public override void register_buffer(string name, Tensor tensor, bool persistent = true)
             {
@@ -94,13 +91,11 @@ namespace TorchSharp
 
             protected ParamLessModule(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) {}
 
-            // Rather than spending cycles only to discover that this module has neither
+              // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public override void register_buffer(string name, Tensor tensor, bool persistent = true)
             {
