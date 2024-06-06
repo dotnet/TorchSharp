@@ -114,10 +114,10 @@ namespace TorchSharp
                     stride = (stride == null) ? kernel_size : stride;
                     padding = (padding == null) ? new long[] { 0 } : padding;
                     unsafe {
-                        fixed (long* pkernelSize = kernel_size, pstrides = stride, ppadding = padding) {
+                        fixed (long* pkernel_size = kernel_size, pstrides = stride, ppadding = padding) {
                             var res =
                                 THSTensor_avg_pool2d(input.Handle,
-                                    (IntPtr)pkernelSize, kernel_size.Length,
+                                    (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, stride.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     ceil_mode,
@@ -149,13 +149,13 @@ namespace TorchSharp
                 {
                     long svalue = (stride == null) ? kernel_size : stride.Value;
 
-                    long* pkernelSize = stackalloc long[2] { kernel_size, kernel_size };
+                    long* pkernel_size = stackalloc long[2] { kernel_size, kernel_size };
                     long* pstrides = stackalloc long[2] { svalue, svalue };
                     long* ppadding = stackalloc long[2] { padding, padding };
 
                     var res =
                         THSTensor_avg_pool2d(input.Handle,
-                            (IntPtr)pkernelSize, 2,
+                            (IntPtr)pkernel_size, 2,
                             (IntPtr)pstrides, 2,
                             (IntPtr)ppadding, 2,
                             ceil_mode,
@@ -191,11 +191,11 @@ namespace TorchSharp
                     long* pstrides = stackalloc long[2] { svalue1, svalue2 };
                     long* ppadding = stackalloc long[2] { pvalue1, pvalue2 };
 
-                    long* pkernelSize = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
+                    long* pkernel_size = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
 
                     var res =
                         THSTensor_avg_pool2d(input.Handle,
-                            (IntPtr)pkernelSize, 2,
+                            (IntPtr)pkernel_size, 2,
                             (IntPtr)pstrides, 2,
                             (IntPtr)ppadding, 2,
                             ceil_mode,
@@ -206,7 +206,7 @@ namespace TorchSharp
                 }
 
                 public static Tensor avg_pool2d_backward(Tensor input, Tensor originalInput,
-                    long[] kernelSizes,
+                    long[] kernel_sizes,
                     long[] strides = null,
                     long[] paddings = null,
                     bool ceil_mode = false,
@@ -216,10 +216,10 @@ namespace TorchSharp
                     strides = (strides == null) ? new long[] { 1 } : strides;
                     paddings = (paddings == null) ? new long[] { 0 } : paddings;
                     unsafe {
-                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                        fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings) {
                             var res =
                                 THSTensor_avg_pool2d_backward(input.Handle, originalInput.Handle,
-                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                                    (IntPtr)pkernel_size, kernel_sizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,

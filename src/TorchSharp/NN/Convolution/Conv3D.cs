@@ -63,7 +63,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernelSize">Size of the convolving kernel</param>
+            /// <param name="kernel_size">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: 1</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
             /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
@@ -72,9 +72,9 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            public static Conv3d Conv3d(long in_channels, long out_channels, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long in_channels, long out_channels, long kernel_size, long stride = 1, long padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Conv3d_ctor(in_channels, out_channels, kernelSize, stride, padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                var res = THSNN_Conv3d_ctor(in_channels, out_channels, kernel_size, stride, padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Conv3d(res, boxedHandle, in_channels).MoveModule<Conv3d>(device, dtype);
             }
@@ -84,7 +84,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernelSize">Size of the convolving kernel</param>
+            /// <param name="kernel_size">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: (1,1,1)</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: (0,0,0)</param>
             /// <param name="dilation">Spacing between kernel elements. Default: (1,1,1)</param>
@@ -93,13 +93,13 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            public static Conv3d Conv3d(long in_channels, long out_channels, (long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long in_channels, long out_channels, (long, long, long) kernel_size, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 if (stride == null) stride = (1, 1, 1);
                 if (padding == null) padding = (0, 0, 0);
                 if (dilation == null) dilation = (1, 1, 1);
 
-                var res = THSNN_Conv3d_ctor_1(in_channels, out_channels, kernelSize.Item1, kernelSize.Item2, kernelSize.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding.Value.Item1, padding.Value.Item2, padding.Value.Item3, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)padding_mode, groups, bias, out var boxedHandle);
+                var res = THSNN_Conv3d_ctor_1(in_channels, out_channels, kernel_size.Item1, kernel_size.Item2, kernel_size.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding.Value.Item1, padding.Value.Item2, padding.Value.Item3, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Conv3d(res, boxedHandle, in_channels).MoveModule<Conv3d>(device, dtype);
             }
@@ -109,7 +109,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernelSize">Size of the convolving kernel</param>
+            /// <param name="kernel_size">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: 1</param>
             /// <param name="padding">Zero-padding added to both sides of the input. padding=Valid is the same as no padding. padding=Same pads the input so the output has the shape as the input. </param>
             /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
@@ -118,9 +118,9 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            public static Conv3d Conv3d(long in_channels, long out_channels, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long in_channels, long out_channels, long kernel_size, Padding padding, long stride = 1, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Conv3d_ctor(in_channels, out_channels, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                var res = THSNN_Conv3d_ctor(in_channels, out_channels, kernel_size, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Conv3d(res, boxedHandle, in_channels).MoveModule<Conv3d>(device, dtype);
             }
@@ -130,7 +130,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernelSize">Size of the convolving kernel</param>
+            /// <param name="kernel_size">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: (1,1,1)</param>
             /// <param name="padding">Zero-padding added to both sides of the input. padding=Valid is the same as no padding. padding=Same pads the input so the output has the shape as the input. </param>
             /// <param name="dilation">Spacing between kernel elements. Default: (1,1,1)</param>
@@ -139,12 +139,12 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            public static Conv3d Conv3d(long in_channels, long out_channels, (long, long, long) kernelSize, Padding padding, (long, long, long)? stride = null, (long, long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long in_channels, long out_channels, (long, long, long) kernel_size, Padding padding, (long, long, long)? stride = null, (long, long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 if (stride == null) stride = (1, 1, 1);
                 if (dilation == null) dilation = (1, 1, 1);
 
-                var res = THSNN_Conv3d_ctor_1(in_channels, out_channels, kernelSize.Item1, kernelSize.Item2, kernelSize.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding == Padding.Valid ? 0 : -1, 0, 0, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)padding_mode, groups, bias, out var boxedHandle);
+                var res = THSNN_Conv3d_ctor_1(in_channels, out_channels, kernel_size.Item1, kernel_size.Item2, kernel_size.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding == Padding.Valid ? 0 : -1, 0, 0, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Conv3d(res, boxedHandle, in_channels).MoveModule<Conv3d>(device, dtype);
             }

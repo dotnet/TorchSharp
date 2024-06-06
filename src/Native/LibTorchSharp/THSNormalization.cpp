@@ -5,11 +5,10 @@
 
 Tensor THSNN_batch_norm(const Tensor input, Tensor running_mean, const Tensor running_var, const Tensor weight, const Tensor bias, const bool training, const double momentum, const double eps)
 {
-    c10::optional<at::Tensor> w, b, rm, rv;
-    if (weight != nullptr) w.emplace(*weight);
-    if (bias != nullptr) b.emplace(*bias);
-    if (running_mean != nullptr) rm.emplace(*running_mean);
-    if (running_var != nullptr) rv.emplace(*running_var);
+    c10::optional<at::Tensor> w = weight != nullptr ? *weight : c10::optional<at::Tensor>();    
+    c10::optional<at::Tensor> b = bias != nullptr ? *bias : c10::optional<at::Tensor>();
+    c10::optional<at::Tensor> rm = running_mean != nullptr ? *running_mean : c10::optional<at::Tensor>();
+    c10::optional<at::Tensor> rv = running_var != nullptr ? *running_var : c10::optional<at::Tensor>();
 
     CATCH_TENSOR(torch::batch_norm(*input, w, b, rm, rv, training, momentum, eps, false));
 }

@@ -365,7 +365,7 @@ namespace TorchSharp
                     if (channels[i] == 0) {
                         layers.Add(MaxPool2d(kernel_size: 2, stride: 2));
                     } else {
-                        layers.Add(Conv2d(in_channels, channels[i], kernelSize: 3, padding: 1));
+                        layers.Add(Conv2d(in_channels, channels[i], kernel_size: 3, padding: 1));
                         if (batch_norm) {
                             layers.Add(BatchNorm2d(channels[i]));
                         }

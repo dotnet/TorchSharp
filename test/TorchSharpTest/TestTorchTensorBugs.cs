@@ -455,7 +455,7 @@ namespace TorchSharp
         {
             using var _ = NewDisposeScope();
 
-            var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
+            var c2 = torch.nn.Conv2d(3, 16, kernel_size: (1, 7), stride: (1, 1), padding: (0, 3));
             var Win = torch.rand(16, 3, 8, 8);
             var s = c2.call(Win).shape;
             Assert.Equal(new long[] { 16, 16, 8, 8 }, s);
@@ -1027,7 +1027,7 @@ namespace TorchSharp
             public GitTestCnn(string name, Device? device = null) : base(name)
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
-                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernel_size: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
                 layers0 = Sequential(modules);
 
                 RegisterComponents();
@@ -1172,7 +1172,7 @@ namespace TorchSharp
             () => Assert.Equal(expectedShape, functional.max_pool2d(t, new long[] { 2, 2 }).shape)
             );
 
-            Assert.Equal(expectedShape, functional.max_pool2d_with_indices(t, new long[] { 2, 2 }).Values.shape);
+            Assert.Equal(expectedShape, functional.max_pool2d_with_indices(t, new long[] { 2, 2 }).output.shape);
         }
 
         [Fact]
@@ -1182,7 +1182,7 @@ namespace TorchSharp
             var expectedShape = new long[] { 1, 6, 14, 14, 14 };
 
             Assert.Equal(expectedShape, functional.max_pool3d(t, new long[] { 2, 2, 2 }).shape);
-            Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).Values.shape);
+            Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).output.shape);
         }
 
         [Fact]

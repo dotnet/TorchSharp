@@ -84,7 +84,7 @@ To illustrate, this is the code for MobileNet from the TorchSharp examples:
             var modules = new List<(string, Module)>();
 
             modules.Add(("conv2d-first", 
-                Conv2d(3, 32, kernelSize: 3, stride: 1, padding: 1, bias: false)));
+                Conv2d(3, 32, kernel_size: 3, stride: 1, padding: 1, bias: false)));
             modules.Add(("bnrm2d-first", 
                 BatchNorm2d(32)));
             modules.Add(("relu-first",   
@@ -110,13 +110,13 @@ To illustrate, this is the code for MobileNet from the TorchSharp examples:
                 var stride = strides[i];
 
                 modules.Add(($"conv2d-{i}a", 
-                    Conv2d(in_planes, in_planes, kernelSize: 3, stride: stride, padding: 1, groups: in_planes, bias: false)));
+                    Conv2d(in_planes, in_planes, kernel_size: 3, stride: stride, padding: 1, groups: in_planes, bias: false)));
                 modules.Add(($"bnrm2d-{i}a", 
                     BatchNorm2d(in_planes)));
                 modules.Add(($"relu-{i}a",   
                     ReLU()));
                 modules.Add(($"conv2d-{i}b", 
-                    Conv2d(in_planes, out_planes, kernelSize: 1L, stride: 1L, padding: 0L, bias: false)));
+                    Conv2d(in_planes, out_planes, kernel_size: 1L, stride: 1L, padding: 0L, bias: false)));
                 modules.Add(($"bnrm2d-{i}b", 
                     BatchNorm2d(out_planes)));
                 modules.Add(($"relu-{i}b",   

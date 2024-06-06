@@ -225,9 +225,9 @@ namespace TorchSharp
                     output_ratio ??= Array.Empty<double>();
 
                     unsafe {
-                        fixed (long* pkernelSize = kernel_size, poutputSize = output_size) {
+                        fixed (long* pkernel_size = kernel_size, poutputSize = output_size) {
                             fixed (double* poutputRatio = output_ratio) {
-                                var resOutput = THSTensor_fractional_max_pool3d(input.Handle, (IntPtr)pkernelSize, kernel_size.Length, (IntPtr)poutputSize, output_size.Length, (IntPtr)poutputRatio, output_ratio.Length, out var resIndices);
+                                var resOutput = THSTensor_fractional_max_pool3d(input.Handle, (IntPtr)pkernel_size, kernel_size.Length, (IntPtr)poutputSize, output_size.Length, (IntPtr)poutputRatio, output_ratio.Length, out var resIndices);
                                 if (resOutput == IntPtr.Zero || resIndices == IntPtr.Zero) { torch.CheckForErrors(); }
                                 return (new Tensor(resOutput), new Tensor(resIndices));
                             }

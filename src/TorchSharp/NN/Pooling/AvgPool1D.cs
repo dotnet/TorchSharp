@@ -69,14 +69,14 @@ namespace TorchSharp
                 public static Tensor avg_pool1d(Tensor input, long kernel_size, long? stride = null,
                     long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
                 {
-                    var kernelSizes = new long[] { kernel_size };
+                    var kernel_sizes = new long[] { kernel_size };
                     var strides = new long[] { stride ?? kernel_size };
                     var paddings = new long[] { padding ?? 0 };
                     unsafe {
-                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                        fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings) {
                             var res =
                                 THSTensor_avg_pool1d(input.Handle,
-                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                                    (IntPtr)pkernel_size, kernel_sizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,

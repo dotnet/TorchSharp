@@ -40,7 +40,7 @@ namespace TorchSharp.Examples
                 if (channels[i] == 0) {
                     modules.Add(($"MaxPool2d-{i}a", MaxPool2d(kernel_size: 2, stride: 2)));
                 } else {
-                    modules.Add(($"conv2d-{i}a", Conv2d(in_channels, channels[i], kernelSize: 3, padding: 1)));
+                    modules.Add(($"conv2d-{i}a", Conv2d(in_channels, channels[i], kernel_size: 3, padding: 1)));
                     modules.Add(($"bnrm2d-{i}a", BatchNorm2d(channels[i])));
                     modules.Add(($"relu-{i}b", ReLU(inplace: true)));
                     in_channels = channels[i];

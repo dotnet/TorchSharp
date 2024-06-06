@@ -113,10 +113,10 @@ namespace TorchSharp
                     stride = (stride == null) ? kernel_size : stride;
                     padding = (padding == null) ? new long[] { 0 } : padding;
                     unsafe {
-                        fixed (long* pkernelSize = kernel_size, pstrides = stride, ppadding = padding) {
+                        fixed (long* pkernel_size = kernel_size, pstrides = stride, ppadding = padding) {
                             var res =
                                 THSTensor_avg_pool3d(input.Handle,
-                                    (IntPtr)pkernelSize, kernel_size.Length,
+                                    (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, stride.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     ceil_mode,
@@ -128,20 +128,20 @@ namespace TorchSharp
                 }
 
                 public static Tensor avg_pool3d_backward(Tensor input, Tensor originalInput,
-                    long[] kernelSizes,
+                    long[] kernel_sizes,
                     long[] strides = null,
                     long[] paddings = null,
                     bool ceil_mode = false,
                     bool count_include_pad = true,
                     long? divisor_override = null)
                 {
-                    strides = (strides == null) ? kernelSizes : strides;
+                    strides = (strides == null) ? kernel_sizes : strides;
                     paddings = (paddings == null) ? new long[] { 0 } : paddings;
                     unsafe {
-                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                        fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings) {
                             var res =
                                 THSTensor_avg_pool3d_backward(input.Handle, originalInput.Handle,
-                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                                    (IntPtr)pkernel_size, kernel_sizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,

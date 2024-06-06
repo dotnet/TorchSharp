@@ -64,28 +64,55 @@ namespace TorchSharp.PInvoke
                 long groups);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_max_pool1d_with_indices(IntPtr input,
+        internal static extern IntPtr THSTensor_max_pool1d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
                 IntPtr dilation, int dilationLength,
-                [MarshalAs(UnmanagedType.U1)] bool ceil_mode, out IntPtr indices);
+                [MarshalAs(UnmanagedType.U1)] bool ceil_mode);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_max_pool2d_with_indices(IntPtr input,
-            IntPtr kernelSize, int kernelSizeLength,
-            IntPtr strides, int stridesLength,
-            IntPtr padding, int paddingLength,
-            IntPtr dilation, int dilationLength,
-            [MarshalAs(UnmanagedType.U1)] bool ceil_mode, out IntPtr indices);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_max_pool3d_with_indices(IntPtr input,
+        internal static extern void THSTensor_max_pool1d_with_indices(IntPtr input, 
+                AllocatePinnedArray allocator,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
                 IntPtr dilation, int dilationLength,
-                [MarshalAs(UnmanagedType.U1)] bool ceil_mode, out IntPtr indices);
+                [MarshalAs(UnmanagedType.U1)] bool ceil_mode);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_max_pool2d(IntPtr input,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                [MarshalAs(UnmanagedType.U1)] bool ceil_mode);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_max_pool2d_with_indices(IntPtr input, 
+                AllocatePinnedArray allocator,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                [MarshalAs(UnmanagedType.U1)] bool ceil_mode);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_max_pool3d(IntPtr input,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                [MarshalAs(UnmanagedType.U1)] bool ceil_mode);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_max_pool3d_with_indices(IntPtr input, 
+                AllocatePinnedArray allocator,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                [MarshalAs(UnmanagedType.U1)] bool ceil_mode);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_max_unpool1d(IntPtr tensor, IntPtr indices,

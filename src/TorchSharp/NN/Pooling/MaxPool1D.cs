@@ -62,12 +62,36 @@ namespace TorchSharp
 
             public static partial class functional
             {
+                /// <summary>
+                /// Applies a 1D max pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="kernel_size"></param>
+                /// <param name="stride"></param>
+                /// <param name="padding"></param>
+                /// <param name="dilation"></param>
+                /// <param name="ceil_mode"></param>
+                /// <returns></returns>
                 public static Tensor max_pool1d(Tensor input, long kernel_size, long? stride = null,
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
-                    var ret = max_pool1d_with_indices(input, kernel_size, stride, padding, dilation, ceil_mode);
-                    ret.Indices.Dispose();
-                    return ret.Values;
+                    var kernel_sizes = new long[] { kernel_size };
+                    var strides = new long[] { stride ?? kernel_size };
+                    var paddings = new long[] { padding ?? 0 };
+                    var dilations = new long[] { dilation ?? 1 };
+                    unsafe {
+                        fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
+                            var res =
+                                THSTensor_max_pool1d(input.Handle,
+                                    (IntPtr)pkernel_size, kernel_sizes.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, paddings.Length,
+                                    (IntPtr)pdilation, dilations.Length,
+                                    ceil_mode);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
                 }
 
                 /// <summary>
@@ -80,25 +104,31 @@ namespace TorchSharp
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static (Tensor Values, Tensor Indices) max_pool1d_with_indices(Tensor input, long kernel_size, long? stride = null,
+                public static (Tensor output, Tensor indices) max_pool1d_with_indices(Tensor input, long kernel_size, long? stride = null,
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
-                    var kernelSizes = new long[] { kernel_size };
+                    var kernel_sizes = new long[] { kernel_size };
                     var strides = new long[] { stride ?? kernel_size };
                     var paddings = new long[] { padding ?? 0 };
                     var dilations = new long[] { dilation ?? 1 };
-                    unsafe {
-                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
-                            var resOutput = THSTensor_max_pool1d_with_indices(input.Handle,
-                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                    IntPtr[] ptrArray;
+
+                    using (var pa = new PinnedArray<IntPtr>()) {
+                        unsafe {
+                            fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
+                                THSTensor_max_pool1d_with_indices(input.Handle,
+                                    pa.CreateArray,
+                                    (IntPtr)pkernel_size, kernel_sizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     (IntPtr)pdilation, dilations.Length,
-                                    ceil_mode, out var resIndices);
-                            if (resOutput == IntPtr.Zero || resIndices == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return (new Tensor(resOutput), new Tensor(resIndices));
+                                    ceil_mode);
+                                torch.CheckForErrors();
+                            }
                         }
+                        ptrArray = pa.Array;
                     }
+                    return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
                 }
             }
         }

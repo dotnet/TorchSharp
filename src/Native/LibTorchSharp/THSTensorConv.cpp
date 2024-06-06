@@ -340,16 +340,33 @@ Tensor THSTensor_conv3d(
         groups));
 }
 
-Tensor THSTensor_max_pool1d_with_indices(
+
+Tensor THSTensor_max_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor *indices)
+    bool ceil_mode)
 {
-    Tensor output = nullptr;
-    *indices = nullptr;
+    CATCH_TENSOR(torch::max_pool1d(
+        *tensor,
+        at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        at::ArrayRef<int64_t>(padding, paddingLength),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        ceil_mode));
+}
+
+void THSTensor_max_pool1d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
     CATCH(
         auto res = torch::max_pool1d_with_indices(
             *tensor,
@@ -359,22 +376,38 @@ Tensor THSTensor_max_pool1d_with_indices(
             at::ArrayRef<int64_t>(dilation, dilationLength),
             ceil_mode);
 
-        output = new torch::Tensor(std::get<0>(res));
-        *indices = new torch::Tensor(std::get<1>(res));
+    Tensor * result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(res));
+    result[1] = new torch::Tensor(std::get<1>(res));
     )
-    return output;
 }
 
-Tensor THSTensor_max_pool2d_with_indices(
+Tensor THSTensor_max_pool2d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor* indices)
+    bool ceil_mode)
 {
-    Tensor output = nullptr;
-    *indices = nullptr;
+    CATCH_TENSOR(torch::max_pool2d(
+        *tensor,
+        at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        at::ArrayRef<int64_t>(padding, paddingLength),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        ceil_mode));
+}
+
+void THSTensor_max_pool2d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
     CATCH(
         auto res = torch::max_pool2d_with_indices(
             *tensor,
@@ -383,22 +416,38 @@ Tensor THSTensor_max_pool2d_with_indices(
             at::ArrayRef<int64_t>(padding, paddingLength),
             at::ArrayRef<int64_t>(dilation, dilationLength),
             ceil_mode);
-        output = new torch::Tensor(std::get<0>(res));
-        *indices = new torch::Tensor(std::get<1>(res));
+    Tensor * result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(res));
+    result[1] = new torch::Tensor(std::get<1>(res));
     )
-    return output;
 }
 
-Tensor THSTensor_max_pool3d_with_indices(
+Tensor THSTensor_max_pool3d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor* indices)
+    bool ceil_mode)
 {
-    Tensor output = nullptr;
-    *indices = nullptr;
+    CATCH_TENSOR(torch::max_pool3d(
+        *tensor,
+        at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        at::ArrayRef<int64_t>(padding, paddingLength),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        ceil_mode));
+}
+
+void THSTensor_max_pool3d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
     CATCH(
         auto res = torch::max_pool3d_with_indices(
             *tensor,
@@ -407,10 +456,10 @@ Tensor THSTensor_max_pool3d_with_indices(
             at::ArrayRef<int64_t>(padding, paddingLength),
             at::ArrayRef<int64_t>(dilation, dilationLength),
             ceil_mode);
-        output = new torch::Tensor(std::get<0>(res));
-        *indices = new torch::Tensor(std::get<1>(res));
+    Tensor * result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(res));
+    result[1] = new torch::Tensor(std::get<1>(res));
     )
-    return output;
 }
 
 Tensor THSTensor_max_unpool1d(

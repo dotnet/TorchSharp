@@ -207,7 +207,7 @@ namespace TorchSharp.Modules
             var conv1d = torch.nn.Conv1d(
                 in_channels,
                 out_channels,
-                kernelSize: kernel_size,
+                kernel_size: kernel_size,
                 stride: stride,
                 padding: padding.Value,
                 dilation: dilation,

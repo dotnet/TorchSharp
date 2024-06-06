@@ -770,7 +770,7 @@ namespace TorchSharp
 
                 var rswd = replace_stride_with_dilation.HasValue ? replace_stride_with_dilation.Value : (false, false, false);
 
-                conv1 = Conv2d(3, in_planes, kernelSize: 7, stride: 2, padding: 3, bias: false);
+                conv1 = Conv2d(3, in_planes, kernel_size: 7, stride: 2, padding: 3, bias: false);
                 bn1 = norm_layer(in_planes);
                 relu = ReLU(inplace: true);
                 maxpool = MaxPool2d(kernel_size: 3, stride: 2, padding: 1);
@@ -844,7 +844,7 @@ namespace TorchSharp
 
                 if (stride != 1 || in_planes != planes * expansion) {
                     downsample = Sequential(
-                        Conv2d(in_planes, planes * expansion, kernelSize: 1, stride: stride, bias: false),
+                        Conv2d(in_planes, planes * expansion, kernel_size: 1, stride: stride, bias: false),
                         norm_layer(planes * expansion)
                         );
                 }
@@ -894,10 +894,10 @@ namespace TorchSharp
                         norm_layer = (planes) => BatchNorm2d(planes);
                     }
 
-                    conv1 = Conv2d(in_planes, planes, kernelSize: 3, stride: stride, padding: 1, bias: false);
+                    conv1 = Conv2d(in_planes, planes, kernel_size: 3, stride: stride, padding: 1, bias: false);
                     bn1 = norm_layer(planes);
                     relu1 = ReLU(inplace: true);
-                    conv2 = Conv2d(planes, planes, kernelSize: 3, stride: 1, padding: 1, bias: false);
+                    conv2 = Conv2d(planes, planes, kernel_size: 3, stride: 1, padding: 1, bias: false);
                     bn2 = norm_layer(planes);
                     this.downsample = downsample;
 
@@ -959,13 +959,13 @@ namespace TorchSharp
 
                     var width = (int)(planes * (base_width / 64.0)) * groups;
 
-                    conv1 = Conv2d(in_planes, width, kernelSize: 1, bias: false);
+                    conv1 = Conv2d(in_planes, width, kernel_size: 1, bias: false);
                     bn1 = norm_layer(width);
                     relu1 = ReLU(inplace: true);
-                    conv2 = Conv2d(width, width, kernelSize: 3, stride: stride, groups: groups, padding: dilation, dilation: dilation, bias: false);
+                    conv2 = Conv2d(width, width, kernel_size: 3, stride: stride, groups: groups, padding: dilation, dilation: dilation, bias: false);
                     bn2 = norm_layer(width);
                     relu2 = ReLU(inplace: true);
-                    conv3 = Conv2d(width, expansion * planes, kernelSize: 1, bias: false);
+                    conv3 = Conv2d(width, expansion * planes, kernel_size: 1, bias: false);
                     bn3 = norm_layer(expansion * planes);
 
                     this.downsample = downsample;

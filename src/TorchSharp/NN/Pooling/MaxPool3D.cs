@@ -102,49 +102,66 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
                 /// <param name="kernel_size"></param>
-                /// <param name="stride"></param>
+                /// <param name="strides"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static Tensor max_pool3d(Tensor input, long[] kernel_size, long[] stride = null,
+                public static Tensor max_pool3d(Tensor input, long[] kernel_size, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    var ret = max_pool3d_with_indices(input, kernel_size, stride, padding, dilation, ceil_mode);
-                    ret.Indices.Dispose();
-                    return ret.Values;
+                    strides = strides ?? kernel_size;
+                    padding = padding ?? kernel_size.Select(x => 0L).ToArray();
+                    dilation = dilation ?? kernel_size.Select(x => 1L).ToArray();
+                    unsafe {
+                        fixed (long* pkernel_size = kernel_size, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                            var res =
+                                THSTensor_max_pool3d(input.Handle,
+                                    (IntPtr)pkernel_size, kernel_size.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)pdilation, dilation.Length,
+                                    ceil_mode);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
                 }
 
                 /// <summary>
                 /// Applies a 3D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernelSize"></param>
+                /// <param name="kernel_size"></param>
                 /// <param name="strides"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static (Tensor Values, Tensor Indices) max_pool3d_with_indices(Tensor input, long[] kernelSize, long[] strides = null,
+                public static (Tensor output, Tensor indices) max_pool3d_with_indices(Tensor input, long[] kernel_size, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    strides ??= kernelSize;
-                    padding ??= kernelSize.Select(x => 0L).ToArray();
-                    dilation ??= kernelSize.Select(x => 1L).ToArray();
+                    strides = strides ?? kernel_size;
+                    padding = padding ?? kernel_size.Select(x => 0L).ToArray();
+                    dilation = dilation ?? kernel_size.Select(x => 1L).ToArray();
+                    IntPtr[] ptrArray;
 
-                    unsafe {
-                        fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
-                            var resOutput = THSTensor_max_pool3d_with_indices(input.Handle,
-                                (IntPtr)pkernelSize, kernelSize.Length,
-                                (IntPtr)pstrides, strides.Length,
-                                (IntPtr)ppadding, padding.Length,
-                                (IntPtr)pdilation, dilation.Length,
-                                ceil_mode, out var resIndices);
-
-                            if (resOutput == IntPtr.Zero || resIndices == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return (new Tensor(resOutput), new Tensor(resIndices));
+                    using (var pa = new PinnedArray<IntPtr>()) {
+                        unsafe {
+                            fixed (long* pkernel_size = kernel_size, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                                THSTensor_max_pool3d_with_indices(input.Handle,
+                                    pa.CreateArray,
+                                    (IntPtr)pkernel_size, kernel_size.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)pdilation, dilation.Length,
+                                    ceil_mode);
+                                torch.CheckForErrors();
+                            }
                         }
+                        ptrArray = pa.Array;
                     }
+                    return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
                 }
             }
         }

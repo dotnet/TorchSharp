@@ -80,8 +80,8 @@ namespace TorchSharp
                     stride ??= Array.Empty<long>();
 
                     unsafe {
-                        fixed (long* pkernelSize = kernel_size, pstrides = stride) {
-                            var res = THSTensor_lp_pool2d(input.Handle, norm_type, (IntPtr)pkernelSize, kernel_size.Length, (IntPtr)pstrides, stride.Length, ceil_mode);
+                        fixed (long* pkernel_size = kernel_size, pstrides = stride) {
+                            var res = THSTensor_lp_pool2d(input.Handle, norm_type, (IntPtr)pkernel_size, kernel_size.Length, (IntPtr)pstrides, stride.Length, ceil_mode);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }

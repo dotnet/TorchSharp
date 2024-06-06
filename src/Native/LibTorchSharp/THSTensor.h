@@ -815,29 +815,56 @@ EXPORT_API(void) THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*al
 
 EXPORT_API(Tensor) THSTensor_max_elementwise(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_max_pool1d_with_indices(
+EXPORT_API(Tensor) THSTensor_max_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor *indices);
+    bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_max_pool2d_with_indices(
+EXPORT_API(Tensor) THSTensor_max_pool2d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor* indices);
+    bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_max_pool3d_with_indices(
+EXPORT_API(Tensor) THSTensor_max_pool3d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor* indices);
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_max_pool1d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_max_pool2d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_max_pool3d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
 
 EXPORT_API(Tensor) THSTensor_max_unpool1d(
     const Tensor tensor,

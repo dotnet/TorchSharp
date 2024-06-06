@@ -181,7 +181,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
             {
                 return Sequential(
-                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
+                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernel_size: kernel_size, stride: stride, padding: padding)),
                     ("bn", BatchNorm2d(out_channels, eps: 0.001)),
                     ("relu", ReLU(true))
                 );
@@ -190,7 +190,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
             {
                 return Sequential(
-                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
+                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernel_size: kernel_size, stride: stride, padding: padding)),
                     ("bn", BatchNorm2d(out_channels, eps: 0.001)),
                     ("relu", ReLU(true))
                 );

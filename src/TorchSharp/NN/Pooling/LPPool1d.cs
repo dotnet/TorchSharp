@@ -68,8 +68,8 @@ namespace TorchSharp
                     var strides = stride.HasValue ? new[] { stride.Value } : Array.Empty<long>(); 
 
                     unsafe {
-                        fixed (long* pkernelSize = kernels, pstrides = strides) {
-                            var res = THSTensor_lp_pool1d(input.Handle, norm_type, (IntPtr)pkernelSize, kernels.Length, (IntPtr)pstrides, strides.Length, ceil_mode);
+                        fixed (long* pkernel_size = kernels, pstrides = strides) {
+                            var res = THSTensor_lp_pool1d(input.Handle, norm_type, (IntPtr)pkernel_size, kernels.Length, (IntPtr)pstrides, strides.Length, ceil_mode);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
