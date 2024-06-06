@@ -200,14 +200,29 @@ Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
     CATCH_TENSOR(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
 }
 
-Tensor THSTensor_celu(const Tensor tensor)
+Tensor THSTensor_celu(const Tensor tensor, const Scalar alpha)
 {
-    CATCH_TENSOR(torch::celu(*tensor));
+    CATCH_TENSOR(torch::celu(*tensor, *alpha));
 }
 
-void THSTensor_celu_(const Tensor tensor)
+void THSTensor_celu_(const Tensor tensor, const Scalar alpha)
 {
-    CATCH(torch::celu_(*tensor););
+    CATCH(torch::celu_(*tensor, *alpha););
+}
+
+Tensor THSTensor_glu(const Tensor tensor, const int64_t dim)
+{
+    CATCH_TENSOR(torch::glu(*tensor, dim));
+}
+
+Tensor THSTensor_hardshrink(const Tensor tensor, const Scalar lambda)
+{
+    CATCH_TENSOR(torch::hardshrink(*tensor, *lambda));
+}
+
+Tensor THSTensor_softshrink(const Tensor tensor, const Scalar lambda)
+{
+    CATCH_TENSOR(torch::softshrink(*tensor, *lambda));
 }
 
 void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim)
@@ -559,6 +574,11 @@ Tensor THSTensor_gather(
 Tensor THSTensor_gelu(const Tensor tensor)
 {
     CATCH_TENSOR(torch::gelu(*tensor));
+}
+
+Tensor THSTensor_gelu_(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::gelu_(*tensor));
 }
 
 Tensor THSTensor_get1(const Tensor tensor, int64_t index)
@@ -1181,6 +1201,17 @@ void THSTensor_relu6_(const Tensor tensor)
     CATCH(torch::nn::functional::relu6(*tensor, torch::nn::functional::ReLU6FuncOptions().inplace(true)););
 }
 
+
+Tensor THSTensor_rrelu(const Tensor tensor, const double lower, const double upper)
+{
+    CATCH_TENSOR(torch::rrelu(*tensor, lower, upper));
+}
+
+void THSTensor_rrelu_(const Tensor tensor, const double lower, const double upper)
+{
+    CATCH(torch::rrelu_(*tensor, lower, upper););
+}
+
 Tensor THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm)
 {
     CATCH_TENSOR(tensor->renorm(p, dim, maxnorm));
@@ -1359,9 +1390,9 @@ Tensor THSTensor_slice(const Tensor tensor, int64_t dim, int64_t start, int64_t 
     CATCH_TENSOR(tensor->slice(dim, start, finish, step));
 }
 
-Tensor THSTensor_softplus(const Tensor tensor)
+Tensor THSTensor_softplus(const Tensor tensor, const Scalar beta, const Scalar threshold)
 {
-    CATCH_TENSOR(torch::softplus(*tensor));
+    CATCH_TENSOR(torch::softplus(*tensor, *beta, *threshold));
 }
 
 Tensor THSTensor_sort(const Tensor tensor, const int64_t dim, const bool descending, const bool stable, Tensor* indices)
@@ -1872,6 +1903,17 @@ void THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t
 {
     CATCH(tensor->transpose_(dim1, dim2););
 }
+
+Tensor THSTensor_threshold(const Tensor tensor, const Scalar threshold, const Scalar value)
+{
+    CATCH_TENSOR(torch::threshold(*tensor, *threshold, *value));
+}
+
+void THSTensor_threshold_(const Tensor tensor, const Scalar threshold, const Scalar value)
+{
+    CATCH(torch::threshold_(*tensor, *threshold, *value););
+}
+
 
 Tensor THSTensor_view(const Tensor tensor, const int64_t* shape, const int length)
 {

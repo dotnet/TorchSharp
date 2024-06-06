@@ -19,11 +19,12 @@ namespace TorchSharp
 {
     static internal class TestUtils
     {
-        public static IList<Device> AvailableDevices(bool cuda = true)
+        public static IList<Device> AvailableDevices(bool cuda = true, bool mps = false)
         {
             List<Device> result = new List<Device>();
             result.Add(torch.CPU);
             if (cuda && torch.cuda_is_available()) result.Add(torch.CUDA);
+            if (mps && torch.mps_is_available()) result.Add(torch.MPS);
             return result;
         }
     }
@@ -269,8 +270,10 @@ namespace TorchSharp
         {
             var device = torch.CPU;
 
-            var lin = Linear(1000, 100, true, device: device);
-            Assert.Throws<ArgumentNullException>(() => lin.bias = null);
+            var lin = Linear(100, 100, true, device: device);
+            // This should not throw:
+            lin.bias = null;
+            lin.call(torch.rand(100));
         }
 
         [Fact]
@@ -332,6 +335,8 @@ namespace TorchSharp
 
                 var input = torch.randn(new long[] { 1, 1000 }, device: device);
                 var output = lin.call(input);
+
+                output[0, 511] = 10; // When we modify the copy, the original should be altered, too.
 
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(input.data<float>(), output.data<float>());
@@ -593,9 +598,15 @@ namespace TorchSharp
         [Fact]
         public void EvaluatePReLU()
         {
+            var rel = PReLU(1, 0.35, torch.CPU);
+
+            Assert.Equal(1, rel.num_parameters);
+            Assert.Equal(0.35f, rel.weight.item<float>());
+            Assert.True(rel.weight.requires_grad);
+
             foreach (var device in TestUtils.AvailableDevices()) {
 
-                var rel = PReLU(1, 0.35, device);
+                rel = rel.to(device);
 
                 var input = torch.randn(new long[] { 4, 3, 8, 8 }, device: device) * 5.0;
                 var output = rel.call(input);
@@ -713,10 +724,14 @@ namespace TorchSharp
         public void EvaluateSoftmax2d()
         {
             var rel = Softmax2d();
+            var rel_x = Softmax(-3);
+
             foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 3, 8, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
+
+                Assert.True(torch.allclose(rel_x.call(input), output));
 
                 var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
@@ -2361,12 +2376,12 @@ namespace TorchSharp
             var shape = new long[] { 16, 3, 28 };
             foreach (var device in TestUtils.AvailableDevices(false)) {
                 Tensor t = torch.rand(shape, device: device);
-                var conv = Conv1d(3, 64, 3, device: device);
+                var conv = Conv1d(3, 64, 5, device: device);
                 var output = conv.call(t);
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
-                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(24, output.shape[2]);
             }
         }
 
@@ -3510,7 +3525,7 @@ namespace TorchSharp
                 var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 }, device: device);
                 var kernelSize = new long[] { 2, 2, 2 };
                 var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 }, device: device);
-                var res = torch.nn.functional.avg_pool3d_backward(avg, ones, kernelSize, divisorOverride: 6) * 6.0;
+                var res = torch.nn.functional.avg_pool3d_backward(avg, ones, kernelSize, divisor_override: 6) * 6.0;
 
                 var ones0000 = ones.cpu()[0, 0, 0, 0, 0].ToSingle();
                 var res0000 = res.cpu()[0, 0, 0, 0, 0].ToSingle();
@@ -4637,6 +4652,35 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestInstanceNorm1dWeightAndBias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28 }, device: device);
+
+                using (var norm = InstanceNorm1d(3, affine:true, track_running_stats: false, device: device)) {
+                    var w = norm.weight;
+                    var b = norm.bias;
+
+                    Assert.NotNull(w);
+                    Assert.NotNull(b);
+
+                    Assert.Equal(device.type, w.device_type);
+                    Assert.Equal(device.type, b.device_type);
+
+                    var pooled = norm.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+
+                    Assert.Null(norm.running_mean);
+                    Assert.Null(norm.running_var);
+
+                    Assert.Equal(new long[] { 3 }, w.shape);
+                    Assert.Equal(new long[] { 3 }, b.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void TestInstanceNorm2D()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
@@ -4650,7 +4694,7 @@ namespace TorchSharp
                         Assert.Null(pool.running_mean);
                         Assert.Null(pool.running_var);
                         Assert.Equal(ones.shape, pooled.shape);
-                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2 }, device: device)));
                         Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
                     }
                 }
@@ -4697,6 +4741,35 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestInstanceNorm2dWeightAndBias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+
+                using (var norm = InstanceNorm2d(3, affine:true, track_running_stats: false, device: device)) {
+                    var w = norm.weight;
+                    var b = norm.bias;
+
+                    Assert.NotNull(w);
+                    Assert.NotNull(b);
+
+                    Assert.Equal(device.type, w.device_type);
+                    Assert.Equal(device.type, b.device_type);
+
+                    var pooled = norm.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+
+                    Assert.Null(norm.running_mean);
+                    Assert.Null(norm.running_var);
+
+                    Assert.Equal(new long[] { 3 }, w.shape);
+                    Assert.Equal(new long[] { 3 }, b.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void TestInstanceNorm3D()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
@@ -4710,7 +4783,7 @@ namespace TorchSharp
                         Assert.Null(pool.running_mean);
                         Assert.Null(pool.running_var);
                         Assert.Equal(ones.shape, pooled.shape);
-                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
                         Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
                     }
                 }
@@ -4752,6 +4825,35 @@ namespace TorchSharp
                         Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
                         Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
                     }
+                }
+            }
+        }
+
+        [Fact]
+        public void TestInstanceNorm3dWeightAndBias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28, 28, 28 }, device: device);
+
+                using (var norm = InstanceNorm3d(3, affine:true, track_running_stats: false, device: device)) {
+                    var w = norm.weight;
+                    var b = norm.bias;
+
+                    Assert.NotNull(w);
+                    Assert.NotNull(b);
+
+                    Assert.Equal(device.type, w.device_type);
+                    Assert.Equal(device.type, b.device_type);
+
+                    var pooled = norm.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+
+                    Assert.Null(norm.running_mean);
+                    Assert.Null(norm.running_var);
+
+                    Assert.Equal(new long[] { 3 }, w.shape);
+                    Assert.Equal(new long[] { 3 }, b.shape);
                 }
             }
         }
@@ -5236,6 +5338,7 @@ namespace TorchSharp
             using (var V = torch.tensor(v_data, src_seq_len, batch_size, vembed_dim))
             using (var Attn = torch.tensor(attn_data, batch_size, src_seq_len, src_seq_len)) {
 
+                var children = mha.children().ToList();
                 mha.eval();
                 Assert.False(mha.training);
 
@@ -5428,13 +5531,13 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 32, 360 }, output.shape);
                 }
 
-                using (var flat = Flatten(startDim: 2)) {
+                using (var flat = Flatten(start_dim: 2)) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 120 }, output.shape);
                 }
 
-                using (var flat = Flatten(startDim: 0)) {
+                using (var flat = Flatten(start_dim: 0)) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32 * 360 }, output.shape);
@@ -6582,6 +6685,38 @@ namespace TorchSharp
 
             lin1.call(input);
             Assert.Equal(1, counter);
+        }
+
+        [Fact]
+        public void TestCustomParameterLessModule() 
+        {
+            var cnp = new CustomNoParameters("test");
+
+            // Should not throw
+            cnp.register_module("sub", new CustomNoParameters("test"));
+
+            Assert.True(cnp.named_modules().Count() > 0);
+            Assert.Equal("sub", cnp.named_modules().First().name);
+
+            Assert.Throws<InvalidOperationException>(() => cnp.register_module("test", torch.nn.Linear(10,10, true)));
+            Assert.Throws<InvalidOperationException>(() => cnp.register_buffer("test", torch.rand(10)));
+            Assert.Throws<InvalidOperationException>(() => cnp.register_parameter("test", new Parameter(torch.rand(10))));
+        }
+
+        class CustomNoParameters : ParamLessModule<Tensor, Tensor>
+        {
+            public CustomNoParameters(string name) : base(name)
+            {
+            }
+
+            public CustomNoParameters(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [Fact]

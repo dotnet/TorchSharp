@@ -12,20 +12,16 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a SELU module.
         /// </summary>
-        public sealed class SELU : torch.nn.Module<Tensor, Tensor>
+        public sealed class SELU : ParamLessModule<Tensor, Tensor>
         {
-            internal SELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal SELU(bool inplace) : base(nameof(SELU))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_SELU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            public override string GetName()
-            {
-                return typeof(SELU).Name;
+                return torch.nn.functional.selu(tensor, inplace);
             }
 
            // Rather than spending cycles only to discover that this module has neither
@@ -33,6 +29,8 @@ namespace TorchSharp
             protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
             protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
             protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+
+            public bool inplace {get; set; }
         }
     }
 
@@ -47,9 +45,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static SELU SELU(bool inplace = false)
             {
-                var handle = THSNN_SELU_ctor(inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new SELU(handle, boxedHandle);
+                return new SELU(inplace);
             }
 
             public static partial class functional

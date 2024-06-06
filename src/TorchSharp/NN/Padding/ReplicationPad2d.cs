@@ -12,27 +12,9 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReplicationPad2d module.
         /// </summary>
-        public sealed class ReplicationPad2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReplicationPad2d : PadBase
         {
-            internal ReplicationPad2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            /// <summary>
-            /// Forward pass.
-            /// </summary>
-            /// <param name="tensor">Input tensor</param>
-            /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
-            {
-                var res = THSNN_ReplicationPad2d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            internal ReplicationPad2d(params long[] padding) : base(nameof(ReplicationPad2d), PaddingModes.Replicate, 0, padding) { }
         }
     }
 
@@ -41,15 +23,13 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Pads the input tensor using replication of the input boundary.
+            /// Pads the input tensor using the replication of the input boundary.
             /// </summary>
             /// <param name="padding">The size of the padding.</param>
             /// <returns></returns>
             public static ReplicationPad2d ReplicationPad2d(long padding)
             {
-                var handle = THSNN_ReplicationPad2d_ctor(padding, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReplicationPad2d(handle, boxedHandle);
+                return new ReplicationPad2d(padding, padding, padding, padding);
             }
 
             /// <summary>
@@ -59,9 +39,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReplicationPad2d ReplicationPad2d((long, long, long, long) padding)
             {
-                var handle = THSNN_ReplicationPad2d_ctor_tuple(padding.Item1, padding.Item2, padding.Item3, padding.Item4, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReplicationPad2d(handle, boxedHandle);
+                return new ReplicationPad2d(padding.Item1, padding.Item2, padding.Item3, padding.Item4);
             }
         }
     }

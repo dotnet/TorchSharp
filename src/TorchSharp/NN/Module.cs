@@ -127,10 +127,10 @@ namespace TorchSharp
                     if (disposing && !handle.IsInvalid) {
 
                         foreach (var (_, p) in named_buffers(false)) {
-                            p.Dispose();
+                            p.DetachFromDisposeScope().Dispose();
                         }
                         foreach (var (_, b) in named_parameters(false)) {
-                            b.Dispose();
+                            b.DetachFromDisposeScope().Dispose();
                         }
 
                         foreach (var (_, m) in named_modules()) {
@@ -797,6 +797,8 @@ namespace TorchSharp
 
                 public virtual string GetName()
                 {
+                    if (!string.IsNullOrEmpty(this.name)) return this.name;
+                    
                     var res = THSNN_Module_name(handle);
                     CheckForErrors();
                     return res;

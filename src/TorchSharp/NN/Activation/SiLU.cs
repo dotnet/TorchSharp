@@ -12,15 +12,16 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a SiLU module.
         /// </summary>
-        public sealed class SiLU : torch.nn.Module<Tensor, Tensor>
+        public sealed class SiLU : ParamLessModule<Tensor, Tensor>
         {
-            internal SiLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal SiLU(bool inplace) : base(nameof(SiLU))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_SiLU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.silu(tensor, inplace);
             }
 
             public override string GetName()
@@ -33,6 +34,8 @@ namespace TorchSharp
             protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
             protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
             protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+
+            public bool inplace {get; set; }
         }
     }
     public static partial class torch
@@ -42,13 +45,9 @@ namespace TorchSharp
             /// <summary>
             /// Sigmoid-Weighted Linear Unit
             /// </summary>
-            /// <returns></returns>
-            /// <remarks>The native libreary does not take an 'inplace' option, even though the PyTorch documentation mentions the parameter.</remarks>
-            public static SiLU SiLU()
+            public static SiLU SiLU(bool inplace = false)
             {
-                var handle = THSNN_SiLU_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new SiLU(handle, boxedHandle);
+                return new SiLU(inplace);
             }
 
             public static partial class functional

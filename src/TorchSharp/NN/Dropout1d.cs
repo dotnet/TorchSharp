@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Dropout2d module.
         /// </summary>
-        public sealed class Dropout1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class Dropout1d : ParamLessModule<Tensor, Tensor>
         {
             internal Dropout1d(double p = 0.5, bool inplace = false) : base(nameof(Dropout1d))
             {
@@ -33,8 +33,8 @@ namespace TorchSharp
             protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
             protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
-            private bool inplace;
-            private double p;
+            public bool inplace { get; set; }
+            public double p { get; set;}
         }
     }
 

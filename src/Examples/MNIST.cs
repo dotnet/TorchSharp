@@ -105,7 +105,7 @@ namespace TorchSharp.Examples
 
             // These don't have any parameters, so the only reason to instantiate
             // them is performance, since they will be used over and over.
-            private Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
+            private Module<Tensor, Tensor> pool1 = MaxPool2d(kernel_size: new long[] { 2, 2 });
 
             private Module<Tensor, Tensor> relu1 = ReLU();
             private Module<Tensor, Tensor> relu2 = ReLU();

@@ -18,13 +18,15 @@ namespace TorchSharp
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            private long[] _normalized_shape;
-            private double _eps;
+            const string WeightComponentName = nameof(weight);
+            const string BiasComponentName = nameof(bias);
 
             internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
-                _normalized_shape = normalized_shape;
-                _eps = eps;
+                this.normalized_shape = normalized_shape;
+                this.eps = eps;
+                this.elementwise_affine = elementwise_affine;
+
                 if (elementwise_affine)
                 {
                     weight = Parameter(torch.empty(normalized_shape, dtype, device));
@@ -34,11 +36,10 @@ namespace TorchSharp
                     }
                 }
 
-
-                reset_parameters(elementwise_affine);
+                reset_parameters();
             }
 
-            private void reset_parameters(bool elementwise_affine)
+            public void reset_parameters()
             {
                 if (elementwise_affine)
                 {
@@ -52,7 +53,14 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                return F.layer_norm(tensor, _normalized_shape, weight, bias, _eps);
+                return F.layer_norm(tensor, normalized_shape, weight, bias, eps);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                _weight?.Dispose();
+                _bias?.Dispose();
+                base.Dispose(disposing);
             }
 
             public Parameter? bias {
@@ -60,7 +68,7 @@ namespace TorchSharp
                 set {
                     _bias?.Dispose();
                     _bias = value?.DetachFromDisposeScope() as Parameter;
-                    ConditionallyRegisterParameter(nameof(bias), _bias);
+                    ConditionallyRegisterParameter(BiasComponentName, _bias);
                 }
             }
 
@@ -71,22 +79,20 @@ namespace TorchSharp
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;
-                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                        ConditionallyRegisterParameter(WeightComponentName, _weight);
                     }
                 }
             }
 
-            [ComponentName(Name = "bias")]
+            [ComponentName(Name = BiasComponentName)]
             private Parameter? _bias;
-            [ComponentName(Name = "weight")]
+            [ComponentName(Name = WeightComponentName)]
             private Parameter? _weight;
 
-            protected override void Dispose(bool disposing)
-            {
-                _weight?.Dispose();
-                _bias?.Dispose();
-                base.Dispose(disposing);
-            }
+
+            public long[] normalized_shape { get; set; }
+            public double eps { get; set; }
+            public bool elementwise_affine { get; set; }
         }
     }
 
