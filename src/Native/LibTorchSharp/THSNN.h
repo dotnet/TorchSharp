@@ -269,8 +269,7 @@ EXPORT_API(Tensor) THSNN_one_hot(const Tensor self, const int64_t num_classes);
 
 EXPORT_API(Tensor)   THSNN_cosine_similarity(const Tensor input1, const Tensor input2, int64_t dim, double eps);
 
-EXPORT_API(NNModule) THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_PairwiseDistance_forward(const NNModule module, const Tensor input1, const Tensor input2);
+EXPORT_API(Tensor) THSNN_pairwise_distance(const Tensor input1, const Tensor input2, double p, double eps, bool keepdim);
 
 EXPORT_API(Tensor) THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, const Tensor value, const Tensor attention_mask, double p, bool casual);
 
