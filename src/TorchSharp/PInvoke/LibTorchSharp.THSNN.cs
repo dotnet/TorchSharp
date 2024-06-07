@@ -402,10 +402,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_one_hot(IntPtr self, long num_classes);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PairwiseDistance_ctor(double p, double eps, [MarshalAs(UnmanagedType.U1)] bool keep_dim, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_pairwise_distance(IntPtr input1, IntPtr input2, double p, double eps, [MarshalAs(UnmanagedType.U1)] bool keepdim);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_pixel_unshuffle(IntPtr tensor, long downscale_factor);

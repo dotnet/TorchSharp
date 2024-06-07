@@ -5620,7 +5620,7 @@ namespace TorchSharp
                 using (Tensor input1 = torch.rand(new long[] { 5, 12 }, device: device))
                 using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64, device: device))
 
-                using (var module = PairwiseDistance(keep_dim: true)) {
+                using (var module = PairwiseDistance(keepdim: true)) {
                     var output = module.call(input1, input2);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(input1.shape[0], output.shape[0]);
