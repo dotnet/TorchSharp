@@ -6591,7 +6591,7 @@ namespace TorchSharp
             var input = torch.randn(32, 100, 100);
             var counter = 0;
 
-            var pre_hook = (Module<Tensor, Tensor> m) => { counter += 1;};
+            var pre_hook = (Module m) => { counter += 1;};
 
             var handle = lin1.register_forward_pre_hook(pre_hook);
 
@@ -6611,7 +6611,7 @@ namespace TorchSharp
             var input = torch.randn(32, 100, 100);
             var counter = 0;
 
-            var hook = (Module<Tensor, Tensor> m) => { counter += 1;};
+            var hook = (Module m) => { counter += 1;};
 
             var handle = lin1.register_forward_hook(hook);
 

@@ -241,7 +241,27 @@ namespace TorchSharp.Utils
             }
         }
 
+        public void CopyTo(Span<T> array, int arrayIndex = 0, long tensorIndex = 0)
+        {
+            int idx = arrayIndex;
+            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
+                if (idx >= array.Length) break;
+                unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
+                idx += 1;
+            }
+        }
+
         public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
+        {
+            int idx = arrayIndex;
+            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
+                if (idx >= array.Length) break;
+                unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
+                idx += 1;
+            }
+        }
+
+        public void CopyFrom(ReadOnlySpan<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
             int idx = arrayIndex;
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
