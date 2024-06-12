@@ -143,7 +143,7 @@ namespace TorchSharp
                 if (origType == (sbyte)ScalarType.ComplexFloat32)
                     prod *= 2;
 
-                if (prod != rawArray.LongLength)
+                if (prod > rawArray.LongLength)
                     throw new ArgumentException($"mismatched total size creating a tensor from an array: {prod} vs. {rawArray.LongLength}");
             }
 

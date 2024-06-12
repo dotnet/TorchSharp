@@ -784,6 +784,16 @@ namespace TorchSharp
                 }
 
                 {
+                    var array = new bool[18]; // Too long, on purpose
+                    var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(8, t.NumberOfElements),
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Bool, t.dtype));
+                }
+
+                {
                     var array = new int[8];
                     var t = torch.tensor(array, device: device);
                     Assert.Multiple(
@@ -796,6 +806,16 @@ namespace TorchSharp
                     var array = new float[8];
                     var t = torch.tensor(array, device: device);
                     Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Float32, t.dtype));
+                }
+
+                {
+                    var array = new float[18]; // Too long, on purpose
+                    var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(8, t.NumberOfElements),
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
                         () => Assert.Equal(ScalarType.Float32, t.dtype));
