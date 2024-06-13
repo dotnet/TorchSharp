@@ -135,6 +135,15 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Create a tensor from an array of values, shaping it based on the shape passed in.
+        /// </summary>
+        [Pure]
+        public static Tensor tensor(Memory<long> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
+        {
+            return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Int64, dtype, device, requires_grad, names: names);
+        }
+
+        /// <summary>
         /// Cast a tensor to a 64-bit integer tensor.
         /// </summary>
         /// <param name="t">The input tensor</param>

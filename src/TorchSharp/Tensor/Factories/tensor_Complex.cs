@@ -271,5 +271,14 @@ namespace TorchSharp
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
+
+        /// <summary>
+        /// Create a tensor from an array of values, shaping it based on the shape passed in.
+        /// </summary>
+        [Pure]
+        public static Tensor tensor(Memory<System.Numerics.Complex> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
+        {
+            return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
+        }
     }
 }
