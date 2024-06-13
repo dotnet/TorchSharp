@@ -96,9 +96,9 @@ namespace TorchSharp
             using var dataloader = torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
             var iterator = dataloader.GetEnumerator();
             Assert.True(iterator.MoveNext());
-            Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
-            Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13L, 13L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
-            Assert.Equal(iterator.Current["index"].ToString(TensorStringStyle.Julia), torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64).ToString(TensorStringStyle.Julia));
+            Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dtype: torch.ScalarType.Int32));
+            Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13L, 13L}, dtype: torch.ScalarType.Int32));
+            Assert.Equal(iterator.Current["index"].ToString(TensorStringStyle.Julia), torch.tensor(rawArray: new[]{0L, 1L}, dtype: torch.ScalarType.Int64).ToString(TensorStringStyle.Julia));
             iterator.Dispose();
         }
 
