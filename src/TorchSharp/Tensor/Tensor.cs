@@ -7149,18 +7149,15 @@ namespace TorchSharp
                 return TensorIndex.Single(value);
             }
 
-            public static implicit operator Tensor(TensorIndex value)
+            public static implicit operator TensorIndex(Tensor tensor)
             {
-                _throw();
-                return new Tensor(IntPtr.Zero);
+                return TensorIndex.Tensor(tensor);
             }
 
-            private static void _throw()
+            public static implicit operator TensorIndex((int? start, int? end) range)
             {
-                throw new InvalidOperationException("Should not be called.");
+                return TensorIndex.Slice(range.start, range.end);
             }
-
-            public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
 #if !NETSTANDARD2_0_OR_GREATER
             public static implicit operator TensorIndex(System.Range range)

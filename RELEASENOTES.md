@@ -8,6 +8,9 @@ __Breaking Changes__:
 
 __API Changes__:
 
+- #1266 An implicit operator from `Tensor` to `TensorIndex` has been added.
+    - The implicit operator from `TensorIndex` to `Tensor` has been removed.
+
 __Bug Fixes__:
 
 

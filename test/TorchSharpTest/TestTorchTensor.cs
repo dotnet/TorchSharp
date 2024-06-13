@@ -3203,11 +3203,11 @@ namespace TorchSharp
         public void NegativeScalarToTensor()
         {
             Scalar s = 10;
-            TensorIndex ti = 10;
+            // TensorIndex ti = 10;
             Tensor t;
 
             Assert.Throws<InvalidOperationException>(() => { t = s; });
-            Assert.Throws<InvalidOperationException>(() => { t = ti; });
+            // Assert.Throws<InvalidOperationException>(() => { t = ti; });
         }
 
         [Fact]
