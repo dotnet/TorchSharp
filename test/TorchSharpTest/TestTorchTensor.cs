@@ -767,7 +767,7 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 {
                     var array = new bool[8];
-                    var t = torch.tensor(array, device: device);
+                    using var t = torch.tensor(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -775,8 +775,39 @@ namespace TorchSharp
                 }
 
                 {
+                    var array = new Memory<byte>(new byte[8]);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Byte, t.dtype));
+                }
+                
+                {
+                    var array = new Memory<long>(new long[8]);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Int64, t.dtype));
+                }
+                
+                {
+                    var array = new long[18];
+                    array[5] = 17;
+                    var mem = new Memory<long>(array,4,10);
+                    using var t = torch.tensor(mem, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(8, t.numel()),
+                        () => Assert.Equal(17, t[1].item<long>()),
+                        () => Assert.Equal(ScalarType.Int64, t.dtype));
+                }
+
+                {
                     var array = new bool[8];
-                    var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -785,7 +816,7 @@ namespace TorchSharp
 
                 {
                     var array = new bool[18]; // Too long, on purpose
-                    var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(8, t.NumberOfElements),
                         () => Assert.Equal(device.type, t.device_type),
@@ -795,7 +826,7 @@ namespace TorchSharp
 
                 {
                     var array = new int[8];
-                    var t = torch.tensor(array, device: device);
+                    using var t = torch.tensor(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -804,7 +835,7 @@ namespace TorchSharp
 
                 {
                     var array = new float[8];
-                    var t = torch.tensor(array, device: device);
+                    using var t = torch.tensor(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -813,7 +844,7 @@ namespace TorchSharp
 
                 {
                     var array = new float[18]; // Too long, on purpose
-                    var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(8, t.NumberOfElements),
                         () => Assert.Equal(device.type, t.device_type),
@@ -823,7 +854,7 @@ namespace TorchSharp
 
                 {
                     var array = new double[1, 2];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(2, t.ndim),
@@ -833,7 +864,7 @@ namespace TorchSharp
 
                 {
                     var array = new long[1, 2, 3];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(3, t.ndim),
@@ -843,7 +874,7 @@ namespace TorchSharp
 
                 {
                     var array = new int[1, 2, 3, 4];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(4, t.ndim),
@@ -853,7 +884,7 @@ namespace TorchSharp
 
                 {
                     var array = new System.Numerics.Complex[1, 2, 3, 4];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(4, t.ndim),
@@ -863,7 +894,7 @@ namespace TorchSharp
 
                 {
                     var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(3, t.ndim),

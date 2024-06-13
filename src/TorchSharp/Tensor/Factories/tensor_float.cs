@@ -160,6 +160,15 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Create a tensor from an array of values, shaping it based on the shape passed in.
+        /// </summary>
+        [Pure]
+        public static Tensor tensor(Memory<float> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
+        {
+            return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Float32, dtype, device, requires_grad, names: names);
+        }
+
+        /// <summary>
         /// Cast a tensor to a 32-bit floating point tensor.
         /// </summary>
         /// <param name="t">The input tensor</param>
