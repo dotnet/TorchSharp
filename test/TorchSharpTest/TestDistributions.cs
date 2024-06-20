@@ -1333,6 +1333,21 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMultivariateNormal_1334()
+        {
+            var actionMean = torch.tensor(new double[]{0.2025, -0.0714, 0.1417});
+            var covMat = torch.tensor(new double[,]
+            {
+                { 0.36, 0, 0 },
+                { 0, 0.36, 0 },
+                { 0, 0, 0.36 },
+            });
+            var dist = torch.distributions.MultivariateNormal(actionMean, covariance_matrix: covMat);
+            torch.Tensor action = dist.sample();
+            torch.Tensor actionLogProb = dist.log_prob(action);
+        }
+
+        [Fact]
         public void TestWeibull()
         {
             var dist = Weibull(torch.ones(3, 3), torch.ones(3, 3));
