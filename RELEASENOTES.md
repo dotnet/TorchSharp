@@ -10,10 +10,11 @@ When creating a tensor from a 1-D array, and passing in a shape, there is now an
 
 __API Changes__:
 
- #1326 Allow arrays used to create tensors to be larger than the tensor. Create tensors from a Memory instance<br/>
+ #1326 Allow arrays used to create tensors to be larger than the tensor. Create tensors from a Memory instance.<br/>
 
 __Bug Fixes__:
 
+#1334 MultivariateNormal.log_prob() exception in TorchSharp but works in pytorch.<br/>
 
 # NuGet Version 0.102.5
 
