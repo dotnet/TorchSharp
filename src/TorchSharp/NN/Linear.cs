@@ -17,6 +17,17 @@ namespace TorchSharp
             const string WeightComponentName = nameof(weight);
             const string BiasComponentName = nameof(bias);
 
+            internal Linear(Parameter weight, Parameter? bias = null) : base(nameof(Linear))
+            {
+                this.in_features = weight.shape[1];
+                this.out_features = weight.shape[0];
+
+                this.weight = weight;
+                if (bias is not null) {
+                    this.bias = bias;
+                }
+            }
+
             internal Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Linear))
             {
                 this.in_features = inputSize;
@@ -85,7 +96,7 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Applies a linear transformation to the incoming data.
+            /// Create a Linear module initialized with random weights and bias.
             /// </summary>
             /// <param name="inputSize">Size of each input sample</param>
             /// <param name="outputSize">Size of each output sample</param>
@@ -95,6 +106,16 @@ namespace TorchSharp
             public static Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
                 return new Linear(inputSize, outputSize, hasBias, device, dtype);
+            }
+
+            /// <summary>
+            /// Create a Linear module with the given weights and bias.
+            /// </summary>
+            /// <param name="weight">The linear weight attribute.</param>
+            /// <param name="bias">The additive linear bias. Optional.</param>
+            public static Linear Linear(Parameter weight, Parameter? bias = null)
+            {
+                return new Linear(weight, bias);
             }
 
             public static partial class functional

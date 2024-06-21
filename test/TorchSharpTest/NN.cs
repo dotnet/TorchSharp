@@ -325,6 +325,29 @@ namespace TorchSharp
                 Assert.Equal(40, forward.shape[1]);
                 Assert.Equal(device.type, forward.device_type);
             }
+        }       
+        
+        [Fact]
+        public void TestLinearFused()
+        {
+            var lin = Linear(15,15);
+            var bn = BatchNorm1d(15);
+            lin.eval();
+            bn.eval();
+
+            Assert.NotNull(lin);
+            Assert.NotNull(lin.bias);
+
+            var input = torch.rand(8,15);
+            var expected = bn.forward(lin.forward(input));
+
+            var fused = torch.nn.utils.fuse_linear_bn_eval(lin, bn);
+            var output = fused.forward(input);
+
+            var eStr = expected.str();
+            var oStr = output.str();
+
+            Assert.True(expected.allclose(output, rtol: 1e-3, atol: 1e-3));
         }
 
         [Fact]
