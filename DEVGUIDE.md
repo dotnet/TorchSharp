@@ -1,20 +1,19 @@
 
 # Building
 
+## Windows
+
+Requirements:
+- Visual Studio 2022, fully updated with C/C++ desktop development and Windows SDK installed
+- git
+- cmake (tested with 3.18)
+
+From a VS 'x64 Native Tools' command prompt, build with:
+
     dotnet build /p:SkipNative=true
     dotnet build  # for cuda support on Windows and Linux
     dotnet test
     dotnet pack
-
-## Windows
-
-Requirements:
-- Visual Studio
-- git
-- cmake (tested with 3.18)
-
-__NOTE:__ At this moment, VS versions 17.4.X will not build the native code library. Use 17.3.X until further notice. See: https://github.com/dotnet/TorchSharp/issues/858 for more information.
-
 
 ## Linux
 
@@ -34,6 +33,10 @@ sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
 
 Commands:
 
+    dotnet build /p:SkipNative=true
+    dotnet build  # for cuda support on Windows and Linux
+    dotnet test
+
 ## Mac
 
 Requirements:
@@ -44,7 +47,8 @@ Requirements:
 
 Build with
 
-    dotnet build /p:SkipNative=true
+    dotnet build
+    dotnet test
 
 ## Packages
 
