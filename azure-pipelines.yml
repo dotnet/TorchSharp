@@ -20,7 +20,7 @@ resources:
 #   https://github.com/dotnet/versions/blob/main/build-info/docker/image-info.dotnet-dotnet-buildtools-prereqs-docker-main.json
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-mlnet-20240216051055-578f026
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mlnet-20210924170306-87445d2
 
 jobs:
 - template: /build/ci/job-template.yml
@@ -533,127 +533,127 @@ jobs:
     displayName: Publish Linux CUDA build packages
     artifact: BuildLinuxCUDAPackages
 
-################################################################################
-- job: CodeSign_Core
-################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
-  dependsOn:
-  - Build_TorchSharp_And_libtorch_cpu_Packages
-  variables:
-  - group: SignClient Credentials
-  pool:
-    vmImage: 'windows-latest'
-  steps:
+# ################################################################################
+# - job: CodeSign_Core
+# ################################################################################
+#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+#   dependsOn:
+#   - Build_TorchSharp_And_libtorch_cpu_Packages
+#   variables:
+#   - group: SignClient Credentials
+#   pool:
+#     vmImage: 'windows-latest'
+#   steps:
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: custom
-      custom: tool
-      arguments: install --tool-path . SignClient
-    displayName: Install SignTool tool
+#   - task: DotNetCoreCLI@2
+#     inputs:
+#       command: custom
+#       custom: tool
+#       arguments: install --tool-path . SignClient
+#     displayName: Install SignTool tool
 
-  - download: current
-    displayName: Download configuration
-    artifact: config
+#   - download: current
+#     displayName: Download configuration
+#     artifact: config
 
-  - download: current
-    displayName: Download TorchSharp Packages
-    artifact: BuildTorchSharpPackages
+#   - download: current
+#     displayName: Download TorchSharp Packages
+#     artifact: BuildTorchSharpPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
-    displayName: Sign packages
+#   - pwsh: |
+#       .\SignClient 'Sign' `
+#       --baseDirectory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
+#       --input '**/*.nupkg' `
+#       --config '$(Pipeline.Workspace)\config\SignClient.json' `
+#       --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
+#       --user '$(SignClientUser)' `
+#       --secret '$(SignClientSecret)' `
+#       --name 'TorchSharp' `
+#       --description 'TorchSharp' `
+#       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+#     displayName: Sign packages
 
-  - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
-    displayName: Publish Signed TorchSharp Packages
-    artifact: SignedTorchSharpPackages
-    continueOnError: true
+#   - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
+#     displayName: Publish Signed TorchSharp Packages
+#     artifact: SignedTorchSharpPackages
+#     continueOnError: true
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
-    displayName: Free up space (TorchSharp packages in workspace)
+#   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
+#     displayName: Free up space (TorchSharp packages in workspace)
 
-################################################################################
-- job: CodeSign_Extras
-################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
-  dependsOn:
-  - Build_libtorch_cuda_win_Packages
-  - Build_libtorch_cuda_linux_Packages
-  variables:
-  - group: SignClient Credentials
-  pool:
-    vmImage: 'windows-latest'
-  steps:
+# ################################################################################
+# - job: CodeSign_Extras
+# ################################################################################
+#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+#   dependsOn:
+#   - Build_libtorch_cuda_win_Packages
+#   - Build_libtorch_cuda_linux_Packages
+#   variables:
+#   - group: SignClient Credentials
+#   pool:
+#     vmImage: 'windows-latest'
+#   steps:
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: custom
-      custom: tool
-      arguments: install --tool-path . SignClient
-    displayName: Install SignTool tool
+#   - task: DotNetCoreCLI@2
+#     inputs:
+#       command: custom
+#       custom: tool
+#       arguments: install --tool-path . SignClient
+#     displayName: Install SignTool tool
 
-  - download: current
-    displayName: Download configuration
-    artifact: config
+#   - download: current
+#     displayName: Download configuration
+#     artifact: config
 
-  - download: current
-    displayName: Download Windows CUDA Packages
-    artifact: BuildWinCUDAPackages
+#   - download: current
+#     displayName: Download Windows CUDA Packages
+#     artifact: BuildWinCUDAPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
-    displayName: Sign packages
+#   - pwsh: |
+#       .\SignClient 'Sign' `
+#       --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
+#       --input '**/*.nupkg' `
+#       --config '$(Pipeline.Workspace)\config\SignClient.json' `
+#       --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
+#       --user '$(SignClientUser)' `
+#       --secret '$(SignClientSecret)' `
+#       --name 'TorchSharp' `
+#       --description 'TorchSharp' `
+#       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+#     displayName: Sign packages
 
-  - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
-    displayName: Publish Signed Windows CUDA Packages
-    artifact: SignedWinCUDAPackages
-    continueOnError: true
+#   - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
+#     displayName: Publish Signed Windows CUDA Packages
+#     artifact: SignedWinCUDAPackages
+#     continueOnError: true
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
-    displayName: Free up space (TorchSharp packages in workspace)
+#   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
+#     displayName: Free up space (TorchSharp packages in workspace)
 
-  - download: current
-    displayName: Download Linux CUDA Packages
-    artifact: BuildLinuxCUDAPackages
+#   - download: current
+#     displayName: Download Linux CUDA Packages
+#     artifact: BuildLinuxCUDAPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
-    displayName: Sign packages
+#   - pwsh: |
+#       .\SignClient 'Sign' `
+#       --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
+#       --input '**/*.nupkg' `
+#       --config '$(Pipeline.Workspace)\config\SignClient.json' `
+#       --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
+#       --user '$(SignClientUser)' `
+#       --secret '$(SignClientSecret)' `
+#       --name 'TorchSharp' `
+#       --description 'TorchSharp' `
+#       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+#     displayName: Sign packages
 
-  - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
-    displayName: Publish Signed Linux CUDA Packages
-    artifact: SignedLinuxCUDAPackages
-    continueOnError: true
+#   - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
+#     displayName: Publish Signed Linux CUDA Packages
+#     artifact: SignedLinuxCUDAPackages
+#     continueOnError: true
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
-    displayName: Free up space (TorchSharp packages in workspace)
+#   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
+#     displayName: Free up space (TorchSharp packages in workspace)
 
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
