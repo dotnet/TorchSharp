@@ -655,264 +655,264 @@ jobs:
 #   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
 #     displayName: Free up space (TorchSharp packages in workspace)
 
-################################################################################
-- job: Push_TorchSharp_And_libtorch_cpu_Packages
-################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['PushPackagesToFeed'], true))
+# ################################################################################
+# - job: Push_TorchSharp_And_libtorch_cpu_Packages
+# ################################################################################
+#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['PushPackagesToFeed'], true))
 
-  dependsOn:
-  - Build_TorchSharp_And_libtorch_cpu_Packages
-  - CodeSign_Core
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-  pool:
-    vmImage: 'windows-latest'
-  steps:
+#   dependsOn:
+#   - Build_TorchSharp_And_libtorch_cpu_Packages
+#   - CodeSign_Core
+#   variables:
+#     BuildConfig: Release
+#     OfficialBuildId: $(BUILD.BUILDNUMBER)
+#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
+#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+#     DOTNET_MULTILEVEL_LOOKUP: 0
+#   pool:
+#     vmImage: 'windows-latest'
+#   steps:
 
-  # Push packages to feed
-  #
-  # Doing these one by one as we're getting a lot of failures pushing them
-  # Also replaying them multiple times for the same reason
-  #
-  - task: NuGetAuthenticate@0
-    displayName: 'NuGet Authenticate'
+#   # Push packages to feed
+#   #
+#   # Doing these one by one as we're getting a lot of failures pushing them
+#   # Also replaying them multiple times for the same reason
+#   #
+#   - task: NuGetAuthenticate@0
+#     displayName: 'NuGet Authenticate'
 
-  - download: current
-    displayName: Download Signed TorchSharp Packages
-    artifact: SignedTorchSharpPackages
+#   - download: current
+#     displayName: Download Signed TorchSharp Packages
+#     artifact: SignedTorchSharpPackages
 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (TorchSharp)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (TorchSharp)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (TorchAudio)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/TorchAudio.*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (TorchAudio)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/TorchAudio.*.nupkg'
+#       publishVstsFeed: 'TorchSharp/SignedPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (TorchVision)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/TorchVision.*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (TorchVision)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/TorchVision.*.nupkg'
+#       publishVstsFeed: 'TorchSharp/SignedPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (TorchSharp-cpu)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (TorchSharp-cpu)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  # push the CPU runtime packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (libtorch-cpu)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   # push the CPU runtime packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (libtorch-cpu)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  # push the CPU runtime packages (retry - we get so many failures!)
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (libtorch-cpu - retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   # push the CPU runtime packages (retry - we get so many failures!)
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (libtorch-cpu - retry)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  # push the CPU runtime packages (retry - we get so many failures!)
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (libtorch-cpu - retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-    continueOnError: true
+#   # push the CPU runtime packages (retry - we get so many failures!)
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (libtorch-cpu - retry)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#     continueOnError: true
 
-  # Terminate all dotnet build processes.
-  - script: dotnet build-server shutdown
-    displayName: Dotnet Server Shutdown
-
-
-################################################################################
-# Only run if BuildLibTorchPackages is true
-- job: Push_libtorch_cuda_win_Packages
-################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
-  dependsOn:
-  - Build_libtorch_cuda_win_Packages
-  - CodeSign_Extras
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-
-  # Push packages to feed
-  #
-  # Doing these one by one as we're getting a lot of failures pushing them
-  # Also replaying them multiple times for the same reason
-  #
-  - task: NuGetAuthenticate@0
-    displayName: 'NuGet Authenticate'
-
-  - download: current
-    displayName: Download Signed Windows CUDA Packages
-    artifact: SignedWinCUDAPackages
-
-  # push the Windows Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda win-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Windows Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda win-x64 retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Windows Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda win-x64 retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Windows Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda win-x64 retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Windows Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda win-x64 retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
+#   # Terminate all dotnet build processes.
+#   - script: dotnet build-server shutdown
+#     displayName: Dotnet Server Shutdown
 
 
-################################################################################
-- job: Push_libtorch_cuda_linux_Packages
-################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
-  dependsOn:
-  - Build_libtorch_cuda_linux_Packages
-  - CodeSign_Extras
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-  pool:
-    vmImage: 'windows-latest'
-  # container: UbuntuContainer
-  # Exact copy of the dependency install above - TODO share this somewhere
-  steps:
+# ################################################################################
+# # Only run if BuildLibTorchPackages is true
+# - job: Push_libtorch_cuda_win_Packages
+# ################################################################################
+#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
+#   dependsOn:
+#   - Build_libtorch_cuda_win_Packages
+#   - CodeSign_Extras
+#   variables:
+#     BuildConfig: Release
+#     OfficialBuildId: $(BUILD.BUILDNUMBER)
+#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
+#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+#     DOTNET_MULTILEVEL_LOOKUP: 0
+#   pool:
+#     vmImage: 'windows-latest'
+#   steps:
 
-  # Push packages to feed
-  #
-  # Doing these one by one as we're getting a lot of failures pushing them
-  # Also replaying them multiple times for the same reason
-  #
-  - task: NuGetAuthenticate@0
-    displayName: 'NuGet Authenticate'
+#   # Push packages to feed
+#   #
+#   # Doing these one by one as we're getting a lot of failures pushing them
+#   # Also replaying them multiple times for the same reason
+#   #
+#   - task: NuGetAuthenticate@0
+#     displayName: 'NuGet Authenticate'
 
-  - download: current
-    displayName: Download Signed Linux CUDA Packages
-    artifact: SignedLinuxCUDAPackages
+#   - download: current
+#     displayName: Download Signed Windows CUDA Packages
+#     artifact: SignedWinCUDAPackages
 
-  # push the Linux Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
+#   # push the Windows Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda win-x64)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
 
-  # push the Linux Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
+#   # push the Windows Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda win-x64 retry)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
 
-  # push the Linux Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
+#   # push the Windows Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda win-x64 retry)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
 
-  # push the Linux Cuda packages
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestPackages'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
+#   # push the Windows Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda win-x64 retry)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
+
+#   # push the Windows Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda win-x64 retry)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
+
+
+# ################################################################################
+# - job: Push_libtorch_cuda_linux_Packages
+# ################################################################################
+#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
+#   dependsOn:
+#   - Build_libtorch_cuda_linux_Packages
+#   - CodeSign_Extras
+#   variables:
+#     BuildConfig: Release
+#     OfficialBuildId: $(BUILD.BUILDNUMBER)
+#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
+#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+#     DOTNET_MULTILEVEL_LOOKUP: 0
+#   pool:
+#     vmImage: 'windows-latest'
+#   # container: UbuntuContainer
+#   # Exact copy of the dependency install above - TODO share this somewhere
+#   steps:
+
+#   # Push packages to feed
+#   #
+#   # Doing these one by one as we're getting a lot of failures pushing them
+#   # Also replaying them multiple times for the same reason
+#   #
+#   - task: NuGetAuthenticate@0
+#     displayName: 'NuGet Authenticate'
+
+#   - download: current
+#     displayName: Download Signed Linux CUDA Packages
+#     artifact: SignedLinuxCUDAPackages
+
+#   # push the Linux Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda linux-x64)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
+
+#   # push the Linux Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda linux-x64)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
+
+#   # push the Linux Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda linux-x64)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
+
+#   # push the Linux Cuda packages
+#   - task: NuGetCommand@2
+#     displayName: 'NuGet push (cuda linux-x64)'
+#     inputs:
+#       command: push
+#       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
+#       publishVstsFeed: 'TorchSharp/TestPackages'
+#       allowPackageConflicts: true
+#       # often fails - try but ignore the error until we sort it out
+#     continueOnError: true
