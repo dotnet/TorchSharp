@@ -8,6 +8,7 @@ using System.Threading;
 
 namespace TorchSharp
 {
+    [Collection("Sequential")]
     public class TestAutogradFunction
     {
 

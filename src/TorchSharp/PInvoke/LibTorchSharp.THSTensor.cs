@@ -40,6 +40,27 @@ namespace TorchSharp.PInvoke
                 long groups);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_conv1d_padding(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                int padding,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_conv2d_padding(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                int padding,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_conv3d_padding(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                int padding,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_conv_transpose1d(IntPtr input, IntPtr weight, IntPtr bias,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,

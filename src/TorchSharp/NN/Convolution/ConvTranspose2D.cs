@@ -10,47 +10,18 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class ConvTranspose2d : Convolution
+        public sealed class ConvTranspose2d : ConvolutionTranspose
         {
-            internal ConvTranspose2d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
+            internal ConvTranspose2d(long in_channels, long out_channels, (long, long) kernel_size, (long, long) stride, (long, long) padding, (long, long) dilation, (long, long) output_padding, long groups = 1, bool bias = true, PaddingModes padding_mode = PaddingModes.Zeros, torch.Device? device = null, ScalarType? dtype = null)
+                        : base(nameof(ConvTranspose2d), in_channels, out_channels, new[] { kernel_size.Item1, kernel_size.Item2 }, new[] { stride.Item1, stride.Item2 }, new[] { padding.Item1, padding.Item2 }, null, new[] { dilation.Item1, dilation.Item2 }, true, new[] { output_padding.Item1, output_padding.Item2 }, groups, bias, padding_mode, device, dtype) { }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input, long[]? output_size)
             {
-                if (ValidateShape(input, 2)) {
-                    var res = THSNN_ConvTranspose2d_forward(handle, input.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
-                }
-                throw new ArgumentException($"Expected 3D (unbatched) or 4D (batched) input with {input_channels} channels to ConvTranspose2d.");
-            }
+                if (!ValidateShape(input, 2))
+                    throw new ArgumentException($"Expected 3D (unbatched) or 4D (batched) input with {in_channels} channels to ConvTranspose2d.");
 
-            public Parameter? bias {
-                get {
-                    var res = THSNN_ConvTranspose2d_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
-                    THSNN_ConvTranspose2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
-                }
-            }
-            public Parameter? weight
-                {
-                get {
-                    var res = THSNN_ConvTranspose2d_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'"); THSNN_ConvTranspose2d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
-                }
+                var output_padding = this._output_padding(input, output_size, kernel_size, stride, padding!, dilation, 2);
+                return torch.nn.functional.conv_transpose2d(input, weight, bias, stride, padding!, output_padding, dilation, groups);
             }
         }
     }
@@ -77,9 +48,7 @@ namespace TorchSharp
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
             public static ConvTranspose2d ConvTranspose2d(long in_channels, long out_channels, long kernel_size, long stride = 1, long padding = 0, long output_padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_ConvTranspose2d_ctor(in_channels, out_channels, kernel_size, stride, padding, output_padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ConvTranspose2d(res, boxedHandle, in_channels).MoveModule<ConvTranspose2d>(device, dtype);
+                return new ConvTranspose2d(in_channels, out_channels, (kernel_size, kernel_size), (stride, stride), (padding, padding), (dilation, dilation), (output_padding, output_padding), groups, bias, padding_mode, device, dtype);
             }
 
 
@@ -102,14 +71,11 @@ namespace TorchSharp
             /// <returns></returns>
             public static ConvTranspose2d ConvTranspose2d(long in_channels, long out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null, (long, long)? output_padding = null, (long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                if (stride == null) stride = (1, 1);
-                if (padding == null) padding = (0, 0);
-                if (output_padding == null) output_padding = (0, 0);
-                if (dilation == null) dilation = (1, 1);
-
-                var res = THSNN_ConvTranspose2d_ctor_1(in_channels, out_channels, kernel_size.Item1, kernel_size.Item2, stride.Value.Item1, stride.Value.Item2, padding.Value.Item1, padding.Value.Item2, output_padding.Value.Item1, output_padding.Value.Item2, dilation.Value.Item1, dilation.Value.Item2, (long)padding_mode, groups, bias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ConvTranspose2d(res, boxedHandle, in_channels).MoveModule<ConvTranspose2d>(device, dtype);
+                stride ??= (1, 1);
+                padding ??= (0, 0);
+                output_padding ??= (0, 0);
+                dilation ??= (1, 1);
+                return new ConvTranspose2d(in_channels, out_channels, kernel_size, stride.Value, padding.Value, dilation.Value, output_padding.Value, groups, bias, padding_mode, device, dtype);
             }
 
             public static partial class functional
