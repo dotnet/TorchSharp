@@ -123,7 +123,7 @@ jobs:
         eval "$(~/miniconda3/bin/conda shell.bash hook)"
         source activate base
         echo "activate conda environment"
-        ~/miniconda3/bin/conda activate base
+        conda activate base
     displayName: Active Miniconda environment
   - script:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
