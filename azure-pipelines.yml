@@ -56,7 +56,7 @@ jobs:
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
     # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
-    prepScript: ${{ parameters.LinuxPrepScript }}
+    prepScript: ${{ variables.LinuxPrepScript }}
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
@@ -125,7 +125,7 @@ jobs:
       packageType: sdk
       version: 6.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
-  - script: ${{ parameters.LinuxPrepScript }}
+  - script: ${{ variables.LinuxPrepScript }}
     displayName: Install dependencies
 
   - script: |
@@ -511,7 +511,7 @@ jobs:
       version: 6.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script: ${{ parameters.LinuxPrepScript }}
+  - script: ${{ variables.LinuxPrepScript }}
     displayName: Install dependencies
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
