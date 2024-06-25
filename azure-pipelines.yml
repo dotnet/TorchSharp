@@ -135,7 +135,7 @@ jobs:
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         
-        source ~/.bashrc &&
+        source activate base &&
         conda install cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
     displayName: Install dependencies
 
