@@ -57,9 +57,8 @@ jobs:
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
     # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript: ${{ variables.LinuxPrepScript }}
-    buildScript: |
-      eval "$(~/miniconda3/bin/conda shell.bash hook)"
-      source activate base
+    buildScript: eval "$(~/miniconda3/bin/conda shell.bash hook)" &&
+      source activate base &&
       dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
