@@ -1,0 +1,8 @@
+<Project>
+  <Import Project="..\Directory.Build.targets" />
+
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>$(PreviousPackageVersion)</PackageValidationBaselineVersion>
+  </PropertyGroup>
+</Project>
