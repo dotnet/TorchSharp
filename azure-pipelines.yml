@@ -118,8 +118,6 @@ jobs:
     inputs:
       targetType: 'inline'
       script: |
-        ~/miniconda3/bin/conda init bash
-        source ~/.bashrc
         eval "$(~/miniconda3/bin/conda shell.bash hook)"
         source activate base
         echo "activate conda environment"
@@ -146,8 +144,6 @@ jobs:
     displayName: Download libtorch native CUDA binaries
 
   - script: |
-      ~/miniconda3/bin/conda init bash
-      source ~/.bashrc
       eval "$(~/miniconda3/bin/conda shell.bash hook)"
       source activate base
       echo "activate conda environment"
