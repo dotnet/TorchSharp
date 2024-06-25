@@ -119,6 +119,7 @@ jobs:
       targetType: 'inline'
       script: |
         ~/miniconda3/bin/conda init bash
+        source ~/.bashrc
         eval "$(~/miniconda3/bin/conda shell.bash hook)"
         ~/miniconda3/bin/conda activate base
     displayName: Active Miniconda environment
