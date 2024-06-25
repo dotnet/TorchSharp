@@ -4,13 +4,36 @@
 
 name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
-variables:
-  MyRunNumber:  $[counter('MyRunNumber', 52201)]
-
+parameters:
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
   BuildLibTorchPackages: false
   PushPackagesToFeed: false
+
+variables:
+  MyRunNumber:  $[counter('MyRunNumber', 52201)]
+  LinuxPrepScript: |
+    ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D
+    sudo apt-get -y update
+    sudo apt-get -y install cmake git libunwind8 curl libomp-dev libomp5
+    wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb
+    sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update
+    ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+
+    # Install Miniconda
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    mkdir -p ~/miniconda3
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+    bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+    rm -rf ~/miniconda3/miniconda.sh
+
+    # Install cmake, clang and gxx_linux-
+    eval "$(~/miniconda3/bin/conda shell.bash hook)"
+    source activate base
+    conda install -y cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
+    
 
 resources:
   containers:
@@ -29,15 +52,7 @@ jobs:
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
     # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
-    prepScript:
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
-        sudo apt-get -y update &&
-        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
-        sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+    prepScript: ${{ parameters.LinuxPrepScript }}
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
@@ -106,55 +121,39 @@ jobs:
       packageType: sdk
       version: 6.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
-  - script:
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&
-        mkdir -p ~/miniconda3 &&
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh &&
-        bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 &&
-        rm -rf ~/miniconda3/miniconda.sh
-    displayName: Install Miniconda
-
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: |
-        eval "$(~/miniconda3/bin/conda shell.bash hook)"
-        source activate base
-        echo "activate conda environment"
-        conda activate base
-        conda install -y cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
-    displayName: Install cmake, clang and gxx_linux-64 dependencies
-  - script:
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
-        sudo apt-get -y update &&
-        sudo apt-get -y install git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
-        sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+  - script: ${{ parameters.LinuxPrepScript }}
     displayName: Install dependencies
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
+  - script: |
+      eval "$(~/miniconda3/bin/conda shell.bash hook)"
+      source activate base
+      dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: |
+      eval "$(~/miniconda3/bin/conda shell.bash hook)"
+      source activate base
+      dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
   - script: |
       eval "$(~/miniconda3/bin/conda shell.bash hook)"
       source activate base
-      echo "activate conda environment"
-      conda activate base
       dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build linux
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: |
+      eval "$(~/miniconda3/bin/conda shell.bash hook)"
+      source activate base
+      dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: |
+      eval "$(~/miniconda3/bin/conda shell.bash hook)"
+      source activate base
+      dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -508,16 +507,7 @@ jobs:
       version: 6.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script:
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
-        sudo apt-get -y update &&
-        sudo apt-get -y install cmake clang-7.0 git libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
-        sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
-        conda install cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
+  - script: ${{ parameters.LinuxPrepScript }}
     displayName: Install dependencies
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
