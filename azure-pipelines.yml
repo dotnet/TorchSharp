@@ -114,6 +114,18 @@ jobs:
         rm -rf ~/miniconda3/miniconda.sh
     displayName: Install Miniconda
 
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        ~/miniconda3/bin/conda init bash
+        source ~/.bashrc
+        eval "$(~/miniconda3/bin/conda shell.bash hook)"
+        source activate base
+        echo "activate conda environment"
+        conda activate base
+        conda install cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
+    displayName: Install cmake, clang and gxx_linux-64 dependencies
   - script:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
@@ -123,11 +135,6 @@ jobs:
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        
-        ~/miniconda3/bin/conda init bash &&
-        source ~/.bashrc &&
-        source activate base &&
-        conda install cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
     displayName: Install dependencies
 
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
