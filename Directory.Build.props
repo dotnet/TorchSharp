@@ -87,6 +87,7 @@
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
     <LibTorchPackageVersion>2.2.1.1</LibTorchPackageVersion>
+    <PreviousPackageVersion>2.2.1.1</PreviousPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
