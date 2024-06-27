@@ -126,13 +126,13 @@ jobs:
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build linux
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -169,13 +169,13 @@ jobs:
     displayName: Download libtorch native CUDA binaries
 
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build Windows
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -198,13 +198,13 @@ jobs:
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build mac-x64
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -387,8 +387,11 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
+  - script: dotnet restore pkg/pack.proj /p:Configuration=Release
+    displayName: Restore package projects
+
   # Pack TorchSharp (and libtorch-cpu if BuildLibTorchPackages is true)
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) pkg/pack.proj
     displayName: Create Packages
 
   - script: rmdir /q /s bin\obj
@@ -444,7 +447,10 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet restore pkg/pack.proj /p:Configuration=Release
+    displayName: Restore package projects
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -515,7 +521,10 @@ jobs:
   - script: rm -fr  $(Pipeline.Workspace)/LinuxAssets
     displayName: Free up space (linux assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet restore pkg/pack.proj /p:Configuration=Release
+    displayName: Restore package projects
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can

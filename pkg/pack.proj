@@ -13,15 +13,16 @@
     <PackProject Include="**\TorchSharp-cuda-windows.nupkgproj" />
     <PackProject Include="**\TorchVision.nupkgproj" />
   </ItemGroup>
-  <Target Name="Pack">
+  <Target Name="Restore">
     <Message Text="Restoring packaging projects..." Importance="high" />
-
-    <Warning Text="Packages will be incomplete and unusable on linux platforms. To get a complete package you need the LibTorchSharp.so binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines." 
+    <MSBuild Projects="%(PackProject.Identity)" Targets="Restore" />
+  </Target>
+  <Target Name="Pack" DependsOnTargets="Restore">
+    <Warning Text="Packages will be incomplete and unusable on linux platforms. To get a complete package you need the LibTorchSharp.so binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines."
              Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\linux-x64\native\libLibTorchSharp.so')" />
-    <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines." 
+    <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines."
              Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\win-x64\native\LibTorchSharp.dll')" />
 
-    <MSBuild Projects="%(PackProject.Identity)" Targets="Restore" />
     <MSBuild Projects="%(PackProject.Identity)" Targets="Pack" />
 
     <Message Text="Done packing!" Importance="high" />
