@@ -1,6 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -12,6 +15,70 @@ namespace TorchSharp
     [Collection("Sequential")]
     public class TestTorch
     {
+        [Fact]
+        public void FInfoTest()
+        {
+            static void AssertScalarEqual(Tensor expected, Tensor actual)
+            {
+                Assert.Equal((double)expected, (double)actual);
+            }
+            static void AssertScalarNotEqual(Tensor expected, Tensor actual)
+            {
+                Assert.NotEqual((double)expected, (double)actual);
+            }
+
+            var floatingTypes = new[] {
+                ScalarType.Float16, ScalarType.Float32, ScalarType.Float64, ScalarType.BFloat16
+            };
+            foreach (var scalarType in floatingTypes) {
+                var info = finfo(scalarType);
+
+                var zeroPointFour = tensor(0.4, scalarType);
+                var zeroPointNine = tensor(0.9, scalarType);
+                var one = tensor(1, scalarType);
+                var zero = tensor(1, scalarType);
+                Assert.Equal(one.dtype.ElementSize() * 8, info.bits);
+                
+                var eps = tensor(info.eps, scalarType);
+                AssertScalarNotEqual(one, one + eps);
+                AssertScalarEqual(one + eps, one + eps * zeroPointNine);
+                AssertScalarEqual(one, one + eps * zeroPointFour);
+
+                var max = tensor(info.max, scalarType);
+                AssertScalarEqual(max, max + eps);
+
+                var min = tensor(info.min, scalarType);
+                AssertScalarEqual(-max, min);
+                AssertScalarEqual(min, min - eps);
+
+                var tiny = tensor(info.tiny, scalarType);
+                // not sure how to test for tiny.
+
+                var smallest_normal = tensor(info.smallest_normal, scalarType);
+                AssertScalarEqual(tiny, smallest_normal);
+
+                var resolution = tensor(info.resolution, scalarType);
+                // not sure how to test for resolution.
+            }
+
+            var complexTypes = new[] {
+                (ScalarType.ComplexFloat32, ScalarType.Float32),
+                (ScalarType.ComplexFloat64, ScalarType.Float64)
+            };
+            foreach (var (complex, floating) in complexTypes) {
+                var c = finfo(complex);
+                var f = finfo(floating);
+
+                Assert.Equal(f.bits, c.bits);
+                Assert.Equal(f.eps, c.eps);
+                Assert.Equal(f.max, c.max);
+                Assert.Equal(f.min, c.min);
+                Assert.Equal(f.tiny, c.tiny);
+                Assert.Equal(f.smallest_normal, c.smallest_normal);
+                Assert.Equal(f.resolution, c.resolution);
+            }
+        }
+
         [Fact]
         public void EnumEquivalence()
         {
@@ -231,6 +298,110 @@ namespace TorchSharp
 
             Assert.Equal(data.shape, data1.shape);
             Assert.Equal(data, data1);
+        }
+
+        [Fact]
+        public void UtilsFusion()
+        {
+            static void SetRandomParameter<T>(
+                T module,
+                Expression<Func<T, Modules.Parameter>> parameterProperty)
+            {
+                var propertyExpression = (MemberExpression)parameterProperty.Body;
+                var property = (PropertyInfo)propertyExpression.Member;
+                var parameter = (Modules.Parameter)property.GetValue(module)!;
+                var randomTensor = rand_like(
+                    parameter,
+                    parameter.dtype,
+                    parameter.device) * 100;
+                var newParameter = new Modules.Parameter(randomTensor, parameter.requires_grad);
+                property.SetValue(module, newParameter);
+            }
+
+            static void SetRandomTensor<T>(
+                T module,
+                Expression<Func<T, Tensor>> tensorProperty)
+            {
+                var propertyExpression = (MemberExpression)tensorProperty.Body;
+                var property = (PropertyInfo)propertyExpression.Member;
+                var tensor = (Tensor)property.GetValue(module)!;
+                var newTensor = rand_like(
+                    tensor,
+                    tensor.dtype,
+                    tensor.device,
+                    tensor.requires_grad) * 100;
+                property.SetValue(module, newTensor);
+            }
+
+            static void AssertRelativelyEqual(
+                Tensor expected, Tensor actual, double tolerance = 1e-5)
+            {
+                Assert.Equal(expected.size(), actual.size());
+                var difference = (expected - actual) / expected;
+                var maxDifference = (double)difference.abs().max();
+                Assert.InRange(maxDifference, -tolerance, tolerance);
+            }
+
+            {
+                // linear
+                var x = rand(new long[] { 20, 20 }) * 100;
+
+                var linear = nn.Linear(20, 5);
+                linear.eval();
+                SetRandomParameter(linear, x => x.weight!);
+                SetRandomParameter(linear, x => x.bias!);
+
+                var batchNorm1d = nn.BatchNorm1d(5, eps: 1);
+                batchNorm1d.eval();
+                SetRandomParameter(batchNorm1d, x => x.weight!);
+                SetRandomParameter(batchNorm1d, x => x.bias!);
+                SetRandomTensor(batchNorm1d, x => x.running_mean!);
+                SetRandomTensor(batchNorm1d, x => x.running_var!);
+
+                (var weight, var bias) = nn.utils.fuse_linear_bn_weights(
+                    linear.weight!, linear.bias,
+                    batchNorm1d.running_mean!, batchNorm1d.running_var!,
+                    bn_eps: 1, batchNorm1d.weight!, batchNorm1d.bias!);
+
+                var newLinear = nn.Linear(20, 5);
+                newLinear.eval();
+                newLinear.weight = weight;
+                newLinear.bias = bias;
+
+                AssertRelativelyEqual(
+                    batchNorm1d.call(linear.call(x)),
+                    newLinear.call(x));
+            }
+
+            {
+                // conv
+                var x = rand(new long[] { 20, 20, 20, 20 }) * 100;
+                var conv = nn.Conv2d(20, 5, 3);
+                conv.eval();
+                SetRandomParameter(conv, x => x.weight!);
+                SetRandomParameter(conv, x => x.bias!);
+
+                var batchNorm2d = nn.BatchNorm2d(5, eps: 13);
+                batchNorm2d.eval();
+                SetRandomParameter(batchNorm2d, x => x.weight!);
+                SetRandomParameter(batchNorm2d, x => x.bias!);
+                SetRandomTensor(batchNorm2d, x => x.running_mean!);
+                SetRandomTensor(batchNorm2d, x => x.running_var!);
+
+                (var weight, var bias) = nn.utils.fuse_conv_bn_weights(
+                    conv.weight!, conv.bias,
+                    batchNorm2d.running_mean!, batchNorm2d.running_var!,
+                    bn_eps: 13, batchNorm2d.weight!, batchNorm2d.bias!);
+
+                var newConv = nn.Conv2d(20, 5, 3);
+                newConv.eval();
+                newConv.weight = weight;
+                newConv.bias = bias;
+
+                AssertRelativelyEqual(
+                    batchNorm2d.call(conv.call(x)),
+                    newConv.call(x));
+            }
         }
 
         [Fact(Skip = "Intermittently fails")]

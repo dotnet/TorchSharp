@@ -60,23 +60,23 @@ namespace TorchSharp
 
             private bool _registered = false;
 
-            protected internal override Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
             {
-                base._to(deviceType, deviceIndex);
+                base._to(deviceType, deviceIndex, non_blocking);
                 _toEpilog();
                 return this;
             }
 
-            protected internal override Module _to(torch.Device device, torch.ScalarType dtype)
+            protected internal override Module _to(torch.Device device, torch.ScalarType dtype, bool non_blocking)
             {
-                base._to(device, dtype);
+                base._to(device, dtype, non_blocking);
                 _toEpilog();
                 return this;
             }
 
-            protected internal override Module _to(torch.ScalarType dtype)
+            protected internal override Module _to(torch.ScalarType dtype, bool non_blocking)
             {
-                base._to(dtype);
+                base._to(dtype, non_blocking);
                 _toEpilog();
                 return this;
             }

@@ -1,20 +1,19 @@
 
 # Building
 
+## Windows
+
+Requirements:
+- Visual Studio 2022, fully updated with C/C++ desktop development and Windows SDK installed
+- git
+- cmake (tested with 3.18)
+
+From a VS 'x64 Native Tools' command prompt, build with:
+
     dotnet build /p:SkipNative=true
     dotnet build  # for cuda support on Windows and Linux
     dotnet test
     dotnet pack
-
-## Windows
-
-Requirements:
-- Visual Studio
-- git
-- cmake (tested with 3.18)
-
-__NOTE:__ At this moment, VS versions 17.4.X will not build the native code library. Use 17.3.X until further notice. See: https://github.com/dotnet/TorchSharp/issues/858 for more information.
-
 
 ## Linux
 
@@ -34,6 +33,10 @@ sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
 
 Commands:
 
+    dotnet build /p:SkipNative=true
+    dotnet build  # for cuda support on Windows and Linux
+    dotnet test
+
 ## Mac
 
 Requirements:
@@ -44,7 +47,8 @@ Requirements:
 
 Build with
 
-    dotnet build /p:SkipNative=true
+    dotnet build
+    dotnet test
 
 ## Packages
 
@@ -145,32 +149,34 @@ For this reason, we do the following
 This project grabs LibTorch and makes a C API wrapper for it, then calls these from C#. When updating to a newer
 version of PyTorch then quite a lot of careful work needs to be done.
 
-0. Make sure you have plenty of disk space, e.g. 15GB
+0. Make sure you have plenty of disk space, e.g. 15GB. 
 
-0. Clean and reset to main
+1. Clean and reset to main
 
        git checkout main
        git clean -xfd .
 
-1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
+2. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-   For example Linux, LibTorch 2.0.1 CPU download uses the link:
+   For example Linux, LibTorch 2.2.0 CPU download uses the link:
 
-       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-2.0.1%2Bcpu.zip
+       https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.2.0%2Bcpu.zip
 
    Don't download anything yet, or manually. The downloads are acquired automatically in step 2.
    
    To update the version, update this in [Dependencies.props](build/Dependencies.props):
 
-       <LibTorchVersion>2.0.1</LibTorchVersion>
+       <LibTorchVersion>2.2.0</LibTorchVersion>
 
     The libtorch version number is also referenced in source code, in the file 'src/TorchSharp/Torch.cs':
 
     ```C#
-    const string libtorchPackageVersion = "2.0.1.1";
+    const string libtorchPackageVersion = "2.2.0.1";
     ```
 
-2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
+3. Run these to test downloads and update SHA hashes for the various LibTorch downloads
+
+On Windows:
 
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
@@ -181,23 +187,33 @@ version of PyTorch then quite a lot of careful work needs to be done.
         dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
         dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
 
+On Linux / Mac:
+
+        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
+        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
+        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true 
+        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
+
+        dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
+
+
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
    If file names in the distribution have changed, or files have been removed, you will get errors saying that files cannot be found. That's okay and will be taken care of in the next step.
 
-3. At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
+4. At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
    [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj).
 
    This is the step in the upgrade process that takes the most effort and time. It requires extreme care.
 
    Check the contents of the unzip of the archive, e.g.
 
-       bin\obj\x64.Debug\libtorch-cpu\libtorch-shared-with-deps-2.0.1\libtorch\lib
+       dir bin\obj\x64.Release\libtorch-cpu\libtorch-cxx11-abi-shared-with-deps-2.2.0cpu\libtorch\lib\*.so*
 
-   You may also need to precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB. The NuGet gallery does not allow packages larger than 250MB, so if files are
-   300MB, after compression, they are likely to be smaller than 250MB. However, you have to look out: if the compression is poor, then packages may end up larger. Note that it is 250 million
-   bytes that is the limit, **not** 250*1024*1024. In other words, it is 250 MB, not 250 MiB. Note that Windows Explorer will show file sizes in KiB, not thousands of bytes. Use 'dir' from a CMD window to get the
-   exact size in bytes for each file. For example -- the file `libtorch_cpu.so` shows up as 511,872 KB in Windows Explorer, but 524,156,144 bytes in CMD. The 2.4% difference can be significant.
+   You may also need to precisely refactor the binaries into multiple parts so each package ends up under ~300MB. Before release 2.2.0 of libtorch, this really only affected the CUDA packagages, but it is now also affecting the CPU packages on Linux and OSX. Windows CPU is still small enough to be contained in just one package. The NuGet gallery does not allow packages larger than 250MB, so if files are 300MB, after compression, they are likely to be smaller than 250MB. However, you have to look out: if the compression is poor, then packages may end up larger. Note that it is 250 million
+   bytes that is the limit, **not** 250*1024*1024. In other words, it is 250 MB, not 250 MiB. Note that Windows Explorer will show file sizes in KiB, not thousands of bytes. Use 'dir' from a CMD window to get the exact size in bytes for each file. For example -- the file `libtorch_cpu.so` shows up as 511,872 KB in Windows Explorer, but 524,156,144 bytes in CMD. The 2.4% difference can be significant. Getting the partitioning right requires precision. 
 
    If the combined size of the files going into a part is smaller than 250MB, then everything is fine, and there is no need to split the part. It can be singular. If that is not the case, then the part should be fragmented into two or more parts that are linked together by their names.
 
@@ -237,14 +253,14 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Once you have carefully edited the parts and the files that go into them, clean the build directory and re-issue the libtorch downloads commands until there are no errors.
 
-4. Add the SHA files:
+5. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
        git add src\Redist\libtorch-cuda-12.1\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 
-5. Build the native and managed code without CUDA
+6. Build the native and managed code without CUDA
 
        dotnet build /p:SkipCuda=true
 
@@ -263,18 +279,18 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
        bin\obj\x64.Debug\Native\LibTorchSharp\LibTorchSharp.vcxproj
 
-6. Similarly build the native code with CUDA
+7. Similarly build the native code with CUDA
 
        dotnet build
 
-7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in `TorchSharp\Directory.Build.targets`.
+8. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in `TorchSharp\Directory.Build.targets`.
 
-8. Run tests
+9. Run tests
 
        dotnet test -c Debug
        dotnet test -c Release
 
-9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
+10. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
        <LibTorchPackageVersion>2.0.1.1</LibTorchPackageVersion>
@@ -286,9 +302,9 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 	**Note:** The locally built TorchSharp packages will only contain binaries for the local platform, so they cannot be used with other platforms. Therefore, only the packages built in Azure Pipelines can be used across platforms.
 
-10. Submit to CI and debug problems.
+11. Submit to CI and debug problems.
 
-11. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
+12. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
 
 
 ## Building with Visual Studio

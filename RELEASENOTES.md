@@ -2,6 +2,117 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.102.6
+
+__Breaking Changes__:
+
+When creating a tensor from a 1-D array, and passing in a shape, there is now an ambiguity between the IList and Memory overloads of `torch.tensor()`. The ambiguity is resolved by removing the `dimensions` argument if it is redundant, or by an explicit cast to IList if it is not.
+
+__API Changes__:
+
+ #1326 Allow arrays used to create tensors to be larger than the tensor. Create tensors from a Memory instance.<br/>
+
+__Bug Fixes__:
+
+#1334 MultivariateNormal.log_prob() exception in TorchSharp but works in pytorch.<br/>
+
+# NuGet Version 0.102.5
+
+__Breaking Changes__:
+
+`torchvision.dataset.MNIST` will try more mirrors. The thrown exception might be changed when it fails to download `MNIST`, `FashionMNIST` or `KMNIST`.<br/>
+`ObjectDisposedException` will now be thrown when trying to use a disposed dispose scopes.<br/>
+The constructor of dispose scopes is no longer `public`. Use `torch.NewDisposeScope` instead.<br/>
+
+__API Changes__:
+
+#1317 How to set default device type in torchsharp.<br/>
+#1314 Grant read-only access to DataLoader attributes<br/>
+#1313 Add 'non_blocking' argument to tensor and module 'to()' signatures.<br/>
+#1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.<br/>
+A potential memory leak caused by `set_grad` has been resolved.<br/>
+`Include` method of dispose scopes has been removed. Use `Attach` instead.<br/>
+Two more `Attach` methods that accepts `IEnumerable<IDisposable>`s and arrays as the parameter have been added into dispose scopes.<br/>
+A new property `torch.CurrentDisposeScope` has been added to provide the ability to get the current dispose scope.<br/>
+Add module hooks that take no input/output arguments, just the module itself.<br/>
+
+__Bug Fixes__:
+
+#1300 `Adadelta`, `Adam` and `AdamW` will no longer throw `NullReferenceException` when `maximize` is `true` and `grad` is `null`.<br/>
+torch.normal` will now correctly return a leaf tensor.<br/>
+New options `disposeBatch` and `disposeDataset` have been added into `DataLoader`.<br/>
+The default collate functions will now always dispose the intermediate tensors, rather than wait for the next iteration.<br/>
+
+__Bug Fixes__:
+
+`TensorDataset` will now keep the aliases detached from dispose scopes, to avoid the unexpected disposal.<br/>
+`DataLoaderEnumerator` has been completely rewritten to resolve the unexpected shuffler disposal, the ignorance of `drop_last`, the incorrect count of worker, and the potential leak cause by multithreading.<br/>
+#1303 Allow dispose scopes to be disposed out of LIFO order.<br/>
+
+# NuGet Version 0.102.4
+
+__Breaking Changes__:
+
+Correct `torch.finfo`. (`torch.set_default_dtype`, `Categorical.entropy`, `_CorrCholesky.check`, `Distribution.ClampProbs`, `FisherSnedecor.rsample`, `Gamma.rsample`, `Geometric.rsample`, `distributions.Gumbel`, `Laplace.rsample`, `SigmoidTransform._call` and `SigmoidTransform._inverse` are influenced.)<br/>
+
+__API Changes__:
+
+#1284 make `torch.unique` and `torch.unique_consecutive` public.<br/>
+
+# NuGet Version 0.102.3
+
+__Breaking Changes__:
+
+The 'paddingMode' parameter of convolution has been changed to 'padding_mode', and the 'outputPadding' is now 'output_padding'.
+
+__API Changes__:
+
+#1243 `fuse_conv_bn_weights` and `fuse_linear_bn_weights` are added.<br/>
+#1274 ConvTranspose3d does not accept non-uniform kernelSize/stride values<br/>
+
+
+# NuGet Version 0.102.2
+
+__Bug Fixes__:
+
+#1257 InverseMelScale in NewDisposeScope doesn't dispose tensors<br/>
+
+# NuGet Version 0.102.1
+
+__Breaking Changes__:
+
+The `kernelSize` parameter in the function and class of `AvgPool1D` was renamed to `kernel_size` to match PyTorch naming.
+The `stride` parameter in the `torch.nn.functional.avg_pool1d` call now defaults to `kernelSize` instead of 1, to match the PyTorch behavior.
+
+
+__Bug Fixes__:
+
+`module.load_state_dict()` throws error for in-place operation on a leaf variable that requires grad. <br/>
+#1250 cstr and npstr for 0d tensors <br/>
+#1249 torch.nn.functional.avg_pool1d is not working correctly<br/>
+`module.load()` with streams which don't read the requested # of bytes throws error. <br/>
+ #1246 Issue running in notebook on Apple Silicon<br/>
+
+## NuGet Version 0.102.0
+
+This release upgrades the libtorch backend to v2.2.1.
+
+__Breaking Changes__:
+
+The Ubuntu builds are now done on a 22.04 version of the OS. This may (or may not) affect TorchSharp use on earlier versions.<br/>
+The default value for the `end_factor` argument in the constructor for `LinearLR` was changed to 1.0 to match PyTorch.<br/>
+Any code that checks whether a device is 'CUDA' and does something rather than checking that it isn't 'CPU' will now fail to work, since there is now support for the 'MPS' device on MacOS.<br/>
+
+__API Changes__:
+
+#652: Apple Silicon support .<br/> 
+#1219: Added support for loading and saving tensors that are >2GB.<br/> 
+
+__Bug Fixes__:
+
+Fixed LinearLR scheduler calculation with misplaced parentheses<br/>
+Added `get_closed_form_lr` to scheduler to match PyTorch behavior when specifying epoch in `.step()`<br/>
+
 ## NuGet Version 0.101.6
 
 __API Changes__:

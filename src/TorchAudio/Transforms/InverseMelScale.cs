@@ -74,6 +74,8 @@ namespace TorchSharp
             /// <exception cref="ArgumentException"></exception>
             public override Tensor forward(Tensor melspec)
             {
+                using var d = torch.NewDisposeScope();
+
                 // pack batch
                 var shape = melspec.size();
                 melspec = melspec.view(-1, shape[shape.Length - 2], shape[shape.Length - 1]);
@@ -95,6 +97,8 @@ namespace TorchSharp
 
                 var loss = float.PositiveInfinity;
                 for (long i = 0; i < this.max_iter; i++) {
+                    using var d2 = torch.NewDisposeScope();
+
                     optim.zero_grad();
                     var diff = melspec - specgram.matmul(this.fb);
                     var new_loss = diff.pow(2).sum(dim: -1).mean();
@@ -119,7 +123,7 @@ namespace TorchSharp
                 shape[shape.Length - 2] = freq;
                 shape[shape.Length - 1] = time;
                 specgram_tensor = specgram_tensor.view(shape);
-                return specgram_tensor;
+                return specgram_tensor.MoveToOuterDisposeScope();
             }
         }
     }

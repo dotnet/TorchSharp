@@ -41,7 +41,7 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.mps_is_available() ? torch.MPS : torch.CPU;
             Console.WriteLine($"Running MNIST on {device.type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
 
@@ -121,7 +121,7 @@ namespace TorchSharp.Examples
             {
                 RegisterComponents();
 
-                if (device != null && device.type == DeviceType.CUDA)
+                if (device != null && device.type != DeviceType.CPU)
                     this.to(device);
             }
 

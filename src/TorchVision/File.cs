@@ -48,7 +48,8 @@ namespace TorchSharp
             /// <param name="data">One dimensional <c>uint8</c> <cref>Tensor</cref>.</param>
             public static void write_file(string filename, Tensor data)
             {
-                File.WriteAllBytes(filename, data.bytes.ToArray());
+                using var stream = File.OpenWrite(filename);
+                data.WriteBytesToStream(stream);
             }
 
             /// <summary>

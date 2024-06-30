@@ -59,7 +59,7 @@ while [ "$1" != "" ]; do
 done
 
 # Force the build to be release since libtorch is in release.
-__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath}"
+__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath} -DLIBTORCH_ARCH=${__build_arch}"
 
 __IntermediatesDir="$__baseIntermediateOutputPath/$__build_arch.$__configuration/Native"
 __BinDir="$__rootBinPath/$__build_arch.$__configuration/Native"
@@ -68,19 +68,18 @@ mkdir -p "$__BinDir"
 mkdir -p "$__IntermediatesDir"
 
 # Set up the environment to be used for building with clang.
-if command -v "clang-6.0" > /dev/null 2>&1; then
+if command -v "clang-7.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-7.0)"
+    export CXX="$(command -v clang++-7.0)"
+elif command -v "clang-6.0" > /dev/null 2>&1; then
     export CC="$(command -v clang-6.0)"
     export CXX="$(command -v clang++-6.0)"
 elif command -v "clang-5.0" > /dev/null 2>&1; then
     export CC="$(command -v clang-5.0)"
     export CXX="$(command -v clang++-5.0)"
-elif command -v clang > /dev/null 2>&1; then
+else
     export CC="$(command -v clang)"
     export CXX="$(command -v clang++)"
-else
-    echo "Unable to find Clang Compiler"
-    echo "Install clang-6.0 or clang-5.0"
-    exit 1
 fi
 
 # Specify path to be set for CMAKE_INSTALL_PREFIX.
@@ -96,7 +95,7 @@ OSName=$(uname -s)
 case $OSName in
     Darwin)
         
-        # PyTorch is specifyin options that require OpenMP support but AppleClang's  OpenMP support is lacking e.g. -fopenmp not supported
+        # PyTorch is specifying options that require OpenMP support but AppleClang's  OpenMP support is lacking e.g. -fopenmp not supported
         # See    https://github.com/oneapi-src/oneDNN/issues/591 for this potential workaround, though it may be better
         # to switch to brew clang.
         #LIBOMP=/usr/local/opt/libomp
@@ -112,7 +111,12 @@ esac
 cd "$__IntermediatesDir"
 
 echo "Building Machine Learning native components from $DIR to $(pwd)"
+cmake --version
 set -x # turn on trace
 cmake "$DIR" -G "Unix Makefiles" $__cmake_defines
 set +x # turn off trace
-make install
+
+if [ ! -f .install.guard ]; then
+    make install
+    touch .install.guard
+fi

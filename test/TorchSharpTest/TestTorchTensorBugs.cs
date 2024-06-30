@@ -18,6 +18,7 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+using System.IO.Compression;
 
 #nullable enable
 
@@ -570,10 +571,10 @@ namespace TorchSharp
                 loss.backward();
                 optimizer.step();
 
-                var grad1 = optimizer.parameters().ToArray()[0].grad();
+                var grad1 = optimizer.parameters().ToArray()[0].grad;
                 Assert.NotNull(grad1);
 
-                var grad2 = model.Weight.grad();
+                var grad2 = model.Weight.grad;
                 Assert.NotNull(grad2);
             }
         }
@@ -1026,7 +1027,7 @@ namespace TorchSharp
             public GitTestCnn(string name, Device? device = null) : base(name)
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
-                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), paddingMode: PaddingModes.Replicate, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
                 layers0 = Sequential(modules);
 
                 RegisterComponents();
@@ -1197,7 +1198,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1216,7 +1217,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1234,7 +1235,7 @@ namespace TorchSharp
 
             example.backward();
 
-            var grads = x1.grad();
+            var grads = x1.grad;
             Assert.True(x1.requires_grad);
             Assert.NotNull(grads);
         }
@@ -1252,7 +1253,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1271,7 +1272,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1290,7 +1291,7 @@ namespace TorchSharp
 
                 example.backward();
 
-                var grads = x1.grad();
+                var grads = x1.grad;
                 Assert.True(x1.requires_grad);
                 Assert.NotNull(grads);
             }
@@ -1516,14 +1517,14 @@ namespace TorchSharp
                 // Build graph 1 on CUDA
                 torch.nn.functional.mse_loss(module.forward(torch.rand(10).cuda()), torch.rand(10).cuda()).backward();
 
-                Assert.Equal(DeviceType.CUDA, module.ln.weight!.grad()!.device_type);
-                Assert.Equal(DeviceType.CUDA, module.p.grad()!.device_type);
+                Assert.Equal(DeviceType.CUDA, module.ln.weight!.grad!.device_type);
+                Assert.Equal(DeviceType.CUDA, module.p.grad!.device_type);
 
                 // Move to CPU
                 module.to(torch.CPU);
 
-                Assert.Equal(DeviceType.CPU, module.ln.weight!.grad()!.device_type);
-                Assert.Equal(DeviceType.CPU, module.p.grad()!.device_type);
+                Assert.Equal(DeviceType.CPU, module.ln.weight!.grad!.device_type);
+                Assert.Equal(DeviceType.CPU, module.p.grad!.device_type);
 
                 // Build graph 2 on CPU.
                 // This should've crashed, saying something about the gradients being on the wrong device.
@@ -1544,7 +1545,7 @@ namespace TorchSharp
                     var resultBatch = rand(32, 1).to(aDevice);
                     aModule.to(aDevice);
                     foreach (var (name, p) in aModule.named_parameters()) {
-                        Console.WriteLine($"{name} {p.device} {p.grad()}");
+                        Console.WriteLine($"{name} {p.device} {p.grad}");
                     }
                     var aMseLoss = nn.MSELoss();
                     var optimizer = torch.optim.AdamW(aModule.parameters());
@@ -1569,7 +1570,7 @@ namespace TorchSharp
                     aModule.to(aDevice);
                     aModule.zero_grad();
                     foreach (var (name, p) in aModule.named_parameters()) {
-                        Console.WriteLine($"{name} {p.device} {p.grad()}");
+                        Console.WriteLine($"{name} {p.device} {p.grad}");
                     }
                     var aMseLoss = nn.MSELoss();
                     var optimizer = torch.optim.AdamW(aModule.parameters());
@@ -1599,19 +1600,86 @@ namespace TorchSharp
 
             module.zero_grad();
 
-            Assert.Null(module.p.grad());
-            Assert.Null(module.ln.weight!.grad());
-            Assert.Null(module.ln.bias!.grad());
+            Assert.Null(module.p.grad);
+            Assert.Null(module.ln.weight!.grad);
+            Assert.Null(module.ln.bias!.grad);
 
             // Build graph again, this time convert gradients to zero
             torch.nn.functional.mse_loss(module.forward(torch.rand(10)), torch.rand(10)).backward();
 
             module.zero_grad(false);
 
-            Assert.NotNull(module.p.grad());
-            Assert.NotNull(module.ln.weight!.grad());
-            Assert.NotNull(module.ln.bias!.grad());
+            Assert.NotNull(module.p.grad);
+            Assert.NotNull(module.ln.weight!.grad);
+            Assert.NotNull(module.ln.bias!.grad);
             
+        }
+
+        [Fact]
+        public void ValidateLinearLR()
+        {
+            var lin = Linear(5, 5, hasBias: false);
+            var optim = torch.optim.SGD(lin.parameters(), 0.05);
+            var scheduler = torch.optim.lr_scheduler.LinearLR(optim, 0.5, 1.0, 4);
+
+            Assert.Equal(0.025, Math.Round(scheduler.get_last_lr().First(), 3));
+            scheduler.step();
+            Assert.Equal(0.03125, Math.Round(scheduler.get_last_lr().First(), 5));
+            scheduler.step();
+            Assert.Equal(0.0375, Math.Round(scheduler.get_last_lr().First(), 4));
+            scheduler.step();
+            Assert.Equal(0.04375, Math.Round(scheduler.get_last_lr().First(), 5));
+            scheduler.step();
+            Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
+            scheduler.step();
+            Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
+        }
+
+        [Fact]
+        public void Validate_1249()
+        {
+            var x = torch.zeros(5, 7, 128);
+            Console.WriteLine(x.metastr());
+            // [5x7x128], type = Float32, device = cpu
+
+            var y1 = torch.nn.functional.avg_pool1d(x, 2);
+            Console.WriteLine(y1.metastr());
+            Assert.Equal(64, y1.size(-1));
+            
+            var y2 = torch.nn.AvgPool1d(2).call(x);
+            Console.WriteLine(y2.metastr());
+            Assert.Equal(64, y1.size(-1));
+        }
+
+        [Fact]
+        public void Validate_1250()
+        {
+            Assert.Equal("[]", torch.zeros(0).npstr());
+            Assert.Equal("[0]", torch.zeros(1).npstr());
+            Assert.Equal("[0], type = Float32, device = cpu, value = float [] {}", torch.zeros(0).cstr());
+            Assert.Equal("[1], type = Float32, device = cpu, value = float [] {0f}", torch.zeros(1).cstr());
+        }
+
+        [Fact]
+        public void ValidateLoadWithDeflateStream()
+        {
+#if NET6_0_OR_GREATER
+            var seq = Sequential(Linear(100, 100), Linear(100, 100));
+
+            var ms = new MemoryStream();
+            using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true)) {
+                var entry = archive.CreateEntry("seq");
+
+                using (var stream = entry.Open())
+                    seq.save(stream);
+            }
+
+            // This test will succeed if the following code doesn't crash. 
+            ms.Position = 0;
+            using (var archive = new ZipArchive(ms)) {
+                seq.load(archive.GetEntry("seq")!.Open());
+            }
+#endif
         }
     }
 }

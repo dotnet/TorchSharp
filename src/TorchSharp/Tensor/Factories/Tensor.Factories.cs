@@ -116,7 +116,8 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor normal(double mean, double std, ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
-            return randn(size, dtype: dtype, device: device, requires_grad: requires_grad, generator: generator) * std + mean;
+            return randn(size, dtype, device, requires_grad: false, generator, names)
+                .mul_(std).add_(mean).requires_grad_(requires_grad);
         }
 
         /// <summary>
@@ -133,7 +134,7 @@ namespace TorchSharp
         /// <returns>A constructed tensor with elements of `dtype`</returns>
         /// <exception cref="ArgumentException"></exception>
         private static Tensor _tensor_generic(Array rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requires_grad, bool clone = true, string[]? names = null)
-        {
+        {           
             {
                 // Validate the sizes before handing over storage to native code...
                 var prod = 1L;
@@ -142,7 +143,7 @@ namespace TorchSharp
                 if (origType == (sbyte)ScalarType.ComplexFloat32)
                     prod *= 2;
 
-                if (prod != rawArray.LongLength)
+                if (prod > rawArray.LongLength)
                     throw new ArgumentException($"mismatched total size creating a tensor from an array: {prod} vs. {rawArray.LongLength}");
             }
 
@@ -163,6 +164,68 @@ namespace TorchSharp
             dtype = dtype.HasValue ? dtype : (ScalarType)origType;
 
             unsafe {
+                void *ptr = null;
+                IntPtr iPtr = (IntPtr)ptr;
+
+                fixed (long* shape = dimensions) {
+                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                    }
+
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
+                    var tensor = new Tensor(handle);
+
+                    if (names != null && names.Length > 0) {
+                        tensor.rename_(names);
+                    }
+
+                    return tensor;
+                }
+            }
+        }
+
+        private static Tensor _tensor_generic<T>(Memory<T> rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requires_grad, bool clone = true, string[]? names = null)
+        {           
+            if (clone) 
+            { 
+                return _tensor_generic(rawArray.ToArray(), dimensions, origType, dtype, device, requires_grad, false, names); 
+            }
+
+            {
+                // Validate the sizes before handing over storage to native code...
+                var prod = 1L;
+                foreach (var sz in dimensions) prod *= sz;
+
+                if (origType == (sbyte)ScalarType.ComplexFloat32)
+                    prod *= 2;
+
+                if (prod > rawArray.Length)
+                    throw new ArgumentException($"mismatched total size creating a tensor from an array: {prod} vs. {rawArray.Length}");
+            }
+
+            device = InitializeDevice(device);
+
+            dtype = dtype.HasValue ? dtype : (ScalarType)origType;
+
+            unsafe {
+
+                var dataHandle = rawArray.Pin();
+                var dataArrayAddr = (IntPtr)dataHandle.Pointer;
+                
+                TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
+                deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
+                    dataHandle.Dispose();
+                    deleters.TryRemove(deleter, out deleter!);
+                });
+                deleters.TryAdd(deleter, deleter); // keep the delegate alive
+
+                void *ptr = null;
+                IntPtr iPtr = (IntPtr)ptr;
+                
                 fixed (long* shape = dimensions) {
                     var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
 
@@ -527,11 +590,8 @@ namespace TorchSharp
                     throw new NotImplementedException("Loading tensors larger than 2GB");
 
                 var tensor = torch.empty(loadedShape, dtype: type);
-
-                var bytes = reader.ReadBytes((int)(totalSize * type.ElementSize()));
-
-                tensor.bytes = bytes;
-
+                tensor.ReadBytesFromStream(reader.BaseStream);
+                
                 return tensor;
             }
 
@@ -587,6 +647,7 @@ namespace TorchSharp
 
         private static ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter> deleters;
         private static ScalarType default_dtype = ScalarType.Float32;
+        private static Device default_device = new Device(DeviceType.CPU, -1);
 
         static torch()
         {

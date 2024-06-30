@@ -218,7 +218,7 @@ namespace TorchSharp
                 var old_batch_dims = outer_batch_dims + bL_batch_dims;
                 var new_batch_dims = outer_batch_dims + 2 * bL_batch_dims;
 
-                var bx_new_shape = TakeAllBut(bx.shape, outer_batch_dims).ToList();
+                var bx_new_shape = bx.shape.Take(outer_batch_dims).ToList();
 
                 for (int i = 0; i < bL.ndim - 2; i++) {
                     var sL = bL.shape[i];

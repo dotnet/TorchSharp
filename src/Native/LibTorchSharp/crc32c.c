@@ -30,12 +30,15 @@
 // Per #2 in the copyright notice above:
 // 
 // The definition of 'NONMINMAX' below was altered from the original.
+// cpuid.h and x86intrin.h are only included if we're on x86 or x64, fixing arm builds.
 
 //#define NOMINMAX
 
 #ifdef CRC32C_GCC
+#if defined(__x86_64__) || defined(__i386__)
 #include <cpuid.h>
 #include <x86intrin.h>
+#endif
 #else
 #include <intrin.h>
 #endif

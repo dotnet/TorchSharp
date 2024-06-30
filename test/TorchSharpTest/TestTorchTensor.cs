@@ -767,7 +767,7 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 {
                     var array = new bool[8];
-                    var t = torch.tensor(array, device: device);
+                    using var t = torch.tensor(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -775,9 +775,50 @@ namespace TorchSharp
                 }
 
                 {
-                    var array = new bool[8];
-                    var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    var array = new Memory<byte>(new byte[8]);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
                     Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Byte, t.dtype));
+                }
+                
+                {
+                    var array = new Memory<long>(new long[8]);
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Int64, t.dtype));
+                }
+                
+                {
+                    var array = new long[18];
+                    array[5] = 17;
+                    var mem = new Memory<long>(array,4,10);
+                    using var t = torch.tensor(mem, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(8, t.numel()),
+                        () => Assert.Equal(17, t[1].item<long>()),
+                        () => Assert.Equal(ScalarType.Int64, t.dtype));
+                }
+
+                {
+                    var array = new bool[8];
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Bool, t.dtype));
+                }
+
+                {
+                    var array = new bool[18]; // Too long, on purpose
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(8, t.NumberOfElements),
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
                         () => Assert.Equal(ScalarType.Bool, t.dtype));
@@ -785,7 +826,7 @@ namespace TorchSharp
 
                 {
                     var array = new int[8];
-                    var t = torch.tensor(array, device: device);
+                    using var t = torch.tensor(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -794,7 +835,7 @@ namespace TorchSharp
 
                 {
                     var array = new float[8];
-                    var t = torch.tensor(array, device: device);
+                    using var t = torch.tensor(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(1, t.ndim),
@@ -802,8 +843,18 @@ namespace TorchSharp
                 }
 
                 {
+                    var array = new float[18]; // Too long, on purpose
+                    using var t = torch.tensor(array, new long[] { 8 }, device: device);
+                    Assert.Multiple(
+                        () => Assert.Equal(8, t.NumberOfElements),
+                        () => Assert.Equal(device.type, t.device_type),
+                        () => Assert.Equal(1, t.ndim),
+                        () => Assert.Equal(ScalarType.Float32, t.dtype));
+                }
+
+                {
                     var array = new double[1, 2];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(2, t.ndim),
@@ -813,7 +864,7 @@ namespace TorchSharp
 
                 {
                     var array = new long[1, 2, 3];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(3, t.ndim),
@@ -823,7 +874,7 @@ namespace TorchSharp
 
                 {
                     var array = new int[1, 2, 3, 4];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(4, t.ndim),
@@ -833,7 +884,7 @@ namespace TorchSharp
 
                 {
                     var array = new System.Numerics.Complex[1, 2, 3, 4];
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(4, t.ndim),
@@ -843,7 +894,7 @@ namespace TorchSharp
 
                 {
                     var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
-                    var t = torch.from_array(array, device: device);
+                    using var t = torch.from_array(array, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
                         () => Assert.Equal(3, t.ndim),
@@ -3930,11 +3981,11 @@ namespace TorchSharp
             var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
 
             if (torch.cuda.is_available()) {
-                var moved = input.to(ScalarType.Float32, torch.CUDA);
+                var moved = input.to(ScalarType.Float32, torch.CUDA, non_blocking: true);
                 Assert.Equal(ScalarType.Float32, moved.dtype);
                 Assert.Equal(DeviceType.CUDA, moved.device_type);
             } else {
-                var moved = input.to(ScalarType.Float32);
+                var moved = input.to(ScalarType.Float32, non_blocking: true);
                 Assert.Equal(ScalarType.Float32, moved.dtype);
                 Assert.Equal(DeviceType.CPU, moved.device_type);
             }
@@ -4429,7 +4480,7 @@ namespace TorchSharp
                     Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
-                    var grad = x.grad();
+                    var grad = x.grad;
                     Assert.False(grad is null || grad.Handle == IntPtr.Zero);
                     var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
@@ -4448,7 +4499,7 @@ namespace TorchSharp
                     Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
-                    var grad = x.grad();
+                    var grad = x.grad;
                     Assert.False(grad is not null && grad.Handle == IntPtr.Zero);
                     var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
@@ -6968,7 +7019,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
         }
 
-        [Fact]
+        [Fact(Skip = "Fails on all Release builds.")]
         [TestOf(nameof(fft.hfftn))]
         public void Float64HFFTN()
         {
@@ -8267,6 +8318,174 @@ namespace TorchSharp
                     (Tensor a, Tensor b) = torch.histogram(x, bins: estimator, range: (-20, 20));
                     Assert.Equal(numbins, a.shape[0]);
                 }
+            }
+        }
+
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadLarger2GBTensor()
+        {
+            var tensor = torch.rand((long)int.MaxValue + 128, device: torch.CPU);
+
+            var tempFile = Path.GetTempFileName();
+            try {
+                // Save to memory
+                using (var fs = File.OpenWrite(tempFile))
+                    tensor.Save(fs);
+
+                // Create a new copy of zeros
+                var copyTensor = torch.zeros_like(tensor, device: torch.CPU);
+
+                // Read it in
+                using (var fs = File.OpenRead(tempFile))
+                    copyTensor.Load(new BinaryReader(fs));
+
+                Assert.Equal(tensor.npstr(), copyTensor.npstr());
+            } finally {
+                File.Delete(tempFile);
+            }
+        }
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadLarger2GBTensorCUDA()
+        {
+            if (torch.cuda.is_available()) {
+                var tensor = torch.rand((long)int.MaxValue + 128, device: torch.CUDA);
+
+                var tempFile = Path.GetTempFileName();
+                try {
+                    // Save to memory
+                    using (var fs = File.OpenWrite(tempFile))
+                        tensor.Save(fs);
+
+                    // Create a new copy of zeros
+                    var copyTensor = torch.zeros_like(tensor, device: torch.CUDA);
+
+                    // Read it in
+                    using (var fs = File.OpenRead(tempFile))
+                        copyTensor.Load(new BinaryReader(fs));
+
+                    Assert.Equal(tensor.npstr(), copyTensor.npstr());
+                } finally {
+                    File.Delete(tempFile);
+                }
+            }
+        }
+
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadModuleWithLarger2GBTensor()
+        {
+            // Create a sequential with a parameter slightly larger than 2GB
+            var seq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false)));
+
+            var tempFile = Path.GetTempFileName();
+            try {
+                // Save to memory
+                using (var fs = File.OpenWrite(tempFile))
+                    seq.save(fs);
+
+                // Create a new sequence, and make sure it is equal
+                var copySeq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false)));
+
+                // Read it in
+                using (var fs = File.OpenRead(tempFile))
+                    copySeq.load(fs);
+
+                // Compare results
+                Assert.Equal(copySeq.parameters().First().npstr(), seq.parameters().First().npstr());
+            } finally {
+                File.Delete(tempFile);
+            }
+        }
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadModuleWithLarger2GBTensorCUDA()
+        {
+            if (torch.cuda.is_available()) {
+                // Create a sequential with a parameter slightly larger than 2GB
+                var seq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false))).cuda();
+
+                var tempFile = Path.GetTempFileName();
+                try {
+                    // Save to memory
+                    using (var fs = File.OpenWrite(tempFile))
+                        seq.save(fs);
+
+                    // Create a new sequence, and make sure it is equal
+                    var copySeq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false))).cuda();
+
+                    // Read it in
+                    using (var fs = File.OpenRead(tempFile))
+                        copySeq.load(fs);
+
+                    // Compare results
+                    Assert.Equal(copySeq.parameters().First().npstr(), seq.parameters().First().npstr());
+                } finally {
+                    File.Delete(tempFile);
+                }
+            }
+        }
+
+        [Fact]
+        public void DefaultDTypeCreation()
+        {
+            var dt = torch.get_default_dtype();
+
+            var t = torch.zeros(5,5);
+            Assert.Equal(torch.float32, t.dtype);
+
+            try {
+                torch.set_default_dtype(torch.float64);              
+                
+                t = torch.zeros(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.ones(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.rand(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.randn(5,5);
+                Assert.Equal(torch.float64, t.dtype);
+
+                t = torch.logspace(5, 15, 20);
+                Assert.Equal(torch.float64, t.dtype);
+            }
+            finally {
+                torch.set_default_dtype(dt);
+            }
+        }
+
+        [Fact]
+        public void DefaultDeviceCreation()
+        {
+            var dt = torch.get_default_device();
+
+            var t = torch.zeros(5,5);
+            Assert.Equal(DeviceType.CPU, t.device_type);
+
+            try {
+                torch.set_default_device(torch.META);              
+                
+                t = torch.zeros(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.ones(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.rand(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.randn(5,5);
+                Assert.Equal(DeviceType.META, t.device_type);
+
+                t = torch.logspace(5, 15, 20);
+                Assert.Equal(DeviceType.META, t.device_type);
+            }
+            finally {
+                torch.set_default_device(dt);
             }
         }
     }

@@ -55,7 +55,7 @@ namespace TorchSharp
 
                 using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
-                        var grad = param.grad();
+                        var grad = param.grad;
                         if (grad is not null) {
                             var update = grad.mul(learning_rate);
                             param.sub_(update);
@@ -99,7 +99,7 @@ namespace TorchSharp
 
                 using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
-                        var grad = param.grad();
+                        var grad = param.grad;
                         if (grad is not null) {
                             var update = grad.mul(learning_rate);
                             param.sub_(update);
@@ -1585,9 +1585,9 @@ namespace TorchSharp
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75, total_iters: 10);
 
-            var loss = TrainLoop(seq, x, y, optimizer, scheduler);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(209.71f, loss);
+            LossIsClose(101.83f, loss);
         }
 
         [Fact]
@@ -1607,7 +1607,33 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false, iters: 20);
 
-            LossIsClose(240.24f, loss);
+            LossIsClose(67.5635f, loss);
+        }
+
+        [Fact]
+        public void TrainingSGDSequentialLRWithAllClosedFormSchedulers()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler0 = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75, total_iters: 10);
+            var scheduler1 = torch.optim.lr_scheduler.ConstantLR(optimizer);
+            var scheduler2 = torch.optim.lr_scheduler.StepLR(optimizer, 2);
+            var scheduler3 = torch.optim.lr_scheduler.MultiStepLR(optimizer, new[] { 2, 4 });
+            var scheduler4 = torch.optim.lr_scheduler.ExponentialLR(optimizer);
+            var scheduler5 = torch.optim.lr_scheduler.PolynomialLR(optimizer, power: 2);
+            var scheduler6 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 5, 0.1);
+            var scheduler7 = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75);
+            var scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, new[] { scheduler0, scheduler1, scheduler2, scheduler3, scheduler4, scheduler5, scheduler6, scheduler7}, new[] { 5, 5, 5, 5, 5, 5, 5 });
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false, iters: 35);
+
+            LossIsClose(52.36025f, loss);
         }
 
         [Fact]

@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorchSharp.Modules;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -16,8 +17,8 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_1_0_1
-        const string libtorchPackageVersion = "2.1.0.1";
+#if LIBTORCH_2_2_1_1
+        const string libtorchPackageVersion = "2.2.1.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -27,9 +28,14 @@ namespace TorchSharp
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
+        static bool isAppleSilicon => 
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && 
+            RuntimeInformation.OSArchitecture == Architecture.Arm64;
+        
         static string nativeRid =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
+            isAppleSilicon ? "osx-arm64" :
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "osx-x64" :
             "any";
 
@@ -54,7 +60,8 @@ namespace TorchSharp
                 ok = NativeLibrary.TryLoad(path, out var res);
                 if (!ok)
                     trace.AppendLine($"    Failed to load native component {path}");
-            } catch {
+            } catch (Exception exn) {
+                trace.AppendLine($"    Failed to load native component {path}: {exn.Message}");
                 ok = false;
             }
             return ok;
@@ -109,7 +116,6 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvfuser_codegen", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
@@ -259,6 +265,11 @@ namespace TorchSharp
 
         public static bool TryInitializeDeviceType(DeviceType deviceType)
         {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon)
+            {
+                return false;
+            }
+
             LoadNativeBackend(deviceType == DeviceType.CUDA, out _);
             if (deviceType == DeviceType.CUDA) {
                 return cuda.CallTorchCudaIsAvailable();
@@ -269,6 +280,11 @@ namespace TorchSharp
 
         public static void InitializeDeviceType(DeviceType deviceType)
         {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon)
+            {
+                throw new InvalidOperationException($"Torch device type 'MPS' is not available on this platform.");
+            }
+
             LoadNativeBackend(deviceType == DeviceType.CUDA, out var trace);
             if (deviceType == DeviceType.CUDA) {
 
@@ -282,8 +298,10 @@ namespace TorchSharp
 
         public static Device InitializeDevice(Device? device)
         {
-            if (device == null)
-                device = new Device(DeviceType.CPU, -1);
+            if (device is null)
+            {
+                device = get_default_device();
+            }
             InitializeDeviceType(device.type);
             return device;
         }
@@ -401,6 +419,80 @@ namespace TorchSharp
                         CheckForErrors();
                     }
                 }
+
+                /// <summary>
+                /// Fuse convolutional module parameters and BatchNorm module parameters into new convolutional module parameters.
+                /// </summary>
+                /// <param name="conv_w">Convolutional weight.</param>
+                /// <param name="conv_b">Convolutional bias.</param>
+                /// <param name="bn_rm">BatchNorm running mean.</param>
+                /// <param name="bn_rv">BatchNorm running variance.</param>
+                /// <param name="bn_eps">BatchNorm epsilon.</param>
+                /// <param name="bn_w">BatchNorm weight.</param>
+                /// <param name="bn_b">BatchNorm bias.</param>
+                /// <param name="transpose">If <c>true</c>, transpose the conv weight. Defaults to <c>false</c>.</param>
+                /// <returns>Fused convolutional weight and bias.</returns>
+                public static (Parameter weight, Parameter bias) fuse_conv_bn_weights(
+                    Tensor conv_w, Tensor? conv_b,
+                    Tensor bn_rm, Tensor bn_rv, double bn_eps,
+                    Tensor? bn_w, Tensor? bn_b,
+                    bool transpose = false)
+                {
+                    using var scope = NewDisposeScope();
+
+                    var conv_weight_dtype = conv_w.dtype;
+                    var conv_bias_dtype = conv_b?.dtype ?? conv_weight_dtype;
+                    conv_b ??= zeros_like(bn_rm);
+                    bn_w ??= ones_like(bn_rm);
+                    bn_b ??= zeros_like(bn_rm);
+                    var shape = conv_w.shape.Select(_ => 1L).ToArray();
+                    if (transpose)
+                        shape[1] = -1;
+                    else
+                        shape[0] = -1;
+
+                    var bn_var_rsqrt = rsqrt(bn_rv + bn_eps);
+                    var fused_conv_w = (conv_w * (bn_w * bn_var_rsqrt).reshape(shape))
+                        .to(conv_weight_dtype);
+                    var fused_conv_b = ((conv_b - bn_rm) * bn_var_rsqrt * bn_w + bn_b)
+                        .to(conv_bias_dtype);
+
+                    var weight = new Parameter(fused_conv_w, conv_w.requires_grad);
+                    var bias = new Parameter(fused_conv_b, conv_b.requires_grad);
+
+                    return scope.MoveToOuter(weight, bias);
+                }
+
+                /// <summary>
+                /// Fuse linear module parameters and BatchNorm module parameters into new linear module parameters.
+                /// </summary>
+                /// <param name="linear_w">Linear weight.</param>
+                /// <param name="linear_b">Linear bias.</param>
+                /// <param name="bn_rm">BatchNorm running mean.</param>
+                /// <param name="bn_rv">BatchNorm running variance.</param>
+                /// <param name="bn_eps">BatchNorm epsilon.</param>
+                /// <param name="bn_w">BatchNorm weight.</param>
+                /// <param name="bn_b">BatchNorm bias.</param>
+                /// <returns>Fused linear weight and bias.</returns>
+                public static (Parameter weight, Parameter bias) fuse_linear_bn_weights(
+                    Tensor linear_w, Tensor? linear_b,
+                    Tensor bn_rm, Tensor bn_rv, double bn_eps,
+                    Tensor bn_w, Tensor bn_b)
+                {
+                    using var scope = NewDisposeScope();
+
+                    linear_b ??= zeros_like(bn_rm);
+
+                    var bn_scale = bn_w * rsqrt(bn_rv + bn_eps);
+
+                    var fused_w = linear_w * bn_scale.unsqueeze(-1);
+                    var fused_b = (linear_b - bn_rm) * bn_scale + bn_b;
+
+                    var weight = new Parameter(fused_w, linear_w.requires_grad);
+                    var bias = new Parameter(fused_b, linear_b.requires_grad);
+
+                    return scope.MoveToOuter(weight, bias);
+                }
             }
         }
 
@@ -506,6 +598,11 @@ namespace TorchSharp
         /// </summary>
         public static bool cuda_is_available() => torch.cuda.is_available();
 
+        /// <summary>
+        /// Check whether MPS is available
+        /// </summary>
+        public static bool mps_is_available() => torch.isAppleSilicon;
+
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
@@ -607,6 +704,7 @@ namespace TorchSharp
         FPGA = 7, // FPGA
         MSNPU = 8, // MSNPU
         XLA = 9, // XLA / TPU
+        MPS = 13, // Apple Silicon
         META = 14,
     }
 }

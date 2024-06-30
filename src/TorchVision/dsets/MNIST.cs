@@ -76,6 +76,11 @@ namespace TorchSharp
         /// </summary>
         internal class MNIST : DatasetHelper
         {
+            private static string[] Mirrors => new[] {
+                "http://yann.lecun.com/exdb/mnist/",
+                "https://ossci-datasets.s3.amazonaws.com/mnist/"
+            };
+
             /// <summary>
             /// Constructor
             /// </summary>
@@ -84,13 +89,13 @@ namespace TorchSharp
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
             public MNIST(string root, bool train, bool download = false, torchvision.ITransform transform = null) :
-                this(root, "mnist", train ? "train" : "t10k", "http://yann.lecun.com/exdb/mnist/", download, transform)
+                this(root, "mnist", train ? "train" : "t10k", Mirrors, download, transform)
             {
             }
 
-            protected MNIST(string root, string datasetName, string prefix, string baseUrl, bool download, torchvision.ITransform transform)
+            protected MNIST(string root, string datasetName, string prefix, IEnumerable<string> baseUrls, bool download, torchvision.ITransform transform)
             {
-                if (download) Download(root, baseUrl, datasetName);
+                if (download) Download(root, baseUrls, datasetName);
 
                 this.transform = transform;
 
@@ -156,7 +161,7 @@ namespace TorchSharp
                 }
             }
 
-            private void Download(string root, string baseUrl, string dataset)
+            private void Download(string root, IEnumerable<string> baseUrls, string dataset)
             {
 #if NETSTANDARD2_0_OR_GREATER
                 var datasetPath = NSPath.Join(root, dataset);
@@ -171,10 +176,10 @@ namespace TorchSharp
                     Directory.CreateDirectory(sourceDir);
                 }
 
-                DownloadFile("train-images-idx3-ubyte.gz", sourceDir, baseUrl);
-                DownloadFile("train-labels-idx1-ubyte.gz", sourceDir, baseUrl);
-                DownloadFile("t10k-images-idx3-ubyte.gz", sourceDir, baseUrl);
-                DownloadFile("t10k-labels-idx1-ubyte.gz", sourceDir, baseUrl);
+                DownloadFile("train-images-idx3-ubyte.gz", sourceDir, baseUrls);
+                DownloadFile("train-labels-idx1-ubyte.gz", sourceDir, baseUrls);
+                DownloadFile("t10k-images-idx3-ubyte.gz", sourceDir, baseUrls);
+                DownloadFile("t10k-labels-idx1-ubyte.gz", sourceDir, baseUrls);
 
                 if (!Directory.Exists(targetDir)) {
                     Directory.CreateDirectory(targetDir);
@@ -229,6 +234,10 @@ namespace TorchSharp
 
         internal class FashionMNIST : MNIST
         {
+            private static string[] Mirrors => new[] {
+                "https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/"
+            };
+
             /// <summary>
             /// Constructor
             /// </summary>
@@ -237,13 +246,17 @@ namespace TorchSharp
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
             public FashionMNIST(string root, bool train, bool download = false, torchvision.ITransform transform = null) :
-                base(root, "fashion-mnist", train ? "train" : "t10k", "https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/", download, transform)
+                base(root, "fashion-mnist", train ? "train" : "t10k", Mirrors, download, transform)
             {
             }
         }
 
         internal class KMNIST : MNIST
         {
+            private static string[] Mirrors => new[] {
+                "http://codh.rois.ac.jp/kmnist/dataset/kmnist/"
+            };
+
             /// <summary>
             /// Constructor
             /// </summary>
@@ -252,7 +265,7 @@ namespace TorchSharp
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
             public KMNIST(string root, bool train, bool download = false, torchvision.ITransform transform = null) :
-                base(root, "kmnist", train ? "train" : "t10k", "http://codh.rois.ac.jp/kmnist/dataset/kmnist/", download, transform)
+                base(root, "kmnist", train ? "train" : "t10k", Mirrors, download, transform)
             {
             }
         }

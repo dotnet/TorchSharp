@@ -18,24 +18,64 @@ namespace TorchSharp
             public static partial class data
             {
 
-                public static Modules.DataLoader DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
+                public static Modules.DataLoader DataLoader(
+                    Dataset dataset,
+                    int batchSize, IEnumerable<long> shuffler,
+                    Device device = null,
+                    int num_worker = 1, bool drop_last = false,
+                    bool disposeBatch = true, bool disposeDataset = true)
                 {
-                    return new Modules.DataLoader(dataset, batchSize,shuffler, device, num_worker, drop_last);
+                    return new Modules.DataLoader(
+                        dataset,
+                        batchSize, shuffler,
+                        device,
+                        num_worker, drop_last,
+                        disposeBatch, disposeDataset);
                 }
 
-                public static Modules.DataLoader DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
+                public static Modules.DataLoader DataLoader(
+                    Dataset dataset,
+                    int batchSize, bool shuffle = false,
+                    Device device = null, int? seed = null,
+                    int num_worker = 1, bool drop_last = false,
+                    bool disposeBatch = true, bool disposeDataset = true)
                 {
-                    return new Modules.DataLoader(dataset,batchSize,shuffle, device, seed, num_worker,drop_last);
+                    return new Modules.DataLoader(
+                        dataset,
+                        batchSize, shuffle,
+                        device, seed,
+                        num_worker, drop_last,
+                        disposeBatch, disposeDataset);
                 }
 
-                public static Modules.IterableDataLoader DataLoader(IterableDataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
+                public static Modules.IterableDataLoader DataLoader(
+                    IterableDataset dataset,
+                    int batchSize, IEnumerable<long> shuffler,
+                    Device device = null,
+                    int num_worker = 1, bool drop_last = false,
+                    bool disposeBatch = true, bool disposeDataset = true)
                 {
-                    return new Modules.IterableDataLoader(dataset, batchSize, shuffler, device, num_worker, drop_last);
+                    return new Modules.IterableDataLoader(
+                        dataset,
+                        batchSize, shuffler,
+                        device,
+                        num_worker, drop_last,
+                        disposeBatch, disposeDataset);
                 }
 
-                public static Modules.IterableDataLoader DataLoader(IterableDataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
+                public static Modules.IterableDataLoader DataLoader(
+                    IterableDataset dataset,
+                    int batchSize, bool shuffle = false,
+                    Device device = null, int? seed = null,
+                    int num_worker = 1, bool drop_last = false,
+                    bool disposeBatch = true, bool disposeDataset = true)
                 {
-                    return new Modules.IterableDataLoader(dataset, batchSize, shuffle, device, seed, num_worker, drop_last);
+                    return new Modules.IterableDataLoader(
+                        dataset,
+                        batchSize, shuffle,
+                        device, seed,
+                        num_worker, drop_last,
+                        disposeBatch, disposeDataset);
                 }
             }
         }
@@ -64,8 +104,23 @@ namespace TorchSharp
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
             /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
             /// </param>
-            public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
-                : base(dataset, batchSize, Collate, shuffler, device, num_worker, drop_last)
+            /// <param name="disposeBatch">
+            /// Indicates whether to automatically dispose the collated tensors after an iteration.
+            /// </param>
+            /// <param name="disposeDataset">
+            /// Indicates whether to dispose the dataset when being disposed.
+            /// </param>
+            public DataLoader(
+                Dataset dataset,
+                int batchSize, IEnumerable<long> shuffler,
+                Device device = null,
+                int num_worker = 1, bool drop_last = false,
+                bool disposeBatch = true, bool disposeDataset = true)
+                : base(dataset,
+                      batchSize, Collate, shuffler,
+                      device,
+                      num_worker, drop_last,
+                      disposeBatch, disposeDataset)
             {
             }
 
@@ -82,21 +137,38 @@ namespace TorchSharp
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
             /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
             /// </param>
-            public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
-                : base(dataset, batchSize, Collate, shuffle, device, seed, num_worker, drop_last)
+            /// <param name="disposeBatch">
+            /// Indicates whether to automatically dispose the collated tensors after an iteration.
+            /// </param>
+            /// <param name="disposeDataset">
+            /// Indicates whether to dispose the dataset when being disposed.
+            /// </param>
+            public DataLoader(
+                Dataset dataset,
+                int batchSize, bool shuffle = false,
+                Device device = null, int? seed = null,
+                int num_worker = 1, bool drop_last = false,
+                bool disposeBatch = true, bool disposeDataset = true)
+                : base(dataset,
+                      batchSize, Collate, shuffle,
+                      device, seed,
+                      num_worker, drop_last,
+                      disposeBatch, disposeDataset)
             {
             }
 
             private static Dictionary<string, torch.Tensor> Collate(IEnumerable<Dictionary<string, torch.Tensor>> dic, torch.Device device)
             {
-                Dictionary<string, torch.Tensor> batch = new();
-                foreach (var x in dic.First().Keys) {
-                    var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
-                    if (t.device_type != device.type || t.device_index != device.index)
-                        t = t.to(device);
-                    batch[x] = t;
+                using (torch.NewDisposeScope()) {
+                    Dictionary<string, torch.Tensor> batch = new();
+                    foreach (var x in dic.First().Keys) {
+                        var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                        if (t.device_type != device.type || t.device_index != device.index)
+                            t = t.to(device);
+                        batch[x] = t.MoveToOuterDisposeScope();
+                    }
+                    return batch;
                 }
-                return batch;
             }
         }
 
@@ -118,8 +190,23 @@ namespace TorchSharp
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
             /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
             /// </param>
-            public IterableDataLoader(IterableDataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
-                : base(dataset, batchSize, Collate, shuffler, device, num_worker, drop_last)
+            /// <param name="disposeBatch">
+            /// Indicates whether to automatically dispose the collated tensors after an iteration.
+            /// </param>
+            /// <param name="disposeDataset">
+            /// Indicates whether to dispose the dataset when being disposed.
+            /// </param>
+            public IterableDataLoader(
+                IterableDataset dataset,
+                int batchSize, IEnumerable<long> shuffler,
+                Device device = null,
+                int num_worker = 1, bool drop_last = false,
+                bool disposeBatch = true, bool disposeDataset = true)
+                : base(dataset,
+                      batchSize, Collate, shuffler,
+                      device,
+                      num_worker, drop_last,
+                      disposeBatch, disposeDataset)
             {
             }
 
@@ -136,37 +223,57 @@ namespace TorchSharp
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
             /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
             /// </param>
-            public IterableDataLoader(IterableDataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
-                : base(dataset, batchSize, Collate, shuffle, device, seed, num_worker, drop_last)
+            /// <param name="disposeBatch">
+            /// Indicates whether to automatically dispose the collated tensors after an iteration.
+            /// </param>
+            /// <param name="disposeDataset">
+            /// Indicates whether to dispose the dataset when being disposed.
+            /// </param>
+            public IterableDataLoader(
+                IterableDataset dataset,
+                int batchSize, bool shuffle = false,
+                Device device = null, int? seed = null,
+                int num_worker = 1, bool drop_last = false,
+                bool disposeBatch = true, bool disposeDataset = true)
+                : base(dataset,
+                      batchSize, Collate, shuffle,
+                      device, seed,
+                      num_worker, drop_last,
+                      disposeBatch, disposeDataset)
             {
             }
 
             private static IList<torch.Tensor> Collate(IEnumerable<IList<torch.Tensor>> dic, torch.Device device)
             {
-                List<torch.Tensor> batch = new();
-                for (var x = 0; x < dic.First().Count; x++) {
-                    var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
-                    if (t.device_type != device.type || t.device_index != device.index)
-                        t = t.to(device);
-                    batch.Add(t);
+                using (torch.NewDisposeScope()) {
+                    List<torch.Tensor> batch = new();
+                    for (var x = 0; x < dic.First().Count; x++) {
+                        var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                        if (t.device_type != device.type || t.device_index != device.index)
+                            t = t.to(device);
+                        batch.Add(t.MoveToOuterDisposeScope());
+                    }
+                    return batch;
                 }
-                return batch;
             }
         }
 
+#nullable enable
         /// <summary>
         /// This class supports creating batches from data sets.
         /// </summary>
         public class DataLoader<T, S> : IEnumerable<S>, IDisposable
         {
-            private Dataset<T> dataset;
-            private int batchSize;
-            private bool shuffle;
-            private bool drop_last;
-            private Device device;
-            private IEnumerable<long> shuffler;
-            private int num_worker;
-            private Func<IEnumerable<T>, torch.Device, S> collate_fn;
+            public Dataset<T> dataset { get; }
+            public int batch_size { get; }
+            public bool drop_last { get; }
+            public IEnumerable<long> sampler { get; }
+            public int num_workers { get; }
+            public Func<IEnumerable<T>, Device, S> collate_fn { get; }
+
+            public Device Device { get; }
+            public bool DisposeBatch { get; }
+            public bool DisposeDataset { get; }
 
             /// <summary>
             /// Pytorch style dataloader
@@ -181,16 +288,32 @@ namespace TorchSharp
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
             /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
             /// </param>
-            public DataLoader(Dataset<T> dataset, int batchSize, Func<IEnumerable<T>, torch.Device, S> collate_fn, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
+            /// <param name="disposeBatch">
+            /// Indicates whether to automatically dispose the collated tensors after an iteration.
+            /// </param>
+            /// <param name="disposeDataset">
+            /// Indicates whether to dispose the dataset when being disposed.
+            /// </param>
+            public DataLoader(
+                Dataset<T> dataset,
+                int batchSize,
+                Func<IEnumerable<T>, torch.Device, S> collate_fn,
+                IEnumerable<long> shuffler,
+                Device? device = null,
+                int num_worker = 1,
+                bool drop_last = false,
+                bool disposeBatch = true,
+                bool disposeDataset = true)
             {
                 this.dataset = dataset;
-                this.batchSize = batchSize;
-                this.shuffle = true;
+                this.batch_size = batchSize;
                 this.drop_last = drop_last;
-                this.device = device ?? CPU;
-                this.shuffler = shuffler;
-                this.num_worker = num_worker;
+                this.Device = device ?? CPU;
+                this.sampler = shuffler;
+                this.num_workers = Math.Max(num_worker, 1);
                 this.collate_fn = collate_fn;
+                this.DisposeBatch = disposeBatch;
+                this.DisposeDataset = disposeDataset;
             }
 
             /// <summary>
@@ -207,66 +330,77 @@ namespace TorchSharp
             /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
             /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
             /// </param>
-            public DataLoader(Dataset<T> dataset, int batchSize, Func<IEnumerable<T>, torch.Device, S> collate_fn, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
+            /// <param name="disposeBatch">
+            /// Indicates whether to automatically dispose the collated tensors (a batch) after an iteration.
+            /// </param>
+            /// <param name="disposeDataset">
+            /// Indicates whether to dispose the dataset when being disposed.
+            /// </param>
+            public DataLoader(
+                Dataset<T> dataset,
+                int batchSize,
+                Func<IEnumerable<T>, torch.Device, S> collate_fn,
+                bool shuffle = false,
+                Device? device = null,
+                int? seed = null,
+                int num_worker = 1,
+                bool drop_last = false,
+                bool disposeBatch = true,
+                bool disposeDataset = true) :
+                this(dataset, batchSize, collate_fn,
+                    shuffle ? new FisherYatesShuffler(dataset.Count, seed) : LongRange(dataset.Count),
+                    device, num_worker, drop_last, disposeBatch, disposeDataset)
+            { }
+
+            static IEnumerable<long> LongRange(long count)
             {
-                this.dataset = dataset;
-                this.batchSize = batchSize;
-                this.shuffle = shuffle;
-                this.drop_last = drop_last;
-                this.device = device ?? CPU;
-                this.shuffler = seed is null ? new FisherYatesShuffler(dataset.Count) : new FisherYatesShuffler(dataset.Count, seed);
-                this.num_worker = num_worker;
-                this.collate_fn = collate_fn;
+                for (long i = 0; i < count; i++)
+                    yield return i;
             }
 
             /// <summary>
             /// Generate enumerator
             /// </summary>
             /// <returns>Enumerator for batch</returns>
-            public IEnumerator<S> GetEnumerator() =>
-                new DataLoaderEnumerator(dataset, batchSize, shuffle, device, shuffler, num_worker, collate_fn);
+            public IEnumerator<S> GetEnumerator() => new DataLoaderEnumerator(this);
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <summary>
             /// Size of batch
             /// </summary>
-            public long Count => drop_last ? (dataset.Count / batchSize) : ((dataset.Count - 1) / batchSize + 1);
+            public long Count => drop_last ? (dataset.Count / batch_size) : ((dataset.Count - 1) / batch_size + 1);
 
-            private class DataLoaderEnumerator : IEnumerator<S>
+            public void Dispose()
             {
-                private Dataset<T> dataset;
-                private int batchSize;
-                private Device device;
-                private bool shuffle;
-                private IEnumerable<long> shuffleEnumerable;
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing && DisposeDataset) {
+                    dataset.Dispose();
+                }
+            }
+
+            sealed class DataLoaderEnumerator : IEnumerator<S>
+            {
+                private readonly DataLoader<T, S> loader;
                 private IEnumerator<long> shuffler;
-                private long currentVal = 0;
-                private int num_worker = 0;
-                private IList<IDisposable> currentDisposables;
-                private Func<IEnumerable<T>, torch.Device, S> collate_fn;
-                public DataLoaderEnumerator(Dataset<T> dataset, int batchSize, bool shuffle, Device device, IEnumerable<long> shuffleEnumerable, int num_worker, Func<IEnumerable<T>, torch.Device, S> collate_fn)
+                private HashSet<IDisposable>? currentDisposables;
+                public DataLoaderEnumerator(DataLoader<T, S> loader)
                 {
-                    this.dataset = dataset;
-                    this.batchSize = batchSize;
-                    this.device = device;
-                    this.shuffle = shuffle;
-                    this.shuffleEnumerable = shuffleEnumerable;
-                    if (num_worker < 1) num_worker = 1;
-                    this.num_worker = num_worker;
-                    this.collate_fn = collate_fn;
+                    this.loader = loader;
+                    // TODO: Use MemberNotNull instead.
+                    shuffler = null!;
                     Reset();
                 }
 
-                private bool MoveNextValue()
+                private static void DisposeAll(HashSet<IDisposable> disposables)
                 {
-                    if (shuffle) {
-                        if (!shuffler.MoveNext()) return false;
-                        currentVal = shuffler.Current;
-                        return true;
-                    } else {
-                        currentVal++;
-                        return currentVal < dataset.Count;
+                    foreach (var disposable in disposables) {
+                        disposable.Dispose();
                     }
                 }
 
@@ -277,54 +411,43 @@ namespace TorchSharp
                 public bool MoveNext()
                 {
                     DisposeCurrent();
-                    using (var scope = DisposeScopeManager.NewDisposeScope()) {
-                        if (!MoveNextValue()) return false;
 
-                        var tensorIndexList = new List<long> { currentVal };
-                        for (int i = 1; i < batchSize; i++) {
-                            if (!MoveNextValue()) break;
-                            tensorIndexList.Add(currentVal);
-                        }
+                    var indices = Enumerable.Range(0, loader.batch_size)
+                        .Select(_ => shuffler.MoveNext() ? shuffler.Current : (long?)null)
+                        .Where(x => x.HasValue)
+                        .Cast<long>()
+                        .ToArray();
 
-                        var items = new List<T>(new T[tensorIndexList.Count]);
-                        var taskedBatchCount = 0;
+                    if (indices.Length is 0)
+                        return false;
 
-                        //Run Async
-                        var tasks = new List<Task>();
-                        foreach (var _ in Enumerable.Range(1, num_worker - 1))
-                            tasks.Add(new(ProcessPendingBatches));
-                        tasks.ForEach(x => x.Start());
-
-                        ProcessPendingBatches();
-
-                        foreach (var task in tasks)
-                            task.Wait();
-
-                        using (var collate_scope = DisposeScopeManager.NewDisposeScope()) {
-                            Current = collate_fn(items, device);
-                            currentDisposables = collate_scope.DisposablesView.ToList();
-                            collate_scope.Detach(currentDisposables);
-                        }
-
-                        return true;
-
-                        void ProcessPendingBatches()
-                        {
-                            while (true) {
-                                var idx = ScheduleBatch();
-                                if (idx is null) break;
-                                items[idx.Value.Item1] = dataset.GetTensor(idx.Value.Item2);
-                            }
-                        }
-
-                        (int, long)? ScheduleBatch()
-                        {
-                            var t = Interlocked.Increment(ref taskedBatchCount) - 1;
-                            if (t < tensorIndexList.Count)
-                                return (t, tensorIndexList[t]);
-                            return null;
-                        }
+                    if (loader.drop_last && indices.Length < loader.batch_size) {
+                        return false;
                     }
+
+                    var tensors = new T[indices.Length];
+                    var getTensorDisposables = new HashSet<IDisposable>[indices.Length];
+                    Enumerable.Range(0, indices.Length)
+                        .AsParallel()
+                        .WithDegreeOfParallelism(loader.num_workers)
+                        .ForAll((i) => {
+                            using var getTensorScope = torch.NewDisposeScope();
+                            tensors[i] = loader.dataset.GetTensor(indices[i]);
+                            getTensorDisposables[i] = getTensorScope.DetachAllAndDispose();
+                        });
+
+                    using var collateScope = torch.NewDisposeScope();
+                    this.current = loader.collate_fn(tensors, loader.Device);
+                    var collateDisposables = collateScope.DetachAllAndDispose();
+                    if (loader.DisposeBatch) {
+                        this.currentDisposables = collateDisposables;
+                    }
+
+                    foreach (var set in getTensorDisposables) {
+                        DisposeAll(set);
+                    }
+
+                    return true;
                 }
 
                 /// <summary>
@@ -333,42 +456,30 @@ namespace TorchSharp
                 public void Reset()
                 {
                     DisposeCurrent();
-                    if (shuffle) shuffler = shuffleEnumerable.GetEnumerator();
-                    currentVal = -1;
+                    shuffler?.Dispose();
+                    shuffler = loader.sampler.GetEnumerator();
                 }
 
+                S? current;
                 /// <summary>
                 /// Current tensor
                 /// </summary>
-                public S Current { get; private set; }
+                public S Current => current!;
 
-                object IEnumerator.Current => Current;
+                object IEnumerator.Current => current!;
 
                 public void Dispose()
                 {
+                    shuffler.Dispose();
                     DisposeCurrent();
                 }
 
                 private void DisposeCurrent()
                 {
-                    if (currentDisposables is null) return;
-                    foreach (var x in currentDisposables)
-                        x.Dispose();
-                    currentDisposables = null;
-                    shuffler?.Dispose();
-                }
-            }
-
-            public void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-
-            protected virtual void Dispose(bool disposing)
-            {
-                if (disposing) {
-                    dataset.Dispose();
+                    if (this.currentDisposables is not null) {
+                        DisposeAll(this.currentDisposables);
+                        this.currentDisposables = null;
+                    }
                 }
             }
         }

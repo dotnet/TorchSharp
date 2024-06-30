@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -404,6 +405,80 @@ namespace TorchSharp
                 }
             }
 
+
+            /// <summary>
+            /// Writes the bytes of the tensor to a stream. Useful for when tensors are >2GB.
+            /// </summary>
+            /// <param name="stream">Stream to write the bytes to</param>
+            /// <param name="bufferSize">The buffer size to use when writing to the stream</param>
+            public void WriteBytesToStream(Stream stream, int bufferSize = 1024)
+            {
+                // Validate, but passing 0 as the total size, since we don't need to validate the size
+                _validate(0);
+
+                long totalSize = NumberOfElements * ElementSize;
+                
+                unsafe {
+                    var ptr = NativeMethods.THSTensor_data(handle);
+                    if (ptr == IntPtr.Zero) { CheckForErrors(); }
+
+                    // NOTE: there is no safety here in this loop.
+                    // Read in the buffer N bytes at a time, and write them out
+                    byte[] buffer = new byte[bufferSize];
+                    while (totalSize > 0) {
+                    // Read in the current buffer size
+                    int curBufferSize = (int)Math.Min(totalSize, bufferSize);
+                        var span = new Span<byte>((void*)ptr, curBufferSize);
+                        span.CopyTo(buffer);
+
+                        // Write it out
+                        stream.Write(buffer, 0, curBufferSize);
+
+                        // Increment our pointer and decrease the total size of elements we have to write
+                        ptr += curBufferSize;
+                        totalSize -= curBufferSize;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Reads the bytes of the tensor from a stream.
+            /// </summary>
+            /// <param name="stream">Stream to read the bytes from</param>
+            /// <param name="bufferSize">The buffer size to use when reading from the stream</param>
+            public void ReadBytesFromStream(Stream stream, int bufferSize = 1024)
+            {
+                long totalSize = NumberOfElements * ElementSize;
+
+                // Validate that this tensor matches the conditions for reading the bytes - pass 0 as total size
+                // since we don't need to check that condition. 
+                _validate(0);
+
+                unsafe {
+                    var ptr = NativeMethods.THSTensor_data(handle);
+                    if (ptr == IntPtr.Zero) { CheckForErrors(); }
+
+                    // NOTE: there is no safety here in this loop.
+                    // Read in the buffer N bytes at a time, and write them out
+                    byte[] buffer = new byte[bufferSize];
+                    while (totalSize > 0) {
+                        // Read in the current buffer size
+                        int bytesRead = stream.Read(buffer, 0, (int)Math.Min(totalSize, bufferSize));
+
+                        if (bytesRead == 0)
+                            throw new EndOfStreamException();
+
+                        // Copy the contents over to the span
+                        var span = new Span<byte>((void*)ptr, bytesRead);
+                        buffer.AsSpan(0, bytesRead).CopyTo(span);
+                        
+                        // Increment our pointer and decrease the total size of elements we have to write
+                        ptr += bytesRead;
+                        totalSize -= bytesRead;
+                    }
+                }
+            }
+
             /// <summary>
             /// Get or set the contents of a tensor as raw bytes.
             /// </summary>
@@ -704,11 +779,28 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+
+            /// <summary>
+            /// Moves the tensor data to the MPS device
+            /// </summary>
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor mps(bool non_blocking = false)
+            {
+                var res = NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.MPS, -1, true, non_blocking);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+
+                return new Tensor(res);
+
+            }
+            
             /// <summary>
             /// Returns a copy of this object in CUDA memory.
             /// If this object is already in CUDA memory and on the correct device, then no copy is performed and the original object is returned.
             /// </summary>
-            public Tensor cuda(Device? device = null)
+            /// <param name="device">The target device</param>
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor cuda(Device? device = null, bool non_blocking = false)
             {
                 if (device is not null && device.type != DeviceType.CUDA) {
                     throw new ArgumentException("Not a CUDA device.", "device");
@@ -718,7 +810,7 @@ namespace TorchSharp
 
                 var res = device is null
                     ? NativeMethods.THSTensor_cuda(Handle)
-                    : NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.CUDA, device_index, false);
+                    : NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.CUDA, device_index, false, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -730,9 +822,10 @@ namespace TorchSharp
             /// <param name="type">The target type</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to_type(ScalarType type, bool copy = false, bool disposeAfter = false)
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to_type(ScalarType type, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
-                var res = NativeMethods.THSTensor_to_type(Handle, (sbyte)type, copy);
+                var res = NativeMethods.THSTensor_to_type(Handle, (sbyte)type, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 if (disposeAfter)
@@ -764,10 +857,11 @@ namespace TorchSharp
             /// <param name="deviceIndex">The optional device index.</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false, bool disposeAfter = false)
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
                 torch.InitializeDeviceType(deviceType);
-                var res = NativeMethods.THSTensor_to_device(Handle, (int)deviceType, deviceIndex, copy);
+                var res = NativeMethods.THSTensor_to_device(Handle, (int)deviceType, deviceIndex, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 if (disposeAfter)
@@ -783,10 +877,11 @@ namespace TorchSharp
             /// <param name="device">The target device</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(ScalarType type, torch.Device device, bool copy = false, bool disposeAfter = false)
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(ScalarType type, torch.Device device, bool copy = false, bool disposeAfter = false, bool non_blocking = false)
             {
-                torch.InitializeDevice(device);
-                var res = NativeMethods.THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy);
+                device = torch.InitializeDevice(device);
+                var res = NativeMethods.THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy, non_blocking);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 if (disposeAfter)
@@ -809,8 +904,9 @@ namespace TorchSharp
             /// <param name="type">The target type</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
             /// <remarks>Alias for to_type</remarks>
-            public Tensor to(ScalarType type, bool copy = false, bool disposeAfter = false) => to_type(type, copy, disposeAfter);
+            public Tensor to(ScalarType type, bool copy = false, bool disposeAfter = false, bool non_blocking = false) => to_type(type, copy, disposeAfter, non_blocking);
 
             /// <summary>
             /// Moves the tensor data.
@@ -818,7 +914,8 @@ namespace TorchSharp
             /// <param name="device">A string denoting the target device.</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(string device, bool copy = false, bool disposeAfter = false) => to(new torch.Device(device), copy, disposeAfter);
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(string device, bool copy = false, bool disposeAfter = false, bool non_blocking = false) => to(new torch.Device(device), copy, disposeAfter, non_blocking);
 
             /// <summary>
             /// Moves the tensor data.
@@ -826,13 +923,15 @@ namespace TorchSharp
             /// <param name="device">The target device</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
-            public Tensor to(torch.Device device, bool copy = false, bool disposeAfter = false) => to(device.type, device.index, copy, disposeAfter);
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(torch.Device device, bool copy = false, bool disposeAfter = false, bool non_blocking = false) => to(device.type, device.index, copy, disposeAfter, non_blocking);
 
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="other">The tensor serving as a template.</param>
-            public Tensor to(Tensor other) => to(other.dtype, other.device);
+            /// <param name="non_blocking">Try to convert asynchronously with respect to the host if possible, e.g., converting a CPU Tensor with pinned memory to a CUDA Tensor.</param>
+            public Tensor to(Tensor other, bool non_blocking = false) => to(other.dtype, other.device, non_blocking);
 
             public Tensor type(Func<Tensor, Tensor> typeFunc) => typeFunc(this);
 
@@ -1260,25 +1359,21 @@ namespace TorchSharp
             /// This attribute is null by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
             /// The attribute will then contain the gradients computed and future calls to backward() will accumulate (add) gradients into it.
             /// </summary>
-            public Tensor? grad()
-            {
-                var res = NativeMethods.THSTensor_grad(Handle);
-                CheckForErrors();
+            public Tensor? grad {
+                get {
+                    var res = NativeMethods.THSTensor_grad(Handle);
 
-                if (res == IntPtr.Zero)
-                    return null;
+                    if (res == IntPtr.Zero) {
+                        CheckForErrors();
+                        return null;
+                    }
 
-                return new Tensor(res);
-            }
-
-            /// <summary>
-            /// This function will set the `tensor.grad()` attribute to a custom tensor. 
-            /// </summary>
-            /// <param name="grad">The new gradient tensor</param>
-            public void set_grad(Tensor grad)
-            {
-                NativeMethods.THSTensor_set_grad(Handle, grad?.DetachFromDisposeScope().Handle ?? IntPtr.Zero);
-                CheckForErrors();
+                    return new Tensor(res);
+                }
+                set {
+                    NativeMethods.THSTensor_set_grad(Handle, value?.Handle ?? IntPtr.Zero);
+                    CheckForErrors();
+                }
             }
 
             internal void EncodeIndices(TensorIndex[] indices,
@@ -6418,11 +6513,18 @@ namespace TorchSharp
                 var leadingRows = torch.maxRows - trailingRows;
 
                 var dim = t.dim();
+
                 if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
                 sb.Append('[');
                 var currentSize = t.size()[0];
-                if (dim == 1) {
+                if (currentSize == 0) {
+                    // print nothing
+                }
+                else if (dim == 0) {
+                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                }
+                else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
@@ -6494,7 +6596,6 @@ namespace TorchSharp
                 var leadingRows = torch.maxRows - trailingRows;
 
                 var dim = t.dim();
-                if (t.size().Length == 0) return "";
                 var sb = new StringBuilder();
 
                 if (top) {
@@ -6570,7 +6671,10 @@ namespace TorchSharp
                 }
 
                 var currentSize = t.size()[0];
-                if (dim == 1) {
+                if (currentSize == 0) {
+                    // do nothing
+                }
+                else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
@@ -7137,37 +7241,63 @@ namespace TorchSharp
             public double max;
             public double min;
             public double tiny;
+            public double smallest_normal;
+            public double resolution;
+        }
+
+        public static FInfo finfo()
+        {
+            return finfo(default_dtype);
         }
 
         public static FInfo finfo(ScalarType dtype)
         {
-            if (!is_floating_point(dtype) && !is_complex(dtype))
-                throw new ArgumentException("'dtype' must be floating point or complex");
-
-            if (dtype == ScalarType.ComplexFloat32)
-                dtype = ScalarType.Float32;
-            if (dtype == ScalarType.ComplexFloat64)
-                dtype = ScalarType.Float64;
-
-            FInfo result = new FInfo();
-
             switch (dtype) {
+            case ScalarType.BFloat16:
+                return new FInfo() {
+                    bits = 16,
+                    eps = 0.0078125,
+                    max = 3.3895313892515355e+38,
+                    min = -3.3895313892515355e+38,
+                    tiny = 1.1754943508222875e-38,
+                    smallest_normal = 1.1754943508222875e-38,
+                    resolution = 0.01
+                };
+            case ScalarType.Float16:
+                return new FInfo() {
+                    bits = 16,
+                    eps = 0.0009765625,
+                    max = 65504.0,
+                    min = -65504.0,
+                    tiny = 6.103515625e-05,
+                    smallest_normal = 6.103515625e-05,
+                    resolution = 0.001
+                };
             case ScalarType.Float32:
-                result.bits = 32;
-                result.min = float.MinValue;
-                result.max = float.MaxValue;
-                result.eps = float.Epsilon;
-                result.tiny = float.Epsilon;
-                break;
+            case ScalarType.ComplexFloat32:
+                return new FInfo() {
+                    bits = 32,
+                    eps = 1.1920928955078125e-07,
+                    max = 3.4028234663852886e+38,
+                    min = -3.4028234663852886e+38,
+                    tiny = 1.1754943508222875e-38,
+                    smallest_normal = 1.1754943508222875e-38,
+                    resolution = 1e-06
+                };
             case ScalarType.Float64:
-                result.bits = 64;
-                result.min = double.MinValue;
-                result.max = double.MaxValue;
-                result.eps = double.Epsilon;
-                result.tiny = double.Epsilon;
-                break;
+            case ScalarType.ComplexFloat64:
+                return new FInfo() {
+                    bits = 64,
+                    eps = 2.220446049250313e-16,
+                    max = 1.7976931348623157e+308,
+                    min = -1.7976931348623157e+308,
+                    tiny = 2.2250738585072014e-308,
+                    smallest_normal = 2.2250738585072014e-308,
+                    resolution = 1e-15
+                };
+            default:
+                throw new ArgumentException("'dtype' must be floating point or complex");
             }
-            return result;
         }
 
         public static bool is_integral(ScalarType type)
@@ -7263,7 +7393,14 @@ namespace TorchSharp
         /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
         /// be automatically disposed once the dispose scope is disposed.
         /// </summary>
-        public static DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
+        public static DisposeScope NewDisposeScope() =>
+            DisposeScopeManager.ThreadSingleton.NewDisposeScope();
+
+        /// <summary>
+        /// Get the current dispose scope for the current thread.
+        /// </summary>
+        public static DisposeScope? CurrentDisposeScope =>
+            DisposeScopeManager.ThreadSingleton.CurrentDisposeScope;
 
         /// <summary>
         /// Creates a new dispose scope for the current thread, wrapping an expression.

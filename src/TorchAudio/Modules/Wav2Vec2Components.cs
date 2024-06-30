@@ -96,8 +96,8 @@ namespace TorchSharp.Modules
                 this.stride = stride;
                 this.layer_norm = layer_norm;
                 this.conv = nn.Conv1d(
-                    inputChannel: in_channels,
-                    outputChannel: out_channels,
+                    in_channels: in_channels,
+                    out_channels: out_channels,
                     kernelSize: kernel_size,
                     stride: stride,
                     bias: bias);

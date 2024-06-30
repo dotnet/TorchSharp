@@ -108,7 +108,7 @@ namespace TorchSharp
                     this.load(weights_file, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
                 }
 
-                if (device != null && device.type == DeviceType.CUDA)
+                if (device != null && device.type != DeviceType.CPU)
                     this.to(device);
             }
 

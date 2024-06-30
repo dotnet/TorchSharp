@@ -17,10 +17,10 @@ resources:
 #   - container: CentosContainer
 #     image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
 # dotnet-buildtools/prereqs containers can be browsed at
-#   https://mcrflowprodcentralus.data.mcr.microsoft.com/mcrprod/dotnet-buildtools/prereqs?P1=1616630425&P2=1&P3=1&P4=xAN4nwxX9ps%2BMi75FMzu0iGuhA7luhLsZKUGf0Q9fFU%3D&se=2021-03-25T00%3A00%3A25Z&sig=j1uhQmj8EAbZqaSyGS%2Fwz0ETxwrGVhN3WFwX4OpNz4w%3D&sp=r&sr=b&sv=2015-02-21
+#   https://github.com/dotnet/versions/blob/main/build-info/docker/image-info.dotnet-dotnet-buildtools-prereqs-docker-main.json
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mlnet-20210924170306-87445d2
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-mlnet-20240216051055-578f026
 
 jobs:
 - template: /build/ci/job-template.yml
@@ -28,18 +28,18 @@ jobs:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
-    # be usable on), then installs clang-6.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
+    # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
         sudo apt-get -y update &&
-        sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
+        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     buildScript: dotnet build /p:SkipCuda=true -c
-    testScript: dotnet test /p:SkipCuda=true --blame -c
+    testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
       vmImage: 'ubuntu-latest'
     container: UbuntuContainer
@@ -49,7 +49,7 @@ jobs:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetCore
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
-    testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame test\TorchSharpTest\TorchSharpTest.csproj -c
     pool:
       vmImage: 'windows-latest'
 
@@ -58,7 +58,7 @@ jobs:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetFX
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
-    testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame test\TorchSharpTest\TorchSharpTest.csproj -c
     pool:
       vmImage: 'windows-latest'
 
@@ -66,10 +66,19 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: MacOS_x64
-    buildScript: dotnet build /p:SkipCuda=true -c
-    testScript: dotnet test --blame /p:SkipCuda=true --blame -c
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=x64 -c
+    testScript: dotnet test --blame /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
-      vmImage: 'macos-11'
+      vmImage: 'macos-latest'
+
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: MacOS_arm64
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 -c
+    testScript: echo "Azure Pipelines does not support arm64 yet, can't run tests"
+    pool:
+      vmImage: 'macos-latest'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -91,14 +100,21 @@ jobs:
   container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 6.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
   - script:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
         sudo apt-get -y update &&
-        sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
+        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
@@ -110,13 +126,13 @@ jobs:
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build linux
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -153,20 +169,20 @@ jobs:
     displayName: Download libtorch native CUDA binaries
 
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build Windows
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: WindowsAssets
 
 # ################################################################################
-- job: MacOS_Native_Build_For_Packages
+- job: MacOS_x64_Native_Build_For_Packages
 # ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
@@ -176,22 +192,51 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'macos-11'
+    vmImage: 'macos-latest'
   steps:
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true  /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
+    condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
-    displayName: Build mac
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
+    displayName: Build mac-x64
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
-    artifact: MacAssets
+    artifact: MacAssets_x64
+
+  # ################################################################################
+- job: MacOS_arm64_Native_Build_For_Packages
+  # ################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'macos-latest'
+  steps:
+    - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:TargetArchitecture=arm64 /t:Build /p:IncludeLibTorchCpuPackages=true
+      displayName: Download libtorch native binaries
+
+    - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true /p:TargetArchitecture=arm64
+      displayName: Build mac-arm64
+
+    - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true /p:TargetArchitecture=arm64
+      displayName: Build TorchVision
+
+    - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true /p:TargetArchitecture=arm64
+      displayName: Build TorchAudio
+
+    - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+      artifact: MacAssets_arm64
 
 
 ################################################################################
@@ -201,7 +246,8 @@ jobs:
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
-  - MacOS_Native_Build_For_Packages
+  - MacOS_x64_Native_Build_For_Packages
+  - MacOS_arm64_Native_Build_For_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -241,44 +287,75 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
-    displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy linux native assets to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu-linux-x64
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-linux-x64
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space (LinuxAssets in workspace)
 
     # Download all bits contributing to the packages from the Mac build
   - download: current
-    artifact: MacAssets
+    artifact: MacAssets_x64
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchAudio
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchVision
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-osx-x64
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-osx-x64
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets
-    displayName: Free up space (MacAssets in workspace)
+  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets_x64
+    displayName: Free up space (MacAssets_x64 in workspace)
+
+    # Download all bits contributing to the packages from the Mac build
+  - download: current
+    artifact: MacAssets_arm64
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/TorchSharp
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+
+  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets_arm64
+    displayName: Free up space (MacAssets_arm64 in workspace)
 
   - download: current
     artifact: WindowsAssets
@@ -310,8 +387,11 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
+  - script: dotnet restore pkg/pack.proj /p:Configuration=Release
+    displayName: Restore package projects
+
   # Pack TorchSharp (and libtorch-cpu if BuildLibTorchPackages is true)
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) pkg/pack.proj
     displayName: Create Packages
 
   - script: rmdir /q /s bin\obj
@@ -367,7 +447,10 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet restore pkg/pack.proj /p:Configuration=Release
+    displayName: Restore package projects
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -402,14 +485,21 @@ jobs:
   container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 6.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
   - script:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
         sudo apt-get -y update &&
-        sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
+        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
@@ -431,7 +521,10 @@ jobs:
   - script: rm -fr  $(Pipeline.Workspace)/LinuxAssets
     displayName: Free up space (linux assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet restore pkg/pack.proj /p:Configuration=Release
+    displayName: Restore package projects
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
