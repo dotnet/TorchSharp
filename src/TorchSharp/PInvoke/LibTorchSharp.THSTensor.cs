@@ -289,11 +289,11 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
+        //internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy);
+        internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
-        internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy);
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_to_type_and_device_and_non_blocking(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
