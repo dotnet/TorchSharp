@@ -38,16 +38,28 @@ namespace TorchSharp.Utils
             _tensor = tensor; // Keep the tensor alive now that everything is alright.
         }
 
+        /// <summary>
+        /// This is important for performance because only called with CopyTo, CopyFrom. Is not necesary in each invocation call tensor.numel() because that use intensive CPU.
+        /// This temporary count avoid so much use CPU. The Property <see cref="Count"/> act as method.
+        /// If tensor is for example 640*640*3 = 1.228.800, <see cref="Count"/> property invoke 1 millons times!!!
+        /// If we only want copy is not necesary call that method so many times.
+        /// </summary>
+        private long TempCount = -1;
         public long Count => (_tensor is not null ? _tensor.numel() : 0);
 
         public bool IsReadOnly => false;
+
 
         public T[] ToArray()
         {
             if (_tensor.ndim < 2)
                 return (T[])ToNDArray();
 
-            var result = new T[Count];
+            var shps = _tensor.shape;
+            TempCount = 1;
+            for(int i=0;i<shps.Length;i++)
+                TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
+            var result = new T[TempCount];
             CopyTo(result);
             return result;
         }
@@ -241,7 +253,27 @@ namespace TorchSharp.Utils
             }
         }
 
+        public void CopyTo(Span<T> array, int arrayIndex = 0, long tensorIndex = 0)
+        {
+            int idx = arrayIndex;
+            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
+                if (idx >= array.Length) break;
+                unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
+                idx += 1;
+            }
+        }
+
         public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
+        {
+            int idx = arrayIndex;
+            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
+                if (idx >= array.Length) break;
+                unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
+                idx += 1;
+            }
+        }
+
+        public void CopyFrom(ReadOnlySpan<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
             int idx = arrayIndex;
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
@@ -274,7 +306,27 @@ namespace TorchSharp.Utils
 
             return result;
         }
+        /// <summary>
+        /// WARNING: Test purpose not use in production
+        /// </summary>
+        private long TranslateIndexNonStatic(long idx, torch.Tensor tensor)
+        {
+            if (idx >= TempCount || idx < 0)
+                throw new ArgumentOutOfRangeException($"{idx} in a collection of  ${tensor.numel()} elements.");
 
+            if (tensor.is_contiguous() || idx == 0) return idx;
+
+            long result = 0;
+            var shape = tensor.shape;
+            var strides = tensor.stride();
+
+            for (var i = shape.Length - 1; i >= 0; i--) {
+                idx = Math.DivRem(idx, shape[i], out long s);
+                result += s * strides[i];
+            }
+
+            return result;
+        }
         private static long TranslateIndex(long[] idx, torch.Tensor tensor)
         {
             long result = 0;
@@ -347,15 +399,18 @@ namespace TorchSharp.Utils
 
         private IEnumerable<long> GetSubsequentIndices(long startingIndex)
         {
-            if (startingIndex < 0 || startingIndex >= Count)
+            TempCount = Count;
+
+            if (startingIndex < 0 || startingIndex >= TempCount)
                 throw new ArgumentOutOfRangeException(nameof(startingIndex));
 
-            if (Count <= 1) {
-                if (Count == 0) {
+            if (TempCount <= 1) {
+                if (TempCount == 0) {
                     return Enumerable.Empty<long>();
                 }
 
-                return (new long[] { 0 }).AsEnumerable<long>();
+                return new List<long>() { 0 };
+                //return (new long[] { 0 }).AsEnumerable<long>();
             }
 
             if (_tensor.is_contiguous()) {
@@ -371,7 +426,6 @@ namespace TorchSharp.Utils
 
             return MultiDimensionIndices(startingIndex);
         }
-
         private IEnumerable<long> MultiDimensionIndices(long startingIndex)
         {
             long[] shape = _tensor.shape;
@@ -379,7 +433,8 @@ namespace TorchSharp.Utils
             long[] inds = new long[stride.Length];
 
             long index = startingIndex;
-            long offset = TranslateIndex(startingIndex, _tensor);
+            //long offset = TranslateIndex(startingIndex, _tensor);
+            long offset = TranslateIndexNonStatic(startingIndex, _tensor); //WARNING: Test purpose not use in production
 
             while (true) {
 
@@ -387,7 +442,7 @@ namespace TorchSharp.Utils
 
                 yield return offset;
 
-                if (index >= Count) break;
+                if (index >= TempCount) break;
 
                 for (int i = inds.Length - 1; ; i--) {
                     Debug.Assert(i >= 0);
@@ -408,21 +463,23 @@ namespace TorchSharp.Utils
         private IEnumerable<long> SimpleIndices(long startingIndex, long stride)
         {
             long index = startingIndex;
-            long offset = TranslateIndex(startingIndex, _tensor);
+            //long offset = TranslateIndex(startingIndex, _tensor);
+            long offset = TranslateIndexNonStatic(startingIndex, _tensor); //WARNING: Test purpose not use in production
 
-            while (index < Count) {
+            while (index < TempCount) {
                 yield return offset;
                 offset += stride;
                 index += 1;
             }
         }
+
         private IEnumerable<long> ContiguousIndices(long startingIndex)
         {
             // If there was an overload for Enumerable.Range that
             // produced long integers, we wouldn't need this implementation.
 
             long index = startingIndex;
-            while (index < Count) {
+            while (index < TempCount) {
                 yield return index;
                 index += 1;
             }

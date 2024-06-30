@@ -21,7 +21,8 @@ namespace TorchSharp
             if (handle == IntPtr.Zero) { CheckForErrors(); }
 
 
-            var t = new Tensor(handle).AutoCast();
+            //var t = new Tensor(handle).AutoCast();
+            var t = new Tensor(handle);
             /*if (is_autocast_cache_enabled()) {
                 if (is_autocast_gpu_enabled())
                     return t.to(get_autocast_gpu_dtype()); //this work, but should put that on all tensor factorie... 
