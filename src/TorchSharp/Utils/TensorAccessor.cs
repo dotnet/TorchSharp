@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
@@ -43,12 +44,12 @@ namespace TorchSharp.Utils
         /// This temporary count avoid so much use CPU. The Property <see cref="Count"/> act as method.
         /// If tensor is for example 640*640*3 = 1.228.800, <see cref="Count"/> property invoke 1 millons times!!!
         /// If we only want copy is not necesary call that method so many times.
+        /// For some reason the method numel() use so much cpu.
         /// </summary>
-        private long TempCount = -1;
-        public long Count => (_tensor is not null ? _tensor.numel() : 0);
+        internal long TempCount = -1;
+        public long Count => _tensor?.numel() ?? 0;
 
         public bool IsReadOnly => false;
-
 
         public T[] ToArray()
         {
@@ -59,6 +60,14 @@ namespace TorchSharp.Utils
             TempCount = 1;
             for(int i=0;i<shps.Length;i++)
                 TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
+            
+            if (typeof(T) == typeof(float)) {
+                if (_tensor.is_contiguous()) { //This is very fast. And work VERY WELL
+                    unsafe {
+                        return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(TempCount)).ToArray();
+                    }
+                }
+            }
             var result = new T[TempCount];
             CopyTo(result);
             return result;
@@ -246,6 +255,18 @@ namespace TorchSharp.Utils
         public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
             int idx = arrayIndex;
+            /*if (_tensor.is_contiguous()) {
+                if (typeof(T) == typeof(float)) {
+                    float[] ff = new float[TempCount];
+                    Marshal.Copy(_tensor_data_ptr, ff, 0,ff.Length);
+                }
+            }*/
+            //Because the contiguous cause arange from tensorIndex to Numel. So is not necesary "create" array of arange, i said "create" because in fact enumerable do not create itself. Very cool.
+            if (_tensor.is_contiguous()) {
+                for(long i= tensorIndex; i<TempCount;i++)
+                    unsafe { array[i] = ((T*)_tensor_data_ptr)[i]; }
+                return;
+            }
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
                 if (idx >= array.Length) break;
                 unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
@@ -399,7 +420,7 @@ namespace TorchSharp.Utils
 
         private IEnumerable<long> GetSubsequentIndices(long startingIndex)
         {
-            TempCount = Count;
+            //TempCount = Count;
 
             if (startingIndex < 0 || startingIndex >= TempCount)
                 throw new ArgumentOutOfRangeException(nameof(startingIndex));
@@ -477,7 +498,7 @@ namespace TorchSharp.Utils
         {
             // If there was an overload for Enumerable.Range that
             // produced long integers, we wouldn't need this implementation.
-
+            
             long index = startingIndex;
             while (index < TempCount) {
                 yield return index;
@@ -534,11 +555,16 @@ namespace TorchSharp.Utils
 #if true
         public IEnumerator<T> GetEnumerator()
         {
-            if (Count <= 1) {
-                if (Count == 0)
+            if (TempCount <= 1) {
+                if (TempCount == 0)
                     return Enumerable.Empty<T>().GetEnumerator();
                 return new T[1] { this[0] }.AsEnumerable<T>().GetEnumerator();
             }
+            /*if (Count <= 1) {
+                if (Count == 0)
+                    return Enumerable.Empty<T>().GetEnumerator();
+                return new T[1] { this[0] }.AsEnumerable<T>().GetEnumerator();
+            }*/
 
             if (_tensor.is_contiguous()) {
                 return new SimpleAtorImpl(this, 1);
@@ -568,7 +594,7 @@ namespace TorchSharp.Utils
             public SimpleAtorImpl(TensorAccessor<T> span, long stride)
             {
                 _span = span;
-                _count = span.Count;
+                _count = span.TempCount;
                 Debug.Assert(_count > 0);
                 _stride = stride;
                 Reset();
@@ -623,7 +649,7 @@ namespace TorchSharp.Utils
             {
                 Debug.Assert(stride.Length > 1);
                 _span = span;
-                _count = span.Count;
+                _count = span.TempCount;
                 Debug.Assert(_count > 0);
                 _shape = span._tensor.shape;
                 Debug.Assert(_shape.Length == stride.Length);

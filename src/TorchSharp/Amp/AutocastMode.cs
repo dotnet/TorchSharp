@@ -16,6 +16,7 @@ namespace TorchSharp.Amp
     //TODO: Should make Singleton and IDisposable on ENTER
     public sealed class AutocastMode : IDisposable
     {
+        //NEED "Register" all tensor in scope for uncasting outer-scope
         private bool Enabled, Prev;
         //private torch.ScalarType Dtype = torch.ScalarType.Float32;
         private torch.ScalarType fast_dtype = torch.ScalarType.Float32;
@@ -29,7 +30,7 @@ namespace TorchSharp.Amp
         }*/
         public static AutocastMode GetInstance()
         {
-            return instance ?? (instance = new AutocastMode(torch.CUDA, cache_enabled:true));
+            return instance ??= new AutocastMode(torch.CUDA, cache_enabled:true);
         }
 
         private AutocastMode(torch.Device dev, torch.ScalarType? dtype = null, bool enabled=true, bool? cache_enabled = null)
@@ -40,7 +41,7 @@ namespace TorchSharp.Amp
                 fast_dtype = torch.get_autocast_gpu_dtype();
             if (dev.type == DeviceType.CPU)
                 fast_dtype = torch.get_autocast_cpu_dtype();
-            IntPtr ptr = IntPtr.Zero;
+            //IntPtr ptr = IntPtr.Zero;
             
             bool _cache_enabled = torch.is_autocast_cache_enabled();
             if (!torch.cuda.is_available() && dev.type == DeviceType.CUDA) //Is not available for doing multicast

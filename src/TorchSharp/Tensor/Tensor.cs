@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using TorchSharp.Amp;
 using TorchSharp.PInvoke;
 
 #nullable enable
@@ -33,13 +34,25 @@ namespace TorchSharp
             static long _peakCount = 0;
 
             internal DisposeScope? OwningDisposeScope { get; set; }
-
+            //internal AutocastDisposeScope? AutocastDisposeScope;
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
+                
+                /*if (_totalCount > 0) {
+                    //have used
+                    AutocastDisposeScope = AutocastDisposeManager.ThreadAutocastSingleton.RegisterTensorAutocastScope(this);
+                    this = AutocastDisposeScope.autocastMode.CastTensor(this); //should cast when using INSIDE NOT WHERE CREATED
+                }*/
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
                 OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+
+                //TODO: Add Autocast/AMP ScopeManager, need improve this.. 1) is not threadsafe and may have big problem while casting and uncasting.
+                //DANGER: DONT USE THIS ON PRODUCTION
+                /*AutocastDisposeScope = AutocastDisposeManager.ThreadAutocastSingleton.RegisterTensorAutocastScope(this);
+                this = AutocastDisposeScope.autocastMode.CastTensor(this); //should cast when using INSIDE NOT WHERE CREATED*/
+                //Should cast inner scope when get tensors for every each method? example prod, sum, div, reshape, etc???
             }
 
             /// <summary>
@@ -209,6 +222,9 @@ namespace TorchSharp
                 get {
                     if (handle == IntPtr.Zero)
                         throw new InvalidOperationException("Tensor invalid -- empty handle.");
+
+                    //AutocastDisposeScope.autocastMode.CastTensor(this); //This is wrong right???
+
                     return handle;
                 }
             }

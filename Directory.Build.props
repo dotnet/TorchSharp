@@ -5,6 +5,10 @@
   <Import Project="build/Dependencies.props" />
 
   <PropertyGroup>
+    <!--If set true need set full path of LibTorchPathCPU and LibTorchPathCUDA-->
+    <UseCustomLibTorchPath>true</UseCustomLibTorchPath>
+    <LibTorchPathCPU Condition="'$(UseCustomLibTorchPath)'=='true'">$(LibTorch)libtorch-win-shared-with-deps-2.3.1+cpu\libtorch</LibTorchPathCPU>
+    <LibTorchPathCUDA Condition="'$(UseCustomLibTorchPath)'=='true'">$(LibTorch)libtorch-win-shared-with-deps-2.3.1+cu121\libtorch</LibTorchPathCUDA>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Configurations>Debug;Release</Configurations>
     <_DefaultArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLower())</_DefaultArchitecture>
@@ -133,7 +137,7 @@
     <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(UseCustomLibTorchPath)'=='false'">
     <LibTorchArchiveSource>pytorch</LibTorchArchiveSource>
     <LibTorchArchiveSource Condition="'$(TargetPlatform)' == 'mac-arm64'">conda</LibTorchArchiveSource>
     <CondaArchivePlatformName Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</CondaArchivePlatformName>
@@ -151,6 +155,9 @@
     <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>
     <LibTorchCudaLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaLocalNameSuffix)</LibTorchCudaLocalBase>
     <LibTorchCmakePath>$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuLocalBase)\libtorch\share\cmake\Torch</LibTorchCmakePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(UseCustomLibTorchPath)'=='true'">
+    <LibTorchCmakePath>$(LibTorchPathCPU)\share\cmake\Torch</LibTorchCmakePath>
   </PropertyGroup>
 
   <!-- Language configuration -->

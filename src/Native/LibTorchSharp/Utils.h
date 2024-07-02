@@ -59,6 +59,9 @@ struct TensorArray {
 inline Tensor ResultTensor(const at::Tensor & res)
 {
     if (res.defined()) {
+
+        //TODO: Autocast here only if is INNER-SCOPE 
+
         /*at::Tensor* resT = new torch::Tensor(res);
         if (at::autocast::is_autocast_cache_enabled()){
             if (res.is_cuda()) {
