@@ -294,3 +294,4 @@ packages/
 /src/Native/ZERO_CHECK.vcxproj
 /src/Native/ZERO_CHECK.vcxproj.filters
 /src/FSharp.Examples/FSharp.Examples.fsproj
+/pkg/FileRestitcher
