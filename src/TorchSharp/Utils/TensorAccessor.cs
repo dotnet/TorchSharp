@@ -61,11 +61,9 @@ namespace TorchSharp.Utils
             for(int i=0;i<shps.Length;i++)
                 TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
             
-            if (typeof(T) == typeof(float)) {
-                if (_tensor.is_contiguous()) { //This is very fast. And work VERY WELL
-                    unsafe {
-                        return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(TempCount)).ToArray();
-                    }
+            if (_tensor.is_contiguous()) { //This is very fast. And work VERY WELL
+                unsafe {
+                    return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(TempCount)).ToArray();
                 }
             }
             var result = new T[TempCount];

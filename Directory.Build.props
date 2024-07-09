@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <!--If set true need set full path of LibTorchPathCPU and LibTorchPathCUDA-->
-    <UseCustomLibTorchPath>true</UseCustomLibTorchPath>
+    <UseCustomLibTorchPath>false</UseCustomLibTorchPath>
     <LibTorchPathCPU Condition="'$(UseCustomLibTorchPath)'=='true'">$(LibTorch)libtorch-win-shared-with-deps-2.3.1+cpu\libtorch</LibTorchPathCPU>
     <LibTorchPathCUDA Condition="'$(UseCustomLibTorchPath)'=='true'">$(LibTorch)libtorch-win-shared-with-deps-2.3.1+cu121\libtorch</LibTorchPathCUDA>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
