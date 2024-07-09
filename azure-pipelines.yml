@@ -20,23 +20,28 @@ variables:
     ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D
     sudo apt-get -y update
-    sudo apt-get -y install cmake git libunwind8 curl libomp-dev libomp5
-    wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 wget
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb
     sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update
     ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
 
-    # Install Miniconda
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    mkdir -p ~/miniconda3
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-    bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-    rm -rf ~/miniconda3/miniconda.sh
+    # Install dotnet
+    sudo apt-get install -y dotnet-sdk-6.0
 
-    # Install cmake, clang and gxx_linux-
-    eval "$(~/miniconda3/bin/conda shell.bash hook)"
-    source activate base
-    conda install -y cmake=3.22.1 clang=14.0.6 clangxx=14.0.6 gxx_linux-64=11.2.0
+    # # Install Miniconda
+    # wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    # mkdir -p ~/miniconda3
+    # wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+    # bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+    # rm -rf ~/miniconda3/miniconda.sh
+
+    # # Install cmake, clang and gxx_linux-
+    # eval "$(~/miniconda3/bin/conda shell.bash hook)"
+    # source activate base
+    # # Add forge channel
+    # conda config --add channels conda-forge
+    # conda install -y cmake=3.22.1 clang=8.0.0 clangxx=8.0.0 gcc=8.5.0 gxx=8.5.0
     
 
 resources:
@@ -57,12 +62,8 @@ jobs:
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
     # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript: ${{ variables.LinuxPrepScript }}
-    buildScript: eval "$(~/miniconda3/bin/conda shell.bash hook)" &&
-      source activate base &&
-      dotnet build /p:SkipCuda=true -c
-    testScript: eval "$(~/miniconda3/bin/conda shell.bash hook)" &&
-      source activate base &&
-      dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
+    buildScript: dotnet build /p:SkipCuda=true -c
+    testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
       vmImage: 'ubuntu-latest'
     container: UbuntuContainer
@@ -132,36 +133,21 @@ jobs:
   - script: ${{ variables.LinuxPrepScript }}
     displayName: Install dependencies
 
-  - script: |
-      eval "$(~/miniconda3/bin/conda shell.bash hook)"
-      source activate base
-      dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: |
-      eval "$(~/miniconda3/bin/conda shell.bash hook)"
-      source activate base
-      dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
-  - script: |
-      eval "$(~/miniconda3/bin/conda shell.bash hook)"
-      source activate base
-      dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build linux
 
-  - script: |
-      eval "$(~/miniconda3/bin/conda shell.bash hook)"
-      source activate base
-      dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchVision
 
-  - script: |
-      eval "$(~/miniconda3/bin/conda shell.bash hook)"
-      source activate base
-      dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
