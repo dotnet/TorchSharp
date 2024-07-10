@@ -88,7 +88,7 @@ jobs:
 ################################################################################
 - job: Linux_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'u/kickBuild'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'kickBuild'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -471,7 +471,7 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'u/kickBuild'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'kickBuild'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   variables:
