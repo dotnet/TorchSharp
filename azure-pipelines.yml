@@ -104,7 +104,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 6.x
+      version: 6.0.402
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script:
@@ -141,7 +141,7 @@ jobs:
 ################################################################################
 - job: Windows_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'kickBuild'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -416,7 +416,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'kickBuild'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Windows_Native_Build_For_Packages
   variables:
