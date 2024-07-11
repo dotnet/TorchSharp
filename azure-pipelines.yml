@@ -528,7 +528,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Core
 ################################################################################
-  condition: and(eq(parameters['BuildLibTorchPackages'], 'true'), eq(parameters['PushPackagesToFeed'], true), ne(variables['system.pullrequest.isfork'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', 'true'), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
@@ -576,7 +576,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Extras
 ################################################################################
-  condition: and(eq(parameters['BuildLibTorchPackages'], 'true'), eq(parameters['PushPackagesToFeed'], true), ne(variables['system.pullrequest.isfork'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', 'true'), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - Build_libtorch_cuda_linux_Packages
@@ -650,7 +650,7 @@ jobs:
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(eq(parameters['BuildLibTorchPackages'], 'true'), eq(parameters['PushPackagesToFeed'], true), ne(variables['system.pullrequest.isfork'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', 'true'), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   - CodeSign_Core
@@ -751,7 +751,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Push_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(eq(parameters['BuildLibTorchPackages'], 'true'), eq(parameters['PushPackagesToFeed'], true), ne(variables['system.pullrequest.isfork'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', 'true'), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - CodeSign_Extras
@@ -836,7 +836,7 @@ jobs:
 ################################################################################
 - job: Push_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(eq(parameters['BuildLibTorchPackages'], 'true'), eq(parameters['PushPackagesToFeed'], true), ne(variables['system.pullrequest.isfork'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', 'true'), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_libtorch_cuda_linux_Packages
   - CodeSign_Extras
