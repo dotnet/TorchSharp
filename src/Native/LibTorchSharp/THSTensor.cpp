@@ -2226,3 +2226,16 @@ Tensor THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_
 
     return nullptr;
 }
+
+bool THSTensor_is_coalesce(Tensor tensor)
+{
+    return tensor->is_coalesced();
+}
+
+Tensor THSTensor_coalesce(Tensor tensor)
+{
+    CATCH(
+        return ResultTensor(tensor->coalesce());
+    );
+    return nullptr;
+}

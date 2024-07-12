@@ -2110,6 +2110,11 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_histogram_out_t(IntPtr input, IntPtr bins, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histogram_out_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_coalesce(IntPtr input);
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTensor_is_coalesce(IntPtr input);
     }
 #pragma warning restore CA2101
 }

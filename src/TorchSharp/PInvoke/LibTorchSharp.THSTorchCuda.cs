@@ -19,5 +19,7 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorchCuda_synchronize(long device_index);
+
+
     }
 }

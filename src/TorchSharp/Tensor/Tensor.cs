@@ -261,6 +261,7 @@ namespace TorchSharp
             /// </summary>
             public long numel() => NumberOfElements;
 
+            public bool is_null() => handle == IntPtr.Zero;
             /// <summary>
             /// Get the size of each element in the tensor.
             /// </summary>
@@ -292,6 +293,21 @@ namespace TorchSharp
                 var res = NativeMethods.THSTensor_is_nonzero(Handle);
                 CheckForErrors();
                 return res != 0;
+            }
+
+            public bool is_coalesce()
+            {
+                var res = NativeMethods.THSTensor_is_coalesce(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            public Tensor coalesce()
+            {
+                var res = NativeMethods.THSTensor_coalesce(Handle);
+                if(res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
             }
 
             public bool is_cuda => device.type == DeviceType.CUDA;
@@ -715,6 +731,7 @@ namespace TorchSharp
 
             public void backward(IList<Tensor>? grad_tensors = null, bool create_graph = false, bool retain_graph = false, IList<Tensor>? inputs = null) =>
                 torch.autograd.backward(new[] { this }, grad_tensors, create_graph, retain_graph, inputs);
+
 
             /// <summary>
             /// Creates a tensor by loading it from a file.
@@ -7426,6 +7443,18 @@ namespace TorchSharp
             using var scope = torch.NewDisposeScope();
             var result = expr();
             return result.MoveToOuterDisposeScope();
+        }
+
+        public static void _amp_foreach_non_finite_check_and_unscale(Tensor found_inf, Tensor inv_scale)
+        {
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
         }
     }
 }
