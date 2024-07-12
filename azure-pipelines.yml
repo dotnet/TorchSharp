@@ -27,7 +27,7 @@ variables:
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D
     sudo apt-get -y update
     sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 wget
-    wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb
     sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update
     ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
@@ -40,7 +40,7 @@ resources:
 #   https://github.com/dotnet/versions/blob/main/build-info/docker/image-info.dotnet-dotnet-buildtools-prereqs-docker-main.json
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-mlnet-20240216051055-578f026
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-20.04-20240708213715-dcf0bb9
 
 jobs:
 - template: /build/ci/job-template.yml
