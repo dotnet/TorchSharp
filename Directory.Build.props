@@ -20,7 +20,7 @@
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
 
-    <LibTorchPackageVersion>2.2.1.2</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.2.1.1</LibTorchPackageVersion>
 
     <!-- when building on local machines the massive downloads get placed up one directory -->
     <!-- so we can clean without triggering a re-download-->
