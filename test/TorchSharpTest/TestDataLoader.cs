@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.Modules;
 using Xunit;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp
@@ -305,6 +306,18 @@ namespace TorchSharp
             Assert.True(dataset1.Disposed);
             Assert.True(dataset2.Disposed);
             Assert.True(dataset3.Disposed);
+        }
+
+        [Fact]
+        public void ConcatDatasetDataLoader()
+        {
+            using var dataset = torch.utils.data.ConcatDataset<IReadOnlyDictionary<string, Tensor>>(
+                new[] {
+                    new TestDataset(),
+                    new TestDataset(),
+                });
+            var dataloader = torch.utils.data.DataLoader(dataset, 10, false);
+            Assert.Equal(2, dataloader.Count);
         }
     }
 }
