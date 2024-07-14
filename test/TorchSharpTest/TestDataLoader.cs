@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System.Collections.Generic;
+using System.Linq;
+using TorchSharp.Modules;
 using Xunit;
 
 
@@ -24,6 +26,26 @@ namespace TorchSharp
             public override IList<torch.Tensor> GetTensor(long index)
             {
                 return new[] { torch.tensor(index), torch.tensor(index) };
+            }
+        }
+
+        private class TestDatasetFromIEnumerable<T> : torch.utils.data.IDataset<T>
+        {
+            private readonly T[] values;
+            public TestDatasetFromIEnumerable(IEnumerable<T> values)
+            {
+                this.values = values.ToArray();
+                this.Disposed = false;
+            }
+
+            public bool Disposed { get; set; }
+
+            public T this[long index] => values[index];
+
+            public long Count => values.LongLength;
+
+            public void Dispose() {
+                this.Disposed = true;
             }
         }
 
@@ -229,6 +251,60 @@ namespace TorchSharp
             Assert.Equal(iterator.Current, iterator2.Current);
             iterator.Dispose();
             iterator2.Dispose();
+        }
+
+        [Fact]
+        public void ConcatDatasetTest()
+        {
+            using var dataset1 = new TestDatasetFromIEnumerable<(int, int)>(new[] {
+                (1, 1), // dataset 1 value 1
+                (1, 2), // dataset 1 value 2
+                (1, 3),
+            });
+            using var dataset2 = new TestDatasetFromIEnumerable<(int, int)>(new[] {
+                (2, 1),
+                (2, 2),
+            });
+            using var dataset3 = new TestDatasetFromIEnumerable<(int, int)>(new[] {
+                (3, 1),
+                (3, 2),
+                (3, 3),
+                (3, 4),
+            });
+
+            using var dataset = new ConcatDataset<(int, int)>(new[] {
+                dataset1, dataset2, dataset3
+            });
+
+            Assert.Equal(3 + 2 + 4, dataset.Count);
+
+            Assert.Equal((1, 1), dataset[0]);
+            Assert.Equal((1, 2), dataset[1]);
+            Assert.Equal((1, 3), dataset[2]);
+            Assert.Equal((2, 1), dataset[3]);
+            Assert.Equal((2, 2), dataset[4]);
+            Assert.Equal((3, 1), dataset[5]);
+            Assert.Equal((3, 2), dataset[6]);
+            Assert.Equal((3, 3), dataset[7]);
+            Assert.Equal((3, 4), dataset[8]);
+
+            Assert.Equal((1, 1), dataset[-9]);
+            Assert.Equal((1, 2), dataset[-8]);
+            Assert.Equal((1, 3), dataset[-7]);
+            Assert.Equal((2, 1), dataset[-6]);
+            Assert.Equal((2, 2), dataset[-5]);
+            Assert.Equal((3, 1), dataset[-4]);
+            Assert.Equal((3, 2), dataset[-3]);
+            Assert.Equal((3, 3), dataset[-2]);
+            Assert.Equal((3, 4), dataset[-1]);
+
+            Assert.False(dataset1.Disposed);
+            Assert.False(dataset2.Disposed);
+            Assert.False(dataset3.Disposed);
+            dataset.Dispose();
+            Assert.True(dataset1.Disposed);
+            Assert.True(dataset2.Disposed);
+            Assert.True(dataset3.Disposed);
         }
     }
 }
