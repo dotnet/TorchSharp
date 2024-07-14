@@ -332,9 +332,9 @@ namespace TorchSharp
                 { "VGG19", new long[] { 64, 64, 0, 128, 128, 0, 256, 256, 256, 256, 0, 512, 512, 512, 512, 0, 512, 512, 512, 512, 0 } }
             };
 
-            private readonly Module<Tensor, Tensor> features;
-            private readonly Module<Tensor, Tensor> avgpool;
-            private readonly Module<Tensor, Tensor> classifier;
+            public readonly Module<Tensor, Tensor> features;
+            public readonly Module<Tensor, Tensor> avgpool;
+            public readonly Module<Tensor, Tensor> classifier;
 
             protected override void Dispose(bool disposing)
             {

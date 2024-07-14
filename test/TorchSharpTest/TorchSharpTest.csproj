@@ -13,6 +13,7 @@
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
     <LangVersion>10.0</LangVersion>
+    <Configurations>Debug;Release;LibTorch2.3.1</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

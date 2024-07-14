@@ -158,7 +158,7 @@ namespace TorchSharp
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
                     var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", "..", "..", ".."));
                     var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", ".."));
-
+                    //torchsharpLoc = @"K:\Proyects_Repos\TorchSharp";
                     trace.AppendLine($"    torchsharpLoc = {torchsharpLoc}");
                     trace.AppendLine($"    packagesDir = {packagesDir}");
                     trace.AppendLine($"    torchsharpHome = {torchsharpHome}");

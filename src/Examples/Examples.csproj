@@ -5,9 +5,12 @@
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
-    <TargetFrameworks>net472;netstandard2.0;$(TargetFrameworks)</TargetFrameworks>
+    <!--
+    <TargetFrameworks>net472;netstandard2.0;$(TargetFrameworks)</TargetFrameworks>-->
     <LangVersion>9.0</LangVersion>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
+    <!--
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>-->
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
