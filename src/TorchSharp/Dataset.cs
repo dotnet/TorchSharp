@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace TorchSharp
 {
@@ -27,7 +28,7 @@ namespace TorchSharp
                 /// <summary>
                 /// The base nterface for all Datasets.
                 /// </summary>
-                public abstract class Dataset<T> : IDisposable
+                public abstract class Dataset<T> : IDataset<T>, IDisposable
                 {
                     public void Dispose()
                     {
@@ -40,6 +41,12 @@ namespace TorchSharp
                     /// </summary>
                     public abstract long Count { get; }
 
+                    [IndexerName("DatasetItems")]
+                    public T this[long index] => this.GetTensor(index);
+
+                    // GetTensor is kept for compatibility.
+                    // Perhaps we should remove that and make the indexer abstract later.
+
                     /// <summary>
                     /// Get tensor according to index
                     /// </summary>
@@ -49,7 +56,30 @@ namespace TorchSharp
 
                     protected virtual void Dispose(bool disposing)
                     {
+                        IDataset<Dictionary<string, string>> a = null;
+                        IDataset<IReadOnlyDictionary<string, string>> b = a;
                     }
+                }
+
+                /// <summary>
+                /// The base interface for all Datasets.
+                /// </summary>
+                public interface IDataset<out T> : IDisposable
+                {
+                    /// <summary>
+                    /// Size of dataset
+                    /// </summary>
+                    long Count { get; }
+
+                    /// <summary>
+                    /// Get tensor according to index
+                    /// </summary>
+                    /// <param name="index">Index for tensor</param>
+                    /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
+                    [IndexerName("DatasetItems")]
+                    T this[long index] { get; }
+
+                    // TODO: support System.Index
                 }
             }
         }
