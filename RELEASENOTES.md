@@ -11,7 +11,8 @@ A new interface `IDataset<out T>` has been added. (Now `Dataset<T>` implements `
 
 __API Changes__:
 
-The parameter of `DataLoader` has been changed to `IDataset` to accept more kinds of datasets.<br/>
+The parameter of `DataLoader`s has been relaxed to `IDataset`.<br/>
+The parameter of `DataLoader`s' collate functions has been relaxed to `IReadOnlyList`.<br/>
 
 # NuGet Version 0.102.6
 
