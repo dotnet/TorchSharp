@@ -14,15 +14,23 @@ namespace TorchSharp
                 /// <summary>
                 /// Map-style data set
                 /// </summary>
-                public abstract class Dataset : Dataset<Dictionary<string, torch.Tensor>>
+                public abstract class Dataset : Dataset<Dictionary<string, Tensor>>,
+                    IDataset<IReadOnlyDictionary<string, Tensor>>
                 {
+                    // Due to covariation, it should naturally be IDataset<IReadOnlyDictionary<string, Tensor>>.
+                    // However FSharp.Examples will break down without this.
+                    IReadOnlyDictionary<string, Tensor> IDataset<IReadOnlyDictionary<string, Tensor>>.this[long index] => this[index];
                 }
 
                 /// <summary>
                 /// Iterable-style data sets
                 /// </summary>
-                public abstract class IterableDataset : Dataset<IList<Tensor>>
+                public abstract class IterableDataset : Dataset<IList<Tensor>>,
+                    IDataset<IEnumerable<Tensor>>
                 {
+                    // Due to covariation, it should naturally be IDataset<IEnumerable<Tensor>>.
+                    // However FSharp.Examples will break down without this.
+                    IEnumerable<Tensor> IDataset<IEnumerable<Tensor>>.this[long index] => this[index];
                 }
 
                 /// <summary>
