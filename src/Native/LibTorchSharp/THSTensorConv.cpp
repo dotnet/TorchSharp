@@ -340,6 +340,63 @@ Tensor THSTensor_conv3d(
         groups));
 }
 
+static c10::string_view get_padding_str(int padding) {
+    if (padding == 0)
+        return "valid";
+    else if (padding == 1)
+        return "same";
+
+    TORCH_CHECK(false, "Invalid padding string specified");
+}
+
+Tensor THSTensor_conv1d_padding(
+    const Tensor input,
+    const Tensor weight,
+    const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int padding,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    CATCH_TENSOR(torch::conv1d(*input, *weight, (bias ? *bias : at::Tensor()),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        get_padding_str(padding),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        groups));
+}
+
+
+Tensor THSTensor_conv2d_padding(
+    const Tensor input,
+    const Tensor weight,
+    const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int padding,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    CATCH_TENSOR(torch::conv2d(*input, *weight, (bias ? *bias : at::Tensor()),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        get_padding_str(padding),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        groups));
+}
+
+Tensor THSTensor_conv3d_padding(
+    const Tensor input,
+    const Tensor weight,
+    const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int padding,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    CATCH_TENSOR(torch::conv3d(*input, *weight, (bias ? *bias : at::Tensor()),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        get_padding_str(padding),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        groups));
+}
 
 Tensor THSTensor_max_pool1d(
     const Tensor tensor,

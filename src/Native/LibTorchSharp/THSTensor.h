@@ -314,6 +314,24 @@ EXPORT_API(Tensor) THSTensor_conv3d(const Tensor input, const Tensor weight, con
     const int64_t* dilations, const int dilations_length,
     int64_t groups);
 
+EXPORT_API(Tensor) THSTensor_conv1d_padding(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int padding,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+EXPORT_API(Tensor) THSTensor_conv2d_padding(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int padding,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+EXPORT_API(Tensor) THSTensor_conv3d_padding(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int padding,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
 EXPORT_API(Tensor) THSTensor_conv_transpose1d(const Tensor input, const Tensor weight, const Tensor bias,
     const int64_t* strides, const int strides_length,
     const int64_t* paddings, const int paddings_length,
