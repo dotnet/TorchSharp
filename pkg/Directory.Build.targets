@@ -1,0 +1,17 @@
+<Project>
+  <Import Project="..\Directory.Build.targets" />
+
+  <PropertyGroup Condition="'$(IsPackable)' != 'false' and '$(EnablePackageValidation)' != 'false'">
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>$(PreviousPackageVersion)</PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <Target Name="GetTargetPath" Returns="@(_updatedTargetPath)">
+    <!-- Repoint up the TargetPath to represent the a matching file from PackagePreparationPath if it exists, otherwise don't return a target path
+         This fakes what the project output would be if we were using real projects (and not package projects) to represent these libraries. -->
+    <ItemGroup>
+      <_targetPathUnderPackagePrep Include="@(TargetPathWithTargetPlatformMoniker->'$(PackagePreparationPath)$(PackageIdFolderName)\lib\$(TargetFramework)\%(FileName)%(Extension)')" />
+      <_updatedTargetPath Include="@(_targetPathUnderPackagePrep)" Condition="Exists('%(Identity)')" />
+    </ItemGroup>
+  </Target>
+</Project>
