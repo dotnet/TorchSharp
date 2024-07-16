@@ -2,6 +2,18 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.102.7
+
+__Breaking Changes__:
+
+A new interface `IDataset<out T>` has been added. (Now `Dataset<T>` implements `IDataset<T>`; `Dataset` implements both `IDataset<Dictionary<string, Tensor>>` and `IDataset<IReadOnlyDictionary<string, Tensor>>`; `IterableDataset` implements `IDataset<IList<string, Tensor>>` and `IDataset<IEnumerable<string, Tensor>>`.)<br/>
+`torch.utils.data.ConcatDataset` has been added.<br/>
+
+__API Changes__:
+
+The parameter of `DataLoader`s has been relaxed to `IDataset`.<br/>
+The parameter of `DataLoader`s' collate functions has been relaxed to `IReadOnlyList`.<br/>
+
 # NuGet Version 0.102.6
 
 __Breaking Changes__:

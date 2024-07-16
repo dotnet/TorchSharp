@@ -17,9 +17,8 @@ namespace TorchSharp
         {
             public static partial class data
             {
-
                 public static Modules.DataLoader DataLoader(
-                    Dataset dataset,
+                    IDataset<IReadOnlyDictionary<string, torch.Tensor>> dataset,
                     int batchSize, IEnumerable<long> shuffler,
                     Device device = null,
                     int num_worker = 1, bool drop_last = false,
@@ -34,7 +33,7 @@ namespace TorchSharp
                 }
 
                 public static Modules.DataLoader DataLoader(
-                    Dataset dataset,
+                    IDataset<IReadOnlyDictionary<string, torch.Tensor>> dataset,
                     int batchSize, bool shuffle = false,
                     Device device = null, int? seed = null,
                     int num_worker = 1, bool drop_last = false,
@@ -49,7 +48,7 @@ namespace TorchSharp
                 }
 
                 public static Modules.IterableDataLoader DataLoader(
-                    IterableDataset dataset,
+                    IDataset<IEnumerable<Tensor>> dataset,
                     int batchSize, IEnumerable<long> shuffler,
                     Device device = null,
                     int num_worker = 1, bool drop_last = false,
@@ -64,7 +63,7 @@ namespace TorchSharp
                 }
 
                 public static Modules.IterableDataLoader DataLoader(
-                    IterableDataset dataset,
+                    IDataset<IEnumerable<Tensor>> dataset,
                     int batchSize, bool shuffle = false,
                     Device device = null, int? seed = null,
                     int num_worker = 1, bool drop_last = false,
@@ -90,7 +89,8 @@ namespace TorchSharp
         /// Data loader. Combines a dataset and a sampler, and provides an enumerator over the given dataset.
         /// </summary>
         /// <remarks>This class is used for map-style data sets</remarks>
-        public class DataLoader : DataLoader<Dictionary<string, torch.Tensor>, Dictionary<string, torch.Tensor>>
+        public class DataLoader : DataLoader<IReadOnlyDictionary<string, torch.Tensor>,
+            Dictionary<string, torch.Tensor>>
         {
             /// <summary>
             /// Pytorch style dataloader
@@ -111,7 +111,7 @@ namespace TorchSharp
             /// Indicates whether to dispose the dataset when being disposed.
             /// </param>
             public DataLoader(
-                Dataset dataset,
+                IDataset<IReadOnlyDictionary<string, torch.Tensor>> dataset,
                 int batchSize, IEnumerable<long> shuffler,
                 Device device = null,
                 int num_worker = 1, bool drop_last = false,
@@ -144,7 +144,7 @@ namespace TorchSharp
             /// Indicates whether to dispose the dataset when being disposed.
             /// </param>
             public DataLoader(
-                Dataset dataset,
+                IDataset<IReadOnlyDictionary<string, torch.Tensor>> dataset,
                 int batchSize, bool shuffle = false,
                 Device device = null, int? seed = null,
                 int num_worker = 1, bool drop_last = false,
@@ -157,7 +157,8 @@ namespace TorchSharp
             {
             }
 
-            private static Dictionary<string, torch.Tensor> Collate(IEnumerable<Dictionary<string, torch.Tensor>> dic, torch.Device device)
+            private static Dictionary<string, torch.Tensor> Collate(
+                IEnumerable<IReadOnlyDictionary<string, torch.Tensor>> dic, torch.Device device)
             {
                 using (torch.NewDisposeScope()) {
                     Dictionary<string, torch.Tensor> batch = new();
@@ -176,7 +177,8 @@ namespace TorchSharp
         /// Data loader. Combines a dataset and a sampler, and provides an enumerator over the given dataset.
         /// </summary>
         /// <remarks>This class is used for list-style data sets</remarks>
-        public class IterableDataLoader : DataLoader<IList<torch.Tensor>, IList<torch.Tensor>>
+        public class IterableDataLoader :
+            DataLoader<IEnumerable<torch.Tensor>, IList<torch.Tensor>>
         {
             /// <summary>
             /// Pytorch style dataloader
@@ -197,7 +199,7 @@ namespace TorchSharp
             /// Indicates whether to dispose the dataset when being disposed.
             /// </param>
             public IterableDataLoader(
-                IterableDataset dataset,
+                IDataset<IEnumerable<Tensor>> dataset,
                 int batchSize, IEnumerable<long> shuffler,
                 Device device = null,
                 int num_worker = 1, bool drop_last = false,
@@ -230,7 +232,7 @@ namespace TorchSharp
             /// Indicates whether to dispose the dataset when being disposed.
             /// </param>
             public IterableDataLoader(
-                IterableDataset dataset,
+                IDataset<IEnumerable<Tensor>> dataset,
                 int batchSize, bool shuffle = false,
                 Device device = null, int? seed = null,
                 int num_worker = 1, bool drop_last = false,
@@ -243,12 +245,18 @@ namespace TorchSharp
             {
             }
 
-            private static IList<torch.Tensor> Collate(IEnumerable<IList<torch.Tensor>> dic, torch.Device device)
+            private static IList<torch.Tensor> Collate(
+                IReadOnlyList<IEnumerable<torch.Tensor>> dic, torch.Device device)
             {
+                var dicCopy = new List<torch.Tensor[]>();
+                foreach (var e in dic) {
+                    dicCopy.Add(e.ToArray());
+                }
+
                 using (torch.NewDisposeScope()) {
                     List<torch.Tensor> batch = new();
-                    for (var x = 0; x < dic.First().Count; x++) {
-                        var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                    for (var x = 0; x < dicCopy[0].Length; x++) {
+                        var t = cat(dicCopy.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
                         if (t.device_type != device.type || t.device_index != device.index)
                             t = t.to(device);
                         batch.Add(t.MoveToOuterDisposeScope());
@@ -264,12 +272,12 @@ namespace TorchSharp
         /// </summary>
         public class DataLoader<T, S> : IEnumerable<S>, IDisposable
         {
-            public Dataset<T> dataset { get; }
+            public IDataset<T> dataset { get; }
             public int batch_size { get; }
             public bool drop_last { get; }
             public IEnumerable<long> sampler { get; }
             public int num_workers { get; }
-            public Func<IEnumerable<T>, Device, S> collate_fn { get; }
+            public Func<IReadOnlyList<T>, Device, S> collate_fn { get; }
 
             public Device Device { get; }
             public bool DisposeBatch { get; }
@@ -295,9 +303,9 @@ namespace TorchSharp
             /// Indicates whether to dispose the dataset when being disposed.
             /// </param>
             public DataLoader(
-                Dataset<T> dataset,
+                IDataset<T> dataset,
                 int batchSize,
-                Func<IEnumerable<T>, torch.Device, S> collate_fn,
+                Func<IReadOnlyList<T>, torch.Device, S> collate_fn,
                 IEnumerable<long> shuffler,
                 Device? device = null,
                 int num_worker = 1,
@@ -337,9 +345,9 @@ namespace TorchSharp
             /// Indicates whether to dispose the dataset when being disposed.
             /// </param>
             public DataLoader(
-                Dataset<T> dataset,
+                IDataset<T> dataset,
                 int batchSize,
-                Func<IEnumerable<T>, torch.Device, S> collate_fn,
+                Func<IReadOnlyList<T>, torch.Device, S> collate_fn,
                 bool shuffle = false,
                 Device? device = null,
                 int? seed = null,
@@ -432,7 +440,7 @@ namespace TorchSharp
                         .WithDegreeOfParallelism(loader.num_workers)
                         .ForAll((i) => {
                             using var getTensorScope = torch.NewDisposeScope();
-                            tensors[i] = loader.dataset.GetTensor(indices[i]);
+                            tensors[i] = loader.dataset[indices[i]];
                             getTensorDisposables[i] = getTensorScope.DetachAllAndDispose();
                         });
 
