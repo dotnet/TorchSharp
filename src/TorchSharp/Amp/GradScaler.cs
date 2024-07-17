@@ -11,11 +11,10 @@ namespace TorchSharp.Amp
     public class GradScaler
     {
         private bool Enabled;
-
         private torch.Tensor _scale, _growth_tracker;
-
         private float InitScale, GrowthFactor, BackoffFactor, GrowthInterval, InitGrowthTracker;
 
+        private Dictionary<int, Dictionary<string, object>> _per_optimizer_states = new Dictionary<int, Dictionary<string, object>>();
         //https://github.com/pytorch/pytorch/blob/main/torch/amp/grad_scaler.py
         public GradScaler(torch.Device dev, float init_scale = 2.0e16f, float growth_factor = 2.0f,
             float backoff_factor = 0.5f, int growth_interval = 2000, bool enabled = true)
@@ -27,7 +26,8 @@ namespace TorchSharp.Amp
             BackoffFactor = backoff_factor;
             GrowthInterval = growth_interval;
             InitGrowthTracker = 0.0f;
-            throw new NotImplementedException();
+
+            throw new NotImplementedException("This need to finish");
         }
 
         private void LazyInitScaleGrowthTracker(torch.Device dev)
@@ -35,6 +35,7 @@ namespace TorchSharp.Amp
             _scale = torch.full(0, InitScale, torch.ScalarType.Float32, device: dev);
             _growth_tracker = torch.full(0, InitGrowthTracker, torch.ScalarType.Int32, device: dev);
         }
+        //private Dictionary<string, object>
 
         //private check_scale_growth_tracker
         public torch.Tensor scale(torch.Tensor output)
@@ -140,10 +141,22 @@ namespace TorchSharp.Amp
             return per_device_found_inf.per_device_tensors;
         }
 
+        private Tuple<torch.Tensor, torch.Tensor> check_scale_growth_tracker(string name)
+        {
+            var fix = "This may indicate your script did not use scaler.scale(loss or outputs) earlier in the iteration.";
+            Debug.Assert(_scale.is_null(), $"Attempted {name} but {nameof(_scale)} is None {fix}");
+            Debug.Assert(_growth_tracker.is_null(), $"Attempted {name} but {nameof(_growth_tracker)} is None {fix}");
+            return new Tuple<torch.Tensor, torch.Tensor>(_scale, _growth_tracker);
+        }
+
         public void unscale(torch.optim.Optimizer optimizer)
         {
             if (!Enabled)
                 return;
+
+            check_scale_growth_tracker(nameof(unscale));
+
+            
         }
     }
 }

@@ -114,7 +114,7 @@
   <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
       <Compile Remove="netstandardTests.cs" />
   </ItemGroup>
-
+  <!--Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net472'"-->
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.2.0" Condition="'$(TargetFramework)' != 'net472'" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
@@ -123,7 +123,6 @@
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
     <PackageReference Update="xunit" Version="2.4.2" />
   </ItemGroup>
-
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
       <CollectCoverage>true</CollectCoverage>
       <SingleHit>true</SingleHit>

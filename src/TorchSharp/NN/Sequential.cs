@@ -31,7 +31,6 @@ namespace TorchSharp
                 Add(name, module);
                 return this;
             }
-
             internal void Add(string name, torch.nn.IModule<Tensor, Tensor> sm)
             {
                 var submodule = (torch.nn.Module)sm;
@@ -51,6 +50,12 @@ namespace TorchSharp
                 return this;
             }
 
+            public Sequential append(IList<torch.nn.IModule<Tensor, Tensor>> modules)
+            {
+                for (int i = 0; i < modules.Count; i++)
+                    Add(_modules.Count.ToString(), modules[i]);
+                return this;
+            }
             internal void Add(torch.nn.IModule<Tensor, Tensor> module)
             {
                 var name = _modules.Count.ToString();

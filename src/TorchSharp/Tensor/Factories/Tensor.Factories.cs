@@ -165,7 +165,7 @@ namespace TorchSharp
 
             unsafe {
                 void *ptr = null;
-                IntPtr iPtr = (IntPtr)ptr;
+                IntPtr iPtr = (IntPtr)ptr; //Warning: Unused variable 
 
                 fixed (long* shape = dimensions) {
                     var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
@@ -224,8 +224,8 @@ namespace TorchSharp
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
 
                 void *ptr = null;
-                IntPtr iPtr = (IntPtr)ptr;
-                
+                IntPtr iPtr = (IntPtr)ptr; //Warning: Unused variable 
+
                 fixed (long* shape = dimensions) {
                     var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
 
