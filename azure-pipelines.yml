@@ -4,13 +4,33 @@
 
 name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
-variables:
-  MyRunNumber:  $[counter('MyRunNumber', 52201)]
-
+parameters:
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
-  BuildLibTorchPackages: false
-  PushPackagesToFeed: false
+  - name: BuildLibTorchPackages
+    type: boolean
+    default: false
+  - name: PushPackagesToFeed
+    type: boolean
+    default: false
+  # Set which source branch to build libtorch-* packages.
+  # The build-libtorch jobs are only run if the source branch is the same as this value.
+  # The default is 'main' branch.
+  - name: SourceBranchName
+    type: string
+    default: 'main'
+
+variables:
+  MyRunNumber:  $[counter('MyRunNumber', 52201)]
+  LinuxPrepScript: |
+    ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D
+    sudo apt-get -y update
+    sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 wget
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb
+    sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update
+    ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
 
 resources:
   containers:
@@ -20,7 +40,7 @@ resources:
 #   https://github.com/dotnet/versions/blob/main/build-info/docker/image-info.dotnet-dotnet-buildtools-prereqs-docker-main.json
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-mlnet-20240216051055-578f026
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-20.04-20240708213715-dcf0bb9
 
 jobs:
 - template: /build/ci/job-template.yml
@@ -29,15 +49,7 @@ jobs:
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
     # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
-    prepScript:
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
-        sudo apt-get -y update &&
-        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
-        sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+    prepScript: ${{ variables.LinuxPrepScript }}
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
@@ -88,7 +100,7 @@ jobs:
 ################################################################################
 - job: Linux_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -104,26 +116,18 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 6.x
+      version: 6.0.402
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script:
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
-        sudo apt-get -y update &&
-        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
-        sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+  - script: ${{ variables.LinuxPrepScript }}
     displayName: Install dependencies
 
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
-    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native binaries
 
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
-    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native CUDA binaries
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
@@ -141,7 +145,7 @@ jobs:
 ################################################################################
 - job: Windows_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -152,7 +156,6 @@ jobs:
     vmImage: 'windows-latest'
 
   steps:
-
   - task: UseDotNet@2
     displayName: 'Use .NET Core sdk'
     inputs:
@@ -161,15 +164,14 @@ jobs:
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
-    condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
-    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native CUDA binaries
 
-
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Build Windows
 
   - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true
@@ -184,7 +186,7 @@ jobs:
 # ################################################################################
 - job: MacOS_x64_Native_Build_For_Packages
 # ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -195,7 +197,7 @@ jobs:
     vmImage: 'macos-latest'
   steps:
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true  /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
-    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native binaries
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
@@ -213,7 +215,7 @@ jobs:
   # ################################################################################
 - job: MacOS_arm64_Native_Build_For_Packages
   # ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -242,7 +244,7 @@ jobs:
 ################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
@@ -416,7 +418,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
   variables:
@@ -471,7 +473,7 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Linux_Native_Build_For_Packages
   variables:
@@ -492,15 +494,7 @@ jobs:
       version: 6.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script:
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
-        sudo apt-get -y update &&
-        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
-        sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
-        ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
+  - script: ${{ variables.LinuxPrepScript }}
     displayName: Install dependencies
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -545,7 +539,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Core
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
@@ -593,7 +587,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Extras
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.PushPackagesToFeed }}', true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - Build_libtorch_cuda_linux_Packages
@@ -667,8 +661,7 @@ jobs:
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['PushPackagesToFeed'], true))
-
+  condition: and(eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   - CodeSign_Core
@@ -769,7 +762,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Push_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', true), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - CodeSign_Extras
@@ -854,7 +847,7 @@ jobs:
 ################################################################################
 - job: Push_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', 'true'), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], true))
   dependsOn:
   - Build_libtorch_cuda_linux_Packages
   - CodeSign_Extras
