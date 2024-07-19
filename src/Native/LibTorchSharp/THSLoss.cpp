@@ -94,10 +94,10 @@ Tensor THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t 
 Tensor THSNN_l1_loss(const Tensor input, const Tensor target, const int64_t reduction)
 {
     CATCH_RETURN_Tensor(
-        auto opts = torch::nn::functional::MSELossFuncOptions();
+        auto opts = torch::nn::functional::L1LossFuncOptions();
         ApplyReduction(opts, reduction);
 
-        res = ResultTensor(torch::nn::functional::mse_loss(*input, *target, opts));
+        res = ResultTensor(torch::nn::functional::l1_loss(*input, *target, opts));
     )
 }
 

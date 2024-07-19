@@ -41,6 +41,16 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Indexer
+            /// </summary>
+            public IList<torch.Tensor> this[long index] {
+
+                get {
+                    return _tensors.Select(t => t[index]).ToList();
+                }
+            }
+
+            /// <summary>
             /// Length of the dataset, i.e. the size of the first dimension.
             /// </summary>
             public override long Count {
@@ -49,7 +59,7 @@ namespace TorchSharp
 
             public override IList<torch.Tensor> GetTensor(long index)
             {
-                return _tensors.Select(t => t[index]).ToList();
+                return this[index];
             }
 
             readonly torch.Tensor[] _tensors;
