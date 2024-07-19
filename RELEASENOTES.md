@@ -4,6 +4,12 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 # NuGet Version 0.102.6
 
+__Bug Fixes__:
+
+#1359 torch.nn.functional.l1_loss computes a criterion with the MSE, not the MAE.<br/>
+
+# NuGet Version 0.102.6
+
 __Breaking Changes__:
 
 When creating a tensor from a 1-D array, and passing in a shape, there is now an ambiguity between the IList and Memory overloads of `torch.tensor()`. The ambiguity is resolved by removing the `dimensions` argument if it is redundant, or by an explicit cast to IList if it is not.
