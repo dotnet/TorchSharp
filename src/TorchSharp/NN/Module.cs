@@ -778,6 +778,16 @@ namespace TorchSharp
                     }
                 }
 
+                public virtual void unregister_module(string name)
+                {
+                    if (_internal_submodules.ContainsKey(name))
+                        _internal_submodules.Remove(name);
+                }
+                public virtual void unregister_module(Module module)
+                {
+                    unregister_module(module.GetName());
+                }
+
                 protected void ConditionallyRegisterParameter(string name, Tensor value)
                 {
                     if (value is null) {

@@ -27,6 +27,10 @@ namespace TorchSharp
     {
         public abstract class Convolution : torch.nn.Module<Tensor, Tensor>
         {
+            internal long _dimension, _in_channel, _out_channel, _kernel,_stride, _padding,_dilation,_groups;
+            internal PaddingModes _paddingModes;
+            internal (long, long)? _kernels, _strides, _paddings, _dilations;
+            internal bool _bias;
             protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
             {
                 this.input_channels = input_channels;
@@ -113,7 +117,17 @@ namespace TorchSharp
             {
                 var res = THSNN_Conv1d_ctor(in_channels, out_channels, kernelSize, stride, padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv1d(res, boxedHandle, in_channels).MoveModule<Conv1d>(device, dtype);
+                return new Conv1d(res, boxedHandle, in_channels) {
+                    _in_channel = in_channels,
+                    _out_channel = out_channels,
+                    _kernel = kernelSize,
+                    _stride = stride,
+                    _padding = padding,
+                    _dilation = dilation,
+                    _paddingModes = padding_mode,
+                    _groups = groups,
+                    _bias = bias
+                }.MoveModule<Conv1d>(device, dtype);
             }
 
             /// <summary>
@@ -135,7 +149,17 @@ namespace TorchSharp
             {
                 var res = THSNN_Conv1d_ctor(in_channels, out_channels, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv1d(res, boxedHandle, in_channels).MoveModule<Conv1d>(device, dtype);
+                return new Conv1d(res, boxedHandle, in_channels) {
+                    _in_channel = in_channels,
+                    _out_channel = out_channels,
+                    _kernel = kernelSize,
+                    _stride = stride,
+                    _padding = (long)padding,
+                    _dilation = dilation,
+                    _paddingModes = padding_mode,
+                    _groups = groups,
+                    _bias = bias
+                }.MoveModule<Conv1d>(device, dtype);
             }
 
             public static partial class functional

@@ -34,11 +34,13 @@ namespace TorchSharp
             static long _peakCount = 0;
 
             internal DisposeScope? OwningDisposeScope { get; set; }
+
             //internal AutocastDisposeScope? AutocastDisposeScope;
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
-                
+                if (AMPManager.GetInstance().IsEnabled)
+                    AMPManager.GetInstance().Add(handle); //MMM.... This is the more abstract of any method Tensor right????
                 /*if (_totalCount > 0) {
                     //have used
                     AutocastDisposeScope = AutocastDisposeManager.ThreadAutocastSingleton.RegisterTensorAutocastScope(this);
@@ -922,6 +924,15 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /*internal static void to(this IntPtr ptr, ScalarType type)
+            {
+                var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                if (disposeAfter)
+                    this.Dispose();
+                return new Tensor(res);
+            }*/
             public Tensor to(torch.Device device, ScalarType type, bool non_blocking)
             {
                 torch.InitializeDevice(device);

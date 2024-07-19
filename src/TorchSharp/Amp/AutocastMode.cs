@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,22 +18,33 @@ namespace TorchSharp.Amp
     public sealed class AutocastMode : IDisposable
     {
         //NEED "Register" all tensor in scope for uncasting outer-scope
-        private bool Enabled, Prev;
+        internal bool Enabled, Prev;
         //private torch.ScalarType Dtype = torch.ScalarType.Float32;
-        private torch.ScalarType fast_dtype = torch.ScalarType.Float32;
-        private torch.Device Device = new torch.Device(DeviceType.CUDA);
+        internal torch.ScalarType fast_dtype = torch.ScalarType.Float32;
+        public torch.Device Device = new torch.Device(DeviceType.CUDA);
         private static AutocastMode instance;
+        bool disposedValue;
+
         /*public static AutocastMode GetInstance(torch.Device dev, torch.ScalarType? dtype = null, bool enabled = true, bool? cache_enabled = null)
-        {
-            if(instance ==null)
-                instance = new AutocastMode(dev, dtype, enabled, cache_enabled);
-            return instance;
-        }*/
+{
+if(instance ==null)
+instance = new AutocastMode(dev, dtype, enabled, cache_enabled);
+return instance;
+}*/
         public static AutocastMode GetInstance()
         {
             return instance ??= new AutocastMode(torch.CUDA, cache_enabled:true);
         }
 
+        public torch.ScalarType GetFastType()
+        {
+            var ft = torch.ScalarType.Float32;
+            if (Device.type == DeviceType.CUDA)
+                ft = torch.get_autocast_gpu_dtype();
+            if (Device.type == DeviceType.CPU)
+                ft = torch.get_autocast_cpu_dtype();
+            return ft;
+        }
         private AutocastMode(torch.Device dev, torch.ScalarType? dtype = null, bool enabled=true, bool? cache_enabled = null)
         {
             //var la = torch.tensor(9);
@@ -78,32 +90,57 @@ namespace TorchSharp.Amp
                 return tensor;
             return tensor.to(fast_dtype, tensor.device);
         }
-        /*public IDisposable Enter()
-        {
 
-            return this;
-        }*/
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue) {
+                if (disposing) {
+
+                    this.Enabled = false;
+                    if (Device.type == DeviceType.CUDA) {
+                        if (torch.autocast_decrement_nesting() == 0)
+                            torch.clear_autocast_cache();
+                        torch.set_autocast_gpu_dtype(this.fast_dtype);
+                        //torch.set_autocast_enabled(this.Prev);
+                        torch.set_autocast_enabled(false);
+                        torch.set_autocast_cache_enabled(false);
+                    }
+
+                    if (Device.type == DeviceType.CPU) {
+                        if (torch.autocast_decrement_nesting() == 0)
+                            torch.clear_autocast_cache();
+                        //torch.set_autocast_enabled(this.Prev);
+                        torch.set_autocast_cpu_dtype(this.fast_dtype);
+                        torch.set_autocast_enabled(false);
+                        torch.set_autocast_cache_enabled(false);
+                    }
+                    //throw new NotImplementedException();
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~AutocastMode()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
         public void Dispose()
         {
-            this.Enabled = false;
-            if (Device.type == DeviceType.CUDA) {
-                if(torch.autocast_decrement_nesting() == 0)
-                    torch.clear_autocast_cache();
-                torch.set_autocast_gpu_dtype(this.fast_dtype);
-                //torch.set_autocast_enabled(this.Prev);
-                torch.set_autocast_enabled(false);
-                torch.set_autocast_cache_enabled(false);
-            }
-
-            if (Device.type == DeviceType.CPU) {
-                if (torch.autocast_decrement_nesting() == 0)
-                    torch.clear_autocast_cache();
-                //torch.set_autocast_enabled(this.Prev);
-                torch.set_autocast_cpu_dtype(this.fast_dtype);
-                torch.set_autocast_enabled(false);
-                torch.set_autocast_cache_enabled(false);
-            }
-            //throw new NotImplementedException();
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
+        /*public IDisposable Enter()
+{
+
+   return this;
+}*/
     }
 }

@@ -13,7 +13,6 @@ namespace TorchSharp.Amp
         private bool Enabled;
         private torch.Tensor _scale, _growth_tracker;
         private float InitScale, GrowthFactor, BackoffFactor, GrowthInterval, InitGrowthTracker;
-
         private Dictionary<int, Dictionary<string, object>> _per_optimizer_states = new Dictionary<int, Dictionary<string, object>>();
         //https://github.com/pytorch/pytorch/blob/main/torch/amp/grad_scaler.py
         public GradScaler(torch.Device dev, float init_scale = 2.0e16f, float growth_factor = 2.0f,
@@ -54,9 +53,9 @@ namespace TorchSharp.Amp
         }
         private class MultiDeviceReplicator
         {
-            private torch.Tensor master;
+            private readonly torch.Tensor master;
 
-            internal Dictionary<torch.Device, torch.Tensor> per_device_tensors = new Dictionary<torch.Device, torch.Tensor>();
+            internal readonly Dictionary<torch.Device, torch.Tensor> per_device_tensors = new Dictionary<torch.Device, torch.Tensor>();
             public MultiDeviceReplicator(torch.Tensor master_tensor)
             {
                 master = master_tensor;
@@ -155,8 +154,6 @@ namespace TorchSharp.Amp
                 return;
 
             check_scale_growth_tracker(nameof(unscale));
-
-            
         }
     }
 }
