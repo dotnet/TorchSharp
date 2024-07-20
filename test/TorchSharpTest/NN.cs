@@ -1409,15 +1409,16 @@ namespace TorchSharp
         public void TestL1Loss()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
-                using (Tensor input = torch.rand(new long[] { 5, 2 }, device: device))
-                using (Tensor target = torch.rand(new long[] { 5, 2 }, device: device)) {
+                using (Tensor input = torch.arange(10, dtype:float32, device: device))
+                using (Tensor target = torch.zeros(10, dtype:float32, device: device)) {
                     var outTensor = L1Loss().call(input, target);
                     Assert.Equal(device.type, outTensor.device_type);
                     var values = outTensor.data<float>().ToArray();
                     Assert.Multiple(
                     () => Assert.Empty(outTensor.shape),
                     () => Assert.Single(values),
-                    () => Assert.False(float.IsNaN(values[0]))
+                    () => Assert.False(float.IsNaN(values[0])),
+                    () => Assert.Equal(4.5, values[0])
                     );
                 }
             }
@@ -1427,15 +1428,16 @@ namespace TorchSharp
         public void TestL1LossF()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
-                using (Tensor input = torch.rand(new long[] { 5, 2 }, device: device))
-                using (Tensor target = torch.rand(new long[] { 5, 2 }, device: device)) {
+                using (Tensor input = torch.arange(10, dtype:float32, device: device))
+                using (Tensor target = torch.zeros(10, dtype:float32, device: device)) {
                     var outTensor = l1_loss(input, target);
                     Assert.Equal(device.type, outTensor.device_type);
                     var values = outTensor.data<float>().ToArray();
                     Assert.Multiple(
                     () => Assert.Empty(outTensor.shape),
                     () => Assert.Single(values),
-                    () => Assert.False(float.IsNaN(values[0]))
+                    () => Assert.False(float.IsNaN(values[0])),
+                    () => Assert.Equal(4.5, values[0])
                     );
                 }
             }
