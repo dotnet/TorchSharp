@@ -39,8 +39,9 @@ namespace TorchSharp
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
-                if (AMPManager.GetInstance().IsEnabled)
-                    AMPManager.GetInstance().Add(handle); //MMM.... This is the more abstract of any method Tensor right????
+                /*if (AMPManager.GetInstance().IsEnabled)
+                    AMPManager.GetInstance().Add(handle); //MMM.... This is the more abstract of any method Tensor right????*/
+
                 /*if (_totalCount > 0) {
                     //have used
                     AutocastDisposeScope = AutocastDisposeManager.ThreadAutocastSingleton.RegisterTensorAutocastScope(this);

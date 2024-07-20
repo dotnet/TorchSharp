@@ -11,7 +11,7 @@ namespace TorchSharp.Amp
     public class AMPManager : IDisposable
     {
         //TODO: Make Singleton THREADSAFE
-        public UnorderedMap<IntPtr, torch.ScalarType> TensorPtrs;
+        public UnorderedMap<IntPtr, torch.ScalarType> TensorPtrs= new UnorderedMap<IntPtr, torch.ScalarType>();
         private readonly AutocastMode autocastMode = AutocastMode.GetInstance();
 
         private AMPManager() { }
@@ -36,7 +36,6 @@ namespace TorchSharp.Amp
             using (var enumer = TensorPtrs.GetEnumerator())
                 while (enumer.MoveNext())
                     To(enumer.Current.Key, enumer.Current.Value);
-            TensorPtrs.Clear(); //Or should use Stack for POP?? May better performance and better ram usage
         }
 
         public void Add(IntPtr ptr)
@@ -60,6 +59,7 @@ namespace TorchSharp.Amp
         {
             Revert();
             autocastMode.Dispose();
+            TensorPtrs.Dispose();
             /*if (!disposedValue) {
                 if (disposing) {
                     
