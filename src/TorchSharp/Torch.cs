@@ -53,7 +53,8 @@ namespace TorchSharp
 
         public static string __version__ => libtorchPackageVersion;
 
-        internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace) {
+        internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace)
+        {
             bool ok;
             try {
                 trace.AppendLine($"    Trying to load native component {path}");
@@ -204,8 +205,7 @@ namespace TorchSharp
                                 throw new NotSupportedException(message);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         trace.AppendLine("    Giving up, TorchSharp.dll does not appear to have been loaded from package directories");
                     }
                     if (!ok) {
@@ -214,7 +214,7 @@ namespace TorchSharp
                         throw new NotSupportedException(message);
                     }
                 }
-                
+
 
                 // Record the successful load
                 if (useCudaBackend)
@@ -265,8 +265,7 @@ namespace TorchSharp
 
         public static bool TryInitializeDeviceType(DeviceType deviceType)
         {
-            if (deviceType == DeviceType.MPS && !isAppleSilicon)
-            {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon) {
                 return false;
             }
 
@@ -280,8 +279,7 @@ namespace TorchSharp
 
         public static void InitializeDeviceType(DeviceType deviceType)
         {
-            if (deviceType == DeviceType.MPS && !isAppleSilicon)
-            {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon) {
                 throw new InvalidOperationException($"Torch device type 'MPS' is not available on this platform.");
             }
 
@@ -498,7 +496,6 @@ namespace TorchSharp
 
         public static partial class cuda
         {
-
             /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
             /// is not raised as early as a DllImportException
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
@@ -567,6 +564,30 @@ namespace TorchSharp
             {
                 TryInitializeDeviceType(device?.type ?? DeviceType.CUDA);
                 THSTorchCuda_synchronize(device?.index ?? -1);
+            }
+
+            public static bool is_bf16_supported()
+            {
+                //TODO IMPLEMENT: torch.cuda.current_device() https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L153
+                if (int.TryParse(cudaVersion.Split('.')[0], out int res)){
+
+                    //TODO: Implement get device properties
+                    //WARNING: Need Major compute capability version https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L161
+                    if (res >= 11)
+                        return true;
+                }
+
+                return check_bf16_tensor_supported(torch.CUDA);
+            }
+
+            private static bool check_bf16_tensor_supported(torch.Device dev)
+            {
+                try {
+                    var va = torch.tensor(new float[] { 1.0f }, dtype: torch.bfloat16, device: dev);
+                    return true;
+                } catch {
+                    return false;
+                }
             }
         }
 

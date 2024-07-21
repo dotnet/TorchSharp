@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using TorchSharp.Amp;
 using TorchSharp.PInvoke;
 
 #nullable enable
@@ -34,12 +35,27 @@ namespace TorchSharp
 
             internal DisposeScope? OwningDisposeScope { get; set; }
 
+            //internal AutocastDisposeScope? AutocastDisposeScope;
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
+                /*if (AMPManager.GetInstance().IsEnabled)
+                    AMPManager.GetInstance().Add(handle); //MMM.... This is the more abstract of any method Tensor right????*/
+
+                /*if (_totalCount > 0) {
+                    //have used
+                    AutocastDisposeScope = AutocastDisposeManager.ThreadAutocastSingleton.RegisterTensorAutocastScope(this);
+                    this = AutocastDisposeScope.autocastMode.CastTensor(this); //should cast when using INSIDE NOT WHERE CREATED
+                }*/
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
                 OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+
+                //TODO: Add Autocast/AMP ScopeManager, need improve this.. 1) is not threadsafe and may have big problem while casting and uncasting.
+                //DANGER: DONT USE THIS ON PRODUCTION
+                /*AutocastDisposeScope = AutocastDisposeManager.ThreadAutocastSingleton.RegisterTensorAutocastScope(this);
+                this = AutocastDisposeScope.autocastMode.CastTensor(this); //should cast when using INSIDE NOT WHERE CREATED*/
+                //Should cast inner scope when get tensors for every each method? example prod, sum, div, reshape, etc???
             }
 
             /// <summary>
@@ -209,6 +225,9 @@ namespace TorchSharp
                 get {
                     if (handle == IntPtr.Zero)
                         throw new InvalidOperationException("Tensor invalid -- empty handle.");
+
+                    //AutocastDisposeScope.autocastMode.CastTensor(this); //This is wrong right???
+
                     return handle;
                 }
             }
@@ -245,6 +264,7 @@ namespace TorchSharp
             /// </summary>
             public long numel() => NumberOfElements;
 
+            public bool is_null() => handle == IntPtr.Zero;
             /// <summary>
             /// Get the size of each element in the tensor.
             /// </summary>
@@ -276,6 +296,21 @@ namespace TorchSharp
                 var res = NativeMethods.THSTensor_is_nonzero(Handle);
                 CheckForErrors();
                 return res != 0;
+            }
+
+            public bool is_coalesce()
+            {
+                var res = NativeMethods.THSTensor_is_coalesce(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            public Tensor coalesce()
+            {
+                var res = NativeMethods.THSTensor_coalesce(Handle);
+                if(res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
             }
 
             public bool is_cuda => device.type == DeviceType.CUDA;
@@ -700,6 +735,7 @@ namespace TorchSharp
             public void backward(IList<Tensor>? grad_tensors = null, bool create_graph = false, bool retain_graph = false, IList<Tensor>? inputs = null) =>
                 torch.autograd.backward(new[] { this }, grad_tensors, create_graph, retain_graph, inputs);
 
+
             /// <summary>
             /// Creates a tensor by loading it from a file.
             /// </summary>
@@ -886,6 +922,24 @@ namespace TorchSharp
                     CheckForErrors();
                 if (disposeAfter)
                     this.Dispose();
+                return new Tensor(res);
+            }
+
+            /*internal static void to(this IntPtr ptr, ScalarType type)
+            {
+                var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                if (disposeAfter)
+                    this.Dispose();
+                return new Tensor(res);
+            }*/
+            public Tensor to(torch.Device device, ScalarType type, bool non_blocking)
+            {
+                torch.InitializeDevice(device);
+                var res = NativeMethods.THSTensor_to_type_and_device_and_non_blocking(Handle, (sbyte)type, (int)device.type, device.index, non_blocking);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
                 return new Tensor(res);
             }
 
@@ -7401,6 +7455,18 @@ namespace TorchSharp
             using var scope = torch.NewDisposeScope();
             var result = expr();
             return result.MoveToOuterDisposeScope();
+        }
+
+        public static void _amp_foreach_non_finite_check_and_unscale(Tensor found_inf, Tensor inv_scale)
+        {
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
+            if (found_inf.numel() == 1)
+                throw new Exception("found_inf must be a 1-element tensor.");
         }
     }
 }

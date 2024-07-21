@@ -108,5 +108,45 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_set_num_interop_threads(int threads);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTorch_is_torch_function_mode_enabled();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTorch_is_autocast_cache_enabled();
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTorch_is_autocast_cpu_enabled();
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTorch_is_autocast_gpu_enabled();
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTorch_is_autocast_xpu_enabled();
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTorch_is_autocast_hpu_enabled();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern sbyte THSTorch_get_autocast_cpu_dtype();
+        [DllImport("LibTorchSharp")]
+        internal static extern sbyte THSTorch_get_autocast_gpu_dtype();
+        [DllImport("LibTorchSharp")]
+        internal static extern sbyte THSTorch_get_autocast_xpu_dtype();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSTorch_autocast_increment_nesting();
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSTorch_autocast_decrement_nesting();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_autocast_enabled(bool enabled);
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_autocast_cache_enabled(bool enabled);
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_autocast_cpu_dtype(sbyte dtype);
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_autocast_gpu_dtype(sbyte dtype);
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_autocast_xpu_dtype(sbyte dtype);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_clear_autocast_cache();
     }
 }
