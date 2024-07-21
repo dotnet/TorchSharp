@@ -765,7 +765,7 @@ namespace TorchSharp
                         }
 
                         submodule.RegisterComponents();
-                        if (!is_autocast_cache_enabled()) {
+                        /*if (!is_autocast_cache_enabled()) {
                             _internal_submodules.Add(name, submodule);
                             return;
                         }
@@ -773,7 +773,7 @@ namespace TorchSharp
                             submodule = submodule.to(get_autocast_dtype(CUDA));
                         if (is_autocast_cpu_enabled())
                             submodule = submodule.to(get_autocast_dtype(CPU));
-                        
+                        */
                         _internal_submodules.Add(name, submodule);
                     }
                 }
