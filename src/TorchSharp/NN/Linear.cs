@@ -11,10 +11,25 @@ namespace TorchSharp
 
     namespace Modules
     {
+        public class LinearInfo
+        {
+            public long InFeatures { get; }
+            public long OutFeatures { get; }
+            public LinearInfo(long inFeatures, long outFeatures)
+            {
+                InFeatures = inFeatures;
+                OutFeatures = outFeatures;
+            }
+        }
         public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
-            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            public LinearInfo linearInfo;
+            /*internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
+            }*/
+            internal Linear(IntPtr handle, IntPtr boxedHandle, long inFeat, long outFeat) : base(handle, boxedHandle)
+            {
+                linearInfo = new LinearInfo(inFeat, outFeat);
             }
 
             public override Tensor forward(Tensor tensor)
@@ -71,7 +86,7 @@ namespace TorchSharp
                 var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
 
-                return new Linear(res, boxedHandle).MoveModule<Linear>(device, dtype);
+                return new Linear(res, boxedHandle, inputSize, outputSize).MoveModule<Linear>(device, dtype);
             }
 
             public static partial class functional
