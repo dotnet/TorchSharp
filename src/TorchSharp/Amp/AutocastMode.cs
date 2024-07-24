@@ -23,7 +23,7 @@ namespace TorchSharp.Amp
         internal torch.ScalarType fast_dtype = torch.ScalarType.Float32;
         public torch.Device Device = new torch.Device(DeviceType.CUDA);
         private static AutocastMode instance;
-        bool disposedValue;
+        //bool disposedValue;
 
         /*public static AutocastMode GetInstance(torch.Device dev, torch.ScalarType? dtype = null, bool enabled = true, bool? cache_enabled = null)
 {
@@ -93,7 +93,26 @@ return instance;
 
         private void Dispose(bool disposing)
         {
-            if (!disposedValue) {
+            this.Enabled = false;
+            if (Device.type == DeviceType.CUDA) {
+                if (torch.autocast_decrement_nesting() == 0)
+                    torch.clear_autocast_cache();
+                torch.set_autocast_gpu_dtype(this.fast_dtype);
+                //torch.set_autocast_enabled(this.Prev);
+                torch.set_autocast_enabled(false);
+                torch.set_autocast_cache_enabled(false);
+            }
+
+            if (Device.type == DeviceType.CPU) {
+                if (torch.autocast_decrement_nesting() == 0)
+                    torch.clear_autocast_cache();
+                //torch.set_autocast_enabled(this.Prev);
+                torch.set_autocast_cpu_dtype(this.fast_dtype);
+                torch.set_autocast_enabled(false);
+                torch.set_autocast_cache_enabled(false);
+            }
+            //disposedValue = true;
+            /*if (!disposedValue) {
                 if (disposing) {
 
                     this.Enabled = false;
@@ -121,7 +140,7 @@ return instance;
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
                 disposedValue = true;
-            }
+            }*/
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources

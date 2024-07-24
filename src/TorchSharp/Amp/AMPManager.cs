@@ -1,65 +1,154 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using Google.Protobuf.WellKnownTypes;
+using System.Diagnostics;
 using TorchSharp.PInvoke;
-using TorchSharp.Utils;
 
 namespace TorchSharp.Amp
 {
     public class AMPManager : IDisposable
     {
+        
         //TODO: Make Singleton THREADSAFE
-        public UnorderedMap<IntPtr, torch.ScalarType> TensorPtrs= new UnorderedMap<IntPtr, torch.ScalarType>();
+        public class TensorConverter
+        {
+            //public torch.Tensor Tensor;
+            public IntPtr PrevHandle;
+            public IntPtr Handle;
+            public torch.ScalarType Dtype;
+            public torch.ScalarType FastDtype;
+            public TensorCalledIn Called, Status;
+            public enum TensorCalledIn
+            {
+                OutSide,
+                InsideEnter
+            }
+
+            public TensorConverter(IntPtr handle)
+            {
+                this.PrevHandle = handle;
+                this.Handle = handle;
+                this.Dtype = (torch.ScalarType)NativeMethods.THSTensor_type(handle);
+                this.FastDtype = AutocastMode.GetInstance().GetFastType();
+                
+                Status = TensorConverter.TensorCalledIn.InsideEnter;
+            }
+            /*public TensorConverter(torch.Tensor tensor) : this(tensor.handle)
+            {
+                this.Tensor = tensor;
+            }*/
+        }
+
+        public IList<TensorConverter> TensorsCasts = new List<TensorConverter>();
+        public bool IsEnter = false;
+        public bool IsDisposed = false;
+        /*public UnorderedMap<IntPtr, torch.ScalarType> TensorPtrs= new UnorderedMap<IntPtr, torch.ScalarType>();
+        public UnorderedMap<torch.Tensor, torch.ScalarType> TensorMap= new UnorderedMap<torch.Tensor, torch.ScalarType>();*/
         private readonly AutocastMode autocastMode = AutocastMode.GetInstance();
 
         private AMPManager() { }
 
         public bool IsEnabled => autocastMode.Enabled;
         private static AMPManager Instance;
-        //bool disposedValue;
-
         public static AMPManager GetInstance()
         {
             return Instance ??= new AMPManager();
         }
 
-        private void To(IntPtr ptr, torch.ScalarType type)
+        private torch.ScalarType GetType(IntPtr handle)
         {
+            return (torch.ScalarType)NativeMethods.THSTensor_type(handle);
+        }
+        private IntPtr To(IntPtr ptr, torch.ScalarType type)
+        {
+            Debug.WriteLine($"{nameof(AMPManager)} Tensor converting from: {(torch.ScalarType)NativeMethods.THSTensor_type(ptr)} to: {type}");
             var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
             if (res == IntPtr.Zero)
                 torch.CheckForErrors();
+            return res;
         }
         private void Revert()
         {
-            using (var enumer = TensorPtrs.GetEnumerator())
-                while (enumer.MoveNext())
-                    To(enumer.Current.Key, enumer.Current.Value);
-        }
-
-        public void Add(IntPtr ptr)
-        {
-            if (!autocastMode.Enabled) {
-                
-                if (TensorPtrs.ContainsKey(ptr))
-                    To(ptr, TensorPtrs[ptr]);
-                return;
+            for (int i = 0; i < TensorsCasts.Count; i++) {
+                var tc = TensorsCasts[i];
+                //var tt = new torch.Tensor(tc.Handle);
+                //var t = new torch.Tensor(tc.Handle) { handle = To(tc.Handle, tc.Dtype) };
+                //var t = new torch.Tensor(tc.Handle).to(tc.Dtype);
+                tc.Handle= To(tc.Handle, tc.Dtype);
+                if (tc.Handle != tc.PrevHandle)
+                    tc.PrevHandle = To(tc.PrevHandle, tc.Dtype);
             }
+            //Cast Work very well but UNCASTING (if outscope, not working i dont know why...)
+            //TensorsCasts.Clear();
+        }
+       
 
-            TensorPtrs[ptr] = (torch.ScalarType)NativeMethods.THSTensor_type(ptr);
-            To(ptr, autocastMode.GetFastType()); //TODO: Set scalar autocast
+        private int ExistsHandle(IntPtr handle)
+        {
+            for (int i = 0; i < TensorsCasts.Count; i++)
+                if (TensorsCasts[i].PrevHandle == handle || TensorsCasts[i].Handle == handle)
+                    return i;
+            return -1;
         }
 
+        public IntPtr Work(IntPtr handle, IntPtr prev)
+        {
+            
+            /*if (IsDisposed && !IsEnter) {
+                Revert(); //Is for cleaned all
+                return IntPtr.Zero;
+            }*/
+            var idx = ExistsHandle(handle);
+            Console.WriteLine($"PTR: {handle}, PREV: {prev}, IDX: {idx}");
+            if (idx == -1) {
+                var tc = new TensorConverter(handle) { Called = IsEnter
+                    ? TensorConverter.TensorCalledIn.InsideEnter
+                    : TensorConverter.TensorCalledIn.OutSide
+                };
+                if (IsEnter)
+                    tc.Handle = To(tc.Handle, tc.FastDtype);
+                TensorsCasts.Add(tc);
+                return tc.Handle;
+            }
+            var tcidx = TensorsCasts[idx];
+            if (!IsEnter && IsDisposed) {
+                if (tcidx.Called == TensorConverter.TensorCalledIn.OutSide) { //Is created outside so this can revert
+                    //Is From Outside and is disposed, the tensor is created Outside so i will revert this
+                    tcidx.PrevHandle = tcidx.Handle;
+                    tcidx.Handle = To(tcidx.Handle, tcidx.Dtype);
+                }
+                return tcidx.Handle;
+            }
+            if (GetType(tcidx.Handle) == tcidx.FastDtype)
+                return tcidx.Handle;
+
+            if (IsEnter) {
+                tcidx.PrevHandle = tcidx.Handle;
+                tcidx.Handle = To(tcidx.Handle, tcidx.FastDtype);
+            }
+            return tcidx.Handle;
+        }
+        
         public IDisposable Enter()
         {
-            return null;
+            IsEnter = true;
+            IsDisposed = false;
+            Debug.WriteLine($"{nameof(AMPManager)} Enter call");
+            return this;
         }
         protected virtual void Dispose(bool disposing)
         {
+            
+            Debug.WriteLine($"{nameof(AMPManager)} Disposed call");
             Revert();
+
+            IsDisposed = true;
+            IsEnter = false;
+           
+            //Work(IntPtr.Zero, IntPtr.Zero);
             autocastMode.Dispose();
-            TensorPtrs.Dispose();
+            //Revert();
+            /*TensorPtrs.Dispose();
+            TensorMap.Dispose();*/
             /*if (!disposedValue) {
                 if (disposing) {
                     

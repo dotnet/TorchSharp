@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TorchSharp.Utils
@@ -9,11 +11,23 @@ namespace TorchSharp.Utils
         bool disposedValue;
 
         public UnorderedMap() { }
+        private static bool IsCollectionType(Type type)
+        {
+            if (!type.GetGenericArguments().Any())
+                return false;
+            Type genericTypeDefinition = type.GetGenericTypeDefinition();
+            var collectionTypes = new[] { typeof(IEnumerable<>), typeof(ICollection<>), typeof(IList<>), typeof(List<>), typeof(IList) };
+            return collectionTypes.Any(x => x.IsAssignableFrom(genericTypeDefinition));
+        }
         public new TValue this[TKey tk] {
             get {
                 if (this.ContainsKey(tk))
                     return base[tk];
-                return default(TValue);
+                var t = typeof(TValue);
+                if (!IsCollectionType(t))
+                    return default;
+                base[tk] = (TValue)(IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(t.GetGenericArguments()));
+                return base[tk];
             }
             set {
                 if (!this.ContainsKey(tk)) {
