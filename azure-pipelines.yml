@@ -9,7 +9,7 @@ parameters:
   # push them to the artifacts feed of the Azure CI project
   - name: BuildLibTorchPackages
     type: boolean
-    default: false
+    default: true
   - name: PushPackagesToFeed
     type: boolean
     default: false
