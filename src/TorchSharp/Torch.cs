@@ -17,8 +17,10 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_2_1_1
-        const string libtorchPackageVersion = "2.2.1.1";
+#if LIBTORCH_2_2_2_0
+        const string libtorchPackageVersion = "2.2.2.0";
+#elif LIBTORCH_2_4_0_0
+        const string libtorchPackageVersion = "2.4.0.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -28,10 +30,10 @@ namespace TorchSharp
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
-        static bool isAppleSilicon => 
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && 
+        static bool isAppleSilicon =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) &&
             RuntimeInformation.OSArchitecture == Architecture.Arm64;
-        
+
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
@@ -214,7 +216,7 @@ namespace TorchSharp
                         throw new NotSupportedException(message);
                     }
                 }
-                
+
 
                 // Record the successful load
                 if (useCudaBackend)

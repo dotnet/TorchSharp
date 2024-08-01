@@ -9,7 +9,7 @@ parameters:
   # push them to the artifacts feed of the Azure CI project
   - name: BuildLibTorchPackages
     type: boolean
-    default: false
+    default: true
   - name: PushPackagesToFeed
     type: boolean
     default: false
@@ -78,7 +78,7 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: MacOS_x64
-    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=x64 -c
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetOS=mac /p:TargetArchitecture=x64 -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
       vmImage: 'macos-latest'
