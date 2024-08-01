@@ -2,7 +2,7 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-# NuGet Version 0.102.6
+# NuGet Version 0.102.8
 
 __Bug Fixes__:
 
