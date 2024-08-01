@@ -87,7 +87,7 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: MacOS_arm64
-    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 -c
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetOS=mac /p:TargetArchitecture=arm64 -c
     testScript: echo "Azure Pipelines does not support arm64 yet, can't run tests"
     pool:
       vmImage: 'macos-latest'
