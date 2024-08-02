@@ -79,7 +79,7 @@ jobs:
     prepScript: echo "no prep needed"
     name: MacOS_x64
     buildScript: dotnet build /p:SkipCuda=true /p:TargetOS=mac /p:TargetArchitecture=x64 -c
-    testScript: dotnet test --blame /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
+    testScript: dotnet test --blame /p:SkipCuda=true /p:TargetOS=mac /p:TargetArchitecture=x64 --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
       vmImage: 'macos-latest'
 
