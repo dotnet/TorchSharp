@@ -1,7 +1,7 @@
 <Project>
-  
+
   <!-- We copy over the LibTorch native binaries in order to run tests.  This can probably be automated better. -->
-  <!-- These lists are duplicated in redist/... with file splitting added for package prep --> 
+  <!-- These lists are duplicated in redist/... with file splitting added for package prep -->
 
   <ItemGroup  Condition="'$(TestUsesLibTorch)' == 'true' and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="LibTorchSharp" />
@@ -82,6 +82,7 @@
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="omp" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
@@ -131,5 +132,5 @@
     </Copy>
 
   </Target>
-  
+
 </Project>
