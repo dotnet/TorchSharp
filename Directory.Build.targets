@@ -81,10 +81,14 @@
 	<!-- Mac arm64 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="omp" />
+    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="torch_python" />
   </ItemGroup>
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->
