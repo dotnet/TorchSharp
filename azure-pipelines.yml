@@ -517,7 +517,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Extras
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.PushPackagesToFeed }}', true))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - Build_libtorch_cuda_linux_Packages
