@@ -210,7 +210,6 @@ jobs:
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
-  - MacOS_x64_Native_Build_For_Packages
   - MacOS_arm64_Native_Build_For_Packages
   variables:
     BuildConfig: Release
