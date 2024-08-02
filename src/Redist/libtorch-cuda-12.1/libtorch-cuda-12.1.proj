@@ -124,8 +124,8 @@
     <File Include= "libtorch\lib\libcudnn_cnn.so.9" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libcudnn_heuristic.so.9"  PackageSuffix="part6"  />
     <File Include= "libtorch\lib\libnvrtc-b51b459d.so.12" PackageSuffix="part6"  />
-    <File Include= "libtorch\lib\llibtorch_python.so" PackageSuffix="part6"  />
-    <File Include= "libtorch\lib\ibnvrtc-b51b459d.so.12" PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libnvrtc-b51b459d.so.12" PackageSuffix="part6"  />
 
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so.9"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so.9"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="200000000" FileUnstitchSize="-1" />
