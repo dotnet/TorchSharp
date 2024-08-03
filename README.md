@@ -106,7 +106,7 @@ Otherwise, you also need one of the LibTorch backend packages: https://www.nuget
 
 * `libtorch-cpu-win-x64` (CPU, Windows)
 
-* `libtorch-cpu-osx-x64` (CPU, OSX)
+* `libtorch-cpu-osx-arm64` (CPU, OSX)
 
 * `libtorch-cpu` (CPU, references all three, larger download but simpler)
 

@@ -56,7 +56,6 @@
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
