@@ -115,6 +115,7 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_cnn64_9", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops64_9", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_graph64_9.dll", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
