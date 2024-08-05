@@ -113,10 +113,8 @@
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="300000000" />
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment4" FileUnstitchIndex="3" FileUnstitchStart="1300000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part4" />
-    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part4" />
-    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part4"  />
-    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part4" />
+    <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="par4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
+    <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcublasLt-f97bfc2c.so.12"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libcublasLt-f97bfc2c.so.12"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
@@ -130,8 +128,11 @@
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="200000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part8-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
-    <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part8-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8" />
+    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part8" />
+    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part8"  />
+    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part8" />
+
 
   </ItemGroup>
 
