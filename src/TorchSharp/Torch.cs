@@ -111,12 +111,9 @@ namespace TorchSharp
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.
                         //
-                        ok = TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_adv64_9", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_cnn64_9", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_ops64_9", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
