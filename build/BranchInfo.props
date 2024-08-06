@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
-    <MinorVersion>102</MinorVersion>
-    <PatchVersion>8</PatchVersion>
-    <PreviousPackageVersion>0.102.7</PreviousPackageVersion>
+    <MinorVersion>103</MinorVersion>
+    <PatchVersion>0</PatchVersion>
+    <PreviousPackageVersion>0.102.8</PreviousPackageVersion>
   </PropertyGroup>
 
 </Project>
