@@ -1,0 +1,38 @@
+   358912 asmjit.dll
+   828416 c10.dll
+   358400 c10_cuda.dll
+    16384 caffe2_nvrtc.dll
+ 98058240 cublas64_12.dll
+538818048 cublasLt64_12.dll
+   527872 cudart64_12.dll
+   438840 cudnn64_9.dll
+241576488 cudnn_adv64_9.dll
+  4019752 cudnn_cnn64_9.dll
+588910632 cudnn_engines_precompiled64_9.dll
+  8235560 cudnn_engines_runtime_compiled64_9.dll
+  2160680 cudnn_graph64_9.dll
+ 85741608 cudnn_heuristic64_9.dll
+107721256 cudnn_ops64_9.dll
+190346752 cufft64_11.dll
+   295936 cufftw64_11.dll
+  4327424 cupti64_2023.1.1.dll
+ 63505408 curand64_10.dll
+110190080 cusolver64_11.dll
+ 77008384 cusolverMg64_11.dll
+262348288 cusparse64_12.dll
+  4961280 fbgemm.dll
+   344576 fbjni.dll
+  2047000 libiomp5md.dll
+    41496 libiompstubs5md.dll
+ 34385920 nvJitLink_120_0.dll
+    48128 nvToolsExt64_1.dll
+  7001600 nvrtc-builtins64_121.dll
+ 42161152 nvrtc64_120_0.dll
+   192000 pytorch_jni.dll
+     9728 torch.dll
+238000640 torch_cpu.dll
+923134464 torch_cuda.dll
+     9728 torch_global_deps.dll
+   195072 uv.dll
+    89088 zlibwapi.dll
+

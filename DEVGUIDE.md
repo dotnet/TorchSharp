@@ -52,7 +52,7 @@ Build with
 
 ## Packages
 
-An ephemeral feed of packages from Azure DevOps CI is available for those 
+An ephemeral feed of packages from Azure DevOps CI is available for those
 
 * View link: https://dotnet.visualstudio.com/TorchSharp/_packaging?_a=feed&feed=SignedPackages
 * Nuget feed: https://dotnet.pkgs.visualstudio.com/TorchSharp/_packaging/SignedPackages/nuget/v3/index.json
@@ -77,7 +77,7 @@ To change the TorchSharp package version update this [file](https://github.com/d
 The TorchSharp package is pushed to nuget.org via Azure DevOps CI release pipeline.  Assuming you're not building or updating the LibTorch packages
 (`BuildLibTorchPackages` is `false` in [azure-pipelines.yml](azure-pipelines.yml)) this is pretty simple once you have the permissions:
 
-1. Update the version number in [./build/BranchInfo.props](./build/BranchInfo.props) and in the [Release Notes](./RELEASENOTES.md) file and then submit a PR. 
+1. Update the version number in [./build/BranchInfo.props](./build/BranchInfo.props) and in the [Release Notes](./RELEASENOTES.md) file and then submit a PR.
 
    Updating the major or minor version number should only be done after a discussion with repo admins. The patch number should be incremented by one each release and set to zero after a change to the major or minor version.
 2. Integrate code to main and wait for CI to process
@@ -149,7 +149,7 @@ For this reason, we do the following
 This project grabs LibTorch and makes a C API wrapper for it, then calls these from C#. When updating to a newer
 version of PyTorch then quite a lot of careful work needs to be done.
 
-0. Make sure you have plenty of disk space, e.g. 15GB. 
+0. Make sure you have plenty of disk space, e.g. 15GB.
 
 1. Clean and reset to main
 
@@ -163,7 +163,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
        https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.2.0%2Bcpu.zip
 
    Don't download anything yet, or manually. The downloads are acquired automatically in step 2.
-   
+
    To update the version, update this in [Dependencies.props](build/Dependencies.props):
 
        <LibTorchVersion>2.2.0</LibTorchVersion>
@@ -179,8 +179,8 @@ version of PyTorch then quite a lot of careful work needs to be done.
 On Windows:
 
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
-        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
-        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true 
+        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:TargetArchitecture=arm64 /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
+        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
 
         dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
@@ -190,8 +190,8 @@ On Windows:
 On Linux / Mac:
 
         dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
-        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
-        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true 
+        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:TargetArchitecture=arm64 /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
+        dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
         dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
 
         dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
@@ -213,7 +213,7 @@ On Linux / Mac:
        dir bin\obj\x64.Release\libtorch-cpu\libtorch-cxx11-abi-shared-with-deps-2.2.0cpu\libtorch\lib\*.so*
 
    You may also need to precisely refactor the binaries into multiple parts so each package ends up under ~300MB. Before release 2.2.0 of libtorch, this really only affected the CUDA packagages, but it is now also affecting the CPU packages on Linux and OSX. Windows CPU is still small enough to be contained in just one package. The NuGet gallery does not allow packages larger than 250MB, so if files are 300MB, after compression, they are likely to be smaller than 250MB. However, you have to look out: if the compression is poor, then packages may end up larger. Note that it is 250 million
-   bytes that is the limit, **not** 250*1024*1024. In other words, it is 250 MB, not 250 MiB. Note that Windows Explorer will show file sizes in KiB, not thousands of bytes. Use 'dir' from a CMD window to get the exact size in bytes for each file. For example -- the file `libtorch_cpu.so` shows up as 511,872 KB in Windows Explorer, but 524,156,144 bytes in CMD. The 2.4% difference can be significant. Getting the partitioning right requires precision. 
+   bytes that is the limit, **not** 250*1024*1024. In other words, it is 250 MB, not 250 MiB. Note that Windows Explorer will show file sizes in KiB, not thousands of bytes. Use 'dir' from a CMD window to get the exact size in bytes for each file. For example -- the file `libtorch_cpu.so` shows up as 511,872 KB in Windows Explorer, but 524,156,144 bytes in CMD. The 2.4% difference can be significant. Getting the partitioning right requires precision.
 
    If the combined size of the files going into a part is smaller than 250MB, then everything is fine, and there is no need to split the part. It can be singular. If that is not the case, then the part should be fragmented into two or more parts that are linked together by their names.
 
@@ -229,12 +229,12 @@ On Linux / Mac:
    They must all be called either 'primary,' which should be the first fragment, or 'fragmentN' where 'N' is the ordinal number of the fragment, starting with '1'. The current logic allows for as many as 10 non-primary fragments. If more are needed, the code in [FileRestitcher.cs](pkg/FileRestitcher/FileRestitcher/FileRestitcher.cs) and [RestitchPackage.targets](pkg/common/RestitchPackage.targets) needs to be updated. Note that the size of each fragment is expressed in bytes, and that fragment start must be
    the sum of the size of all previous fragments. A '-1' should be used for the last fragment (and only for the last fragment): it means that the fragment size will be based on how much there is still left of the file.
 
-   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment. 
-   
+   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment.
+
    __Important:__
 
-   If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others. 
-   
+   If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others.
+
    Specifically, they include different build targets:
 
     ```xml
@@ -295,8 +295,8 @@ On Linux / Mac:
 
        <LibTorchPackageVersion>2.0.1.1</LibTorchPackageVersion>
 
-       dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true 
-       dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:TargetOS=linux /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true        
+       dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true
+       dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:TargetOS=linux /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true
 
     Once these finish, the output can be found in `bin\packages\Release`. Look at the file sizes -- if anything is larger than 250,000,000 bytes, you need to go back to #3 above and redefine the package contents and fragmentation scheme. It maybe necessary to introduce new fragments.
 
