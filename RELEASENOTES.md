@@ -2,6 +2,10 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.103.0
+
+Move to libtorch 2.4.0.
+
 # NuGet Version 0.102.8
 
 __Bug Fixes__:

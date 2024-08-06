@@ -24,24 +24,25 @@
 
   <!-- Windows CUDA 11.3 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
-    <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
+    <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="c10_cuda" Variant="cuda\" />
     <NativeAssemblyReference Include="caffe2_nvrtc" Variant="cuda\" />
     <NativeAssemblyReference Include="cublas64_12" Variant="cuda\" />
     <NativeAssemblyReference Include="cublasLt64_12" Variant="cuda\" />
     <NativeAssemblyReference Include="cudart64_12" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn_adv_infer64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn_adv_train64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn_cnn_infer64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn_cnn_train64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn_ops_infer64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn_ops_train64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_adv64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_cnn64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_engines_precompiled64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_engines_runtime_compiled64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_graph64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_heuristic64_9" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_ops64_9" Variant="cuda\" />
     <NativeAssemblyReference Include="cufft64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cufftw64_11" Variant="cuda\" />
-    <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cupti64_2023.1.1" Variant="cuda\" />
+    <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolver64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolverMg64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusparse64_12" Variant="cuda\" />
@@ -49,10 +50,10 @@
     <NativeAssemblyReference Include="fbjni" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc64_120_0" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc-builtins64_121" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
     <NativeAssemblyReference Include="nvJitLink_120_0" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc-builtins64_121" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc64_120_0" Variant="cuda\" />
     <NativeAssemblyReference Include="pytorch_jni" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
@@ -81,10 +82,14 @@
 	<!-- Mac arm64 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="omp" />
+    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="torch_python" />
   </ItemGroup>
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->

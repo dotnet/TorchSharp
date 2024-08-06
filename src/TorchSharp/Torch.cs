@@ -17,8 +17,10 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_2_1_1
-        const string libtorchPackageVersion = "2.2.1.1";
+#if LIBTORCH_2_2_2_0
+        const string libtorchPackageVersion = "2.2.2.0";
+#elif LIBTORCH_2_4_0_0
+        const string libtorchPackageVersion = "2.4.0.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -28,15 +30,14 @@ namespace TorchSharp
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
-        static bool isAppleSilicon => 
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && 
+        static bool isAppleSilicon =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) &&
             RuntimeInformation.OSArchitecture == Architecture.Arm64;
-        
+
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
             isAppleSilicon ? "osx-arm64" :
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "osx-x64" :
             "any";
 
         static string nativeGlob =>
@@ -110,12 +111,13 @@ namespace TorchSharp
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.
                         //
-                        ok = TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_adv64_9", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_cnn64_9", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_ops64_9", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_graph64_9.dll", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
@@ -214,7 +216,7 @@ namespace TorchSharp
                         throw new NotSupportedException(message);
                     }
                 }
-                
+
 
                 // Record the successful load
                 if (useCudaBackend)
