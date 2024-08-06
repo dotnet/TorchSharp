@@ -89,7 +89,7 @@
     <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudart-9335f6a2.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudnn.so.9" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcublas-37d11411.so.12" PackageSuffix="part7" />
+    <File Include= "libtorch\lib\libcublas-37d11411.so.12" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libcudnn_engines_runtime_compiled.so.9" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libcudnn_graph.so.9" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
