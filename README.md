@@ -11,9 +11,10 @@
 <br/>
 Please check the [Release Notes](RELEASENOTES.md) file for news on what's been updated in each new release.
 
-__TorchSharp is now in the .NET Foundation!__
 
-If you are using TorchSharp from NuGet, you should be using a version >= 0.98.3 of TorchSharp, and >= 1.12.0 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right LibTorch backends.
+__TorchSharp no longer supports MacOS on Intel hardware.__
+
+With libtorch release 2.4.0, Intel HW support was deprecated for libtorch. This means that the last version of TorchSharp to work on Intel Macintosh hardware is 0.102.8. Starting with 0.103.0, only Macs based on Apple Silicon are supported.
 
 __TorchSharp examples has their own home!__
 
@@ -105,7 +106,7 @@ Otherwise, you also need one of the LibTorch backend packages: https://www.nuget
 
 * `libtorch-cpu-win-x64` (CPU, Windows)
 
-* `libtorch-cpu-osx-x64` (CPU, OSX)
+* `libtorch-cpu-osx-arm64` (CPU, OSX)
 
 * `libtorch-cpu` (CPU, references all three, larger download but simpler)
 

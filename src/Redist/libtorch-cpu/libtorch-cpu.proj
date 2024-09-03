@@ -29,7 +29,7 @@
     <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(TargetRuntimeID)</MainPackageFolder>
     <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCpuPackages.$(IncludeLibTorchCpuPackages)</CopyToPackageSemaphore>
   </PropertyGroup>
-  
+
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
     <File Include="libtorch\lib\asmjit.dll" />
     <File Include="libtorch\lib\c10.dll" />
@@ -43,23 +43,13 @@
     <File Include="libtorch\lib\torch_global_deps.dll" />
     <File Include="libtorch\lib\uv.dll" />
   </ItemGroup>
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'">
-    <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
-    <File Include="libtorch\lib\libc10.dylib" />
-    <File Include="libtorch\lib\libfbjni.dylib" />
-    <File Include="libtorch\lib\libiomp5.dylib" />
-    <File Include="libtorch\lib\libjitbackend_test.dylib" />
-    <File Include="libtorch\lib\libpytorch_jni.dylib" />
-    <File Include="libtorch\lib\libshm.dylib" />
-    <File Include="libtorch\lib\libtorch.dylib" />
-    <File Include="libtorch\lib\libtorch_cpu.dylib" />
-    <File Include="libtorch\lib\libtorchbind_test.dylib" />
-    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
-    <File Include="libtorch\lib\libtorch_python.dylib" />
-  </ItemGroup>
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(TargetOS)' == 'mac'">
     <File Include="libtorch\lib\libc10.dylib" />
     <File Include="libtorch\lib\libshm.dylib" />
+    <File Include="libtorch\lib\libfbjni.dylib" />
+    <File Include="libtorch\lib\libpytorch_jni.dylib" />
+    <!-- libomp.dylib is required for libtorch, but it is only bundled with libtorch 2.4.0 and above. -->
+    <File Include="libtorch\lib\libomp.dylib"/>
     <File Include="libtorch\lib\libtorch.dylib" />
     <File Include="libtorch\lib\libtorch_cpu.dylib" />
     <File Include="libtorch\lib\libtorch_global_deps.dylib" />
@@ -76,7 +66,6 @@
     <File Include="libtorch\lib\libtorchbind_test.so"/>
     <File Include="libtorch\lib\libtorch_global_deps.so"/>
     <File Include="libtorch\lib\libtorch_python.so"/>
-    <File Include= "libtorch\lib\libtorch_cpu.so" />
     <File Include= "libtorch\lib\libtorch_cpu.so" />
   </ItemGroup>
 

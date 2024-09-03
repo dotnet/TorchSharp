@@ -24,7 +24,8 @@
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
 
-    <LibTorchPackageVersion>2.2.1.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.4.0.0</LibTorchPackageVersion>
+    <LibTorchPackageVersion Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">2.2.2.0</LibTorchPackageVersion>
 
     <!-- when building on local machines the massive downloads get placed up one directory -->
     <!-- so we can clean without triggering a re-download-->
@@ -59,7 +60,6 @@
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
@@ -90,7 +90,8 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>2.2.1.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.4.0.0</LibTorchPackageVersion>
+    <LibTorchPackageVersion Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">2.2.2.0</LibTorchPackageVersion>
     <EnablePackageValidation>false</EnablePackageValidation>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
@@ -139,17 +140,14 @@
 
   <PropertyGroup Condition="'$(UseCustomLibTorchPath)'=='false'">
     <LibTorchArchiveSource>pytorch</LibTorchArchiveSource>
-    <LibTorchArchiveSource Condition="'$(TargetPlatform)' == 'mac-arm64'">conda</LibTorchArchiveSource>
-    <CondaArchivePlatformName Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</CondaArchivePlatformName>
     <LibTorchCpuArchiveNameSuffix Condition="'$(TargetOS)' != 'mac'">%252Bcpu</LibTorchCpuArchiveNameSuffix>
-    <LibTorchCpuArchiveNameSuffix Condition="'$(LibTorchArchiveSource)' == 'conda'">-py3.10_0</LibTorchCpuArchiveNameSuffix>
     <LibTorchCudaArchiveNameSuffix>%252Bcu$(CudaVersionNoDot)</LibTorchCudaArchiveNameSuffix>
     <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
     <LibTorchCudaLocalNameSuffix>cu$(CudaVersionNoDot)</LibTorchCudaLocalNameSuffix>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-cxx11-abi-shared-with-deps</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos-x86_64</LibTorchArchiveCoreName>
-    <LibTorchArchiveCoreName Condition="'$(LibTorchArchiveSource)' == 'conda'">pytorch</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetPlatform)' == 'mac-arm64'">libtorch-macos-arm64</LibTorchArchiveCoreName>
     <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
     <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
     <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>
