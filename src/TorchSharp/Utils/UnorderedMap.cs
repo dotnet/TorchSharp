@@ -9,7 +9,8 @@ namespace TorchSharp.Utils
     public class UnorderedMap<TKey, TValue> : Dictionary<TKey, TValue>, IDisposable
     {
         bool disposedValue;
-
+        private TValue default_dict;
+        //TODO: Add DefautlDict behaviour
         public UnorderedMap() { }
         private static bool IsCollectionType(Type type)
         {
@@ -21,6 +22,8 @@ namespace TorchSharp.Utils
         }
         public new TValue this[TKey tk] {
             get {
+                /*if (!this.ContainsKey(tk) && default_dict == null)
+                    return default_dict;*/
                 if (this.ContainsKey(tk))
                     return base[tk];
                 var t = typeof(TValue);
@@ -36,6 +39,11 @@ namespace TorchSharp.Utils
                 }
                 base[tk] = value;
             }
+        }
+
+        public void SetDefaultDict(TValue def)
+        {
+            this.default_dict = def;
         }
 
         protected virtual void Dispose(bool disposing)

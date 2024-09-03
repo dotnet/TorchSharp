@@ -2,16 +2,20 @@
 #pragma once
 
 #include "../Stdafx.h"
-
-#include "torch/torch.h"
-
 #include "Utils.h"
 
 //https://github.com/pytorch/pytorch/blob/main/torch/_meta_registrations.py#L5957
 //EXPORT_API(void) THSAmp_amp_foreach_non_finite_check_and_unscale_(const at::TensorList self, at::Tensor& found_inf, const at::Tensor& inv_scale);
 
 EXPORT_API(void) THSAmp_amp_foreach_non_finite_check_and_unscale_(Tensor* self, const int64_t tLength, at::Tensor& found_inf, const at::Tensor& inv_scale);
-//EXPORT_API(void) THSAmp_amp_update_scale_(at::Tensor& found_inf, const at::Tensor& inv_scale);
+
+//EXPORT_API(void) THSAmp_amp_update_scale_(const at::Tensor& self, const at::Tensor& inv_scale);
+
+EXPORT_API(Tensor) THSAmp_amp_update_scale_(at::Tensor& self, at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval);
+EXPORT_API(Tensor) THSAmp_amp_update_scale_out(at::Tensor& out, const at::Tensor& self, at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval);
+EXPORT_API(Tensor) THSAmp_amp_update_scale_outf(const at::Tensor& self, at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval, at::Tensor& out);
+EXPORT_API(Tensor) THSAMP_amp_update_scale(const at::Tensor& self, const at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval, Tensor* sec);
+   
 EXPORT_API(bool) THSAmp_is_torch_function_mode_enabled();
 
 //Maybe the best work is call THSTorch_is_autocast_enabled(enum of devices c# as int8_t);

@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+#include "torch/torch.h"
+#include "torch/cuda.h"
 
 /*void THSAmp_amp_foreach_non_finite_check_and_unscale_(const at::TensorList self, at::Tensor& found_inf, const at::Tensor& inv_scale)
 {
@@ -12,14 +14,25 @@
 void THSAmp_amp_foreach_non_finite_check_and_unscale_(Tensor* self, const int64_t tLength, at::Tensor& found_inf, const at::Tensor& inv_scale)
 {
     torch::_amp_foreach_non_finite_check_and_unscale_(toTensors<at::Tensor>((torch::Tensor**)self, tLength),found_inf,inv_scale);
-    
 }
 
-/*void THSAmp_amp_update_scale_(Tensor* self, const int64_t tLength, __resharper_unknown_type& found_inf, const __resharper_unknown_type& inv_scale)
-{
-    torch::_amp_update_scale()
-}*/
+Tensor THSAmp_amp_update_scale_(at::Tensor& self, at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval) {
+    CATCH_TENSOR(torch::_amp_update_scale_(self, growth_tracker, found_inf, scale_growth_factor, scale_backoff_factor, growth_interval);)
+}
+Tensor THSAmp_amp_update_scale_out(at::Tensor& out, const at::Tensor& self, at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval){
+    CATCH_TENSOR(torch::_amp_update_scale_out(out, self, growth_tracker, found_inf, scale_growth_factor, scale_backoff_factor, growth_interval);)
+}
+Tensor THSAmp_amp_update_scale_outf(const at::Tensor& self, at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval, at::Tensor& out){
+    CATCH_TENSOR(torch::_amp_update_scale_outf(self, growth_tracker, found_inf, scale_growth_factor, scale_backoff_factor, growth_interval, out);)
+}
 
+Tensor THSAMP_amp_update_scale(const at::Tensor& self, const at::Tensor& growth_tracker, const at::Tensor& found_inf, double scale_growth_factor, double scale_backoff_factor, int64_t growth_interval, Tensor* sec)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::_amp_update_scale(self, growth_tracker, found_inf, scale_growth_factor, scale_backoff_factor, growth_interval);)
+    *sec = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
 
 bool THSAmp_is_torch_function_mode_enabled()
 {
