@@ -171,6 +171,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_matmul(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -183,6 +184,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_mm(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -195,6 +197,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_mv(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new Tensor(res);
             }
 

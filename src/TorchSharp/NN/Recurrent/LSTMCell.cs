@@ -108,6 +108,7 @@ namespace TorchSharp
             {
                 var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new LSTMCell(res, boxedHandle).MoveModule<LSTMCell>(device, dtype);
             }
         }

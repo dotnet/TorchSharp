@@ -35,18 +35,23 @@ namespace TorchSharp
 
             internal DisposeScope? OwningDisposeScope { get; set; }
 
-            //internal AutocastDisposeScope? AutocastDisposeScope;
-            internal Tensor(IntPtr handle)
+            /*internal Tensor(IntPtr handle, IntPtr res)
             {
-
-                //TODO: Add Autocast/AMP ScopeManager, need improve this.. 1) is not threadsafe and may have big problem while casting and uncasting.
-                //DANGER: DONT USE THIS ON PRODUCTION
                 if (AMPManager.GetInstance().IsEnabled) {
-                    this.handle = AMPManager.GetInstance().Work(handle, this.handle); //MMM.... This is the more abstract of any method Tensor right????
+                    this.handle = AMPManager.GetInstance().Work(res, handle);
                 } else {
                     this.handle = handle;
                 }
-
+            }*/
+            internal Tensor(IntPtr handle)
+            {
+                //TODO: Add Autocast/AMP ScopeManager, need improve this.. 1) is not threadsafe and may have big problem while casting and uncasting.
+                //DANGER: DONT USE THIS ON PRODUCTION
+                /*if (AMPManager.GetInstance().IsEnabled) {
+                    this.handle = AMPManager.GetInstance().Work(handle, this.handle); //MMM.... This is the more abstract of any method Tensor right????
+                } else {*/
+                    this.handle = handle;
+                //}
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
                 OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
@@ -1924,6 +1929,17 @@ namespace TorchSharp
                 }
             }
 
+            public Tensor resize_(params long[] shape)
+            {
+                unsafe {
+                    fixed (long* pshape = shape) {
+                        NativeMethods.THSTensor_resize_(Handle, (IntPtr)pshape, shape.Length);
+                    }
+                }
+
+                return this;
+            }
+
             /// <summary>
             /// Flattens input by reshaping it into a one-dimensional tensor.
             /// </summary>
@@ -3103,6 +3119,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_baddbmm(Handle, batch1.Handle, batch2.Handle, beta, alpha);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -3115,6 +3132,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_bmm(Handle, batch2.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -4185,7 +4203,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Returns the q-th quantiles of all elements in the input tensor, doing a linear interpolation when the q-th quantile lies between two data points.
+            /// Returns the q-th quantiles of all elements in the input tensor, doing a
+            /// interpolation when the q-th quantile lies between two data points.
             /// </summary>
             /// <param name="q">1D tensor of quantile values in the range [0, 1]</param>
             /// <param name="dim">The dimension to reduce.</param>
@@ -4469,6 +4488,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_prelu(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new Tensor(res);
             }
 

@@ -573,7 +573,8 @@ namespace TorchSharp
 
                     //TODO: Implement get device properties
                     //WARNING: Need Major compute capability version https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L161
-                    if (res >= 11)
+                    var compute = torch.cuda.get_compute_capability();
+                    if (res >= 11 && compute.major >= 8)
                         return true;
                 }
 
@@ -583,11 +584,16 @@ namespace TorchSharp
             private static bool check_bf16_tensor_supported(torch.Device dev)
             {
                 try {
-                    var va = torch.tensor(new float[] { 1.0f }, dtype: torch.bfloat16, device: dev);
+                    var va = torch.tensor(new float[] { 1.0f }, dtype: ScalarType.BFloat16, device: dev);
                     return true;
                 } catch {
                     return false;
                 }
+            }
+
+            public static (int major, int minor) get_compute_capability()
+            {
+                return (THSCuda_get_major_compute_capability(), THSCuda_get_minor_compute_capability());
             }
         }
 

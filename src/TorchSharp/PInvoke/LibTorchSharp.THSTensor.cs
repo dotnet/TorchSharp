@@ -459,6 +459,8 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_resize_(IntPtr tensor, IntPtr shape, int length);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);

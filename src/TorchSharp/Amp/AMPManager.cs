@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using TorchSharp.PInvoke;
 
 namespace TorchSharp.Amp
@@ -58,9 +59,28 @@ namespace TorchSharp.Amp
         {
             return (torch.ScalarType)NativeMethods.THSTensor_type(handle);
         }
-        private IntPtr To(IntPtr ptr, torch.ScalarType type)
+
+        public IntPtr AutoCast(IntPtr handle)
+        {
+            return ToIf(handle, AutocastMode.GetInstance().GetFastType());
+        }
+
+        public torch.Tensor AutoCast(torch.Tensor tensor)
+        {
+            return tensor.to(AutocastMode.GetInstance().GetFastType());
+        }
+        public static IntPtr To(IntPtr ptr, torch.ScalarType type)
         {
             Debug.WriteLine($"{nameof(AMPManager)} Tensor converting from: {(torch.ScalarType)NativeMethods.THSTensor_type(ptr)} to: {type}");
+            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
+            if (res == IntPtr.Zero)
+                torch.CheckForErrors();
+            return res;
+        }
+        public static IntPtr ToIf(IntPtr ptr, torch.ScalarType type)
+        {
+            if (!AMPManager.GetInstance().IsEnabled)
+                return ptr;
             var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
             if (res == IntPtr.Zero)
                 torch.CheckForErrors();
@@ -92,25 +112,29 @@ namespace TorchSharp.Amp
 
         public IntPtr Work(IntPtr handle, IntPtr prev)
         {
-            
+            if (!this.IsEnabled)
+                return handle;
             /*if (IsDisposed && !IsEnter) {
                 Revert(); //Is for cleaned all
                 return IntPtr.Zero;
             }*/
             var idx = ExistsHandle(handle);
-            Console.WriteLine($"PTR: {handle}, PREV: {prev}, IDX: {idx}");
+            Console.WriteLine($"PTR: {handle}, PREV: {prev}, IDX: {idx}, {GetType(handle)}");
             if (idx == -1) {
                 var tc = new TensorConverter(handle) { Called = IsEnter
                     ? TensorConverter.TensorCalledIn.InsideEnter
                     : TensorConverter.TensorCalledIn.OutSide
                 };
+                
                 if (IsEnter)
                     tc.Handle = To(tc.Handle, tc.FastDtype);
                 TensorsCasts.Add(tc);
                 return tc.Handle;
             }
             var tcidx = TensorsCasts[idx];
-            if (!IsEnter && IsDisposed) {
+            tcidx.Handle = handle;
+            return tcidx.Handle;
+            /*if (!IsEnter && IsDisposed) {
                 if (tcidx.Called == TensorConverter.TensorCalledIn.OutSide) { //Is created outside so this can revert
                     //Is From Outside and is disposed, the tensor is created Outside so i will revert this
                     tcidx.PrevHandle = tcidx.Handle;
@@ -125,7 +149,7 @@ namespace TorchSharp.Amp
                 tcidx.PrevHandle = tcidx.Handle;
                 tcidx.Handle = To(tcidx.Handle, tcidx.FastDtype);
             }
-            return tcidx.Handle;
+            return tcidx.Handle;*/
         }
         
         public IDisposable Enter()
@@ -137,13 +161,10 @@ namespace TorchSharp.Amp
         }
         protected virtual void Dispose(bool disposing)
         {
-            
             Debug.WriteLine($"{nameof(AMPManager)} Disposed call");
-            Revert();
-
             IsDisposed = true;
             IsEnter = false;
-           
+            Revert();
             //Work(IntPtr.Zero, IntPtr.Zero);
             autocastMode.Dispose();
             //Revert();

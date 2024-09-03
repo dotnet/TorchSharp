@@ -112,6 +112,7 @@ namespace TorchSharp
             {
                 var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res);
                 return new RNNCell(res, boxedHandle).MoveModule<RNNCell>(device, dtype);
             }
         }

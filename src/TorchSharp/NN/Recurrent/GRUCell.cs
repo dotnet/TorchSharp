@@ -106,6 +106,7 @@ namespace TorchSharp
             {
                 var res = THSNN_GRUCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = Amp.AMPManager.GetInstance().AutoCast(res); //TODO: Research if this work...
                 return new GRUCell(res, boxedHandle).MoveModule<GRUCell>(device, dtype);
             }
         }

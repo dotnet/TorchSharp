@@ -93,33 +93,3 @@ EXPORT_API(void) THSTorch_dispose_scalar(Scalar scalar);
 EXPORT_API(double) THSSpecial_erf_scalar(const double x);
 EXPORT_API(double) THSSpecial_erfc_scalar(const double x);
 
-EXPORT_API(bool) THSTorch_is_torch_function_mode_enabled();
-
-//Maybe the best work is call THSTorch_is_autocast_enabled(enum of devices c# as int8_t);
-EXPORT_API(bool) THSTorch_is_autocast_cache_enabled();
-EXPORT_API(bool) THSTorch_is_autocast_cpu_enabled();
-EXPORT_API(bool) THSTorch_is_autocast_gpu_enabled();
-EXPORT_API(bool) THSTorch_is_autocast_xpu_enabled();
-EXPORT_API(bool) THSTorch_is_autocast_hpu_enabled();
-
-#if (TORCH_VERSION_MAJOR ==2 && TORCH_VERSION_MINOR > 0)
-EXPORT_API(bool) THSTorch_is_autocast_ipu_enabled();
-EXPORT_API(bool) THSTorch_is_autocast_xla_enabled();
-#endif
-
-EXPORT_API(int8_t) THSTorch_get_autocast_cpu_dtype();
-EXPORT_API(int8_t) THSTorch_get_autocast_gpu_dtype();
-EXPORT_API(int8_t) THSTorch_get_autocast_xpu_dtype();
-
-EXPORT_API(int) THSTorch_autocast_increment_nesting();
-EXPORT_API(int) THSTorch_autocast_decrement_nesting();
-
-EXPORT_API(void) THSTorch_set_autocast_enabled(bool enabled);
-EXPORT_API(void) THSTorch_set_autocast_cache_enabled(bool enabled);
-EXPORT_API(void) THSTorch_set_autocast_cpu_dtype(int8_t dtype);
-EXPORT_API(void) THSTorch_set_autocast_gpu_dtype(int8_t dtype);
-EXPORT_API(void) THSTorch_set_autocast_xpu_dtype(int8_t dtype);
-
-EXPORT_API(void) THSTorch_clear_autocast_cache();
-
-//EXPORT_API(bool) THSTorch_jit_is_scripting();

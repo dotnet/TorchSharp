@@ -1097,6 +1097,8 @@ EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length);
 
+EXPORT_API(void) THSTensor_resize_(const Tensor tensor, const int64_t* shape, const int length);
+
 EXPORT_API(Tensor) THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength);
 
 EXPORT_API(Tensor) THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2);
@@ -1731,7 +1733,6 @@ EXPORT_API(Tensor) THSTensor_rfftfreq(const int64_t n, const double d, const int
 EXPORT_API(Tensor) THSTensor_fftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
 
 EXPORT_API(Tensor) THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
-
 
 // Spectral Ops
 

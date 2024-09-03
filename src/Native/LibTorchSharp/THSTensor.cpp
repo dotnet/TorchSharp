@@ -1206,6 +1206,11 @@ Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int le
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
 }
 
+void THSTensor_resize_(const Tensor tensor, const int64_t* shape, const int length)
+{
+    CATCH(tensor->resize_(at::ArrayRef<int64_t>(shape, length)););
+}
+
 Tensor THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2)
 {
     CATCH_TENSOR(tensor->rot90(k, { dim1, dim2 }));

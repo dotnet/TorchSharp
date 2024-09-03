@@ -1,5 +1,9 @@
 project(LibTorchSharp)
 
+find_package(CUDA)
+include_directories(${CUDA_INCLUDE_DIRS})
+link_directories(${CUDA_LIBRARY_DIRS})
+
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
@@ -11,6 +15,7 @@ set(SOURCES
 	crc32c.h
 	THSAmp.h
     THSAutograd.h
+	THSCuda.h
     THSData.h
     THSJIT.h
     THSNN.h
@@ -24,6 +29,7 @@ set(SOURCES
 	THSActivation.cpp
 	THSAmp.cpp
     THSAutograd.cpp
+	THSCuda.cpp
 	THSConvolution.cpp
     THSData.cpp
 	THSFFT.cpp
@@ -72,6 +78,8 @@ endif()
 include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
+
+target_link_libraries(LibTorchSharp ${CUDA_LIBRARIES})
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 

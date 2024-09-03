@@ -117,6 +117,7 @@ namespace TorchSharp
                                     (IntPtr)pdilation, dilations.Length,
                                     groups);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            res = Amp.AMPManager.GetInstance().AutoCast(res);
                             return new Tensor(res);
                         }
                     }

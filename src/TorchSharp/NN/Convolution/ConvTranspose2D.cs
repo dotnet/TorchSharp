@@ -148,6 +148,7 @@ namespace TorchSharp
                                     (IntPtr)pdilation, dilation.Length,
                                     groups);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            res = Amp.AMPManager.GetInstance().AutoCast(res);
                             return new Tensor(res);
                         }
                     }
