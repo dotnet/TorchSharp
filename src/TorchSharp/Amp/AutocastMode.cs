@@ -39,21 +39,23 @@ return instance;
 
         public torch.ScalarType GetFastType()
         {
-            var ft = torch.ScalarType.Float32;
+            return torch.get_autocast_dtype(Device.type);
+            /*var ft = torch.ScalarType.Float32;
             if (Device.type == DeviceType.CUDA)
                 ft = torch.get_autocast_gpu_dtype();
             if (Device.type == DeviceType.CPU)
                 ft = torch.get_autocast_cpu_dtype();
-            return ft;
+            return ft;*/
         }
         private AutocastMode(torch.Device dev, torch.ScalarType? dtype = null, bool enabled=true, bool? cache_enabled = null)
         {
             //var la = torch.tensor(9);
             fast_dtype = dtype ?? torch.ScalarType.Float32;
-            if (dev.type == DeviceType.CUDA)
-                fast_dtype = torch.get_autocast_gpu_dtype();
+            fast_dtype = torch.get_autocast_dtype(dev.type);
+            /*if (dev.type == DeviceType.CUDA)
+                fast_dtype = torch.get_autocast_dtype(dev);
             if (dev.type == DeviceType.CPU)
-                fast_dtype = torch.get_autocast_cpu_dtype();
+                fast_dtype = torch.get_autocast_cpu_dtype();*/
             //IntPtr ptr = IntPtr.Zero;
             
             bool _cache_enabled = torch.is_autocast_cache_enabled();
@@ -74,11 +76,10 @@ return instance;
 
             this.Enabled = enabled;
 
-            this.Prev = torch.is_autocast_cpu_enabled();
+            this.Prev = torch.is_autocast_enabled(DeviceType.CPU);
             if (dev.type == DeviceType.CUDA) {
-                this.Prev = torch.is_autocast_gpu_enabled();
+                this.Prev = torch.is_autocast_enabled(dev.type);
             }
-
             torch.set_autocast_cache_enabled(_cache_enabled);
             torch.set_autocast_enabled(this.Enabled);
             //throw new NotImplementedException();
@@ -99,23 +100,12 @@ return instance;
         private void Dispose(bool disposing)
         {
             this.Enabled = false;
-            if (Device.type == DeviceType.CUDA) {
-                if (torch.autocast_decrement_nesting() == 0)
-                    torch.clear_autocast_cache();
-                torch.set_autocast_gpu_dtype(this.fast_dtype);
-                //torch.set_autocast_enabled(this.Prev);
-                torch.set_autocast_enabled(false);
-                torch.set_autocast_cache_enabled(false);
-            }
-
-            if (Device.type == DeviceType.CPU) {
-                if (torch.autocast_decrement_nesting() == 0)
-                    torch.clear_autocast_cache();
-                //torch.set_autocast_enabled(this.Prev);
-                torch.set_autocast_cpu_dtype(this.fast_dtype);
-                torch.set_autocast_enabled(false);
-                torch.set_autocast_cache_enabled(false);
-            }
+            if (torch.autocast_decrement_nesting() == 0)
+                torch.clear_autocast_cache();
+            //torch.set_autocast_enabled(this.Prev);
+            torch.set_autocast_cache_enabled(Device.type, this.fast_dtype);
+            torch.set_autocast_enabled(false);
+            torch.set_autocast_cache_enabled(false);
         }
         
         public void Dispose()

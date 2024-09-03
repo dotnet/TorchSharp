@@ -10,51 +10,21 @@ namespace TorchSharp
             return THSAmp_is_autocast_cache_enabled();
         }
 
-        public static bool is_autocast_enabled(Device device)
+        public static bool is_autocast_enabled(DeviceType device)
         {
-            if(device.type == DeviceType.CPU)
-                return THSAmp_is_autocast_cpu_enabled();
-            if(device.type == DeviceType.CUDA)
-                return THSAmp_is_autocast_gpu_enabled();
-            return THSAmp_is_autocast_cache_enabled();
+            return THSAmp_is_autocast_enabled((int)device);
+            //return THSAmp_is_autocast_cache_enabled();
         }
-        public static bool is_autocast_cpu_enabled()
+        public static ScalarType get_autocast_dtype(DeviceType device)
         {
-            return THSAmp_is_autocast_cpu_enabled();
-        }
-        public static bool is_autocast_gpu_enabled()
-        {
-            return THSAmp_is_autocast_gpu_enabled();
-        }
-        public static bool is_autocast_xpu_enabled()
-        {
-            return THSAmp_is_autocast_xpu_enabled();
-        }
-        public static bool is_autocast_hpu_enabled()
-        {
-            return THSAmp_is_autocast_hpu_enabled();
-        }
-
-        public static ScalarType get_autocast_dtype(Device device)
-        {
-            if (device.type == DeviceType.CPU)
+            return (ScalarType)THSAmp_get_autocast_dtype((int)device);
+            /*if (device.type == DeviceType.CPU)
                 return get_autocast_cpu_dtype();
             if (device.type == DeviceType.CUDA)
                 return get_autocast_gpu_dtype();
-            return ScalarType.Float32;
+            return ScalarType.Float32;*/
         }
-        public static ScalarType get_autocast_cpu_dtype()
-        {
-            return (ScalarType)THSAmp_get_autocast_cpu_dtype();
-        }
-        public static ScalarType get_autocast_gpu_dtype()
-        {
-            return (ScalarType)THSAmp_get_autocast_gpu_dtype();
-        }
-        public static ScalarType get_autocast_xpu_dtype()
-        {
-            return (ScalarType)THSAmp_get_autocast_xpu_dtype();
-        }
+
 
         public static int autocast_increment_nesting()
         {
@@ -74,18 +44,9 @@ namespace TorchSharp
         {
             THSAmp_set_autocast_cache_enabled(enabled);
         }
-
-        public static void set_autocast_cpu_dtype(ScalarType dtype)
+        public static void set_autocast_cache_enabled(DeviceType device, ScalarType dtype)
         {
-            THSAmp_set_autocast_cpu_dtype((sbyte)dtype);
-        }
-        public static void set_autocast_gpu_dtype(ScalarType dtype)
-        {
-            THSAmp_set_autocast_gpu_dtype((sbyte)dtype);
-        }
-        public static void set_autocast_xpu_dtype(ScalarType dtype)
-        {
-            THSAmp_set_autocast_xpu_dtype((sbyte)dtype);
+            THSAmp_set_autocast_dtype((int)device, (sbyte)dtype);
         }
 
         public static void clear_autocast_cache()

@@ -23,23 +23,9 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern bool THSAmp_is_autocast_cache_enabled();
         [DllImport("LibTorchSharp")]
-        internal static extern bool THSAmp_is_autocast_cpu_enabled();
+        internal static extern bool THSAmp_is_autocast_enabled(int device_type);
         [DllImport("LibTorchSharp")]
-        internal static extern bool THSAmp_is_autocast_gpu_enabled();
-        [DllImport("LibTorchSharp")]
-        internal static extern bool THSAmp_is_autocast_xpu_enabled();
-        [DllImport("LibTorchSharp")]
-        internal static extern bool THSAmp_is_autocast_hpu_enabled();
-        [DllImport("LibTorchSharp")]
-        internal static extern bool THSAmp_is_autocast_ipu_enabled();
-        [DllImport("LibTorchSharp")]
-        internal static extern bool THSAmp_is_autocast_xla_enabled();
-        [DllImport("LibTorchSharp")]
-        internal static extern sbyte THSAmp_get_autocast_cpu_dtype();
-        [DllImport("LibTorchSharp")]
-        internal static extern sbyte THSAmp_get_autocast_gpu_dtype();
-        [DllImport("LibTorchSharp")]
-        internal static extern sbyte THSAmp_get_autocast_xpu_dtype();
+        internal static extern sbyte THSAmp_get_autocast_dtype(int device_type);
         [DllImport("LibTorchSharp")]
         internal static extern int THSAmp_autocast_increment_nesting();
         [DllImport("LibTorchSharp")]
@@ -49,11 +35,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern void THSAmp_set_autocast_cache_enabled(bool enabled);
         [DllImport("LibTorchSharp")]
-        internal static extern void THSAmp_set_autocast_cpu_dtype(sbyte dtype);
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSAmp_set_autocast_gpu_dtype(sbyte dtype);
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSAmp_set_autocast_xpu_dtype(sbyte dtype);
+        internal static extern void THSAmp_set_autocast_dtype(int device_type, sbyte dtype);
         [DllImport("LibTorchSharp")]
         internal static extern void THSAmp_clear_autocast_cache();
 
