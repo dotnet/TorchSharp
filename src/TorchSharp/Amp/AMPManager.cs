@@ -16,7 +16,7 @@ namespace TorchSharp.Amp
             public IntPtr PrevHandle;
             public IntPtr Handle;
             public torch.ScalarType Dtype;
-            public torch.ScalarType FastDtype;
+            public torch.ScalarType FastDtype = torch.ScalarType.Float32;
             public TensorCalledIn Called, Status;
             public enum TensorCalledIn
             {
@@ -44,15 +44,26 @@ namespace TorchSharp.Amp
         public bool IsDisposed = false;
         /*public UnorderedMap<IntPtr, torch.ScalarType> TensorPtrs= new UnorderedMap<IntPtr, torch.ScalarType>();
         public UnorderedMap<torch.Tensor, torch.ScalarType> TensorMap= new UnorderedMap<torch.Tensor, torch.ScalarType>();*/
-        private readonly AutocastMode autocastMode = AutocastMode.GetInstance();
+        private AutocastMode autocastMode=null;
+        public bool IsEnabled {
+            get {
+                if (autocastMode == null)
+                    return false;
+                return autocastMode.Enabled;
+            }
+        }
 
-        private AMPManager() { }
-
-        public bool IsEnabled => autocastMode.Enabled;
-        private static AMPManager Instance;
-        public static AMPManager GetInstance()
+        private AMPManager(bool enabled)
         {
-            return Instance ??= new AMPManager();
+            if (!torch.cuda_is_available())
+                return;
+            autocastMode = AutocastMode.GetInstance(enabled);
+        }
+
+        private static AMPManager Instance;
+        public static AMPManager GetInstance(bool enabled = false)
+        {
+            return Instance ??= new AMPManager(enabled);
         }
 
         private torch.ScalarType GetType(IntPtr handle)
@@ -67,7 +78,8 @@ namespace TorchSharp.Amp
 
         public torch.Tensor AutoCast(torch.Tensor tensor)
         {
-            return tensor.to(AutocastMode.GetInstance().GetFastType());
+            return new torch.Tensor(AutoCast(tensor.Handle));
+            //return tensor.to(AutocastMode.GetInstance().GetFastType());
         }
         public static IntPtr To(IntPtr ptr, torch.ScalarType type)
         {
@@ -154,8 +166,11 @@ namespace TorchSharp.Amp
         
         public IDisposable Enter()
         {
+            if (!torch.cuda_is_available())
+                return this;
             IsEnter = true;
             IsDisposed = false;
+            autocastMode.SetEnabled(true, torch.CUDA);
             Debug.WriteLine($"{nameof(AMPManager)} Enter call");
             return this;
         }
@@ -184,10 +199,10 @@ namespace TorchSharp.Amp
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        ~AMPManager()
+        /*~AMPManager()
         {
             Dispose(false);
-        }
+        }*/
 
         public void Dispose()
         {

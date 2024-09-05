@@ -201,7 +201,13 @@ namespace TorchSharp.Amp
         private float? maybe_opt_step(torch.optim.Optimizer optimizer, UnorderedMap<string, object> optimizer_state)
         {
             //https://github.com/pytorch/pytorch/blob/a00fad017719346bac6e08da0819358146e647e3/torch/amp/grad_scaler.py#L351
-            throw new NotImplementedException();
+            float? retval=0;
+            foreach(var d in optimizer_state)
+                if (d.Value is torch.Tensor t)
+                    retval += t.item<float>();
+            if (retval==0)
+                retval = optimizer.step().item<float>();
+            return retval;
         }
 
         public float? step(torch.optim.Optimizer optimizer, params object[] obj)

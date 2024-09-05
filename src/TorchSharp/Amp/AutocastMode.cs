@@ -32,43 +32,39 @@ if(instance ==null)
 instance = new AutocastMode(dev, dtype, enabled, cache_enabled);
 return instance;
 }*/
-        public static AutocastMode GetInstance()
+        public static AutocastMode GetInstance(bool enabled=false)
         {
-            return instance ??= new AutocastMode(torch.CUDA, cache_enabled:true);
+            return instance ??= new AutocastMode(torch.cuda_is_available() ? torch.CUDA : torch.CPU, enabled:enabled,cache_enabled:true);
         }
 
         public torch.ScalarType GetFastType()
         {
             return torch.get_autocast_dtype(Device.type);
-            /*var ft = torch.ScalarType.Float32;
-            if (Device.type == DeviceType.CUDA)
-                ft = torch.get_autocast_gpu_dtype();
-            if (Device.type == DeviceType.CPU)
-                ft = torch.get_autocast_cpu_dtype();
-            return ft;*/
         }
         private AutocastMode(torch.Device dev, torch.ScalarType? dtype = null, bool enabled=true, bool? cache_enabled = null)
+        {
+            if (!torch.cuda_is_available())
+                return;
+            Process(dev, dtype, enabled, cache_enabled);
+        }
+
+        private void Process(torch.Device dev, torch.ScalarType? dtype=null, bool enabled=true, bool? cache_enabled=null)
         {
             //var la = torch.tensor(9);
             fast_dtype = dtype ?? torch.ScalarType.Float32;
             fast_dtype = torch.get_autocast_dtype(dev.type);
-            /*if (dev.type == DeviceType.CUDA)
-                fast_dtype = torch.get_autocast_dtype(dev);
-            if (dev.type == DeviceType.CPU)
-                fast_dtype = torch.get_autocast_cpu_dtype();*/
             //IntPtr ptr = IntPtr.Zero;
-            
+
             bool _cache_enabled = torch.is_autocast_cache_enabled();
             if (!torch.cuda.is_available() && dev.type == DeviceType.CUDA) //Is not available for doing multicast
                 Enabled = false;
             if (dtype.HasValue)
                 fast_dtype = dtype.Value;
-            if(cache_enabled.HasValue)
-                _cache_enabled=cache_enabled.Value;
+            if (cache_enabled.HasValue)
+                _cache_enabled = cache_enabled.Value;
             if (dev.type == DeviceType.CPU) {
 
-            }
-            else if (dev.type == DeviceType.CUDA) {
+            } else if (dev.type == DeviceType.CUDA) {
 
                 if (enabled && fast_dtype == torch.ScalarType.BFloat16 && !torch.cuda.is_bf16_supported())
                     throw new Exception("Current CUDA Device does not support bfloat16. Please switch dtype to float16.");
@@ -82,7 +78,6 @@ return instance;
             }
             torch.set_autocast_cache_enabled(_cache_enabled);
             torch.set_autocast_enabled(this.Enabled);
-            //throw new NotImplementedException();
         }
 
         /*internal void Cast(torch.Tensor tensor)
@@ -97,6 +92,10 @@ return instance;
             return tensor.to(fast_dtype, tensor.device);
         }
 
+        internal void SetEnabled(bool enabled, torch.Device dev)
+        {
+            Process(dev, null, enabled, true);
+        }
         private void Dispose(bool disposing)
         {
             this.Enabled = false;
