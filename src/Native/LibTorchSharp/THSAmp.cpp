@@ -44,6 +44,12 @@ bool THSAmp_is_autocast_cache_enabled()
     return at::autocast::is_autocast_cache_enabled();
 }
 
+bool THSAmp_is_autocast_available(int8_t device)
+{
+    return at::autocast::is_autocast_available((c10::DeviceType)device);
+}
+
+
 bool THSAmp_is_autocast_enabled(int8_t device)
 {
     return at::autocast::is_autocast_enabled((at::DeviceType)device);

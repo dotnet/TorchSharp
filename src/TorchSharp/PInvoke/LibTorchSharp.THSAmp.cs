@@ -23,6 +23,8 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern bool THSAmp_is_autocast_cache_enabled();
         [DllImport("LibTorchSharp")]
+        internal static extern bool THSAmp_is_autocast_available(int device_type);
+        [DllImport("LibTorchSharp")]
         internal static extern bool THSAmp_is_autocast_enabled(int device_type);
         [DllImport("LibTorchSharp")]
         internal static extern sbyte THSAmp_get_autocast_dtype(int device_type);
@@ -31,7 +33,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern int THSAmp_autocast_decrement_nesting();
         [DllImport("LibTorchSharp")]
-        internal static extern void THSAmp_set_autocast_enabled(bool enabled);
+        internal static extern void THSAmp_set_autocast_enabled(int device_type, bool enabled);
         [DllImport("LibTorchSharp")]
         internal static extern void THSAmp_set_autocast_cache_enabled(bool enabled);
         [DllImport("LibTorchSharp")]

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -112,7 +113,7 @@ namespace TorchSharp
             {
                 var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new RNNCell(res, boxedHandle).MoveModule<RNNCell>(device, dtype);
             }
         }

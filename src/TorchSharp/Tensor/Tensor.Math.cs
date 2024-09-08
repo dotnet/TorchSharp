@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -270,7 +271,7 @@ namespace TorchSharp
                 var res = THSTensor_addmm(Handle, mat1.Handle, mat2.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -302,7 +303,7 @@ namespace TorchSharp
                 var res = THSTensor_addmv(Handle, mat.Handle, vec.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -1387,6 +1388,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_pow(Handle, exponent.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32); //https://pytorch.org/docs/stable/amp.html#cuda-ops-that-can-autocast-to-float32
                 return new Tensor(res);
             }
 

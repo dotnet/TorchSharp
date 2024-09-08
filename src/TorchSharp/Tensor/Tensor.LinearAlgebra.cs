@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -171,7 +172,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_matmul(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -184,7 +185,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_mm(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -197,7 +198,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_mv(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 

@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Diagnostics.Contracts;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -39,6 +40,7 @@ namespace TorchSharp
                 var res = THSTensor_asin(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -70,6 +72,7 @@ namespace TorchSharp
                 var res = THSTensor_acos(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 

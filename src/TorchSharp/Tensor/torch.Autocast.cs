@@ -10,6 +10,11 @@ namespace TorchSharp
             return THSAmp_is_autocast_cache_enabled();
         }
 
+        public static bool is_autocast_available(DeviceType device)
+        {
+            //https://github.com/pytorch/pytorch/blob/main/torch/csrc/autograd/init.cpp
+            return THSAmp_is_autocast_available((int)device);
+        }
         public static bool is_autocast_enabled(DeviceType device)
         {
             return THSAmp_is_autocast_enabled((int)device);
@@ -18,11 +23,6 @@ namespace TorchSharp
         public static ScalarType get_autocast_dtype(DeviceType device)
         {
             return (ScalarType)THSAmp_get_autocast_dtype((int)device);
-            /*if (device.type == DeviceType.CPU)
-                return get_autocast_cpu_dtype();
-            if (device.type == DeviceType.CUDA)
-                return get_autocast_gpu_dtype();
-            return ScalarType.Float32;*/
         }
 
 
@@ -36,9 +36,14 @@ namespace TorchSharp
             return THSAmp_autocast_decrement_nesting();
         }
 
-        public static void set_autocast_enabled(bool enabled)
+        public static void set_autocast_enabled(DeviceType device, bool enabled)
         {
-            THSAmp_set_autocast_enabled(enabled);
+            THSAmp_set_autocast_enabled((int)device,enabled);
+        }
+
+        public static void set_autocast_dtype(DeviceType device, ScalarType dtype)
+        {
+            THSAmp_set_autocast_dtype((int)device, (sbyte)dtype);
         }
         public static void set_autocast_cache_enabled(bool enabled)
         {

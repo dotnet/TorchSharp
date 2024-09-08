@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Amp\AMPManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Tensor\TensorTyped.tt" />
   </ItemGroup>
 

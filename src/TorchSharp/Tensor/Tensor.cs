@@ -45,13 +45,7 @@ namespace TorchSharp
             }*/
             internal Tensor(IntPtr handle)
             {
-                //TODO: Add Autocast/AMP ScopeManager, need improve this.. 1) is not threadsafe and may have big problem while casting and uncasting.
-                //DANGER: DONT USE THIS ON PRODUCTION
-                /*if (AMPManager.GetInstance().IsEnabled) {
-                    this.handle = AMPManager.GetInstance().Work(handle, this.handle); //MMM.... This is the more abstract of any method Tensor right????
-                } else {*/
-                    this.handle = handle;
-                //}
+                this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
                 OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
@@ -3119,7 +3113,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_baddbmm(Handle, batch1.Handle, batch2.Handle, beta, alpha);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -3132,7 +3126,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_bmm(Handle, batch2.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -4488,7 +4482,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_prelu(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = Amp.AMPManager.GetInstance().AutoCast(res);
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 

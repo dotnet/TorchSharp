@@ -20,6 +20,8 @@ EXPORT_API(bool) THSAmp_is_torch_function_mode_enabled();
 
 EXPORT_API(bool) THSAmp_is_autocast_cache_enabled();
 
+EXPORT_API(bool) THSAmp_is_autocast_available(int8_t device);
+
 EXPORT_API(bool) THSAmp_is_autocast_enabled(int8_t device);
 EXPORT_API(int8_t) THSAmp_get_autocast_dtype(int8_t device);
 EXPORT_API(void) THSAmp_set_autocast_enabled(int8_t device, bool enabled);

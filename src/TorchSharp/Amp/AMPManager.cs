@@ -49,7 +49,7 @@ namespace TorchSharp.Amp
             get {
                 if (autocastMode == null)
                     return false;
-                return autocastMode.Enabled;
+                return autocastMode.IsEnabled;
             }
         }
 

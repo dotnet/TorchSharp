@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -144,7 +145,7 @@ namespace TorchSharp
                                     (IntPtr)pdilation, dilation.Length,
                                     groups);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            res = Amp.AMPManager.GetInstance().AutoCast(res);
+                            res = AutocastMode.AutoCast(res);
                             return new Tensor(res);
                         }
                     }
