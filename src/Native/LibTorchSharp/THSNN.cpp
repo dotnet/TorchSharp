@@ -1336,6 +1336,13 @@ Tensor THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, 
     CATCH_TENSOR(torch::scaled_dot_product_attention(*query, *key, *value, mask, p, casual));
 }
 
+Tensor THSNN_normalize(Tensor input, float p, const int64_t* dim, float eps, Tensor out)
+{
+    auto opts = torch::nn::functional::NormalizeFuncOptions().p(p).eps(eps).dim(*dim);
+    CATCH_TENSOR(torch::nn::functional::normalize(*input, opts))
+    //CATCH_TENSOR(torch::scaled_dot_product_attention(*query, *key, *value, mask, p, casual));
+}
+
 void THSNN_Print_Module(const NNModule module) {
     std::ostringstream oss;
     const std::string name = module->get()->name();

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -365,6 +366,7 @@ namespace TorchSharp
                 {
                     var res = THSNN_binary_cross_entropy_with_logits(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, pos_weights?.Handle ?? IntPtr.Zero);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     return new Tensor(res);
                 }
 
@@ -435,6 +437,7 @@ namespace TorchSharp
                 {
                     var res = THSNN_cosine_embedding_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     return new Tensor(res);
                 }
 
@@ -514,6 +517,7 @@ namespace TorchSharp
                 {
                     var res = THSNN_multilabel_margin_loss(input.Handle, target.Handle, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     return new Tensor(res);
                 }
 
@@ -547,6 +551,7 @@ namespace TorchSharp
                     IntPtr h = (weight is null) ? IntPtr.Zero : weight.Handle;
                     var res = THSNN_multi_margin_loss(input.Handle, target.Handle, p, margin, h, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     return new Tensor(res);
                 }
 
@@ -561,6 +566,7 @@ namespace TorchSharp
                 {
                     var res = THSNN_mse_loss(input.Handle, target.Handle, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     return new Tensor(res);
                 }
 
@@ -620,6 +626,7 @@ namespace TorchSharp
                 {
                     var res = THSNN_kl_div_loss(input.Handle, target.Handle, (long)reduction, log_target);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     return new Tensor(res);
                 }
 
@@ -744,6 +751,7 @@ namespace TorchSharp
                 var ii = ignore_index.HasValue ? ignore_index.Value : -100;
                 var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction, label_smoothing);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+
                 return new Tensor(res);
             }
 
@@ -776,6 +784,7 @@ namespace TorchSharp
             {
                 var res = THSNN_binary_cross_entropy_with_logits(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, pos_weights?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -793,6 +802,7 @@ namespace TorchSharp
             {
                 var res = THSNN_cosine_embedding_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -829,6 +839,7 @@ namespace TorchSharp
             {
                 var res = THSNN_hinge_embedding_loss(input.Handle, target.Handle, margin, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -863,6 +874,7 @@ namespace TorchSharp
             {
                 var res = THSNN_margin_ranking_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -942,6 +954,7 @@ namespace TorchSharp
             {
                 var res = THSNN_l1_loss(input.Handle, target.Handle, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
         }
@@ -956,6 +969,7 @@ namespace TorchSharp
             {
                 var res = THSNN_nll_loss(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
         }
@@ -973,6 +987,7 @@ namespace TorchSharp
             {
                 var res = THSNN_poisson_loss(input.Handle, target.Handle, log_input, full, eps, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1046,6 +1061,7 @@ namespace TorchSharp
             {
                 var res = THSNN_smooth_l1_loss(input.Handle, target.Handle, (long)reduction, beta);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1062,6 +1078,7 @@ namespace TorchSharp
             {
                 var res = THSNN_soft_margin_loss(input.Handle, target.Handle, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
         }
@@ -1080,6 +1097,7 @@ namespace TorchSharp
             {
                 var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, swap, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 

@@ -3449,6 +3449,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_erfinv(Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4417,6 +4418,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_dist(Handle, other.Handle, p);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4428,6 +4430,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_norm(Handle, p);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4438,6 +4441,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_norm_along_dimension(Handle, dim, keepdim, p);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4528,6 +4532,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_renorm(Handle, p, dim, maxnorm);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4950,6 +4955,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_prod(Handle, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4960,6 +4966,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_prod_along_dimensions(Handle, dim, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -4970,6 +4977,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_sum(Handle, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -5844,6 +5852,13 @@ namespace TorchSharp
             /// </summary>
             public Tensor scatter_add(long dim, Tensor index, Tensor src)
             {
+                if (AutocastMode.IsAutocastEnabled()) {
+                    var sts = new[] { this.dtype, index.dtype, src.dtype };
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, index.handle, src.handle) = AutocastMode.AutoCast(handle, index.handle, src.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, index.handle, src.handle) = AutocastMode.AutoCast(handle, index.handle, src.handle, ScalarType.Float32);
+                }
                 var res = NativeMethods.THSTensor_scatter_add(Handle, dim, index.Handle, src.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);

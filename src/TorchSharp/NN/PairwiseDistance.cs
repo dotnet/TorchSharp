@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -41,6 +42,7 @@ namespace TorchSharp
             {
                 var handle = THSNN_PairwiseDistance_ctor(p, eps, keep_dim, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                handle = AutocastMode.AutoCast(handle, ScalarType.Float32);
                 return new PairwiseDistance(handle, boxedHandle);
             }
 

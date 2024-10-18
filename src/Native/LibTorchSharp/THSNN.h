@@ -579,6 +579,7 @@ EXPORT_API(Tensor)   THSNN_PairwiseDistance_forward(const NNModule module, const
 
 EXPORT_API(Tensor) THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, const Tensor value, const Tensor attention_mask, double p, bool casual);
 
+EXPORT_API(Tensor) THSNN_normalize(const Tensor input, float p, const int64_t* dim, float eps, Tensor out);
 // Initializers
 
 EXPORT_API(void) THSNN_initUniform(Tensor twrapper, double low, double high);

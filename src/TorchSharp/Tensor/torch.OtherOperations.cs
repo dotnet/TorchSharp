@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.Amp;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -166,6 +167,7 @@ namespace TorchSharp
             var res = THSTensor_cdist(x1.Handle, x2.Handle, p, (long)compute_mode);
             if (res == IntPtr.Zero)
                 CheckForErrors();
+            res = AutocastMode.AutoCast(res, ScalarType.Float32);
             return new Tensor(res);
         }
 

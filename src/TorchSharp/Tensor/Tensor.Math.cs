@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
+using System.Linq;
 using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -158,6 +159,7 @@ namespace TorchSharp
                 var res = THSTensor_addbmm(Handle, batch1.Handle, batch2.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -187,6 +189,16 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addcdiv(Tensor tensor1, Tensor tensor2, Scalar value)
             {
+                if (AutocastMode.IsAutocastEnabled(this.device.type)) {
+                    var st = (ScalarType)THSTensor_type(Handle);
+                    var st1 = (ScalarType)THSTensor_type(tensor1.Handle);
+                    var st2 = (ScalarType)THSTensor_type(tensor2.Handle);
+                    var sts = new[] { st, st1, st2 };
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float32);
+                }
                 var res = THSTensor_addcdiv(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
@@ -238,6 +250,23 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addcmul(Tensor tensor1, Tensor tensor2, Scalar value)
             {
+                if (AutocastMode.IsAutocastEnabled(this.device.type)) {
+                    /*
+                     * These ops don’t require a particular dtype for stability, but take multiple inputs and require that the inputs’ dtypes match.
+                     * If all of the inputs are float16, the op runs in float16.
+                     * If any of the inputs is float32, autocast casts all inputs to float32 and runs the op in float32.
+                     * https://pytorch.org/docs/stable/amp.html
+                     */
+                    var st = (ScalarType)THSTensor_type(Handle);
+                    var st1 = (ScalarType)THSTensor_type(tensor1.Handle);
+                    var st2 = (ScalarType)THSTensor_type(tensor2.Handle);
+                    var sts = new[] { st, st1, st2 };
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float32);
+                }
+
                 var res = THSTensor_addcmul(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
@@ -335,6 +364,7 @@ namespace TorchSharp
                 var res = THSTensor_addr(Handle, vec1.Handle, vec2.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res);
                 return new Tensor(res);
             }
 
@@ -649,6 +679,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_cumsum(Handle, dim, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -663,6 +694,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_cumprod(Handle, dim, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -757,6 +789,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_exp(Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -789,6 +822,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_expm1(Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1028,6 +1062,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_log(Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1111,6 +1146,7 @@ namespace TorchSharp
                 var res = THSTensor_log10(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1134,6 +1170,7 @@ namespace TorchSharp
                 var res = THSTensor_log1p(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1157,6 +1194,7 @@ namespace TorchSharp
                 var res = THSTensor_log2(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1413,6 +1451,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_pow_scalar(Handle, exponent.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1437,6 +1476,7 @@ namespace TorchSharp
                 var res = THSTensor_reciprocal(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1532,6 +1572,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_rsqrt(Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -1792,6 +1833,15 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+
+            /*public Tensor rtruediv_(Tensor other)
+            {
+                var res = THSTensor_true_divide(other.Handle, Handle);
+                if(res == IntPtr.Zero)
+                    CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
+                return new Tensor(res);
+            }*/
 
             /// <summary>
             /// Returns a new tensor with the truncated integer values of the elements of input.

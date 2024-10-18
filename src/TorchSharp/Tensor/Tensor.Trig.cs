@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -143,6 +144,13 @@ namespace TorchSharp
             /// <param name="other">The second tensor</param>
             public Tensor atan2(Tensor other)
             {
+                if (AutocastMode.IsAutocastEnabled()) {
+                    var sts = new[] { this.dtype, other.dtype };
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, other.handle) = AutocastMode.AutoCast(handle, other.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, other.handle) = AutocastMode.AutoCast(handle, other.handle, ScalarType.Float32);
+                }
                 var res = THSTensor_atan2(Handle, other.Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
@@ -219,6 +227,7 @@ namespace TorchSharp
                 var res = THSTensor_tan(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -265,6 +274,7 @@ namespace TorchSharp
                 var res = THSTensor_sinh(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -288,6 +298,7 @@ namespace TorchSharp
                 var res = THSTensor_cosh(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 

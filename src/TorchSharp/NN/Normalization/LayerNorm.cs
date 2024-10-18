@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -28,9 +29,11 @@ namespace TorchSharp
                 if (elementwise_affine)
                 {
                     weight = Parameter(torch.empty(normalized_shape, dtype, device));
+                    //weight.handle = AutocastMode.AutoCast(weight.handle, ScalarType.Float32); //This is correct???
                     if (bias)
                     {
                         this.bias = Parameter(torch.empty(normalized_shape, dtype, device));
+                        //bias.handle = AutocastMode.AutoCast(bias.handle, ScalarType.Float32); //This is correct???
                     }
                 }
 

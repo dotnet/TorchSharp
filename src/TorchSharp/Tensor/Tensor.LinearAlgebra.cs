@@ -18,6 +18,13 @@ namespace TorchSharp
             public Tensor tensordot(Tensor b, long[] dims1, long[] dims2)
             {
                 IntPtr res;
+                if (AutocastMode.IsAutocastEnabled()) {
+                    var sts = new[] { this.dtype, b.dtype };
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, b.handle) = AutocastMode.AutoCast(handle, b.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, b.handle) = AutocastMode.AutoCast(handle, b.handle, ScalarType.Float32);
+                }
                 unsafe {
                     fixed (long* pdims1 = dims1, pdims2 = dims2) {
                         res = THSLinalg_tensordot(Handle, b.Handle,(IntPtr)pdims1, dims1.Length,(IntPtr)pdims2, dims2.Length);
@@ -248,6 +255,13 @@ namespace TorchSharp
             public Tensor dot(Tensor target)
             {
                 if (shape.Length != 1 || target.shape.Length != 1 || shape[0] != target.shape[0]) throw new InvalidOperationException("dot arguments must have the same shape.");
+                if (AutocastMode.IsAutocastEnabled()) {
+                    var sts = new[] { this.dtype, target.dtype };
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, target.handle) = AutocastMode.AutoCast(handle, target.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, target.handle) = AutocastMode.AutoCast(handle, target.handle, ScalarType.Float32);
+                }
                 var res = THSTensor_dot(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);

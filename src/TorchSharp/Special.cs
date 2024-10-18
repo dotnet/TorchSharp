@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -674,10 +675,11 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor log_softmax(Tensor input, long dim, ScalarType? dtype = null)
             {
-                var dt = dtype.HasValue ? dtype.Value : input.dtype;
+                var dt = dtype ?? input.dtype;
                 var res = THSSpecial_log_softmax(input.Handle, dim, (sbyte)dt);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -745,6 +747,7 @@ namespace TorchSharp
                 var res = THSSpecial_softmax(input.Handle, dim, (sbyte)dt);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
+                res = AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
