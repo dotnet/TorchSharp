@@ -388,7 +388,7 @@ namespace TorchSharp
             {
                 private readonly DataLoader<T, S> loader;
                 private IEnumerator<long> shuffler;
-                private HashSet<IDisposable>? currentDisposables;
+                private HashSet<IDisposeScopeClient>? currentDisposables;
                 public DataLoaderEnumerator(DataLoader<T, S> loader)
                 {
                     this.loader = loader;
@@ -397,7 +397,7 @@ namespace TorchSharp
                     Reset();
                 }
 
-                private static void DisposeAll(HashSet<IDisposable> disposables)
+                private static void DisposeAll(HashSet<IDisposeScopeClient> disposables)
                 {
                     foreach (var disposable in disposables) {
                         disposable.Dispose();
@@ -426,7 +426,7 @@ namespace TorchSharp
                     }
 
                     var tensors = new T[indices.Length];
-                    var getTensorDisposables = new HashSet<IDisposable>[indices.Length];
+                    var getTensorDisposables = new HashSet<IDisposeScopeClient>[indices.Length];
                     Enumerable.Range(0, indices.Length)
                         .AsParallel()
                         .WithDegreeOfParallelism(loader.num_workers)

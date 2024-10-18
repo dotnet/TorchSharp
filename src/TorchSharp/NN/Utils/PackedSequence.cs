@@ -4,6 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -17,9 +18,9 @@ namespace TorchSharp
                     /// <summary>
                     /// A packed batch of variable length sequences.
                     /// </summary>
-                    public sealed class PackedSequence : IDisposable
+                    public sealed class PackedSequence : IDisposeScopeClient
                     {
-                        internal DisposeScope OwningDisposeScope { get; set; }
+                        public DisposeScope? OwningDisposeScope { get; set; }
 
                         /// <summary>
                         /// Class wrapping PyTorch's packedsequence object reference.
@@ -79,10 +80,7 @@ namespace TorchSharp
                             this.batch_sizes = new Tensor(THSNN_PackedSequence_batch_sizes(handle));
                             this.sorted_indices = new Tensor(THSNN_PackedSequence_sorted_indices(handle));
                             this.unsorted_indices = new Tensor(THSNN_PackedSequence_unsorted_indices(handle));
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.data);
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.batch_sizes);
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.sorted_indices);
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.unsorted_indices);
+
                             OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
                         }
 
@@ -95,14 +93,15 @@ namespace TorchSharp
                         {
                             this.data.Dispose();
                             this.batch_sizes.Dispose();
-                            this.sorted_indices.Dispose();
-                            this.unsorted_indices.Dispose();
+                            if (!this.sorted_indices.IsInvalid) {
+                                this.sorted_indices.Dispose();
+                                this.unsorted_indices.Dispose();
+                            }
                             OwningDisposeScope?.MarkAsDisposed(this);
 
-                            if (handle != null && !handle.IsInvalid) {
+                            if (!handle.IsInvalid) {
                                 handle.Dispose();
                                 handle.SetHandleAsInvalid();
-
                             }
                         }
                         /// <summary>
@@ -114,8 +113,10 @@ namespace TorchSharp
                         {
                             OwningDisposeScope?.MoveToOuter(this.data);
                             OwningDisposeScope?.MoveToOuter(this.batch_sizes);
-                            OwningDisposeScope?.MoveToOuter(this.sorted_indices);
-                            OwningDisposeScope?.MoveToOuter(this.unsorted_indices);
+                            if (!this.sorted_indices.IsInvalid) {
+                                OwningDisposeScope?.MoveToOuter(this.sorted_indices);
+                                OwningDisposeScope?.MoveToOuter(this.unsorted_indices);
+                            }
                             OwningDisposeScope?.MoveToOuter(this);
                             return this;
                         }
@@ -128,31 +129,37 @@ namespace TorchSharp
                         {
                             OwningDisposeScope?.Detach(this.data);
                             OwningDisposeScope?.Detach(this.batch_sizes);
-                            OwningDisposeScope?.Detach(this.sorted_indices);
-                            OwningDisposeScope?.Detach(this.unsorted_indices);
+                            if (!this.sorted_indices.IsInvalid) {
+                                OwningDisposeScope?.Detach(this.sorted_indices);
+                                OwningDisposeScope?.Detach(this.unsorted_indices);
+                            }
                             OwningDisposeScope?.Detach(this);
                             return this;
                         }
 
-                        public PackedSequence MoveToOtherDisposeScope(PackedSequence other)
+                        public PackedSequence MoveToOtherDisposeScope(IDisposeScopeClient other)
                         {
                             return MoveToOtherDisposeScope(other.OwningDisposeScope);
                         }
 
-                        public PackedSequence MoveToOtherDisposeScope(DisposeScope other)
+                        public PackedSequence MoveToOtherDisposeScope(DisposeScope? other)
                         {
                             if (OwningDisposeScope == null && other != null) {
                                 other.Attach(this.data);
                                 other.Attach(this.batch_sizes);
-                                other.Attach(this.sorted_indices);
-                                other.Attach(this.unsorted_indices);
+                                if (!this.sorted_indices.IsInvalid) {
+                                    other.Attach(this.sorted_indices);
+                                    other.Attach(this.unsorted_indices);
+                                }
                                 other.Attach(this);
                             }
                             else {
                                 OwningDisposeScope?.MoveToOther(other, this.data);
                                 OwningDisposeScope?.MoveToOther(other, this.batch_sizes);
-                                OwningDisposeScope?.MoveToOther(other, this.sorted_indices);
-                                OwningDisposeScope?.MoveToOther(other, this.unsorted_indices);
+                                if (!this.sorted_indices.IsInvalid) {
+                                    OwningDisposeScope?.MoveToOther(other, this.sorted_indices);
+                                    OwningDisposeScope?.MoveToOther(other, this.unsorted_indices);
+                                }
                                 OwningDisposeScope?.MoveToOther(other, this);
                             }
                             return this;

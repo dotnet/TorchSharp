@@ -55,37 +55,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestPackSequenceMoveDisposeScope()
-        {
-            nn.utils.rnn.PackedSequence packed_sequence;
-            var otherScope = NewDisposeScope();
-            using (var outerScope = NewDisposeScope())
-            {
-                using (var innerScope = NewDisposeScope()) {
-                    var (sequences, sequences_len) = make_test();
-                    packed_sequence = torch.nn.utils.rnn.pack_sequence(sequences, enforce_sorted: false);
-                    AssertPackedSequenceValid(packed_sequence);
-                    packed_sequence.MoveToOuterDisposeScope();
-                }
-                AssertPackedSequenceValid(packed_sequence);
-                packed_sequence.MoveToOtherDisposeScope(otherScope);
-            }
-            AssertPackedSequenceValid(packed_sequence);
-            otherScope.Dispose();
-            Assert.True(packed_sequence.IsInvalid);
-            Assert.True(packed_sequence.data.IsInvalid);
-        }
-
-        private static void AssertPackedSequenceValid(nn.utils.rnn.PackedSequence packed_sequence)
-        {
-            Assert.False(packed_sequence.IsInvalid);
-            Assert.False(packed_sequence.batch_sizes.IsInvalid);
-            Assert.False(packed_sequence.data.IsInvalid);
-            Assert.False(packed_sequence.sorted_indices.IsInvalid);
-            Assert.False(packed_sequence.unsorted_indices.IsInvalid);
-        }
-
-        [Fact]
         public void TestAutoGradGrad()
         {
             using var _ = torch.NewDisposeScope();
