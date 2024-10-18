@@ -213,6 +213,9 @@ namespace TorchSharp
                     if (disposable is torch.Tensor tensor) {
                         tensor.OwningDisposeScope = null;
                     }
+                    else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                        sequence.OwningDisposeScope = null;
+                    }
                 }
             }
         }
@@ -239,9 +242,16 @@ namespace TorchSharp
                         _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
                     }
                 }
+                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    if (sequence.OwningDisposeScope == null && !sequence.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                    }
+                }
+
                 AddToOther(this, disposable);
                 result.Add(disposable);
             }
+
             return result;
         }
 
@@ -272,6 +282,12 @@ namespace TorchSharp
                     // No need to have the disposable call back to the scope
                     tensor.OwningDisposeScope = null;
                     if (!tensor.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
+                    }
+                } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    // No need to have the disposable call back to the scope
+                    sequence.OwningDisposeScope = null;
+                    if (!sequence.IsInvalid) {
                         _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
                     }
                 } else {
@@ -358,6 +374,9 @@ namespace TorchSharp
             if (disposable is torch.Tensor tensor) {
                 tensor.OwningDisposeScope = null;
             }
+            else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                sequence.OwningDisposeScope = null;
+            }
         }
 
         /// <summary>
@@ -380,6 +399,9 @@ namespace TorchSharp
             if (disposable is torch.Tensor tensor) {
                 tensor.OwningDisposeScope = scope;
             }
+            else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                sequence.OwningDisposeScope = scope;
+            }
         }
 
         internal HashSet<IDisposable> DetachAllAndDispose()
@@ -389,6 +411,9 @@ namespace TorchSharp
                 this._disposeScopeManager!.StatisticsInstance.DetachedFromScopeCount++;
                 if (disposable is torch.Tensor tensor) {
                     tensor.OwningDisposeScope = null;
+                }
+                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    sequence.OwningDisposeScope = null;
                 }
             }
 
