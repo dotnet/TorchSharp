@@ -86,10 +86,10 @@ namespace TorchSharp
                         internal PackedSequence(HType handle)
                         {
                             this.handle = handle;
-                            this.data = new Tensor(THSNN_PackedSequence_data(handle));
-                            this.batch_sizes = new Tensor(THSNN_PackedSequence_batch_sizes(handle));
-                            this.sorted_indices = new Tensor(THSNN_PackedSequence_sorted_indices(handle));
-                            this.unsorted_indices = new Tensor(THSNN_PackedSequence_unsorted_indices(handle));
+                            this.data = new Tensor(THSNN_PackedSequence_data(handle)).DetachFromDisposeScope();
+                            this.batch_sizes = new Tensor(THSNN_PackedSequence_batch_sizes(handle)).DetachFromDisposeScope();
+                            this.sorted_indices = new Tensor(THSNN_PackedSequence_sorted_indices(handle)).DetachFromDisposeScope();
+                            this.unsorted_indices = new Tensor(THSNN_PackedSequence_unsorted_indices(handle)).DetachFromDisposeScope();
                             OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
                         }
 
@@ -119,10 +119,6 @@ namespace TorchSharp
                         /// <returns>The same PackedSequence that the method was called on</returns>
                         public PackedSequence MoveToOuterDisposeScope()
                         {
-                            OwningDisposeScope?.MoveToOuter(this.data);
-                            OwningDisposeScope?.MoveToOuter(this.batch_sizes);
-                            OwningDisposeScope?.MoveToOuter(this.sorted_indices);
-                            OwningDisposeScope?.MoveToOuter(this.unsorted_indices);
                             OwningDisposeScope?.MoveToOuter(this);
                             return this;
                         }
@@ -133,10 +129,6 @@ namespace TorchSharp
                         /// <returns>The same PackedSequence that the method was called on</returns>
                         public PackedSequence DetachFromDisposeScope()
                         {
-                            OwningDisposeScope?.Detach(this.data);
-                            OwningDisposeScope?.Detach(this.batch_sizes);
-                            OwningDisposeScope?.Detach(this.sorted_indices);
-                            OwningDisposeScope?.Detach(this.unsorted_indices);
                             OwningDisposeScope?.Detach(this);
                             return this;
                         }
@@ -149,17 +141,9 @@ namespace TorchSharp
                         public PackedSequence MoveToOtherDisposeScope(DisposeScope other)
                         {
                             if (OwningDisposeScope == null && other != null) {
-                                other.Attach(this.data);
-                                other.Attach(this.batch_sizes);
-                                other.Attach(this.sorted_indices);
-                                other.Attach(this.unsorted_indices);
                                 other.Attach(this);
                             }
                             else {
-                                OwningDisposeScope?.MoveToOther(other, this.data);
-                                OwningDisposeScope?.MoveToOther(other, this.batch_sizes);
-                                OwningDisposeScope?.MoveToOther(other, this.sorted_indices);
-                                OwningDisposeScope?.MoveToOther(other, this.unsorted_indices);
                                 OwningDisposeScope?.MoveToOther(other, this);
                             }
                             return this;

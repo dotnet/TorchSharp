@@ -39,7 +39,7 @@ public class TestDisposeScopesPackedSequence
         var sequences = CreateTestSequences();
         using var scope = torch.NewDisposeScope();
         var packed = torch.nn.utils.rnn.pack_sequence(sequences, enforce_sorted: false);
-        Assert.Equal(5, scope.DisposablesCount);
+        Assert.Equal(1, scope.DisposablesCount);
         AssertPackedSequenceValid(packed);
     }
 
@@ -49,7 +49,7 @@ public class TestDisposeScopesPackedSequence
         var sequences = CreateTestSequences();
         using var scope = torch.NewDisposeScope();
         var packed = torch.nn.utils.rnn.pack_sequence(sequences, enforce_sorted: true);
-        Assert.Equal(5, scope.DisposablesCount);
+        Assert.Equal(1, scope.DisposablesCount);
         Assert.False(GetPackedSequenceIsInvalid(packed));
         Assert.False(packed.batch_sizes.IsInvalid);
         Assert.False(packed.data.IsInvalid);
@@ -70,17 +70,17 @@ public class TestDisposeScopesPackedSequence
         AssertStatCounts(0, 7, 0, 0, 0);
 
         var inScope = torch.nn.utils.rnn.pack_sequence(sequences, enforce_sorted: true);
-        AssertStatCounts(5, 7, 0, 0, 5);
+        AssertStatCounts(5, 7, 4, 0, 1);
 
         scope.Attach(outOfScope);
-        //Possible subtle bug. When attaching an object that isn't owned by any scope, the count goes negative.
-        AssertStatCounts( 5, 7, -1, 0, 6);
+        //Possible subtle bug. When attaching an object that isn't owned by any scope, the count subtracts.
+        AssertStatCounts( 5, 7, 3, 0, 2);
 
         scope.Detach(inScope);
-        AssertStatCounts( 5, 7, 0, 0, 5);
+        AssertStatCounts( 5, 7, 4, 0, 1);
 
         outOfScope.Dispose();
-        AssertStatCounts( 5, 7, 0, 5, 0);
+        AssertStatCounts( 5, 7, 4, 5, -4);
 
     }
 
