@@ -6,7 +6,8 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Bug Fixes__:
 
-#1383 `torch.linalg.vector_norm`: Make `ord`-argument optional, as specified in docs
+#1383 `torch.linalg.vector_norm`: Make `ord`-argument optional, as specified in docs<br/>
+#1385 PackedSequence now participates in the DisposeScope system at the same level as Tensor objects.<br/>
 
 # NuGet Version 0.103.0
 
