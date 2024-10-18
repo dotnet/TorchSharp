@@ -30,14 +30,14 @@ namespace TorchSharp
         /// <summary>
         /// The disposables that are scheduled for disposing.
         /// </summary>
-        internal HashSet<IDisposeScopeClient> Disposables { get; private set; } =
-            new HashSet<IDisposeScopeClient>(ReferenceEqualityComparer<IDisposeScopeClient>.Default);
+        internal HashSet<IDisposable> Disposables { get; private set; } =
+            new HashSet<IDisposable>(ReferenceEqualityComparer<IDisposable>.Default);
 
         /// <summary>
         /// A view of the disposables in the scope - this list will not be kept in synch with the disposables
         /// in the scope.
         /// </summary>
-        public IReadOnlyList<IDisposeScopeClient> DisposablesView {
+        public IReadOnlyList<IDisposable> DisposablesView {
             get {
                 if (this._disposeScopeManager is null)
                     throw new ObjectDisposedException(this.GetType().FullName);
@@ -58,99 +58,99 @@ namespace TorchSharp
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
-        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all scopes,
+        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
         /// </summary>
-        public T MoveToOuter<T>(T disposable) where T : IDisposeScopeClient
+        public T MoveToOuter<T>(T disposable) where T : IDisposable
         {
-            MoveToOuter(new IDisposeScopeClient[] { disposable });
+            MoveToOuter(new IDisposable[] { disposable });
             return disposable;
         }
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
-        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all scopes,
+        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
         /// </summary>
         public (T1 first, T2 second) MoveToOuter<T1, T2>(T1 first, T2 second)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable
         {
-            MoveToOuter(new IDisposeScopeClient[] { first, second });
+            MoveToOuter(new IDisposable[] { first, second });
             return (first, second);
         }
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
-        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all scopes,
+        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
         /// </summary>
         public (T1 first, T2 second, T3 third) MoveToOuter<T1, T2, T3>(T1 first, T2 second, T3 third)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient where T3 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
         {
-            MoveToOuter(new IDisposeScopeClient[] { first, second, third });
+            MoveToOuter(new IDisposable[] { first, second, third });
             return (first, second, third);
         }
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
-        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all scopes,
+        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
         /// </summary>
-        public void MoveToOuter(params IDisposeScopeClient[] disposables) =>
-            MoveToOuter((IEnumerable<IDisposeScopeClient>)disposables);
+        public void MoveToOuter(params IDisposable[] disposables) =>
+            MoveToOuter((IEnumerable<IDisposable>)disposables);
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
-        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all scopes,
+        /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
         /// </summary>
-        public void MoveToOuter(IEnumerable<IDisposeScopeClient> disposables) =>
+        public void MoveToOuter(IEnumerable<IDisposable> disposables) =>
             MoveToOther(OuterScope, disposables);
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
-        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all scopes, use Detach.
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
         /// </summary>
-        public T MoveToOther<T>(DisposeScope? scope, T disposable) where T : IDisposeScopeClient
+        public T MoveToOther<T>(DisposeScope? scope, T disposable) where T : IDisposable
         {
-            MoveToOther(scope, new IDisposeScopeClient[] { disposable });
+            MoveToOther(scope, new IDisposable[] { disposable });
             return disposable;
         }
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
-        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all scopes, use Detach.
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
         /// </summary>
         public (T1 first, T2 second) MoveToOther<T1, T2>(DisposeScope? scope, T1 first, T2 second)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable
         {
-            MoveToOther(scope, new IDisposeScopeClient[] { first, second });
+            MoveToOther(scope, new IDisposable[] { first, second });
             return (first, second);
         }
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
-        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all scopes, use Detach.
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
         /// </summary>
         public (T1 first, T2 second, T3 third) MoveToOther<T1, T2, T3>(DisposeScope? scope, T1 first, T2 second, T3 third)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient where T3 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
         {
-            MoveToOther(scope, new IDisposeScopeClient[] { first, second, third });
+            MoveToOther(scope, new IDisposable[] { first, second, third });
             return (first, second, third);
         }
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
-        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all scopes, use Detach.
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
         /// </summary>
-        public void MoveToOther(DisposeScope? scope, params IDisposeScopeClient[] disposables) =>
-            MoveToOther(scope, (IEnumerable<IDisposeScopeClient>)disposables);
+        public void MoveToOther(DisposeScope? scope, params IDisposable[] disposables) =>
+            MoveToOther(scope, (IEnumerable<IDisposable>)disposables);
 
         /// <summary>
         /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
-        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all scopes, use Detach.
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
         /// </summary>
-        public void MoveToOther(DisposeScope? scope, IEnumerable<IDisposeScopeClient> disposables)
+        public void MoveToOther(DisposeScope? scope, IEnumerable<IDisposable> disposables)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
@@ -162,78 +162,90 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Detaches/excludes a set of tensors/disposables from all dispose scopes, see overloaded methods. See MoveToOuter
+        /// Detaches/excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See MoveToOuter
         /// if you wish to move it to the outer dispose scope.
         /// </summary>
-        public T Detach<T>(T disposable) where T : IDisposeScopeClient
+        public T Detach<T>(T disposable) where T : IDisposable
         {
-            Detach(new IDisposeScopeClient[] { disposable });
+            Detach(new IDisposable[] { disposable });
             return disposable;
         }
 
         /// <summary>
-        /// Detaches/excludes a set of tensors/disposables from all dispose scopes, see overloaded methods. See MoveToOuter
+        /// Detaches/excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See MoveToOuter
         /// if you wish to move it to the outer dispose scope.
         /// </summary>
         public (T1 first, T2 second) Detach<T1, T2>(T1 first, T2 second)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable
         {
-            Detach(new IDisposeScopeClient[] { first, second });
+            Detach(new IDisposable[] { first, second });
             return (first, second);
         }
 
         /// <summary>
-        /// Detaches/excludes a set of tensors/disposables from all dispose scopes, see overloaded methods. See MoveToOuter
+        /// Detaches/excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See MoveToOuter
         /// if you wish to move it to the outer dispose scope.
         /// </summary>
         public (T1 first, T2 second, T3 third) Detach<T1, T2, T3>(T1 first, T2 second, T3 third)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient where T3 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
         {
-            Detach(new IDisposeScopeClient[] { first, second, third });
+            Detach(new IDisposable[] { first, second, third });
             return (first, second, third);
         }
 
         /// <summary>
-        /// Detaches/excludes a set of tensors/disposables from all dispose scopes, see overloaded methods. See MoveToOuter
+        /// Detaches/excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See MoveToOuter
         /// if you wish to move it to the outer dispose scope.
         /// </summary>
-        public void Detach(params IDisposeScopeClient[] disposables) => Detach((IEnumerable<IDisposeScopeClient>)disposables);
+        public void Detach(params IDisposable[] disposables) => Detach((IEnumerable<IDisposable>)disposables);
 
         /// <summary>
-        /// Detaches/excludes a set of tensors/disposables from all dispose scopes, see overloaded methods. See MoveToOuter
+        /// Detaches/excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See MoveToOuter
         /// if you wish to move it to the outer dispose scope.
         /// </summary>
-        public void Detach(IEnumerable<IDisposeScopeClient> disposables)
+        public void Detach(IEnumerable<IDisposable> disposables)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
                     _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
-                    disposable.OwningDisposeScope = null;
+                    if (disposable is torch.Tensor tensor) {
+                        tensor.OwningDisposeScope = null;
+                    }
+                    else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                        sequence.OwningDisposeScope = null;
+                    }
                 }
             }
         }
 
-        public void Attach(IDisposeScopeClient disposable)
+        public void Attach(IDisposable disposable)
         {
-            _ = Attach((IEnumerable<IDisposeScopeClient>)new[] { disposable });
+            _ = Attach((IEnumerable<IDisposable>)new[] { disposable });
         }
 
-        public void Attach(params IDisposeScopeClient[] disposables)
+        public void Attach(params IDisposable[] disposables)
         {
-            _ = Attach((IEnumerable<IDisposeScopeClient>)disposables);
+            _ = Attach((IEnumerable<IDisposable>)disposables);
         }
 
-        public IReadOnlyList<IDisposeScopeClient> Attach(IEnumerable<IDisposeScopeClient> disposables)
+        public IReadOnlyList<IDisposable> Attach(IEnumerable<IDisposable> disposables)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
 
-            var result = new List<IDisposeScopeClient>();
+            var result = new List<IDisposable>();
             foreach (var disposable in disposables) {
-                if (disposable.OwningDisposeScope == null && !disposable.IsInvalid) {
-                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                if (disposable is torch.Tensor tensor) {
+                    if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                    }
+                }
+                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    if (sequence.OwningDisposeScope == null) {
+                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                    }
                 }
 
                 AddToOther(this, disposable);
@@ -246,7 +258,7 @@ namespace TorchSharp
         /// <summary>
         /// Disposes everything currently in the dispose scope.
         /// </summary>
-        public void DisposeEverything() => DisposeEverythingBut(Enumerable.Empty<IDisposeScopeClient>());
+        public void DisposeEverything() => DisposeEverythingBut(Enumerable.Empty<IDisposable>());
 
         /// <summary>
         /// As an intermediate step, you can dispose all the tensors/disposables currently scheduled for dispose, to
@@ -254,22 +266,34 @@ namespace TorchSharp
         /// tensors from disposing, use Exclude for that. Also, excluded tensors don't need to be included
         /// here.
         /// </summary>
-        public void DisposeEverythingBut(IEnumerable<IDisposeScopeClient> inKeep)
+        public void DisposeEverythingBut(IEnumerable<IDisposable> inKeep)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
             // Avoiding multiple enumerations
             var oldList = Disposables;
-            Disposables = inKeep.ToHashSet(ReferenceEqualityComparer<IDisposeScopeClient>.Default);
+            Disposables = inKeep.ToHashSet(ReferenceEqualityComparer<IDisposable>.Default);
             foreach (var disposable in oldList) {
                 if (Disposables.Contains(disposable)) {
                     continue;
                 }
-                // No need to have the disposable call back to the scope
-                disposable.OwningDisposeScope = null;
-                if (!disposable.IsInvalid) {
+
+                if (disposable is torch.Tensor tensor) {
+                    // No need to have the disposable call back to the scope
+                    tensor.OwningDisposeScope = null;
+                    if (!tensor.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
+                    }
+                } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    // No need to have the disposable call back to the scope
+                    sequence.OwningDisposeScope = null;
+                    if (!sequence.IsInvalid) {
+                        _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
+                    }
+                } else {
                     _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
                 }
+
                 disposable.Dispose();
             }
         }
@@ -280,8 +304,8 @@ namespace TorchSharp
         /// tensors from disposing, use Exclude for that. Also, excluded tensors don't need to be included
         /// here.
         /// </summary>
-        public void DisposeEverythingBut(params IDisposeScopeClient[] keep) =>
-            DisposeEverythingBut((IEnumerable<IDisposeScopeClient>)keep);
+        public void DisposeEverythingBut(params IDisposable[] keep) =>
+            DisposeEverythingBut((IEnumerable<IDisposable>)keep);
 
         /// <summary>
         /// As an intermediate step, you can dispose all the tensors/disposables currently scheduled for dispose, to
@@ -289,9 +313,9 @@ namespace TorchSharp
         /// tensors from disposing, use Exclude for that. Also, excluded tensors don't need to be included
         /// here.
         /// </summary>
-        public T DisposeEverythingBut<T>(T keep) where T : IDisposeScopeClient
+        public T DisposeEverythingBut<T>(T keep) where T : IDisposable
         {
-            DisposeEverythingBut(new IDisposeScopeClient[] { keep });
+            DisposeEverythingBut(new IDisposable[] { keep });
             return keep;
         }
 
@@ -302,9 +326,9 @@ namespace TorchSharp
         /// here.
         /// </summary>
         public (T1 first, T2 second) DisposeEverythingBut<T1, T2>(T1 first, T2 second)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable
         {
-            DisposeEverythingBut(new IDisposeScopeClient[] { first, second });
+            DisposeEverythingBut(new IDisposable[] { first, second });
             return (first, second);
         }
 
@@ -315,9 +339,9 @@ namespace TorchSharp
         /// here.
         /// </summary>
         public (T1 first, T2 second, T3 third) DisposeEverythingBut<T1, T2, T3>(T1 first, T2 second, T3 third)
-            where T1 : IDisposeScopeClient where T2 : IDisposeScopeClient where T3 : IDisposeScopeClient
+            where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
         {
-            DisposeEverythingBut(new IDisposeScopeClient[] { first, second, third });
+            DisposeEverythingBut(new IDisposable[] { first, second, third });
             return (first, second, third);
         }
 
@@ -341,13 +365,18 @@ namespace TorchSharp
         /// method.
         /// </summary>
         /// <param name="disposable">The disposable that was disposed</param>
-        public void MarkAsDisposed(IDisposeScopeClient disposable)
+        public void MarkAsDisposed(IDisposable disposable)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
             _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
             Disposables.Remove(disposable);
-            disposable.OwningDisposeScope = null;
+            if (disposable is torch.Tensor tensor) {
+                tensor.OwningDisposeScope = null;
+            }
+            else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                sequence.OwningDisposeScope = null;
+            }
         }
 
         /// <summary>
@@ -355,9 +384,9 @@ namespace TorchSharp
         /// </summary>
         /// <param name="disposable">The disposable that's searched for</param>
         /// <returns></returns>
-        public bool Contains(IDisposeScopeClient disposable) => Disposables.Contains(disposable);
+        public bool Contains(IDisposable disposable) => Disposables.Contains(disposable);
 
-        private void AddToOther(DisposeScope? scope, IDisposeScopeClient disposable)
+        private void AddToOther(DisposeScope? scope, IDisposable disposable)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
@@ -367,15 +396,25 @@ namespace TorchSharp
                 _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
             }
 
-            disposable.OwningDisposeScope = scope;
+            if (disposable is torch.Tensor tensor) {
+                tensor.OwningDisposeScope = scope;
+            }
+            else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                sequence.OwningDisposeScope = scope;
+            }
         }
 
-        internal HashSet<IDisposeScopeClient> DetachAllAndDispose()
+        internal HashSet<IDisposable> DetachAllAndDispose()
         {
             var disposables = this.Disposables;
             foreach (var disposable in this.Disposables) {
                 this._disposeScopeManager!.StatisticsInstance.DetachedFromScopeCount++;
-                disposable.OwningDisposeScope = null;
+                if (disposable is torch.Tensor tensor) {
+                    tensor.OwningDisposeScope = null;
+                }
+                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    sequence.OwningDisposeScope = null;
+                }
             }
 
             this.Disposables = new();

@@ -18,7 +18,7 @@ namespace TorchSharp
         internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
         internal DisposeScope? CurrentDisposeScope { get; private set; } = null;
 
-        internal DisposeScope? RegisterOnCurrentDisposeScope(IDisposeScopeClient client)
+        internal DisposeScope? RegisterOnCurrentDisposeScope(IDisposable tensor)
         {
             if (this.CurrentDisposeScope is null) {
                 StatisticsInstance.CreatedOutsideScopeCount++;
@@ -26,7 +26,7 @@ namespace TorchSharp
             }
 
             StatisticsInstance.CreatedInScopeCount++;
-            this.CurrentDisposeScope.Disposables.Add(client);
+            this.CurrentDisposeScope.Disposables.Add(tensor);
             return CurrentDisposeScope;
         }
 
