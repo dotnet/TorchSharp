@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -19,7 +20,16 @@ namespace TorchSharp
                     /// </summary>
                     public sealed class PackedSequence : IDisposable
                     {
-                        internal DisposeScope OwningDisposeScope { get; set; }
+                        internal DisposeScope OwningDisposeScope {
+                            get => mOwningDisposeScope;
+                            set {
+                                mOwningDisposeScope = value;
+                                this.batch_sizes.OwningDisposeScope = value;
+                                this.data.OwningDisposeScope = value;
+                                this.sorted_indices.OwningDisposeScope = value;
+                                this.unsorted_indices.OwningDisposeScope = value;
+                            }
+                        }
 
                         /// <summary>
                         /// Class wrapping PyTorch's packedsequence object reference.
@@ -69,8 +79,9 @@ namespace TorchSharp
                         /// <summary>
                         /// Is true if the PackedSequence has been disposed, false otherwise.
                         /// </summary>
-                        public bool IsInvalid => handle.IsInvalid;
+                        internal bool IsInvalid => handle.IsInvalid;
                         private HType handle;
+                        private DisposeScope mOwningDisposeScope;
 
                         internal PackedSequence(HType handle)
                         {
@@ -79,10 +90,6 @@ namespace TorchSharp
                             this.batch_sizes = new Tensor(THSNN_PackedSequence_batch_sizes(handle));
                             this.sorted_indices = new Tensor(THSNN_PackedSequence_sorted_indices(handle));
                             this.unsorted_indices = new Tensor(THSNN_PackedSequence_unsorted_indices(handle));
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.data);
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.batch_sizes);
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.sorted_indices);
-                            OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this.unsorted_indices);
                             OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
                         }
 

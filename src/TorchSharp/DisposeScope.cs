@@ -243,7 +243,7 @@ namespace TorchSharp
                     }
                 }
                 else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                    if (sequence.OwningDisposeScope == null) {
+                    if (sequence.OwningDisposeScope == null && !sequence.IsInvalid) {
                         _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
                     }
                 }
