@@ -697,8 +697,8 @@ namespace TorchSharp
                 }
             }
 
-            public void backward(IList<Tensor>? grad_tensors = null, bool create_graph = false, bool retain_graph = false, IList<Tensor>? inputs = null) =>
-                torch.autograd.backward(new[] { this }, grad_tensors, create_graph, retain_graph, inputs);
+            public void backward(IList<Tensor>? grad_tensors = null, bool retain_graph = false, bool create_graph = false, IList<Tensor>? inputs = null) =>
+                torch.autograd.backward(new[] { this }, grad_tensors, retain_graph, create_graph, inputs);
 
             /// <summary>
             /// Creates a tensor by loading it from a file.
