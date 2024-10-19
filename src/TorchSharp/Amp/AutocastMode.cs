@@ -22,7 +22,7 @@ namespace TorchSharp.Amp
     public sealed class AutocastMode : IDisposable
     {
         public bool _enabled=false;
-        public bool IsEnter = false;
+        public bool IsEnter { private set; get; }=false;
         public bool IsDisposed = false;
         private bool prev_cache_enabled, prev;
         private torch.ScalarType prev_fastdtype;
@@ -37,10 +37,6 @@ namespace TorchSharp.Amp
             return instance ??= new AutocastMode(torch.cuda_is_available() ? torch.CUDA : torch.CPU, enabled:enabled,cache_enabled:true);
         }
 
-        public torch.ScalarType GetFastType()
-        {
-            return torch.get_autocast_dtype(device);
-        }
         private AutocastMode(torch.Device dev, torch.ScalarType? dtype = null, bool enabled=true, bool? cache_enabled = null)
         {
             //https://pytorch.org/docs/stable/amp.html#cuda-ops-that-can-autocast-to-float16
@@ -70,7 +66,12 @@ namespace TorchSharp.Amp
             }
             this._enabled = enabled;
         }
-        private torch.ScalarType GetType(IntPtr handle)
+
+        public torch.ScalarType GetFastType()
+        {
+            return torch.get_autocast_dtype(device);
+        }
+        private static torch.ScalarType GetDtype(IntPtr handle)
         {
             return (torch.ScalarType)NativeMethods.THSTensor_type(handle);
         }
@@ -99,30 +100,6 @@ namespace TorchSharp.Amp
             return (ToIf(handle1, dtype), ToIf(handle2, dtype), ToIf(handle3, dtype));
         }
 
-
-        /*public static IntPtr[] AutoCast(params IntPtr[] handles)
-        {
-            var stsel =handles.Select(x => (torch.ScalarType)NativeMethods.THSTensor_type(x));
-            if (AutocastMode.IsAutocastEnabled(this.device.type)) {
-                var st = (ScalarType)THSTensor_type(Handle);
-                var st1 = (ScalarType)THSTensor_type(tensor1.Handle);
-                var st2 = (ScalarType)THSTensor_type(tensor2.Handle);
-                var sts = new ScalarType[] { st, st1, st2 };
-                if (sts.All(x => x == ScalarType.Float16)) {
-                    var f16 = ScalarType.Float16;
-                    handle = AutocastMode.AutoCast(handle, f16);
-                    tensor1.handle = AutocastMode.AutoCast(tensor1.handle, f16);
-                    tensor2.handle = AutocastMode.AutoCast(tensor2.handle, f16);
-
-                }
-                var f32 = ScalarType.Float32;
-                if (sts.Any(x => x == f32)) {
-                    handle = AutocastMode.AutoCast(handle, f32);
-                    tensor1.handle = AutocastMode.AutoCast(tensor1.handle, f32);
-                    tensor2.handle = AutocastMode.AutoCast(tensor2.handle, f32);
-                }
-            }
-        }*/
         public static IntPtr AutoCast(IntPtr handle, torch.ScalarType dtype)
         {
             return ToIf(handle, dtype);
@@ -142,19 +119,13 @@ namespace TorchSharp.Amp
             return res;
         }
 
-        private static torch.ScalarType GetDtype(IntPtr ptr)
-        {
-            return (torch.ScalarType)NativeMethods.THSTensor_type(ptr);
-        }
-
         private static DeviceType GetDeviceType(IntPtr ptr)
         {
             return (DeviceType)NativeMethods.THSTensor_device_type(ptr);
         }
         public static IntPtr ToIf(IntPtr ptr, torch.ScalarType type)
         {
-            
-            if (!GetInstance()._enabled)
+            if (!GetInstance()._enabled || !GetInstance().IsEnter)
                 return ptr;
             if (GetDtype(ptr) == type) //if already have same dtype is not necesary convert to dtype, right???
                 return ptr;
@@ -168,7 +139,7 @@ namespace TorchSharp.Amp
         public static IntPtr ToIf(IntPtr ptr, torch.ScalarType type, DeviceType device_type)
         {
             bool is_elegible = GetDtype(ptr) != torch.ScalarType.Float64 && GetDeviceType(ptr) == device_type;
-            
+
             if (!NativeMethods.THSAmp_is_autocast_enabled(NativeMethods.THSTensor_device_type(ptr)))
                 return ptr;
             var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
@@ -191,11 +162,13 @@ namespace TorchSharp.Amp
             torch.set_autocast_dtype(device, fast_dtype);
             torch.autocast_increment_nesting();
             torch.set_autocast_cache_enabled(_cache_enabled);
+            IsEnter = true;
             return this;
         }
 
         private void Dispose(bool disposing)
         {
+            IsEnter = false;
             this._enabled = false;
             if (torch.autocast_decrement_nesting() == 0)
                 torch.clear_autocast_cache();

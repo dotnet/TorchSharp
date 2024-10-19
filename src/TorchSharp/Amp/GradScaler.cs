@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tensorboard;
 using TorchSharp.Modules;
 using TorchSharp.Utils;
 
@@ -39,6 +35,7 @@ namespace TorchSharp.Amp
         public GradScaler(torch.Device dev, float init_scale = 2.0e16f, float growth_factor = 2.0f,
             float backoff_factor = 0.5f, int growth_interval = 2000, bool enabled = true)
         {
+            //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13
             Debug.Assert(dev == torch.CPU || dev == torch.CUDA);
             device = dev;
             Enabled = enabled;
@@ -48,6 +45,7 @@ namespace TorchSharp.Amp
             _growth_interval = growth_interval;
             InitGrowthTracker = 0.0f;
 
+            _per_optimizer_states.SetDefaultDict(_refresh_per_optimizer_state());
             throw new NotImplementedException("This need to finish");
         }
 
@@ -231,22 +229,25 @@ namespace TorchSharp.Amp
             if (f != null && f.GetValue(optimizer) is bool b && !b) {
                 bool has_grad_scaler = false;//I dont know how deal this...
                 if (has_grad_scaler) {
-
+                    throw new NotImplementedException();
                 } else {
                     if (optimizer_state["stage"] is OptState optstate && optstate == OptState.Ready)
                         check_inf_per_device(optimizer);
                     var scaler = _get_scale_async();
                     Debug.Assert(!scaler.is_null(), "!scaler.is_null()");
-                    torch.Tensor found_inf;
+                    torch.Tensor found_inf=null;
                     if (optimizer_state["found_inf_per_device"] is torch.Tensor[] ts) {
                         for (int i = 0; i < ts.Length; i++)
                             ts[i].to(scaler.device, true);
                         found_inf=torch.sum(torch.cat(ts));
                     }
+
+                    optimizer.grad_scale = (optimizer_state["stage"] as OptState?) == OptState.Unscaled ? null : scaler * (optimizer.grad_scale.is_null() ? 1 : optimizer.grad_scale);
+                    optimizer.found_inf = found_inf;
+
                     //if(optimizer is SGD ad)
                     //Info: All optimizer have grad_scale and found_inf //https://github.com/pytorch/pytorch/blob/main/torch/optim/adam.py, etc.
-                    //DANGER: Optimizer in TorchShapr not have grad_scaler or found_inf, we need grad_scale for https://github.com/pytorch/pytorch/blob/758d78790164bfb041555daed380de96e06f78a3/torch/amp/grad_scaler.py#L440
-
+                    //DANGER: Optimizer in TorchSharp not have grad_scaler or found_inf, we need grad_scale for https://github.com/pytorch/pytorch/blob/758d78790164bfb041555daed380de96e06f78a3/torch/amp/grad_scaler.py#L440
                     //optimizer.GetType().GetField("grad_scale").GetValue(optimizer) as torch.Tensor t
                 }
                 retval = optimizer.step().item<float>();
@@ -256,7 +257,7 @@ namespace TorchSharp.Amp
             }
             if (optimizer_state["stage"] is OptState state1 && state1 == OptState.Ready)
                 unscale(optimizer);
-            Debug.Assert((optimizer_state["found_inf_per_device"] as torch.Tensor[]).Length > 0, "(optimizer_state['found_inf_per_device'] as torch.Tensor).size(0) > 0");
+            Debug.Assert((optimizer_state["found_inf_per_device"] as torch.Tensor[])?.Length > 0, "(optimizer_state['found_inf_per_device'] as torch.Tensor).size(0) > 0");
             retval = maybe_opt_step(optimizer, optimizer_state);
             optimizer_state["stage"] = OptState.Stepped;
             return retval;
@@ -301,23 +302,49 @@ namespace TorchSharp.Amp
                     for (int i = 1; i < found_infs.Count; i++)
                         found_inf_combined += found_infs[i];
                 torch.amp_update_scale_(_scale, _growth_tracker, found_inf_combined, (double)_growth_factor, (double)_backoff_factor, (long)_growth_interval);
-
             }
             //TODO: Implement defaultdict https://github.com/pytorch/pytorch/blob/758d78790164bfb041555daed380de96e06f78a3/torch/amp/grad_scaler.py#L531
         }
 
-        public float get_scale()
+        public void set_init_growth_tracker(long new_value)
         {
-            if (this.Enabled) {
-
-                var scale = _get_scale_async();
-                if (scale.is_null())
-                    return InitScale;
-                return scale.item<float>();
-            }
-            return 1.0f;
+            InitGrowthTracker=new_value;
         }
 
+        public torch.Tensor get_scale_async()
+        {
+            return _scale;
+        }
+        public float get_scale()
+        {
+            if (!this.Enabled)
+                return 1.0f;
+
+            var scale = _get_scale_async();
+            if (scale.is_null())
+                return InitScale;
+            return scale.item<float>();
+        }
+
+        public float get_growth_factor()
+        {
+            return _growth_factor;
+        }
+
+        public float get_backoff_factor()
+        {
+            return _backoff_factor;
+        }
+
+        public int get_growth_interval()
+        {
+            return _growth_interval;
+        }
+
+        public float get_init_growth_tracker()
+        {
+            return InitGrowthTracker; //TODO: Resarch this... should be int64_t???
+        }
         public bool IsEnabled()
         {
             return this.Enabled;
@@ -325,16 +352,16 @@ namespace TorchSharp.Amp
 
         public UnorderedMap<string, object> state_dict()
         {
-            if (Enabled) {
-                var res = new UnorderedMap<string, object>();
-                res["scale"] = get_scale();
-                res[nameof(_growth_factor)] = _growth_factor;
-                res[nameof(_backoff_factor)] = _backoff_factor;
-                res[nameof(_growth_interval)] = _growth_interval;
-                res[nameof(_growth_tracker)] = _growth_tracker;
-                return res;
-            }
-            return null;
+            if (!Enabled)
+                return null;
+
+            var res = new UnorderedMap<string, object>();
+            res["scale"] = get_scale();
+            res[nameof(_growth_factor)] = _growth_factor;
+            res[nameof(_backoff_factor)] = _backoff_factor;
+            res[nameof(_growth_interval)] = _growth_interval;
+            res[nameof(_growth_tracker)] = _growth_tracker;
+            return res;
         }
 
         public void load_state_dict(Dictionary<string, object> state_dict)

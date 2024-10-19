@@ -6,6 +6,7 @@ using TorchSharp.PInvoke;
 
 namespace TorchSharp.Amp
 {
+    [Obsolete("Use AutocastMode instaed", true)]
     public class AMPManager : IDisposable
     {
         
