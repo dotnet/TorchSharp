@@ -27,7 +27,7 @@ namespace TorchSharp
         public long DetachedFromScopeCount { get; internal set; }
 
         /// <summary>
-        /// The number of disposables that are currently live on the current thread. If a It's aproximate, see
+        /// The number of disposables that are currently live on the current thread. It's approximate, see
         /// Tensor.TotalCount. Disposables that weren't created within a DisposeScope, or detached from the dispose
         /// scope, will not be counted as alive.
         /// </summary>
