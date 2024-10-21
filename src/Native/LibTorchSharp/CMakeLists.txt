@@ -1,11 +1,11 @@
 project(LibTorchSharp)
 
 find_package(CUDA)
-IF(CUDA_FOUND)
-include_directories(${CUDA_INCLUDE_DIRS})
-link_directories(${CUDA_LIBRARY_DIRS})
-add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
-ENDIF()
+if(CUDA_FOUND)
+	include_directories(${CUDA_INCLUDE_DIRS})
+	link_directories(${CUDA_LIBRARY_DIRS})
+	add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
+endif()
 
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
@@ -88,7 +88,7 @@ ENDIF()
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
-set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 17)
+set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 
 if(APPLE)
     set_target_properties(LibTorchSharp PROPERTIES INSTALL_RPATH "@loader_path;@executable_path;")

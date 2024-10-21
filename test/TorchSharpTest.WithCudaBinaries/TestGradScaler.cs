@@ -59,16 +59,16 @@ namespace TorchSharpTest.WithCudaBinaries
                 if (enabled) {
                     var net_growth = unskipped > 0 ? MathF.Pow(scaler.get_growth_factor(), unskipped) : 1.0f;
                     var net_backoff = skipped> 0 ? MathF.Pow(scaler.get_backoff_factor(), skipped) : 1.0f;
-                    Assert.Equal(scaler.get_scale(), (128.0f * net_growth * net_backoff));
+                    Assert.Equal((128.0f * net_growth * net_backoff), scaler.get_scale());
                     
                 } else {
-                    Assert.Equal(scaler.get_scale(), 1.0f);
+                    Assert.Equal(1.0f, scaler.get_scale());
                 }
 
                 foreach(var seq in res.modctrl.parameters().Zip(res.modscal.parameters())){
                     var c_grad = seq.First.grad;
                     var s_grad = seq.Second.grad;
-                    if(!c_grad.is_null() && !s_grad.is_null())
+                    if(!(c_grad is null) && !(s_grad is null))
                         Assert.True(torch.allclose(seq.First.grad, seq.Second.grad, rtol, atol));
                     var c_state = res.optctrl.ParamGroups;
                     var s_state = res.optscal.ParamGroups;
@@ -97,25 +97,25 @@ namespace TorchSharpTest.WithCudaBinaries
 
             var p = s.clone();
             Assert.True(p.is_sparse);
-            var optA = torch.optim.SGD(new Parameter[] { new Parameter(p) }, 1.0);
+            var optA = torch.optim.SGD(new[] { new Parameter(p) }, 1.0);
             p.grad = s.clone();
             found_inf.zero_();
             found_inf = scaler.unscale_grads(optA, inv_scale, found_inf, false)[cur];
 
-            Assert.Equal(found_inf.item<float>(), 0.0f);
+            Assert.Equal(0.0f, found_inf.item<float>());
             Assert.True(torch.equal(p.grad.to_dense(), (s/4).to_dense()).item<bool>());
 
             v = torch.tensor(new float[] { 16.0f, 32.0f, float.PositiveInfinity });
             p.grad = torch.sparse_coo_tensor(i, v, new long[] { 2, 3 }, dtype, new Device(DeviceType.CUDA));
             found_inf.zero_();
             found_inf = scaler.unscale_grads(optA, inv_scale, found_inf, false)[cur];
-            Assert.Equal(found_inf.item<float>(), 1.0f);
+            Assert.Equal(1.0f, found_inf.item<float>());
 
             v = torch.tensor(new float[] { 16.0f, 32.0f, float.NaN });
             p.grad = torch.sparse_coo_tensor(i, v, new long[] { 2, 3 }, dtype, new Device(DeviceType.CUDA));
             found_inf.zero_();
             found_inf = scaler.unscale_grads(optA, inv_scale, found_inf, false)[cur];
-            Assert.Equal(found_inf.item<float>(), 1.0f);
+            Assert.Equal(1.0f, found_inf.item<float>());
 
             p = s.clone().to(ScalarType.Float16);
             Assert.True(p.is_sparse);
@@ -124,7 +124,7 @@ namespace TorchSharpTest.WithCudaBinaries
             p.grad = s.clone().to(ScalarType.Float16);
             found_inf.zero_();
             found_inf = scaler.unscale_grads(optB, inv_scale, found_inf, true)[cur];
-            Assert.Equal(found_inf.item<float>(), 0.0f);
+            Assert.Equal(0.0f, found_inf.item<float>());
             Assert.True(torch.equal(p.grad.to_dense(), (s.to(ScalarType.Float16) / 4).to_dense()).item<bool>());
 
             i = torch.tensor(new long[,] { { 0, 1, 0 }, { 2, 0, 2 } });
@@ -132,7 +132,7 @@ namespace TorchSharpTest.WithCudaBinaries
             p.grad = torch.sparse_coo_tensor(i, v, new long[] { 2, 3 }, dtype, new Device(DeviceType.CUDA));
             found_inf.zero_();
             found_inf = scaler.unscale_grads(optB, inv_scale, found_inf, true)[cur];
-            Assert.Equal(found_inf.item<float>(), 0.0f);
+            Assert.Equal(0.0f, found_inf.item<float>());
         }
 
         [Fact]
@@ -146,16 +146,16 @@ namespace TorchSharpTest.WithCudaBinaries
                 s1.set_init_growth_tracker(7);
                 if (l) {
                     s1.scale(torch.full(1, 4.0f, ScalarType.Float32, new Device(DeviceType.CUDA, 0)));
-                    Assert.Equal(s1.get_scale_async().dtype, ScalarType.Float32);
+                    Assert.Equal(ScalarType.Float32, s1.get_scale_async().dtype);
                 }
 
                 var re = s0.state_dict();
                 s1.load_state_dict(re);
 
-                Assert.Equal(s1.get_scale(), 3.0f);
-                Assert.Equal(s1.get_growth_factor(), 0.5f);
-                Assert.Equal(s1.get_growth_interval(), 2);
-                Assert.Equal(s1.get_init_growth_tracker(), 0.0f);
+                Assert.Equal(3.0f, s1.get_scale());
+                Assert.Equal(0.5f, s1.get_growth_factor());
+                Assert.Equal(2, s1.get_growth_interval());
+                Assert.Equal(0.0f, s1.get_init_growth_tracker());
             }
         }
 
@@ -193,6 +193,8 @@ namespace TorchSharpTest.WithCudaBinaries
                             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm * scaler.get_scale());
                             if (idx == skip_iter && scaler.IsEnabled()) {
                                 var weight = (model[1] as Linear)?.weight;
+                                if (weight.is_null())
+                                    throw new ArgumentNullException(nameof(weight));
                                 weight.grad.fill_(float.PositiveInfinity);
                             }
 
@@ -252,7 +254,7 @@ namespace TorchSharpTest.WithCudaBinaries
             
             run_scaling_case(new Action<List<KeyValuePair<Tensor, Tensor>>, Sequential, optim.Optimizer, GradScaler, MSELoss, int, bool>((
                 (data, model, optimizer, scaler, loss_fn, skip_iter, try_scaling_api) => {
-                    const float max_norm = 0.2f;
+                    //const float max_norm = 0.2f;
                     int idx = 0;
                     foreach (var ipair in data) {
                         //ipair.
@@ -294,7 +296,6 @@ namespace TorchSharpTest.WithCudaBinaries
                             }
                         }
                         idx++;
-                        
                     }
                 })),
             3, 1);

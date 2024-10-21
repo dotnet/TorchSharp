@@ -382,6 +382,16 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_index_put_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
 
+        /*
+        //NOTE: The index_put and with accumulate need passing to c10::List<std::optional<torch::Tensor>>()
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_index_put_accumulate_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value, [MarshalAs(UnmanagedType.I1)] bool accumulate);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_index_put(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_index_put_accumulate(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value, [MarshalAs(UnmanagedType.I1)] bool accumulate);*/
+
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
 

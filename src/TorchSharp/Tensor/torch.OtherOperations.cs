@@ -230,6 +230,8 @@ namespace TorchSharp
         /// </summary>
         public static Tensor cross(Tensor input, Scalar other, long dim = 0L) => input.cross(other, dim);
 
+        public static Tensor cross(Tensor input, Tensor other, long dim = 0L) => input.cross(other, dim);
+
         // https://pytorch.org/docs/stable/generated/torch.cummax
         public static (Tensor values, Tensor indices) cummax(Tensor input, long dim) => input.cummax(dim);
 

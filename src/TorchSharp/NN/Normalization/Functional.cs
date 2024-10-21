@@ -94,6 +94,14 @@ namespace TorchSharp
                         torch.CheckForErrors();
                     return new Tensor(res);
                 }
+
+                public static Tensor normalize(Tensor input, float p=2.0f, long dim=1, float eps= 1e-12f, Tensor output = null)
+                {
+                    var res = THSNN_normalize(input.Handle, p, dim, eps, out _);
+                    if (res == IntPtr.Zero)
+                        torch.CheckForErrors();
+                    return new Tensor(res);
+                }
             }
         }
     }

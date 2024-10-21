@@ -2,20 +2,14 @@
   "configurations": [
     {
       "name": "x64-Debug",
-      "generator": "Visual Studio 17 2022 Win64",
+      "generator": "Ninja",
       "configurationType": "Debug",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DCMAKE_PREFIX_PATH=\"K:\\FrameworksForC\\LibTorch\\libtorch-win-shared-with-deps-debug-2.0.1+cu117\"",
-      "ctestCommandArgs": "",
-      "variables": [
-        {
-          "name": "Torch_DIR",
-          "value": "K:/FrameworksForC/LibTorch/libtorch-win-shared-with-deps-debug-2.0.1+cu117",
-          "type": "PATH"
-        }
-      ]
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": ""
     }
   ]
 }

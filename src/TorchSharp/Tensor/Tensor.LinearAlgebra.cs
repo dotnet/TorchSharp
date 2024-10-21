@@ -118,7 +118,19 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
-
+            public Tensor cross(Tensor other, long dim)
+            {
+                if (AutocastMode.IsAutocastEnabled()) {
+                    var sts = new[] { this.dtype, other.dtype};
+                    if (sts.All(x => x == ScalarType.Float16))
+                        (handle, other.handle)= AutocastMode.AutoCast(handle, other.handle, ScalarType.Float16);
+                    if (sts.Any(x => x == ScalarType.Float32))
+                        (handle, other.handle) = AutocastMode.AutoCast(handle, other.handle, ScalarType.Float32);
+                }
+                var res = THSTensor_cross(Handle, other.Handle, dim);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
             /// <summary>
             /// Computes the determinant of a square matrix.
             /// </summary>

@@ -40,20 +40,24 @@ namespace TorchSharp.Amp
             device = dev;
             Enabled = enabled;
             InitScale = init_scale;
+            if (Enabled) {
+                Debug.Assert(growth_factor > 1.0);
+                Debug.Assert(backoff_factor < 1.0);
+            }
             this._growth_factor = growth_factor;
             _backoff_factor = backoff_factor;
             _growth_interval = growth_interval;
             InitGrowthTracker = 0.0f;
 
             _per_optimizer_states.SetDefaultDict(_refresh_per_optimizer_state());
-            throw new NotImplementedException("This need to finish");
+            //throw new NotImplementedException("This need to finish");
         }
 
         private Tuple<torch.Tensor, torch.Tensor> check_scale_growth_tracker(string name)
         {
             var fix = "This may indicate your script did not use scaler.scale(loss or outputs) earlier in the iteration.";
-            Debug.Assert(_scale.is_null(), $"Attempted {name} but {nameof(_scale)} is None {fix}");
-            Debug.Assert(_growth_tracker.is_null(), $"Attempted {name} but {nameof(_growth_tracker)} is None {fix}");
+            Debug.Assert(_scale is null, $"Attempted {name} but {nameof(_scale)} is None {fix}");
+            Debug.Assert(_growth_tracker is null, $"Attempted {name} but {nameof(_growth_tracker)} is None {fix}");
             return new Tuple<torch.Tensor, torch.Tensor>(_scale, _growth_tracker);
         }
 
@@ -70,9 +74,9 @@ namespace TorchSharp.Amp
         {
             if (!Enabled)
                 return output;
-            if (_scale.is_null())
+            if (_scale is null)
                 LazyInitScaleGrowthTracker(output.device);
-            Debug.Assert(!_scale.is_null());
+            Debug.Assert(!(_scale is null));
             return output * _scale.to(output.device, output.dtype, true);
         }
 
@@ -106,7 +110,7 @@ namespace TorchSharp.Amp
         {
             IList<MultiDeviceReplicator> stash = new List<MultiDeviceReplicator>();
             if (stash.Count == 0) {
-                if (_scale.is_null()) {
+                if (_scale is null) {
                     LazyInitScaleGrowthTracker(scale.device);
                 }
                 stash.Add(new MultiDeviceReplicator(_scale));
@@ -126,18 +130,17 @@ namespace TorchSharp.Amp
             Dictionary<torch.Device, Dictionary<torch.ScalarType, IList<torch.Tensor>>> per_device_and_dtype_grads = new Dictionary<torch.Device, Dictionary<torch.ScalarType, IList<torch.Tensor>>>();
 
             using (torch.no_grad()) {
-                if (optimizer is AdamW adamW){ //Some optimizer have parameter tensor for unscale_grads i need that.
+                if (optimizer is AdamW adamW){ //Some optimizer have parameter tensor for unscale_grads i need that. [20/10/24 WHY I DO THIS???? ]
                     using (var enumer = adamW.parameters().GetEnumerator()) {
                         while (enumer.MoveNext()) {
                             var param = enumer.Current;
-                            if (param.is_null()) 
+                            if (param is null) 
                                 continue;
                             if (!allow_fp16 && param.dtype == torch.ScalarType.Float16)
                                 throw new Exception("Attempting to unscale FP16 Gradients");
                             torch.Tensor to_unscale;
                             if (param.grad.is_sparse) {
                                 if (param.grad.dtype == torch.ScalarType.Float16) {
-                                    
                                     param.grad = param.grad.coalesce();
                                 }
 
@@ -187,7 +190,7 @@ namespace TorchSharp.Amp
                     throw new Exception($"{nameof(unscale)} is being called after step()");
             }
 
-            Debug.Assert(!_scale.is_null());
+            Debug.Assert(!(_scale is null));
             var inv_scale = _scale.@double().reciprocal().@float();
             var found_inf = torch.full(new ReadOnlySpan<long>(new long[] { 0 }), 0.0f, torch.ScalarType.Float32,_scale.device);
 
@@ -234,7 +237,7 @@ namespace TorchSharp.Amp
                     if (optimizer_state["stage"] is OptState optstate && optstate == OptState.Ready)
                         check_inf_per_device(optimizer);
                     var scaler = _get_scale_async();
-                    Debug.Assert(!scaler.is_null(), "!scaler.is_null()");
+                    Debug.Assert(!(scaler is null), "!scaler.is_null()");
                     torch.Tensor found_inf=null;
                     if (optimizer_state["found_inf_per_device"] is torch.Tensor[] ts) {
                         for (int i = 0; i < ts.Length; i++)
@@ -242,7 +245,7 @@ namespace TorchSharp.Amp
                         found_inf=torch.sum(torch.cat(ts));
                     }
 
-                    optimizer.grad_scale = (optimizer_state["stage"] as OptState?) == OptState.Unscaled ? null : scaler * (optimizer.grad_scale.is_null() ? 1 : optimizer.grad_scale);
+                    optimizer.grad_scale = (optimizer_state["stage"] as OptState?) == OptState.Unscaled ? null : scaler * ((optimizer.grad_scale is null) ? 1 : optimizer.grad_scale);
                     optimizer.found_inf = found_inf;
 
                     //if(optimizer is SGD ad)
@@ -280,7 +283,7 @@ namespace TorchSharp.Amp
             _scale = tup.Item1;
             _growth_tracker = tup.Item2;
             if (new_scale != null) {
-                Debug.Assert(!_scale.is_null());
+                Debug.Assert(!(_scale is null));
                 if (new_scale is float f)
                     _scale.fill_(f);
                 else if(new_scale is torch.Tensor t) {
@@ -321,7 +324,7 @@ namespace TorchSharp.Amp
                 return 1.0f;
 
             var scale = _get_scale_async();
-            if (scale.is_null())
+            if (scale is null)
                 return InitScale;
             return scale.item<float>();
         }

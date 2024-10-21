@@ -1654,6 +1654,24 @@ namespace TorchSharp
                     }
                 }
             }
+            /*/// <summary>
+            /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
+            /// </summary>
+            private Tensor index_put_accumulate_(Tensor value, bool accumulate, params TensorIndex[] indices)
+            {
+                EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+                unsafe {
+                    fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                        fixed (IntPtr* ptrTensors = arrTensors) {
+                            NativeMethods.THSTensor_index_put_accumulate_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, accumulate);
+                            CheckForErrors();
+                            GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                            GC.KeepAlive(value);
+                            return this;
+                        }
+                    }
+                }
+            }*/
 
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
@@ -1663,7 +1681,51 @@ namespace TorchSharp
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
 
+            /*public Tensor index_put_(Tensor value, bool accumulate, params TensorIndex[] indices)
+            {
+                return index_put_accumulate_(value, accumulate, indices);
+            }
+            public Tensor index_put_(Tensor value, bool accumulate, params Tensor[] indices)
+            {
+                return index_put_accumulate_(value, accumulate, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
+            }
+            /// <summary>
+            /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
+            /// </summary>
+            private Tensor index_put_accumulate(Tensor value, bool accumulate, params TensorIndex[] indices)
+            {
+                EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+                unsafe {
+                    fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                        fixed (IntPtr* ptrTensors = arrTensors) {
+                            var res = NativeMethods.THSTensor_index_put_accumulate(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, accumulate);
+                            CheckForErrors();
+                            GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                            GC.KeepAlive(value);
+                            if(res == IntPtr.Zero)
+                                CheckForErrors();
+                            return new Tensor(res);
+                        }
+                    }
+                }
+            }*/
 
+            /*/// <summary>
+            /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
+            /// </summary>
+            public Tensor index_put(Tensor value, params Tensor[] indices)
+            {
+                return index_put(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
+            }*/
+
+            /*public Tensor index_put(Tensor value, bool accumulate, params TensorIndex[] indices)
+            {
+                return index_put_accumulate(value, accumulate, indices);
+            }
+            public Tensor index_put(Tensor value, bool accumulate, params Tensor[] indices)
+            {
+                return index_put_accumulate(value, accumulate, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
+            }*/
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>

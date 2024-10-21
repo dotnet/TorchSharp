@@ -58,7 +58,7 @@ namespace TorchSharp.Utils
                     return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(TempCount)).ToArray();
                 }
             }
-
+            
             var result = new T[Count];
             CopyTo(result);
             return result;

@@ -64,6 +64,8 @@ namespace TorchSharp.Amp
                 if (enabled && fast_dtype == torch.ScalarType.BFloat16 && !torch.cuda.is_bf16_supported())
                     throw new Exception("Current CUDA Device does not support bfloat16. Please switch dtype to float16.");
             }
+
+            torch.set_autocast_enabled(dev.type, true);
             this._enabled = enabled;
         }
 
@@ -75,7 +77,7 @@ namespace TorchSharp.Amp
         {
             return (torch.ScalarType)NativeMethods.THSTensor_type(handle);
         }
-
+        
         public static IntPtr AutoCast(IntPtr handle)
         {
             return ToIf(handle, GetInstance().GetFastType());
@@ -125,7 +127,7 @@ namespace TorchSharp.Amp
         }
         public static IntPtr ToIf(IntPtr ptr, torch.ScalarType type)
         {
-            if (!GetInstance()._enabled || !GetInstance().IsEnter)
+            if (!IsAutocastEnabled() || !GetInstance().IsEnter)
                 return ptr;
             if (GetDtype(ptr) == type) //if already have same dtype is not necesary convert to dtype, right???
                 return ptr;
@@ -163,13 +165,24 @@ namespace TorchSharp.Amp
             torch.autocast_increment_nesting();
             torch.set_autocast_cache_enabled(_cache_enabled);
             IsEnter = true;
+            /*if (!_enabled) //Research this, may mbad idea????
+                return new AutocastMode(new torch.Device(DeviceType.CUDA));*/
             return this;
         }
 
+        public static IDisposable AutoCastEnter()
+        {
+            return AutocastMode.GetInstance().Enter();
+        }
+
+        public void Disabled()
+        {
+            _enabled = false;
+            Dispose();
+        }
         private void Dispose(bool disposing)
         {
             IsEnter = false;
-            this._enabled = false;
             if (torch.autocast_decrement_nesting() == 0)
                 torch.clear_autocast_cache();
             torch.set_autocast_enabled(device, prev);
@@ -187,5 +200,14 @@ namespace TorchSharp.Amp
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+    }
+    public class AutocastAttribute : Attribute
+    {
+        private DeviceType Dev;
+        public AutocastAttribute(DeviceType dev)
+        {
+            Dev = dev;
+        }
+        
     }
 }

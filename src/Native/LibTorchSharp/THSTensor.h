@@ -619,6 +619,7 @@ EXPORT_API(void) THSTensor_index_copy_(const Tensor tensor, const int64_t dim, c
 EXPORT_API(Tensor) THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
 EXPORT_API(void) THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
 
+
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
@@ -628,6 +629,14 @@ EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
     const Tensor* indexTensors,
     const int indicesLength);
 
+EXPORT_API(void) THSTensor_index_put_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value);
+
 EXPORT_API(void) THSTensor_index_put_scalar_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
@@ -636,13 +645,31 @@ EXPORT_API(void) THSTensor_index_put_scalar_(Tensor tensor,
     const int indicesLength,
     const Scalar value);
 
-EXPORT_API(void) THSTensor_index_put_(Tensor tensor,
+/*EXPORT_API(void) THSTensor_index_put_accumulate_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value,
+    bool accumulate);*/
+
+/*EXPORT_API(Tensor) THSTensor_index_put(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
     const int indicesLength,
     const Tensor value);
+*/
+/*EXPORT_API(Tensor) THSTensor_index_put_accumulate(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value,
+    bool accumulate);*/
 
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index);
 
