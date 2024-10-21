@@ -408,7 +408,9 @@ namespace TorchSharp
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.BFloat16:
-                    throw new ArgumentException($"No support for {dtype.ToString()} in TorchSharp");
+                    if(dotnetType != typeof(Half))
+                        throw new ArgumentException($"No support for {dtype.ToString()} in TorchSharp");
+                    break;
                 case ScalarType.Float16:
 #if NET6_0_OR_GREATER
                     if (dotnetType != typeof(Half))

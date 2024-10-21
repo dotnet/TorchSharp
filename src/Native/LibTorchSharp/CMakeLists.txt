@@ -20,6 +20,7 @@ set(SOURCES
 	crc32c.h
 	THSAmp.h
     THSAutograd.h
+    THSBFloat16.h
 	THSCuda.h
     THSData.h
     THSJIT.h
@@ -34,6 +35,7 @@ set(SOURCES
 	THSActivation.cpp
 	THSAmp.cpp
     THSAutograd.cpp
+	THSBFloat16.cpp
 	THSCuda.cpp
 	THSConvolution.cpp
     THSData.cpp

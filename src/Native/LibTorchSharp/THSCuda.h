@@ -12,7 +12,7 @@
 
 cudaDeviceProp THSCuda_get_device_prop(int device=0);
 
-int show_available_memory()
+inline int show_available_memory()
 {
     int num_gpus;
     size_t free, total;
@@ -24,6 +24,7 @@ int show_available_memory()
         cudaMemGetInfo(&free, &total);
         std::cout << "GPU " << id << " memory: free=" << free << ", total=" << total << std::endl;
     }
+    return 0;
 }
 #endif
 

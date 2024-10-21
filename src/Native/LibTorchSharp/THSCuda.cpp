@@ -16,7 +16,6 @@ cudaDeviceProp THSCuda_get_device_prop(int device)
     //cudaGetDeviceProperties(&cdp, device);
     cudaGetDeviceProperties_v2(&cdp, device);
     return cdp;
-    
 }
 
 #endif
