@@ -237,17 +237,6 @@ namespace TorchSharp
 
             var result = new List<IDisposable>();
             foreach (var disposable in disposables) {
-                if (disposable is torch.Tensor tensor) {
-                    if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
-                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
-                    }
-                }
-                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                    if (sequence.OwningDisposeScope == null && !sequence.IsInvalid) {
-                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
-                    }
-                }
-
                 AddToOther(this, disposable);
                 result.Add(disposable);
             }
