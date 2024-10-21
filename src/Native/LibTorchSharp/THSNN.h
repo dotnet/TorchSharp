@@ -367,7 +367,7 @@ EXPORT_API(NNModule) THSNN_CELU_ctor(const double alpha, const bool inplace, NNA
 EXPORT_API(Tensor)   THSNN_CELU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_ELU_ctor(const double alpha, const bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_ELU_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_GELU_ctor(NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_GELU_ctor(NNAnyModule* outAsAnyModule, const char* approximate);
 EXPORT_API(Tensor)   THSNN_GELU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_GLU_ctor(const int64_t dim, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_GLU_forward(const NNModule module, const Tensor tensor);

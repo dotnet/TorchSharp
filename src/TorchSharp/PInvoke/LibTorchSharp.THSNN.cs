@@ -983,8 +983,8 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_GELU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GELU_ctor(out IntPtr pBoxedModule);
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern IntPtr THSNN_GELU_ctor(out IntPtr pBoxedModule, [MarshalAs(UnmanagedType.LPStr)] string approximate);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_GLU_forward(torch.nn.Module.HType module, IntPtr tensor);

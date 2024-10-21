@@ -40,17 +40,21 @@ namespace TorchSharp
     {
         public static partial class nn
         {
+            public enum Approx
+            {
+                none,
+                tanh
+            }
             /// <summary>
             /// Gaussian Error Linear Units
             /// </summary>
             /// <returns></returns>
-            public static GELU GELU()
+            public static GELU GELU(torch.nn.Approx approximate = Approx.none)
             {
-                var handle = THSNN_GELU_ctor(out var boxedHandle);
+                var handle = THSNN_GELU_ctor(out var boxedHandle, approximate.ToString());
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new GELU(handle, boxedHandle);
             }
-
             public static partial class functional
             {
                 /// <summary>

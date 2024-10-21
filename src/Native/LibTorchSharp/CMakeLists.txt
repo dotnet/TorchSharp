@@ -11,6 +11,8 @@ if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
+
+#set(LIBTORCH_PATH "K:/Proyects_Repos/TorchSharp/bin/obj/AnyCPU.Debug/libtorch-cuda-12.1/libtorch-win-shared-with-deps-debug-2.4.0cu121/libtorch")
 find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
@@ -82,9 +84,9 @@ include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
-IF(CUDA_FOUND)
+if(CUDA_FOUND)
 target_link_libraries(LibTorchSharp ${CUDA_LIBRARIES})
-ENDIF()
+endif()
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
