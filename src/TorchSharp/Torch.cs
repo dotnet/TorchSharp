@@ -597,6 +597,29 @@ namespace TorchSharp
             {
                 return (THSCuda_get_major_compute_capability(), THSCuda_get_minor_compute_capability());
             }
+
+            public static (int res, int id, ulong free, ulong total) get_free_total_memory(int device)
+            {
+                int id = 0;
+                ulong f=0;
+                ulong t=0;
+                int res = THSCuda_get_free_total(device, ref id, ref f, ref t);
+                return (res, id, f, t);
+            }
+
+            public static int get_device_count(ref int count)
+            {
+                return THSCuda_get_device_count(ref count);
+            }
+
+            public static ulong get_total_memory(int device)
+            {
+                return THSCuda_get_total_memory(device);
+            }
+            public static ulong get_global_total_memory(int device)
+            {
+                return THSCuda_get_global_total_memory(device);
+            }
         }
 
         /// <summary>
