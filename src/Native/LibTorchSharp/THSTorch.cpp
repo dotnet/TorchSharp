@@ -324,3 +324,9 @@ double THSSpecial_erfc_scalar(const double x)
 {
     return erfc(x);
 }
+
+
+/*bool THSTorch_jit_is_scripting()
+{
+    
+}*/

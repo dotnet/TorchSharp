@@ -21,6 +21,8 @@ namespace TorchSharp
             /// </summary>
             public abstract partial class Optimizer : IDisposable
             {
+                internal Tensor grad_scale;
+                internal Tensor found_inf;
                 /// <summary>
                 /// Class wrapping PyTorch's optimzer object reference.
                 /// </summary>
@@ -85,6 +87,9 @@ namespace TorchSharp
                 protected virtual void Dispose(bool disposing)
                 {
                     if (disposing && handle != null && !handle.IsInvalid) {
+
+                        grad_scale?.Dispose();
+                        found_inf?.Dispose();
                         handle.Dispose();
                         handle.SetHandleAsInvalid();
                     }

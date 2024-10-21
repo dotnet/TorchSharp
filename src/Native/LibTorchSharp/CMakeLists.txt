@@ -1,15 +1,27 @@
 project(LibTorchSharp)
 
+find_package(CUDA)
+if(CUDA_FOUND)
+	include_directories(${CUDA_INCLUDE_DIRS})
+	link_directories(${CUDA_LIBRARY_DIRS})
+	add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
+endif()
+
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
+
+#set(LIBTORCH_PATH "K:/Proyects_Repos/TorchSharp/bin/obj/AnyCPU.Debug/libtorch-cuda-12.1/libtorch-win-shared-with-deps-debug-2.4.0cu121/libtorch")
 find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
     cifar10.h
 	crc32c.h
+	THSAmp.h
     THSAutograd.h
+    THSBFloat16.h
+	THSCuda.h
     THSData.h
     THSJIT.h
     THSNN.h
@@ -21,7 +33,10 @@ set(SOURCES
     cifar10.cpp
 	crc32c.c
 	THSActivation.cpp
+	THSAmp.cpp
     THSAutograd.cpp
+	THSBFloat16.cpp
+	THSCuda.cpp
 	THSConvolution.cpp
     THSData.cpp
 	THSFFT.cpp
@@ -70,6 +85,10 @@ endif()
 include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
+
+if(CUDA_FOUND)
+target_link_libraries(LibTorchSharp ${CUDA_LIBRARIES})
+endif()
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
