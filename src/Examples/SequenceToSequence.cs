@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
+using System.Text.RegularExpressions;
 
 namespace TorchSharp.Examples
 {
@@ -26,6 +27,8 @@ namespace TorchSharp.Examples
         // This path assumes that you're running this on Windows.
 #if NET472_OR_GREATER
         private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
+#elif NETSTANDARD2_0               
+        private readonly static string _dataLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
 #else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
 #endif // NET472_OR_GREATER
@@ -251,7 +254,11 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t, Tensor mask)
             {
+#if !NETSTANDARD2_0
                 var src = pos_encoder.call(encoder.call(t) * MathF.Sqrt(ninputs));
+#else
+                var src = pos_encoder.call(encoder.call(t) * (float)Math.Sqrt(ninputs));
+#endif
                 var enc = transformer_encoder.call(src, mask);
                 return decoder.call(enc);
             }

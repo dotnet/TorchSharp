@@ -29,10 +29,11 @@ Tensor THSNN_ELU_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::ELU>()->forward(*tensor));
 }
 
-NNModule THSNN_GELU_ctor(NNAnyModule* outAsAnyModule)
+NNModule THSNN_GELU_ctor(NNAnyModule* outAsAnyModule, const char* approximate)
 {
+    //res = create_module<torch::nn::GELUImpl>(outAsAnyModule);
     CATCH_RETURN_NNModule(
-        res = create_module<torch::nn::GELUImpl>(outAsAnyModule);
+        res = create_module<torch::nn::GELUImpl>(torch::nn::GELUOptions().approximate(std::string(approximate)), outAsAnyModule);
     );
 }
 

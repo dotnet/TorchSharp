@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -22,6 +23,7 @@ namespace TorchSharp
             {
                 var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res= AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
         }
@@ -41,6 +43,7 @@ namespace TorchSharp
             {
                 var handle = THSNN_CosineSimilarity_ctor(dim, eps, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                handle = AutocastMode.AutoCast(handle, ScalarType.Float32);
                 return new CosineSimilarity(handle, boxedHandle);
             }
 

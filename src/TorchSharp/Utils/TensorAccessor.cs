@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
@@ -47,6 +48,17 @@ namespace TorchSharp.Utils
             if (_tensor.ndim < 2)
                 return (T[])ToNDArray();
 
+            if (_tensor.is_contiguous()) {
+                //This is very fast. And work VERY WELL
+                var shps = _tensor.shape;
+                long TempCount = 1;
+                for (int i = 0; i < shps.Length; i++)
+                    TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
+                unsafe {
+                    return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(TempCount)).ToArray();
+                }
+            }
+            
             var result = new T[Count];
             CopyTo(result);
             return result;

@@ -41,5 +41,10 @@ namespace TorchSharp.PInvoke
         internal static extern bool THSBackend_cuda_get_enable_math_sdp();
         [DllImport("LibTorchSharp")]
         internal static extern void THSBackend_cuda_set_enable_math_sdp([MarshalAs(UnmanagedType.U1)] bool flag);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSCuda_get_major_compute_capability();
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSCuda_get_minor_compute_capability();
     }
 }
