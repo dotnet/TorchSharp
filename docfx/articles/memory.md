@@ -10,6 +10,8 @@ In both cases, you may want to experiment with using a smaller batch size -- tem
 
 Note DiffSharp (which uses TorchSharp) relies on techniques 1.
 
+Also refer to [Memory Leak Troubleshooting](memory leak troubleshooting.md) for help on fixing any leaks.
+
 > Most of the examples included will use technique #1, doing frequent explicit calls to GC.Collect() in the training code -- if not after each batch in the training loop, at least after each epoch.
 
 ## Technique 1. Automatic disposal via Garbage Collection
@@ -44,7 +46,7 @@ __Note__: Even with this approach, it is a good idea to place a call to `GC.Coll
 
 It is important to understand that all TorchSharp "tensors" (type Tensor) are actually "tensor aliases", referring to a C++ tensor. When a C++ tensor is created and returned to .NET as a tensor alias, and the reference count on the C++ tensor is incremented. When you call `Dispose()` on the TorchSharp tensor alias (that is, type Tensor), it is decremented. If the tensor alias is finalized instead, the decrement happens implicitly.
 
-To enable this technique, all operations that return one or more TorchSharp `Tensor`s should return "fresh" Tensor aliases (though that doesn't always mean freshly copied C++ tensors). This is true even for in-place, destructive operations like `add_()`, which overwrites the underlying native tensor with data, but still returns a fresh tensor alias to that same tensor.  
+To enable this technique, all operations that return one or more TorchSharp `Tensor`s should return "fresh" Tensor aliases (though that doesn't always mean freshly copied C++ tensors). This is true even for in-place, destructive operations like `add_()`, which overwrites the underlying native tensor with data, but still returns a fresh tensor alias to that same tensor.
 
 Thus, when you write methods and functions that take and produce type Tensor, for example in the `forward()` method of a model, you should always make sure to return a fresh alias. Most of the time, this happens automatically, because the last action of your code will normally be to call another tensor function, which itself will be returning a fresh alias, but there are cases when it's not, especially when returning input tensors or tensors stored in some lookaside table.
 
@@ -55,7 +57,7 @@ Tensor flatten(Tensor input) {
     if (input.shape.Length == 1)
         return input.alias();
     else
-        return input.reshape(input.numel());        
+        return input.reshape(input.numel());
 }
 ```
 
@@ -100,10 +102,10 @@ let myTensorFunction0(input: Tensor) =
     input.alias()
 
 let myTensorFunction1() =
-    if today then 
-       table[4].alias()  
+    if today then
+       table[4].alias()
     else
-       table[5].alias()  
+       table[5].alias()
 
 let myTensorFunction2(input: Tensor) =
     input.add(tensor(1))
@@ -124,9 +126,9 @@ let myTensorFunction5(go: bool, input: Tensor) =
         tmp2.add(tensor(1))
     else
         input.alias()
-    
+
 let myTensorFunction5(go: bool, input: Tensor) =
-    if go then 
+    if go then
         use tmp1 = input.add_(tensor(1))  // NOTE: even for in-place mutations
         use tmp2 = input.add_(tensor(1))  // NOTE: even for in-place mutations
         tmp2.add(tensor(1))
@@ -173,13 +175,13 @@ use d = torch.NewDisposeScope()
 total_acc <- total_acc + (predicted_labels.argmax(1) == labels).sum().cpu().item<long>()
 ```
 
-If you need to dispose some tensors before the scope is disposed, you can use `DisposeEverything()`, or `DisposeEverythingBut(...)` if you want to exclude a few tensors from disposal. These can be useful when tensor lifetimes aren't cleanly nested in dynamic scopes. 
+If you need to dispose some tensors before the scope is disposed, you can use `DisposeEverything()`, or `DisposeEverythingBut(...)` if you want to exclude a few tensors from disposal. These can be useful when tensor lifetimes aren't cleanly nested in dynamic scopes.
 
 __NOTE: It is absolutely essential for the proper functioning of dynamic dispose scopes that the scope is created with a 'using' statemen (C#) or 'use' expression (F#).__
 
 It's important to note that these scopes are dynamic -- if any functions are called, the tensors inside them are also registered and disposed, unless there's a nested scope within those functions.
 
-It is advisable to place a dispose scope around your training and test code, and in any library code that can be called from contexts that do not have dispose scopes. 
+It is advisable to place a dispose scope around your training and test code, and in any library code that can be called from contexts that do not have dispose scopes.
 
 That said, you should use dispose scope very carefully: having _too few_ scope raises the pressure on native memory, which is particularly bad for GPUs. Having too _many_ scopes, managing too few temporaries, will add runtime overhead to computations. For example, it may be better to put a scope outside an inner loop that contains multiple computations than to place it inside the loop. There is no single best answer.
 

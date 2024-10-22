@@ -100,16 +100,15 @@ namespace TorchSharp
                         /// </summary>
                         public void Dispose()
                         {
-                            this.data.Dispose();
-                            this.batch_sizes.Dispose();
-                            this.sorted_indices.Dispose();
-                            this.unsorted_indices.Dispose();
-                            OwningDisposeScope?.MarkAsDisposed(this);
-
                             if (handle != null && !handle.IsInvalid) {
+                                this.data.Dispose();
+                                this.batch_sizes.Dispose();
+                                this.sorted_indices.Dispose();
+                                this.unsorted_indices.Dispose();
+                                DisposeScopeManager.ThreadSingleton.DisposingOnCurrentScope(this);
+                                OwningDisposeScope?.MarkAsDisposed(this);
                                 handle.Dispose();
                                 handle.SetHandleAsInvalid();
-
                             }
                         }
                         /// <summary>
