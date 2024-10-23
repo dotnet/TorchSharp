@@ -43,6 +43,13 @@
     <Compile Include="..\TorchSharpTest\TestTorchVisionOps.cs" Link="TestTorchVisionOps.cs" />
     <Compile Include="..\TorchSharpTest\TestTraining.cs" Link="TestTraining.cs" />
     <Compile Include="..\TorchSharpTest\TestDisposeScopes.cs" Link="TestDisposeScopes.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesPackedSequence.cs" Link="TestDisposeScopesPackedSequence.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesStatisticsBase.cs" Link="TestDisposeScopesStatisticsBase.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesStatisticsPackedSequence.cs" Link="TestDisposeScopesStatisticsPackedSequence.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesStatisticsPackedSequenceUnscoped.cs" Link="TestDisposeScopesStatisticsPackedSequenceUnscoped.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesStatisticsTensor.cs" Link="TestDisposeScopesStatisticsTensor.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesStatisticsTensorUnscoped.cs" Link="TestDisposeScopesStatisticsTensorUnscoped.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopesStatisticsToString.cs" Link="TestDisposeScopesStatisticsToString.cs" />
   </ItemGroup>
 
   <ItemGroup>
