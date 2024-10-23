@@ -11,6 +11,7 @@ __Bug Fixes__:
 
 #1383 `torch.linalg.vector_norm`: Make `ord`-argument optional, as specified in docs<br/>
 #1385 PackedSequence now participates in the DisposeScope system at the same level as Tensor objects.<br/>
+#1387 Attaching tensor to a DisposeScope no longer makes Statistics.DetachedFromScopeCount go negative.<br/>
 
 # NuGet Version 0.103.0
 
