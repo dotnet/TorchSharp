@@ -12,6 +12,7 @@ __Bug Fixes__:
 #1383 `torch.linalg.vector_norm`: Make `ord`-argument optional, as specified in docs<br/>
 #1385 PackedSequence now participates in the DisposeScope system at the same level as Tensor objects.<br/>
 #1387 Attaching tensor to a DisposeScope no longer makes Statistics.DetachedFromScopeCount go negative.<br/>
+#1390 DisposeScopeManager.Statistics now includes DisposedOutsideScopeCount and AttachedToScopeCount. ThreadTotalLiveCount is now exact instead of approximate. ToString gives a useful debug string, and documentation is added for how to troubleshoot memory leaks. Also DisposeScopeManager.Statistics.TensorStatistics and DisposeScopeManager.Statistics.PackedSequenceStatistics provide separate metrics for these objects.
 
 # NuGet Version 0.103.0
 

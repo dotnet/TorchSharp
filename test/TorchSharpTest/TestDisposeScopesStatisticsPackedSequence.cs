@@ -7,40 +7,46 @@ namespace TorchSharp
     public class TestDisposeScopesStatisticsPackedSequenceScoped : TestDisposeScopesStatisticsBase
     {
 
-        //When reviewing these tests, refer first to TestDisposeScopesStatisticsTensor. The tests here are
-        //essentially identical, except that the numbers all look weird because a PackedSequence is constructed
-        //from Tensors, and contains Tensors that it detaches from any scope and manages itself.
-
+        //ATTENTION WEIRDNESS HERE!
+        //See notes in TestDisposeScopesStatisticsPackedSequenceUnscoped before modifying tests here.
+        //The same weird behavior occurs in this fixture. Additionally since scopes are created
+        //before the test data in this fixture, you will always see the internal tensors
+        //having been detached and the data tensors created and disposed in scope.
+        public TestDisposeScopesStatisticsPackedSequenceScoped()
+        {
+            ResetStats();
+        }
 
         [Fact]
         public void CreatingIncrementsCreatedInScope()
         {
             using var scope = torch.NewDisposeScope();
-            ResetStats();
-            var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
-            //CreatedInScope = 2 tensors (source data) + 4 internal PackedSequence tensors, + the PackedSequence
-            //DetachedFromScope = the 4 internal PackedSequenceTensors
-            AssertStatCounts(7, 0, 4, 0, 3);
+            using var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
+            AssertTensorCounts(0, 0, 6, 2, 0, 4, 4);
+            AssertPackedCounts(0, 0, 1, 0, 0, 0, 1);
+            AssertTotalsCounts(0, 0, 7, 2, 0, 4, 5);
         }
 
         [Fact]
         public void AttachingIncrementsNothing()
         {
             using var scope = torch.NewDisposeScope();
-            var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
-            ResetStats();
+            using var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
             scope.Attach(ps);
-            AssertStatCounts(0, 0, 0, 0, 0);
+            AssertTensorCounts(0, 0, 6, 2, 0, 4, 4);
+            AssertPackedCounts(0, 0, 1, 0, 0, 0, 1);
+            AssertTotalsCounts(0, 0, 7, 2, 0, 4, 5);
         }
 
         [Fact]
         public void DetachingIncrementsDetached()
         {
             using var scope = torch.NewDisposeScope();
-            var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
-            ResetStats();
+            using var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
             scope.Detach(ps);
-            AssertStatCounts(0, 0, 1, 0, -1);
+            AssertTensorCounts(0, 0, 6, 2, 0, 4, 4);
+            AssertPackedCounts(0, 0, 1, 0, 0, 1, 1);
+            AssertTotalsCounts(0, 0, 7, 2, 0, 5, 5);
         }
 
         [Fact]
@@ -48,33 +54,36 @@ namespace TorchSharp
         {
             using var scope = torch.NewDisposeScope();
             var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
-            ResetStats();
             ps.Dispose();
-            //DisposedInScope = The PackedSequence + the 4 internal tensors
-            AssertStatCounts(0, 0, 0, 5, -5);
+            AssertTensorCounts(0, 0, 6, 6, 0, 4, 0);
+            AssertPackedCounts(0, 0, 1, 1, 0, 0, 0);
+            AssertTotalsCounts(0, 0, 7, 7, 0, 4, 0);
+            ps.Dispose();
+            //Ensuring the count doesn't increment again (no re-entry)
+            AssertPackedCounts(0, 0, 1, 1, 0, 0, 0);
         }
 
         [Fact]
         public void DisposingScopeIncrementsDisposed()
         {
             var scope = torch.NewDisposeScope();
-            var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
-            ResetStats();
+            using var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
             scope.Dispose();
-            //DisposedInScope = The PackedSequence and the 2 source data tensors. The internal tensors and not on the scope.
-            AssertStatCounts(0, 0, 0, 3, -3);
+            AssertTensorCounts(0, 0, 6, 6, 0, 4, 0);
+            AssertPackedCounts(0, 0, 1, 1, 0, 0, 0);
+            AssertTotalsCounts(0, 0, 7, 7, 0, 4, 0);
         }
 
         [Fact]
-        public void DisposingScopeAfterDetachingCountsOnlyTheSourceDataTensors()
+        public void DisposingScopeAfterDetachingLeavesSequenceAndInternalTensorsLive()
         {
             var scope = torch.NewDisposeScope();
-            var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
+            using var ps = TestDisposeScopesStatisticsPackedSequenceUnscoped.Create();
             scope.Detach(ps);
-            ResetStats();
             scope.Dispose();
-            //DisposedInScope just the two source data tensors.
-            AssertStatCounts(0, 0, 0, 2, -2);
+            AssertTensorCounts(0, 0, 6, 2, 0, 4, 4);
+            AssertPackedCounts(0, 0, 1, 0, 0, 1, 1);
+            AssertTotalsCounts(0, 0, 7, 2, 0, 5, 5);
         }
     }
 }
