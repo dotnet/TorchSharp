@@ -1,113 +1,135 @@
 #nullable enable
 using System.Text;
-using TorchSharp;
 
 namespace TorchSharp
 {
-    public interface ILifetimeStatistics
-    {
-        /// <summary>
-        /// The number of disposables that were created on this thread, but weren't captured by a DisposeScope.
-        /// </summary>
-        long CreatedOutsideScopeCount { get; }
-        /// <summary>
-        /// The number of disposables that were Disposed on this thread, but weren't captured by a DisposeScope.
-        /// </summary>
-        long DisposedOutsideScopeCount { get; }
-        /// <summary>
-        /// The number of disposables that were created on this thread and were captured by a DisposeScope.
-        /// </summary>
-        long CreatedInScopeCount { get; }
-        /// <summary>
-        /// The number of disposables that were disposed on this thread and were disposed while in a DisposeScope.
-        /// </summary>
-        long DisposedInScopeCount { get; }
-        /// <summary>
-        /// The number of disposables that were created on this thread outside a DisposeScope, and then
-        /// eventually were attached to one.
-        /// </summary>
-        long AttachedToScopeCount { get; }
-        /// <summary>
-        /// Number of disposables that were once included in the scope, but were subsequently detached.
-        /// </summary>
-        long DetachedFromScopeCount { get; }
-        /// <summary>
-        /// The number of disposables that are currently live on the current thread.
-        /// </summary>
-        long ThreadTotalLiveCount { get; }
-        /// <summary>
-        /// Resets the counts for the current thread. See ThreadTotalLiveCount etc. Mainly used in tests to make sure
-        /// we get a clean slate on the thread.
-        /// </summary>
-        void Reset();
-        /// <summary>
-        /// A debug printout of all the properties and their values, suitable for a log or console output
-        /// </summary>
-        /// <returns></returns>
-        string ToString();
-    }
 
     /// <summary>
     /// Keeps track of the combined Tensor and PackedSequence statistics for the current thread. Can be queried to figure out performance/memory issues.
     /// </summary>
-    public class ThreadDisposeScopeStatistics: ILifetimeStatistics
+    public class ThreadDisposeScopeStatistics
     {
-        public long CreatedOutsideScopeCount => _TensorStatistics.CreatedOutsideScopeCount +
-                                                _PackedSequenceStatistics.CreatedOutsideScopeCount;
+        /// <summary>
+        /// The total number of Tensors and PackedSequence instances that were created on this thread, but weren't
+        /// captured by a DisposeScope.
+        /// </summary>
+        public long CreatedOutsideScopeCount => TensorStatistics.CreatedOutsideScopeCount +
+                                                PackedSequenceStatistics.CreatedOutsideScopeCount;
 
-        public long DisposedOutsideScopeCount => _TensorStatistics.DisposedOutsideScopeCount +
-                                                _PackedSequenceStatistics.DisposedOutsideScopeCount;
-        public long CreatedInScopeCount => _TensorStatistics.CreatedInScopeCount +
-                                           _PackedSequenceStatistics.CreatedInScopeCount;
+        /// <summary>
+        /// The number of Tensors and PackedSequence instances that were Disposed on this thread, but weren't
+        /// captured by a DisposeScope.
+        /// </summary>
+        public long DisposedOutsideScopeCount => TensorStatistics.DisposedOutsideScopeCount +
+                                                 PackedSequenceStatistics.DisposedOutsideScopeCount;
+        /// <summary>
+        /// The number of Tensors and PackedSequence instances that were created on this thread and were captured
+        /// by a DisposeScope.
+        /// </summary>
+        public long CreatedInScopeCount => TensorStatistics.CreatedInScopeCount +
+                                           PackedSequenceStatistics.CreatedInScopeCount;
 
-        public long DisposedInScopeCount => _TensorStatistics.DisposedInScopeCount +
-                                            _PackedSequenceStatistics.DisposedInScopeCount;
+        /// <summary>
+        /// The number of Tensors and PackedSequence instances that were disposed on this thread and were disposed
+        /// while in a DisposeScope.
+        /// </summary>
+        public long DisposedInScopeCount => TensorStatistics.DisposedInScopeCount +
+                                            PackedSequenceStatistics.DisposedInScopeCount;
 
-        public long AttachedToScopeCount=> _TensorStatistics.AttachedToScopeCount +
-                                             _PackedSequenceStatistics.AttachedToScopeCount;
+        /// <summary>
+        /// The number of Tensors and PackedSequence instances that were created on this thread outside a DisposeScope,
+        /// and then eventually were attached to one.
+        /// </summary>
+        public long AttachedToScopeCount=> TensorStatistics.AttachedToScopeCount +
+                                           PackedSequenceStatistics.AttachedToScopeCount;
 
-        public long DetachedFromScopeCount=> _TensorStatistics.DetachedFromScopeCount +
-                                             _PackedSequenceStatistics.DetachedFromScopeCount;
+        /// <summary>
+        /// Number of Tensors and PackedSequence instances that were once included in a DisposeScope, but were
+        /// subsequently detached.
+        /// </summary>
+        public long DetachedFromScopeCount=> TensorStatistics.DetachedFromScopeCount +
+                                             PackedSequenceStatistics.DetachedFromScopeCount;
 
-        public long ThreadTotalLiveCount => _TensorStatistics.ThreadTotalLiveCount +
-                                            _PackedSequenceStatistics.ThreadTotalLiveCount;
+        /// <summary>
+        /// Exact number of Tensors and PackedSequence instances that are still live. Is the difference of all
+        /// created objects minus all disposed objects.
+        /// </summary>
+        public long ThreadTotalLiveCount => TensorStatistics.ThreadTotalLiveCount +
+                                            PackedSequenceStatistics.ThreadTotalLiveCount;
 
+        /// <summary>
+        /// Resets the counts for the current thread. See ThreadTotalLiveCount etc. Mainly used in tests and memory
+        /// leak debugging to make sure we get a clean slate on the thread.
+        /// </summary>
         public void Reset()
         {
-            _TensorStatistics.Reset();
-            _PackedSequenceStatistics.Reset();
+            TensorStatistics.Reset();
+            PackedSequenceStatistics.Reset();
         }
-
+        /// <summary>
+        /// A debug printout of all the properties and their values, suitable for a log or console output
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return LifetimeStatisticsUtil.DebugString(this);
+            var sb = new StringBuilder();
+            sb.Append("ThreadTotalLiveCount: " + ThreadTotalLiveCount);
+            sb.Append("; CreatedOutsideScopeCount: " + CreatedOutsideScopeCount);
+            sb.Append("; DisposedOutsideScopeCount: " + DisposedOutsideScopeCount);
+            sb.Append("; CreatedInScopeCount: " + CreatedInScopeCount);
+            sb.Append("; DisposedInScopeCount: " + DisposedInScopeCount);
+            sb.Append("; AttachedToScopeCount: " + AttachedToScopeCount);
+            sb.Append("; DetachedFromScopeCount: " + DetachedFromScopeCount);
+            return sb.ToString();
         }
         /// <summary>
         /// Keeps track of the Tensor statistics for the current thread. Can be queried to figure out performance/memory issues.
         /// </summary>
-        public ILifetimeStatistics TensorStatistics => _TensorStatistics;
-        internal LifetimeStatistics _TensorStatistics { get; set; } = new LifetimeStatistics();
+        public LifetimeStatistics TensorStatistics { get; } = new LifetimeStatistics();
         /// <summary>
         /// Keeps track of the PackedSequence statistics for the current thread. Can be queried to figure out performance/memory issues.
         /// </summary>
-        public ILifetimeStatistics PackedSequenceStatistics => _PackedSequenceStatistics;
-        internal LifetimeStatistics _PackedSequenceStatistics { get; set; } = new LifetimeStatistics();
+        public LifetimeStatistics PackedSequenceStatistics { get; } = new LifetimeStatistics();
     }
 
-    public class LifetimeStatistics : ILifetimeStatistics
+    public class LifetimeStatistics
     {
+        /// <summary>
+        /// The number of disposables that were created on this thread, but weren't captured by a DisposeScope.
+        /// </summary>
         public long CreatedOutsideScopeCount { get; internal set; }
+        /// <summary>
+        /// The number of disposables that were Disposed on this thread, but weren't captured by a DisposeScope.
+        /// </summary>
         public long DisposedOutsideScopeCount { get; internal set; }
+        /// <summary>
+        /// The number of disposables that were created on this thread and were captured by a DisposeScope.
+        /// </summary>
         public long CreatedInScopeCount { get; internal set; }
+        /// <summary>
+        /// The number of disposables that were disposed on this thread and were disposed while in a DisposeScope.
+        /// </summary>
         public long DisposedInScopeCount { get; internal set; }
+        /// <summary>
+        /// The number of disposables that were created on this thread outside a DisposeScope, and then
+        /// eventually were attached to one.
+        /// </summary>
         public long AttachedToScopeCount { get; internal set; }
+        /// <summary>
+        /// Number of disposables that were once included in a DisposeScope, but were subsequently detached.
+        /// </summary>
         public long DetachedFromScopeCount { get; internal set; }
         /// <summary>
         /// Exact number of objects that are still live. Is the difference of all created objects
         /// minus all disposed objects.
         /// </summary>
-        public long ThreadTotalLiveCount => (CreatedInScopeCount - DisposedInScopeCount) + (CreatedOutsideScopeCount - DisposedOutsideScopeCount);
+        public long ThreadTotalLiveCount => (CreatedInScopeCount - DisposedInScopeCount) +
+                                            (CreatedOutsideScopeCount - DisposedOutsideScopeCount);
 
+        /// <summary>
+        /// Resets the counts for the current thread. See ThreadTotalLiveCount etc. Mainly used in tests to make sure
+        /// we get a clean slate on the thread.
+        /// </summary>
         public void Reset()
         {
             CreatedOutsideScopeCount = 0;
@@ -117,23 +139,20 @@ namespace TorchSharp
             AttachedToScopeCount = 0;
             DetachedFromScopeCount = 0;
         }
+        /// <summary>
+        /// A debug printout of all the properties and their values, suitable for a log or console output
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return LifetimeStatisticsUtil.DebugString(this);
-        }
-    }
-    static class LifetimeStatisticsUtil
-    {
-        public static string DebugString(this ILifetimeStatistics statistics)
-        {
             var sb = new StringBuilder();
-            sb.Append("ThreadTotalLiveCount: " + statistics.ThreadTotalLiveCount);
-            sb.Append("; CreatedOutsideScopeCount: " + statistics.CreatedOutsideScopeCount);
-            sb.Append("; DisposedOutsideScopeCount: " + statistics.DisposedOutsideScopeCount);
-            sb.Append("; CreatedInScopeCount: " + statistics.CreatedInScopeCount);
-            sb.Append("; DisposedInScopeCount: " + statistics.DisposedInScopeCount);
-            sb.Append("; AttachedToScopeCount: " + statistics.AttachedToScopeCount);
-            sb.Append("; DetachedFromScopeCount: " + statistics.DetachedFromScopeCount);
+            sb.Append("ThreadTotalLiveCount: " + ThreadTotalLiveCount);
+            sb.Append("; CreatedOutsideScopeCount: " + CreatedOutsideScopeCount);
+            sb.Append("; DisposedOutsideScopeCount: " + DisposedOutsideScopeCount);
+            sb.Append("; CreatedInScopeCount: " + CreatedInScopeCount);
+            sb.Append("; DisposedInScopeCount: " + DisposedInScopeCount);
+            sb.Append("; AttachedToScopeCount: " + AttachedToScopeCount);
+            sb.Append("; DetachedFromScopeCount: " + DetachedFromScopeCount);
             return sb.ToString();
         }
     }

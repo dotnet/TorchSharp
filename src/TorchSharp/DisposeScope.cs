@@ -214,10 +214,10 @@ namespace TorchSharp
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
                     if (disposable is torch.Tensor tensor) {
-                        _disposeScopeManager.StatisticsInstance._TensorStatistics.DetachedFromScopeCount++;
+                        _disposeScopeManager.StatisticsInstance.TensorStatistics.DetachedFromScopeCount++;
                         tensor.OwningDisposeScope = null;
                     } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                        _disposeScopeManager.StatisticsInstance._PackedSequenceStatistics.DetachedFromScopeCount++;
+                        _disposeScopeManager.StatisticsInstance.PackedSequenceStatistics.DetachedFromScopeCount++;
                         sequence.OwningDisposeScope = null;
                     }
                 }
@@ -243,9 +243,9 @@ namespace TorchSharp
             foreach (var disposable in disposables) {
                 if (AddToOther(this, disposable)) {
                     if (disposable is torch.Tensor tensor) {
-                        _disposeScopeManager.StatisticsInstance._TensorStatistics.AttachedToScopeCount++;
+                        _disposeScopeManager.StatisticsInstance.TensorStatistics.AttachedToScopeCount++;
                     } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                        _disposeScopeManager.StatisticsInstance._PackedSequenceStatistics.AttachedToScopeCount++;
+                        _disposeScopeManager.StatisticsInstance.PackedSequenceStatistics.AttachedToScopeCount++;
                     }
                 }
                 result.Add(disposable);
@@ -404,10 +404,10 @@ namespace TorchSharp
             var disposables = this.Disposables;
             foreach (var disposable in this.Disposables) {
                 if (disposable is torch.Tensor tensor) {
-                    this._disposeScopeManager!.StatisticsInstance._TensorStatistics.DetachedFromScopeCount++;
+                    this._disposeScopeManager!.StatisticsInstance.TensorStatistics.DetachedFromScopeCount++;
                     tensor.OwningDisposeScope = null;
                 } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                    this._disposeScopeManager!.StatisticsInstance._PackedSequenceStatistics.DetachedFromScopeCount++;
+                    this._disposeScopeManager!.StatisticsInstance.PackedSequenceStatistics.DetachedFromScopeCount++;
                     sequence.OwningDisposeScope = null;
                 }
             }

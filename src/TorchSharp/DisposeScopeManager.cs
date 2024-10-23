@@ -22,16 +22,16 @@ namespace TorchSharp
         {
             if (this.CurrentDisposeScope is null) {
                 if (item is torch.Tensor t) {
-                    StatisticsInstance._TensorStatistics.CreatedOutsideScopeCount++;
+                    StatisticsInstance.TensorStatistics.CreatedOutsideScopeCount++;
                 } else if (item is torch.nn.utils.rnn.PackedSequence p) {
-                    StatisticsInstance._PackedSequenceStatistics.CreatedOutsideScopeCount++;
+                    StatisticsInstance.PackedSequenceStatistics.CreatedOutsideScopeCount++;
                 }
                 return null;
             } else {
                 if (item is torch.Tensor t) {
-                    StatisticsInstance._TensorStatistics.CreatedInScopeCount++;
+                    StatisticsInstance.TensorStatistics.CreatedInScopeCount++;
                 } else if (item is torch.nn.utils.rnn.PackedSequence p) {
-                    StatisticsInstance._PackedSequenceStatistics.CreatedInScopeCount++;
+                    StatisticsInstance.PackedSequenceStatistics.CreatedInScopeCount++;
                 }
                 this.CurrentDisposeScope.Disposables.Add(item);
                 return CurrentDisposeScope;
@@ -41,17 +41,17 @@ namespace TorchSharp
         internal void DisposingOnCurrentScope(torch.Tensor item)
         {
             if (item.OwningDisposeScope == null) {
-                StatisticsInstance._TensorStatistics.DisposedOutsideScopeCount++;
+                StatisticsInstance.TensorStatistics.DisposedOutsideScopeCount++;
             } else {
-                StatisticsInstance._TensorStatistics.DisposedInScopeCount++;
+                StatisticsInstance.TensorStatistics.DisposedInScopeCount++;
             }
         }
         internal void DisposingOnCurrentScope(torch.nn.utils.rnn.PackedSequence item)
         {
             if (item.OwningDisposeScope == null) {
-                StatisticsInstance._PackedSequenceStatistics.DisposedOutsideScopeCount++;
+                StatisticsInstance.PackedSequenceStatistics.DisposedOutsideScopeCount++;
             } else {
-                StatisticsInstance._PackedSequenceStatistics.DisposedInScopeCount++;
+                StatisticsInstance.PackedSequenceStatistics.DisposedInScopeCount++;
             }
         }
         internal void RemoveDisposeScope(DisposeScope disposeScope)
