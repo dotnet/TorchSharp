@@ -18,9 +18,7 @@ namespace TorchSharp
             device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
             if (handle == IntPtr.Zero) { CheckForErrors(); }
-            var tensor = new Tensor(handle);
-            tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            return tensor;
+            return InstantiateTensorWithLeakSafeTypeChange(handle, dtype);
         }
 
         /// <summary>

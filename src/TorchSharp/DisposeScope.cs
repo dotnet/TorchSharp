@@ -154,9 +154,13 @@ namespace TorchSharp
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
-            foreach (var disposable in disposables) {
-                if (Disposables.Remove(disposable)) {
-                    AddToOther(scope, disposable);
+            if (scope == null) {
+                Detach(disposables);
+            } else {
+                foreach (var disposable in disposables) {
+                    if (Disposables.Remove(disposable)) {
+                        AddToOther(scope, disposable);
+                    }
                 }
             }
         }
@@ -209,11 +213,11 @@ namespace TorchSharp
                 throw new ObjectDisposedException(this.GetType().FullName);
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
-                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
                     if (disposable is torch.Tensor tensor) {
+                        _disposeScopeManager.StatisticsInstance.TensorStatistics.DetachedFromScopeCount++;
                         tensor.OwningDisposeScope = null;
-                    }
-                    else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                        _disposeScopeManager.StatisticsInstance.PackedSequenceStatistics.DetachedFromScopeCount++;
                         sequence.OwningDisposeScope = null;
                     }
                 }
@@ -237,18 +241,13 @@ namespace TorchSharp
 
             var result = new List<IDisposable>();
             foreach (var disposable in disposables) {
-                if (disposable is torch.Tensor tensor) {
-                    if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
-                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                if (AddToOther(this, disposable)) {
+                    if (disposable is torch.Tensor tensor) {
+                        _disposeScopeManager.StatisticsInstance.TensorStatistics.AttachedToScopeCount++;
+                    } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                        _disposeScopeManager.StatisticsInstance.PackedSequenceStatistics.AttachedToScopeCount++;
                     }
                 }
-                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                    if (sequence.OwningDisposeScope == null && !sequence.IsInvalid) {
-                        _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
-                    }
-                }
-
-                AddToOther(this, disposable);
                 result.Add(disposable);
             }
 
@@ -276,22 +275,6 @@ namespace TorchSharp
             foreach (var disposable in oldList) {
                 if (Disposables.Contains(disposable)) {
                     continue;
-                }
-
-                if (disposable is torch.Tensor tensor) {
-                    // No need to have the disposable call back to the scope
-                    tensor.OwningDisposeScope = null;
-                    if (!tensor.IsInvalid) {
-                        _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
-                    }
-                } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
-                    // No need to have the disposable call back to the scope
-                    sequence.OwningDisposeScope = null;
-                    if (!sequence.IsInvalid) {
-                        _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
-                    }
-                } else {
-                    _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
                 }
 
                 disposable.Dispose();
@@ -369,7 +352,7 @@ namespace TorchSharp
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
-            _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
+
             Disposables.Remove(disposable);
             if (disposable is torch.Tensor tensor) {
                 tensor.OwningDisposeScope = null;
@@ -386,33 +369,45 @@ namespace TorchSharp
         /// <returns></returns>
         public bool Contains(IDisposable disposable) => Disposables.Contains(disposable);
 
-        private void AddToOther(DisposeScope? scope, IDisposable disposable)
+        private bool AddToOther(DisposeScope scope, IDisposable disposable)
         {
             if (this._disposeScopeManager is null)
                 throw new ObjectDisposedException(this.GetType().FullName);
-            if (scope != null) {
-                scope.Disposables.Add(disposable);
+
+            DisposeScope? oldScope;
+            if (disposable is torch.Tensor t) {
+                oldScope = t.OwningDisposeScope;
+            } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                oldScope = sequence.OwningDisposeScope;
             } else {
-                _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
+                throw new InvalidOperationException("DisposeScope can only manage Tensor or PackedSequence");
+            }
+
+            if (scope == oldScope) return false;
+
+            scope.Disposables.Add(disposable);
+            if (oldScope != null) {
+                oldScope.Disposables.Remove(disposable);
             }
 
             if (disposable is torch.Tensor tensor) {
                 tensor.OwningDisposeScope = scope;
-            }
-            else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+            } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
                 sequence.OwningDisposeScope = scope;
             }
+
+            return true;
         }
 
         internal HashSet<IDisposable> DetachAllAndDispose()
         {
             var disposables = this.Disposables;
             foreach (var disposable in this.Disposables) {
-                this._disposeScopeManager!.StatisticsInstance.DetachedFromScopeCount++;
                 if (disposable is torch.Tensor tensor) {
+                    this._disposeScopeManager!.StatisticsInstance.TensorStatistics.DetachedFromScopeCount++;
                     tensor.OwningDisposeScope = null;
-                }
-                else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                } else if (disposable is torch.nn.utils.rnn.PackedSequence sequence) {
+                    this._disposeScopeManager!.StatisticsInstance.PackedSequenceStatistics.DetachedFromScopeCount++;
                     sequence.OwningDisposeScope = null;
                 }
             }
