@@ -26,7 +26,10 @@ namespace TorchSharp
         /// </summary>
         public static Tensor tensor(float real, float imaginary, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            return tensor((real, imaginary), dtype: dtype, device: device);
+            device = InitializeDevice(device);
+            var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
+            return InstantiateTensorWithLeakSafeTypeChange(handle, dtype);
         }
 
         /// <summary>
@@ -34,10 +37,7 @@ namespace TorchSharp
         /// </summary>
         public static Tensor tensor((float Real, float Imaginary) scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = InitializeDevice(device);
-            var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return InstantiateTensorWithLeakSafeTypeChange(handle, dtype);
+            return tensor(scalar.Real, scalar.Imaginary, dtype: dtype, device: device);
         }
 
         /// <summary>
