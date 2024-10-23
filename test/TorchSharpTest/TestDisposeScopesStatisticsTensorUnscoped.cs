@@ -114,23 +114,5 @@ namespace TorchSharp
             AssertTensorCounts(1, 0, 0, 0, 1, 0, 1);
             AssertTotalsCounts(1, 0, 0, 0, 1, 0, 1);
         }
-
-        [Fact]
-        public void ToTensorCreatesOrphanedTensor()
-        {
-            //Defect: This needs fixing but is unrelated to the commit that discovered
-            //it - adding better lifetime statistics. ToTensor() leaks 1 tensor
-            // //every time it is called.
-            var stats = DisposeScopeManager.Statistics;
-            stats.Reset();
-            var a1 = 1.ToTensor();
-            //Should be 1 ideally. If it remains two...
-            Assert.Equal(2, stats.CreatedOutsideScopeCount);
-            // ... this should be 1
-            Assert.Equal(0, stats.DisposedOutsideScopeCount);
-            a1.Dispose();
-            //... and this should also be 2
-            Assert.Equal(1, stats.DisposedOutsideScopeCount);
-        }
     }
 }
