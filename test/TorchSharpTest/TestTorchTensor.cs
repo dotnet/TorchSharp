@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Sdk;
@@ -3227,6 +3228,66 @@ namespace TorchSharp
                 Assert.Equal(ScalarType.Float64, tensor.dtype);
                 Assert.Equal(-1.0, (double)tensor);
             }
+        }
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void ScalarToTensorDoesNotLeakMemory()
+        {
+            AssertTensorDoesNotLeak(()=>{
+                Tensor tensor = 1;
+                return tensor;
+            });
+            AssertTensorDoesNotLeak(() => ((byte)1).ToTensor());
+            AssertTensorDoesNotLeak(() => ((sbyte)-1).ToTensor());
+            AssertTensorDoesNotLeak(() => ((short)-1).ToTensor());
+            AssertTensorDoesNotLeak(() => ((long)-1).ToTensor());
+            AssertTensorDoesNotLeak(() => ((float)-1).ToTensor());
+            AssertTensorDoesNotLeak(() => ((double)-1).ToTensor());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void ScalarArrayToTensorDoesNotLeakMemory()
+        {
+            AssertTensorDoesNotLeak(() => (new byte[]{1}).ToTensor(new long[]{1}));
+            AssertTensorDoesNotLeak(() => (new sbyte[]{-1}).ToTensor(new long[]{1}));
+            AssertTensorDoesNotLeak(() => (new short[]{-1}).ToTensor(new long[]{1}));
+            AssertTensorDoesNotLeak(() => (new long[]{-1}).ToTensor(new long[]{1}));
+            AssertTensorDoesNotLeak(() => (new float[]{-1}).ToTensor(new long[]{1}));
+            AssertTensorDoesNotLeak(() => (new double[]{-1}).ToTensor(new long[]{1}));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void ComplexNumberOfDoubleDoesNotLeakMemory()
+        {
+            AssertTensorDoesNotLeak(() => ( torch.tensor((double)-1, (double)-2)));
+            AssertTensorDoesNotLeak(() => ( torch.tensor(((double)-1, (double)-2))));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void ComplexNumberOfFloatDoesNotLeakMemory()
+        {
+            AssertTensorDoesNotLeak(() => (torch.tensor((float)-1, (float)-2)));
+            AssertTensorDoesNotLeak(() => (torch.tensor(((float)-1, (float)-2))));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void DotNetComplexNumberDoesNotLeakMemory()
+        {
+            AssertTensorDoesNotLeak(() => (torch.tensor(new Complex(1, 2))));
+        }
+
+        private void AssertTensorDoesNotLeak(Func<Tensor> createTensorFunc)
+        {
+            var stats = DisposeScopeManager.Statistics.TensorStatistics;
+            stats.Reset();
+            using (Tensor tensor = createTensorFunc()) {
+                Assert.Equal(1, stats.ThreadTotalLiveCount);
+            }
+            Assert.Equal(0, stats.ThreadTotalLiveCount);
         }
 
         [Fact]
