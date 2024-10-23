@@ -7405,7 +7405,7 @@ namespace TorchSharp
         internal static Tensor InstantiateTensorWithLeakSafeTypeChange(IntPtr handle, ScalarType? dtype)
         {
             var tensor = new Tensor(handle);
-            if (dtype.HasValue) {
+            if (dtype.HasValue && tensor.dtype != dtype.Value) {
                 var typed = tensor.to_type(dtype.Value);
                 tensor.Dispose();
                 return typed;
