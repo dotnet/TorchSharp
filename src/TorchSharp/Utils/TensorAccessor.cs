@@ -47,18 +47,15 @@ namespace TorchSharp.Utils
         {
             if (_tensor.ndim < 2)
                 return (T[])ToNDArray();
-
+            long Cnt = Count;
             if (_tensor.is_contiguous()) {
-                //This is very fast. And work VERY WELL
-                var shps = _tensor.shape;
-                long TempCount = 1;
-                for (int i = 0; i < shps.Length; i++)
-                    TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
+                if (Cnt == 0)
+                    throw new Exception("Invalid");
                 unsafe {
-                    return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(TempCount)).ToArray();
+                    return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(Cnt)).ToArray();
                 }
             }
-            var result = new T[Count];
+            var result = new T[Cnt];
             CopyTo(result);
             return result;
         }
@@ -246,12 +243,9 @@ namespace TorchSharp.Utils
         {
              if (!_tensor.is_contiguous())
                  throw new Exception("The tensor is not contiguous");
-             var shps = _tensor.shape;
-             long TempCount = 1;
-             for (int i = 0; i < shps.Length; i++)
-                 TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
-             if (count > TempCount || count == 0)
-                 count = (int)TempCount;
+             var Cnt = Count;
+             if (count > Cnt || count == 0)
+                 count = (int)Cnt;
              if (array is byte[] ba)
                  Marshal.Copy(_tensor_data_ptr, ba, index, count);
              if (array is short[] sa)
