@@ -18,43 +18,27 @@ namespace TorchSharp
             device = InitializeDevice(device);
             var handle = THSTensor_newFloat64Scalar(scalar, (int)device.type, device.index, requires_grad);
             if (handle == IntPtr.Zero) { CheckForErrors(); }
-            var tensor = new Tensor(handle);
-            tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            return tensor;
+            return InstantiateTensorWithLeakSafeTypeChange(handle, dtype);
         }
 
         /// <summary>
-        /// Create a scalar tensor from a single value
+        /// Create a scalar complex number tensor from a tuple of (real, imaginary)
         /// </summary>
         public static Tensor tensor((double Real, double Imaginary) scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = InitializeDevice(device);
-            var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            var tensor = new Tensor(handle);
-            if (device is { }) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor = tensor.to_type(dtype.Value);
-            }
-            return tensor;
+            return tensor(scalar.Real, scalar.Imaginary, dtype, device, requires_grad);
         }
 
         /// <summary>
-        /// Create a scalar tensor from a single value
+        /// Create a scalar complex number tensor from independent real and imaginary components
         /// </summary>
         public static Tensor tensor(double real, double imaginary, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
+
             device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
             if (handle == IntPtr.Zero) { CheckForErrors(); }
-            var tensor = new Tensor(handle);
-            if (device is { }) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor = tensor.to_type(dtype.Value);
-            }
-            return tensor;
+            return InstantiateTensorWithLeakSafeTypeChange(handle, dtype);
         }
 
         /// <summary>

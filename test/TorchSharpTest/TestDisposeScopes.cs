@@ -22,10 +22,10 @@ namespace TorchSharp
         {
             DisposeScopeManager.Statistics.Reset();
             using (var scope1 = torch.NewDisposeScope()) {
-                var a1 = 1.ToTensor(); // This one is caught
-                var a2 = 2.ToTensor().DetachFromDisposeScope(); // This one is lost
-                var a3 = 3.ToTensor().MoveToOuterDisposeScope(); // This one is lost also
-                using var a4 = 4.ToTensor(); // This one was manually disposed
+                var a1 = torch.tensor(1); // This one is caught
+                var a2 = torch.tensor(2).DetachFromDisposeScope(); // This one is lost
+                var a3 = torch.tensor(3).MoveToOuterDisposeScope(); // This one is lost also
+                using var a4 = torch.tensor(4); // This one was manually disposed
                 var disposables = scope1.DisposablesView;
                 Assert.Multiple(
                     () => Assert.True(Contains(disposables, a1)),
@@ -36,10 +36,9 @@ namespace TorchSharp
             }
 
             Assert.Multiple(
-                () => Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount),
-                // These numbers are higher than I expected them to be.
-                // () => Assert.Equal(4, DisposeScopeManager.Statistics.CreatedInScopeCount),
-                // () => Assert.Equal(2, DisposeScopeManager.Statistics.DisposedInScopeCount),
+                () => Assert.Equal(2, DisposeScopeManager.Statistics.ThreadTotalLiveCount),
+                () => Assert.Equal(4, DisposeScopeManager.Statistics.CreatedInScopeCount),
+                () => Assert.Equal(2, DisposeScopeManager.Statistics.DisposedInScopeCount),
                 () => Assert.Equal(2, DisposeScopeManager.Statistics.DetachedFromScopeCount),
                 () => Assert.Equal(0, DisposeScopeManager.Statistics.CreatedOutsideScopeCount)
             );
@@ -218,9 +217,10 @@ namespace TorchSharp
                 _testOutputHelper.WriteLine($"Undisposed Tensors inside DisposeScope: {d.DisposablesCount}");
             }
 
-            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
             _testOutputHelper.WriteLine(
                 $"Undisposed Tensors after DisposeScope: {DisposeScopeManager.Statistics.ThreadTotalLiveCount}");
+
+            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
             DisposeScopeManager.Statistics.Reset();
         }
 

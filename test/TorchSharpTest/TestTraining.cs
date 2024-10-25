@@ -1893,7 +1893,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 3, 28, 28 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adam(seq.parameters());
+            using var optimizer = torch.optim.Adam(seq.parameters());
 
             TrainLoop(seq, x, y, optimizer);
         }
