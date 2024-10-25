@@ -242,31 +242,30 @@ namespace TorchSharp.Utils
             if (index >= Count) throw new IndexOutOfRangeException();
         }
 
-         private void CopyContiguous(T[] array, int index=0, int count=0)
-         {
+        private void CopyContiguous(T[] array, int index=0, int count=0)
+        {
              if (!_tensor.is_contiguous())
                  throw new Exception("The tensor is not contiguous");
-            var shps = _tensor.shape;
-            long TempCount = 1;
-            for (int i = 0; i < shps.Length; i++)
-                TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
-            if (count > TempCount || count == 0)
-                count = (int)TempCount;
-
-            if (array is byte[] ba)
-                Marshal.Copy(_tensor_data_ptr, ba, index, count);
-            if (array is short[] sa)
-                Marshal.Copy(_tensor_data_ptr, sa, index, count);
-            if(array is char[] ca)
-                Marshal.Copy(_tensor_data_ptr, ca, index, count);
-            if (array is long[] la)
-                Marshal.Copy(_tensor_data_ptr, la, index, count);
-            if (array is float[] fa)
-                Marshal.Copy(_tensor_data_ptr, fa, index, count);
-            if (array is int[] ia)
-                Marshal.Copy(_tensor_data_ptr, ia, index, count);
-            if (array is double[] da)
-                Marshal.Copy(_tensor_data_ptr, da, index, count);
+             var shps = _tensor.shape;
+             long TempCount = 1;
+             for (int i = 0; i < shps.Length; i++)
+                 TempCount *= shps[i]; //Theorically the numel is simple as product of each element shape
+             if (count > TempCount || count == 0)
+                 count = (int)TempCount;
+             if (array is byte[] ba)
+                 Marshal.Copy(_tensor_data_ptr, ba, index, count);
+             if (array is short[] sa)
+                 Marshal.Copy(_tensor_data_ptr, sa, index, count);
+             if(array is char[] ca)
+                 Marshal.Copy(_tensor_data_ptr, ca, index, count);
+             if (array is long[] la)
+                 Marshal.Copy(_tensor_data_ptr, la, index, count);
+             if (array is float[] fa)
+                 Marshal.Copy(_tensor_data_ptr, fa, index, count);
+             if (array is int[] ia)
+                 Marshal.Copy(_tensor_data_ptr, ia, index, count);
+             if (array is double[] da)
+                 Marshal.Copy(_tensor_data_ptr, da, index, count);
         }
         public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
