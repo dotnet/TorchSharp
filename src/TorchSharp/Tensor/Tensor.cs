@@ -84,9 +84,9 @@ namespace TorchSharp
             /// </summary>
             protected virtual void Dispose(bool disposing)
             {
-                OwningDisposeScope?.MarkAsDisposed(this);
-
                 if (handle != IntPtr.Zero) {
+                    DisposeScopeManager.ThreadSingleton.DisposingOnCurrentScope(this);
+                    OwningDisposeScope?.MarkAsDisposed(this);
                     System.Threading.Interlocked.Decrement(ref _totalCount);
                     NativeMethods.THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
@@ -417,7 +417,7 @@ namespace TorchSharp
                 _validate(0);
 
                 long totalSize = NumberOfElements * ElementSize;
-                
+
                 unsafe {
                     var ptr = NativeMethods.THSTensor_data(handle);
                     if (ptr == IntPtr.Zero) { CheckForErrors(); }
@@ -451,7 +451,7 @@ namespace TorchSharp
                 long totalSize = NumberOfElements * ElementSize;
 
                 // Validate that this tensor matches the conditions for reading the bytes - pass 0 as total size
-                // since we don't need to check that condition. 
+                // since we don't need to check that condition.
                 _validate(0);
 
                 unsafe {
@@ -471,7 +471,7 @@ namespace TorchSharp
                         // Copy the contents over to the span
                         var span = new Span<byte>((void*)ptr, bytesRead);
                         buffer.AsSpan(0, bytesRead).CopyTo(span);
-                        
+
                         // Increment our pointer and decrease the total size of elements we have to write
                         ptr += bytesRead;
                         totalSize -= bytesRead;
@@ -697,8 +697,8 @@ namespace TorchSharp
                 }
             }
 
-            public void backward(IList<Tensor>? grad_tensors = null, bool create_graph = false, bool retain_graph = false, IList<Tensor>? inputs = null) =>
-                torch.autograd.backward(new[] { this }, grad_tensors, create_graph, retain_graph, inputs);
+            public void backward(IList<Tensor>? grad_tensors = null, bool retain_graph = false, bool create_graph = false, IList<Tensor>? inputs = null) =>
+                torch.autograd.backward(new[] { this }, grad_tensors, retain_graph, create_graph, inputs);
 
             /// <summary>
             /// Creates a tensor by loading it from a file.
@@ -793,7 +793,7 @@ namespace TorchSharp
                 return new Tensor(res);
 
             }
-            
+
             /// <summary>
             /// Returns a copy of this object in CUDA memory.
             /// If this object is already in CUDA memory and on the correct device, then no copy is performed and the original object is returned.
@@ -3277,14 +3277,14 @@ namespace TorchSharp
             /// <summary>
             /// Creates a tensor whose diagonals of certain 2D planes (specified by dim1 and dim2) are filled by input.
             /// To facilitate creating batched diagonal matrices, the 2D planes formed by the last two dimensions of the returned tensor are chosen by default.
-            /// 
+            ///
             /// The argument offset controls which diagonal to consider:
             ///   If offset is equal to 0, it is the main diagonal.
             ///   If offset is greater than 0, it is above the main diagonal.
             ///   If offset is less than 0, it is below the main diagonal.
-            ///   
+            ///
             /// The size of the new matrix will be calculated to make the specified diagonal of the size of the last input dimension.Note that for offset other than 0,
-            /// 
+            ///
             /// the order of dim1 and dim2 matters.Exchanging them is equivalent to changing the sign of offset.
             /// </summary>
             /// <param name="offset">Which diagonal to consider.</param>
@@ -3354,7 +3354,7 @@ namespace TorchSharp
             public Tensor erf_()
             {
                 NativeMethods.THSTensor_erf_(Handle);
-                CheckForErrors(); 
+                CheckForErrors();
                 return this;
             }
 
@@ -7401,6 +7401,16 @@ namespace TorchSharp
             using var scope = torch.NewDisposeScope();
             var result = expr();
             return result.MoveToOuterDisposeScope();
+        }
+        internal static Tensor InstantiateTensorWithLeakSafeTypeChange(IntPtr handle, ScalarType? dtype)
+        {
+            var tensor = new Tensor(handle);
+            if (dtype.HasValue && tensor.dtype != dtype.Value) {
+                var typed = tensor.to_type(dtype.Value);
+                tensor.Dispose();
+                return typed;
+            }
+            return tensor;
         }
     }
 }

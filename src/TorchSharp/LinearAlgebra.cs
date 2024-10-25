@@ -703,7 +703,7 @@ namespace TorchSharp
             /// <param name="dims">Dimensions over which to compute the norm.</param>
             /// <param name="keepdim">If set to true, the reduced dimensions are retained in the result as dimensions with size one. </param>
             /// <returns></returns>
-            public static Tensor vector_norm(Tensor input, double ord, long[]? dims = null, bool keepdim = false)
+            public static Tensor vector_norm(Tensor input, double ord = 2d, long[]? dims = null, bool keepdim = false)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
