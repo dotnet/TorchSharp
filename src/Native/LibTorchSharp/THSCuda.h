@@ -2,10 +2,21 @@
 #pragma once
 
 #include "../Stdafx.h"
-
+#include "Utils.h"
 #include "torch/torch.h"
 
-#include "Utils.h"
+#ifdef TORCHSHARP_CUDA_TOOLKIT_FOUND
+#define CUDA_TOOLKIT_FOUND 1
+#else
+#define CUDA_TOOLKIT_FOUND 0
+#endif
+
+#define RETURN_CUDA_DEVICE(x) \
+    if(CUDA_TOOLKIT_FOUND)  \
+        return x; \
+    else \
+        return -1; 
+
 #ifdef TORCHSHARP_CUDA_TOOLKIT_FOUND
 #include "cuda.h"
 #include "cuda_runtime_api.h"
