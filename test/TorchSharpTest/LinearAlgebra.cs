@@ -641,6 +641,12 @@ namespace TorchSharp
 
                 Assert.Equal(5.4344883f, b.item<float>());
                 Assert.Equal(5.4344883f, c.item<float>());
+
+                var d = linalg.vector_norm(a, ord: 2);
+                var e = linalg.vector_norm(a);
+
+                Assert.Equal(7.7459669f, d.item<float>());
+                Assert.Equal(7.7459669f, e.item<float>());
             }
         }
 

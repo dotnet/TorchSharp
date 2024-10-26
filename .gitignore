@@ -273,4 +273,5 @@ packages/
 /.idea
 /test/TorchSharpTest/exportsd.py
 .vscode/settings.json
-/Directory.Build.props Copia
+/TestClear
+TestClear/

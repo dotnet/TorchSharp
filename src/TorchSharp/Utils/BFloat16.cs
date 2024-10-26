@@ -8,6 +8,7 @@ namespace System
     [StructLayout(LayoutKind.Sequential,Pack=2)]
     public struct BFloat16
     {
+        [MarshalAs(UnmanagedType.I2)]
         private short x;
         public struct from_bits_t{};
     }
