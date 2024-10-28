@@ -31,7 +31,7 @@ namespace TorchSharp
             submodules.Add(("relu1", ReLU()));
             submodules.Add(("lin2", lin2));
 
-            var seq = Sequential(submodules);
+            using var seq = Sequential(submodules);
 
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
@@ -65,8 +65,6 @@ namespace TorchSharp
             }
 
             Assert.True(finalLoss < initialLoss);
-
-            seq.Dispose();
         }
 
         /// <summary>
@@ -77,7 +75,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
@@ -118,7 +116,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00001;
 
@@ -132,7 +130,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00001;
 
@@ -298,7 +296,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adam(seq.parameters());
 
@@ -314,7 +312,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adam(seq.parameters(), maximize:true);
 
@@ -330,7 +328,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adam(new Adam.ParamGroup[]
             {
@@ -350,7 +348,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
 
@@ -366,7 +364,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adam(seq.parameters(), weight_decay: 0.5);
 
@@ -382,7 +380,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.0005;
             var optimizer = torch.optim.Adam(seq.parameters(), lr: lr, amsgrad: true);
@@ -404,7 +402,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.AdamW(seq.parameters());
 
@@ -420,7 +418,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.AdamW(new AdamW.ParamGroup[]
             {
@@ -440,7 +438,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.AdamW(seq.parameters(), amsgrad: true);
 
@@ -456,7 +454,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.AdamW(seq.parameters(), weight_decay: 0.5);
 
@@ -472,7 +470,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.001;
             var optimizer = torch.optim.AdamW(seq.parameters(), lr: lr, amsgrad: true);
@@ -495,7 +493,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate);
@@ -512,7 +510,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate, weight_decay: 0.5);
@@ -529,7 +527,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate, lr_decay: 0.1);
@@ -546,7 +544,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adagrad(new Adagrad.ParamGroup[]
             {
@@ -566,7 +564,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adagrad(new Adagrad.ParamGroup[]
             {
@@ -586,7 +584,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 1.0f;
             var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate);
@@ -603,7 +601,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 1.0f;
             var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, maximize:true);
@@ -620,7 +618,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 1.0f;
             var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, weight_decay: 0.35);
@@ -637,7 +635,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 1.0f;
             var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, rho: 0.75);
@@ -654,7 +652,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adadelta(new Adadelta.ParamGroup[]
             {
@@ -674,7 +672,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adamax(seq.parameters());
 
@@ -690,7 +688,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adamax(seq.parameters(), weight_decay: 0.35);
 
@@ -706,7 +704,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adamax(seq.parameters(), beta1: 0.75, beta2: 0.95);
 
@@ -722,7 +720,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Adamax(new Adamax.ParamGroup[]
             {
@@ -745,7 +743,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.002;
             var optimizer = torch.optim.Adamax(seq.parameters(), lr: lr);
@@ -763,7 +761,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.NAdam(seq.parameters());
 
@@ -779,7 +777,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.NAdam(seq.parameters(), weight_decay: 0.45);
 
@@ -795,7 +793,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.NAdam(seq.parameters(), beta1: 0.75, beta2: 0.95);
 
@@ -811,7 +809,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.NAdam(seq.parameters(), momentum_decay: 0.04);
 
@@ -827,7 +825,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.NAdam(new NAdam.ParamGroup[]
             {
@@ -850,7 +848,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.002;
             var optimizer = torch.optim.NAdam(seq.parameters(), lr: lr);
@@ -871,7 +869,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005);
 
@@ -887,7 +885,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005, weight_decay: 0.05);
 
@@ -903,7 +901,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005, beta1: 0.9, beta2: 0.999);
 
@@ -919,7 +917,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.RAdam(new RAdam.ParamGroup[]
             {
@@ -942,7 +940,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.0005;
             var optimizer = torch.optim.RAdam(seq.parameters(), lr: lr);
@@ -963,7 +961,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.0005;
             var optimizer = torch.optim.RAdam(new RAdam.ParamGroup[]
@@ -988,7 +986,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.0002;
             var optimizer = torch.optim.SGD(new SGD.ParamGroup[]
@@ -1013,7 +1011,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var lr = 0.0002;
             var optimizer = torch.optim.SGD(new SGD.ParamGroup[]
@@ -1044,7 +1042,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.ASGD(seq.parameters());
 
@@ -1060,7 +1058,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.ASGD(seq.parameters(), maximize:true);
 
@@ -1076,7 +1074,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.ASGD(seq.parameters(), lambd: 0.00025);
 
@@ -1092,7 +1090,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.ASGD(seq.parameters(), alpha: 0.65);
 
@@ -1108,7 +1106,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.ASGD(seq.parameters(), weight_decay: 0.25);
 
@@ -1124,7 +1122,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.ASGD(seq.parameters(), t0: 100000);
 
@@ -1140,7 +1138,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var pgs = new ASGD.ParamGroup[]
             {
@@ -1166,7 +1164,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Rprop(seq.parameters());
 
@@ -1183,7 +1181,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Rprop(seq.parameters(), maximize: true);
 
@@ -1199,7 +1197,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Rprop(seq.parameters(), etaminus: 0.55);
 
@@ -1215,7 +1213,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Rprop(seq.parameters(), etaplus: 1.25);
 
@@ -1232,7 +1230,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.Rprop(new Rprop.ParamGroup[]
             {
@@ -1256,7 +1254,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
@@ -1277,7 +1275,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
@@ -1295,7 +1293,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
@@ -1312,7 +1310,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75, maximize:true);
@@ -1329,7 +1327,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, weight_decay: 0.15);
@@ -1346,7 +1344,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, centered: true);
@@ -1363,7 +1361,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, weight_decay: 0.15, centered: true);
@@ -1380,7 +1378,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, momentum: 0.15);
@@ -1397,7 +1395,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
 
@@ -1419,7 +1417,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.5);
@@ -1436,7 +1434,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, dampening: 0.5);
@@ -1453,7 +1451,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.1, nesterov: true);
@@ -1470,7 +1468,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1487,7 +1485,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var pgs = new SGD.ParamGroup[] {
                 new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
@@ -1509,7 +1507,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1527,7 +1525,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1545,7 +1543,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1563,7 +1561,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1581,7 +1579,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1599,7 +1597,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1619,7 +1617,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1645,7 +1643,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1691,7 +1689,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1737,7 +1735,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1755,7 +1753,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1773,7 +1771,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
@@ -1811,7 +1809,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = (torch.optim.Optimizer)torch.optim.LBFGS(seq.parameters(), learning_rate);
@@ -1825,7 +1823,7 @@ namespace TorchSharp
             CreateLinearLayers(gen, out var lin1, out var lin2);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            using var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter: 15, max_eval: 15);
@@ -1864,7 +1862,7 @@ namespace TorchSharp
             var gen = new Generator(4711);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = torch.jit.load<torch.Tensor, torch.Tensor>(@"l1000_100_10.script.dat");
+            using var seq = torch.jit.load<torch.Tensor, torch.Tensor>(@"l1000_100_10.script.dat");
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1883,7 +1881,7 @@ namespace TorchSharp
             var lin1 = Linear(4 * 13 * 13, 32);
             var lin2 = Linear(32, 10);
 
-            var seq = Sequential(
+            using var seq = Sequential(
                 ("conv1", conv1),
                 ("r1", ReLU(inplace: true)),
                 ("drop1", Dropout(0.1)),

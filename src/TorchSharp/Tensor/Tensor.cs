@@ -34,12 +34,14 @@ namespace TorchSharp
 
             internal DisposeScope? OwningDisposeScope { get; set; }
 
-            internal Tensor(IntPtr handle)
+            internal Tensor(IntPtr handle, bool register = true)
             {
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
-                OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+                if (register) {
+                    OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+                }
             }
 
             /// <summary>
@@ -213,6 +215,11 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Disassociates the native tensor handle from the managed Tensor.
+            /// </summary>
+            /// <remarks>Used to create a Parameter instance.</remarks>
+            /// <returns>The handle to the underlying native tensor.</returns>
             internal IntPtr MoveHandle()
             {
                 var h = handle;
@@ -2172,7 +2179,7 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
-            
+
             public Tensor threshold(Scalar threshold, Scalar value)
             {
                 var res = NativeMethods.THSTensor_threshold(Handle, threshold.Handle, value.Handle);
@@ -2717,7 +2724,7 @@ namespace TorchSharp
                 torch.special.softmax(this, dim, dtype);
 
 
-            public Tensor softplus(int beta = 1, int threshold = 20) => 
+            public Tensor softplus(int beta = 1, int threshold = 20) =>
                 softplus1(beta, threshold);
 
             private Tensor softplus1(Scalar beta, Scalar threshold)
@@ -2787,9 +2794,9 @@ namespace TorchSharp
             }
 
             public Tensor celu() => this.celu(1.0);
-            
+
             public Tensor celu_() => this.celu_(1.0);
-            
+
             public Tensor celu(Scalar alpha)
             {
                 var res = NativeMethods.THSTensor_celu(Handle, alpha.Handle);
