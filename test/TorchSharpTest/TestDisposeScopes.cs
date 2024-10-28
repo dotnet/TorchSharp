@@ -192,7 +192,7 @@ namespace TorchSharp
             DisposeScopeManager.Statistics.Reset();
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/TorchSharp/issues/1397")]
         public void DisposeScopeWorksForTestTraining1()
         {
             DisposeScopeManager.Statistics.Reset();
@@ -207,7 +207,7 @@ namespace TorchSharp
             DisposeScopeManager.Statistics.Reset();
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/TorchSharp/issues/1397")]
         public void DisposeScopeWorksForTestTrainingConv2d()
         {
             DisposeScopeManager.Statistics.Reset();

@@ -65,6 +65,8 @@ namespace TorchSharp
             }
 
             Assert.True(finalLoss < initialLoss);
+
+            seq.Dispose();
         }
 
         /// <summary>
