@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
@@ -55,6 +56,32 @@ namespace TorchSharp.Utils
                     return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(Cnt)).ToArray();
                 }
             }
+
+            /*unsafe {
+                IntPtr arr = IntPtr.Zero;
+                if (typeof(T) == typeof(int)) {
+                    arr = NativeMethods.THSStorage_tensor_to_array_int(_tensor.handle);
+                    int[] tot = new int[Cnt];
+                    Marshal.Copy(arr, tot, 0, (int)Cnt);
+                }
+
+                if (typeof(T) == typeof(long)) {
+
+                }
+                
+                return tot as T[];
+                //var stride = _tensor.stride();
+                //var res = new T[Cnt];
+                //int idx = 0;
+                //T* ptr = (T*)_tensor_data_ptr;
+                //for (int ndim = 0; ndim < _tensor.shape.Length; ndim++) {
+                //    for (int xyz = 0; xyz < _tensor.shape[ndim]; xyz++) {
+                //        res[idx++] = ptr[xyz + stride[ndim]];
+                //    }
+                //}
+                //return res;
+            }*/
+
             var result = new T[Cnt];
             CopyTo(result);
             return result;

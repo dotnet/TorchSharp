@@ -7544,7 +7544,16 @@ namespace TorchSharp
             var result = expr();
             return result.MoveToOuterDisposeScope();
         }
-
+        internal static Tensor InstantiateTensorWithLeakSafeTypeChange(IntPtr handle, ScalarType? dtype)
+        {
+            var tensor = new Tensor(handle);
+            if (dtype.HasValue && tensor.dtype != dtype.Value) {
+                var typed = tensor.to_type(dtype.Value);
+                tensor.Dispose();
+                return typed;
+            }
+            return tensor;
+        }
         public static void _amp_foreach_non_finite_check_and_unscale(Tensor found_inf, Tensor inv_scale)
         {
             if (found_inf.numel() == 1)

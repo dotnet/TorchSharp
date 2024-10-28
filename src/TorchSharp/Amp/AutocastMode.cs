@@ -53,14 +53,14 @@ namespace TorchSharp.Amp
                 fast_dtype = dtype.Value;
             if (cache_enabled.HasValue)
                 _cache_enabled = cache_enabled.Value;
-
+            if (dev.type != DeviceType.CPU && dev.type != DeviceType.CUDA && enabled)
+                throw new Exception($"Currently autocast does not support {dev.type} only CPU or CUDA");
             if (dev.type == DeviceType.CPU) {
                 if (fast_dtype != torch.ScalarType.Float16 || fast_dtype != torch.ScalarType.BFloat16) {
                     Debug.WriteLine($"In CPU autocast, but the target d type is not suported. Disabling autocast. CPU autocast only supports dtype of {torch.ScalarType.Float16} or {torch.ScalarType.BFloat16}");
                     enabled = false;
                 }
             } else if (dev.type == DeviceType.CUDA) {
-
                 if (enabled && fast_dtype == torch.ScalarType.BFloat16 && !torch.cuda.is_bf16_supported())
                     throw new Exception("Current CUDA Device does not support bfloat16. Please switch dtype to float16.");
             }
@@ -131,6 +131,7 @@ namespace TorchSharp.Amp
                 return ptr;
             if (GetDtype(ptr) == type) //if already have same dtype is not necesary convert to dtype, right???
                 return ptr;
+            //TODO: Check if is from CPU to passing BFloat16 if support
             /*if (!NativeMethods.THSAmp_is_autocast_enabled(NativeMethods.THSTensor_device_type(ptr)))
                 return ptr;*/
             var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
@@ -190,17 +191,16 @@ namespace TorchSharp.Amp
             torch.set_autocast_cache_enabled(prev_cache_enabled);
         }
 
-        /*~AutocastMode()
-        {
-
-        }*/
-        
         public void Dispose()
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }
+    /// <summary>
+    /// Trying to make Custom Autocast forwarded that mean in Pytorch
+    /// like this @torch.autocast(device_type="cuda")
+    /// </summary>
     public class AutocastAttribute : Attribute
     {
         private DeviceType Dev;
@@ -208,6 +208,5 @@ namespace TorchSharp.Amp
         {
             Dev = dev;
         }
-        
     }
 }

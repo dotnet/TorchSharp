@@ -15,5 +15,15 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSStorage_data_ptr(IntPtr tensor);
+        /*[DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSStorage_tensor_to_array_int(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSStorage_tensor_to_array_long(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSStorage_tensor_to_array_float(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSStorage_tensor_to_array_double(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSStorage_tensor_to_array_byte(IntPtr tensor);*/
     }
 }
