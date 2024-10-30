@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static TorchSharp.torch.nn;
 
+#nullable enable
 namespace TorchSharp
 {
     using System.Linq;
@@ -43,7 +44,7 @@ namespace TorchSharp
                 return int.TryParse(target, out int idx) && idx > -1 && idx < _list.Count && _list[idx] is not null;
             }
 
-            public override Parameter get_parameter(string target)
+            public override Parameter? get_parameter(string target)
             {
                 if (int.TryParse(target, out int idx) && idx > -1 && idx < _list.Count) {
                     return _list[idx];
@@ -51,7 +52,7 @@ namespace TorchSharp
                 return null;
             }
 
-            protected override void _toEpilog(torch.ScalarType? dtype, torch.Device device, bool non_blocking)
+            protected override void _toEpilog(torch.ScalarType? dtype, torch.Device? device, bool non_blocking)
             {
                 for (int i = 0; i < _list.Count; i++) {
 

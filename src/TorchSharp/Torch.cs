@@ -13,6 +13,7 @@ using TorchSharp.Modules;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
