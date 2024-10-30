@@ -254,11 +254,10 @@ namespace TorchSharp
                     var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
                     var propsByName = new Dictionary<string, PropertyInfo>();
-                    // foreach (var p in props) {
-                    //     // There may be duplicates, and this just overwrites it.
-                    //     //propsByName.Add(p.Name, p);
-                    //     propsByName[p.Name] = p;
-                    // }
+                    foreach (var p in props) {
+                        // There may be duplicates, and this just overwrites it.
+                        propsByName[p.Name] = p;
+                    }
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
                         using var grad = param.grad;
