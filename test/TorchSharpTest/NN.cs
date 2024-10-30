@@ -325,8 +325,8 @@ namespace TorchSharp
                 Assert.Equal(40, forward.shape[1]);
                 Assert.Equal(device.type, forward.device_type);
             }
-        }       
-        
+        }
+
         [Fact]
         public void TestLinearFused()
         {
@@ -3272,7 +3272,7 @@ namespace TorchSharp
             Assert.True(sd.ContainsKey("_linear2.weight"));
 
             // The field names are also retrieved in the `_toEpilogue` function, so we want to make sure
-            // that everything works after calling a `.to` function. 
+            // that everything works after calling a `.to` function.
             model = model.to(ScalarType.BFloat16);
 
             sd = model.state_dict();
@@ -4492,6 +4492,26 @@ namespace TorchSharp
                         var pooled = pool.call(ones);
                         Assert.Equal(ones.shape, pooled.shape);
                     }
+                }
+            }
+        }
+
+
+
+        [Fact]
+        public void TestMovingBatchNorm2D()
+        {
+            Device? device = torch.mps_is_available() ? torch.MPS : torch.cuda_is_available() ? torch.CUDA : null;
+
+            if (device is not null) {
+                using (var pool = BatchNorm2d(32)) {
+                    Assert.NotNull(pool.num_batches_tracked);
+                    Assert.False(pool.num_batches_tracked.IsInvalid);
+
+                    pool.to(device);
+
+                    Assert.NotNull(pool.num_batches_tracked);
+                    Assert.False(pool.num_batches_tracked.IsInvalid);
                 }
             }
         }
@@ -6713,7 +6733,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestCustomParameterLessModule() 
+        public void TestCustomParameterLessModule()
         {
             var cnp = new CustomNoParameters("test");
 
