@@ -148,11 +148,11 @@ namespace TorchSharp
             var lin = Linear(1000, 100, true);
             var weight = lin.get_parameter("weight");
             var bias = lin.get_parameter("bias");
-            Assert.Equal(2, weight.shape.Length);
-            Assert.Equal(100, weight.shape[0]);
-            Assert.Equal(1000, weight.shape[1]);
-            Assert.True(1 == bias.shape.Length);
-            Assert.Equal(100, bias.shape[0]);
+            Assert.Equal(2, weight!.shape.Length);
+            Assert.Equal(100, weight!.shape[0]);
+            Assert.Equal(1000, weight!.shape[1]);
+            Assert.True(1 == bias!.shape.Length);
+            Assert.Equal(100, bias!.shape[0]);
         }
 
         [Fact]
@@ -2898,17 +2898,19 @@ namespace TorchSharp
             var param = torch.randn(new long[] { 1000, 100 });
             var module = new TestModule1(param, true);
 
-            Assert.Equal(1000, module.get_parameter("test").shape[0]);
-            Assert.Equal(100, module.get_parameter("test").shape[1]);
+            Assert.Equal(1000, module.get_parameter("test")!.shape[0]);
+            Assert.Equal(100, module.get_parameter("test")!.shape[1]);
 
             param = module.get_parameter("test");
 
+            Assert.NotNull(param);
+
             using (torch.no_grad()) {
-                var z = param.transpose_(0, 1);
+                var z = param!.transpose_(0, 1);
                 Assert.Same(param, z);
             }
-            Assert.Equal(100, module.get_parameter("test").shape[0]);
-            Assert.Equal(1000, module.get_parameter("test").shape[1]);
+            Assert.Equal(100, module.get_parameter("test")!.shape[0]);
+            Assert.Equal(1000, module.get_parameter("test")!.shape[1]);
             Assert.Equal(100, param.shape[0]);
             Assert.Equal(1000, param.shape[1]);
         }
@@ -3244,20 +3246,20 @@ namespace TorchSharp
         {
             var module = new TestModule1(torch.randn(2, 2), true);
             // Disable grad on test, and make sure that it is able to move and retains the gradient state
-            module.get_parameter("test").requires_grad = false;
+            module.get_parameter("test")!.requires_grad = false;
 
             // Move the module to 16-bit floats
             module.half();
-            Assert.False(module.get_parameter("test").requires_grad);
+            Assert.False(module.get_parameter("test")!.requires_grad);
 
             // Move to a different device
             if (torch.cuda.is_available()) {
                 module.cuda();
-                Assert.False(module.get_parameter("test").requires_grad);
+                Assert.False(module.get_parameter("test")!.requires_grad);
 
                 // Try a different device & type
                 module.to(torch.CPU, float32);
-                Assert.False(module.get_parameter("test").requires_grad);
+                Assert.False(module.get_parameter("test")!.requires_grad);
             }
         }
 
@@ -4496,7 +4498,23 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void TestMovingBatchNorm1D()
+        {
+            Device? device = torch.mps_is_available() ? torch.MPS : torch.cuda_is_available() ? torch.CUDA : null;
 
+            if (device is not null) {
+                using (var pool = BatchNorm1d(32)) {
+                    Assert.NotNull(pool.num_batches_tracked);
+                    Assert.False(pool.num_batches_tracked.IsInvalid);
+
+                    pool.to(device);
+
+                    Assert.NotNull(pool.num_batches_tracked);
+                    Assert.False(pool.num_batches_tracked.IsInvalid);
+                }
+            }
+        }
 
         [Fact]
         public void TestMovingBatchNorm2D()
@@ -4505,6 +4523,24 @@ namespace TorchSharp
 
             if (device is not null) {
                 using (var pool = BatchNorm2d(32)) {
+                    Assert.NotNull(pool.num_batches_tracked);
+                    Assert.False(pool.num_batches_tracked.IsInvalid);
+
+                    pool.to(device);
+
+                    Assert.NotNull(pool.num_batches_tracked);
+                    Assert.False(pool.num_batches_tracked.IsInvalid);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestMovingBatchNorm3D()
+        {
+            Device? device = torch.mps_is_available() ? torch.MPS : torch.cuda_is_available() ? torch.CUDA : null;
+
+            if (device is not null) {
+                using (var pool = BatchNorm3d(32)) {
                     Assert.NotNull(pool.num_batches_tracked);
                     Assert.False(pool.num_batches_tracked.IsInvalid);
 

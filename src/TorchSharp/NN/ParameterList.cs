@@ -33,35 +33,6 @@ namespace TorchSharp
                 _registered = true;
             }
 
-
-            protected internal override Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
-            {
-                base._to(deviceType, deviceIndex, non_blocking);
-                _toEpilog();
-                return this;
-            }
-
-            protected internal override Module _to(torch.Device device, torch.ScalarType dtype, bool non_blocking)
-            {
-                base._to(device, dtype, non_blocking);
-                _toEpilog();
-                return this;
-            }
-
-            protected internal override Module _to(torch.ScalarType dtype, bool non_blocking)
-            {
-                base._to(dtype, non_blocking);
-                _toEpilog();
-                return this;
-            }
-
-            void _toEpilog()
-            {
-                for (int i = 0; i < _list.Count; i++) {
-                    _list[i] = base.get_parameter($"{i}");
-                }
-            }
-
             public override IEnumerable<(string name, Parameter parameter)> named_parameters(bool recurse = true)
             {
                 return Enumerable.Range(0, _list.Count).Select(i => ($"{i}", _list[i]));
@@ -78,6 +49,46 @@ namespace TorchSharp
                     return _list[idx];
                 }
                 return null;
+            }
+
+            protected override void _toEpilog(torch.ScalarType? dtype, torch.Device device, bool non_blocking)
+            {
+                for (int i = 0; i < _list.Count; i++) {
+
+                    string name = $"{i}";
+                    var param = _list[i];
+
+                    using var grad = param.grad;
+
+                    if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
+                        (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                        continue;
+
+                    Parameter p;
+                    torch.ScalarType paramType =
+                        dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
+
+                    // When moving the parameter, we don't want the autograd to track this movement on the graph.
+                    // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
+                    // disable grad we would need to call .detach() on the moved tensor.
+                    using (var d = torch.no_grad()) {
+                        p = new Parameter(
+                            data: param.to(paramType, device ?? param.device),
+                            requires_grad: param.requires_grad);
+                        _ = p.DetachFromDisposeScope();
+
+                        // Copy the gradient over as well, if it exists
+                        if (grad is not null) {
+                            using var newGrad = grad.to(paramType, device ?? param.device)
+                                .with_requires_grad(grad.requires_grad);
+                            p.grad = newGrad;
+                        }
+                    }
+
+                    param?.Dispose();
+
+                    _list[i] = p;
+                }
             }
 
             private bool _registered = false;

@@ -30,7 +30,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnet18(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -86,7 +86,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnet34(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -142,7 +142,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnet50(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -197,7 +197,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.wide_resnet50_2(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -251,7 +251,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnext50_32x4d(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -305,7 +305,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnet101(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -360,7 +360,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnext101_32x8d(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -413,7 +413,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnext101_32x8d(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -466,7 +466,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnet101(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -521,7 +521,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.resnet152(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -825,7 +825,7 @@ namespace TorchSharp
 
                 } else {
 
-                    this.load(weights_file, skip: skipfc ? new[] { "fc.weight", "fc.bias" } : null);
+                    this.load(weights_file!, skip: skipfc ? new[] { "fc.weight", "fc.bias" } : null);
                 }
 
                 if (device != null && device.type != DeviceType.CPU)

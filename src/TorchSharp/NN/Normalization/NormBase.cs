@@ -3,6 +3,7 @@ using System;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
+
 #nullable enable
 namespace TorchSharp
 {
@@ -14,13 +15,13 @@ namespace TorchSharp
     {
         public abstract class NormBase : torch.nn.Module<Tensor, Tensor>
         {
-            public NormBase(long num_features, 
-                            double eps, 
-                            double? momentum, 
-                            bool affine, 
-                            bool track_running_stats, 
-                            Device? device, 
-                            ScalarType? dtype, 
+            public NormBase(long num_features,
+                            double eps,
+                            double? momentum,
+                            bool affine,
+                            bool track_running_stats,
+                            Device? device,
+                            ScalarType? dtype,
                             string name) : base(name)
             {
                 this.num_features = num_features;
@@ -115,15 +116,15 @@ namespace TorchSharp
                     ConditionallyRegisterBuffer(nameof(num_batches_tracked), _num_batches_tracked);
                 }
             }
-            
+
             public long num_features { get; private set; }
-            
+
             public double eps { get; set; }
-            
+
             public double? momentum { get; set; }
 
             public bool affine { get; private set; }
-            
+
             public bool track_running_stats { get; private set; }
 
             [ComponentName(Name = nameof(bias))]

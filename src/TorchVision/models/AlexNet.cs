@@ -24,7 +24,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.alexnet(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -105,7 +105,7 @@ namespace TorchSharp
 
                 if (!string.IsNullOrEmpty(weights_file)) {
 
-                    this.load(weights_file, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
+                    this.load(weights_file!, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
                 }
 
                 if (device != null && device.type != DeviceType.CPU)

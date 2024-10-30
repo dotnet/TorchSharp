@@ -498,12 +498,12 @@ namespace TorchSharp
             var model = new Module510(1, 32);
             model.call(torch.randn(16, 1, 32));
 
-            var w0 = model.get_parameter("stack.0.weight").clone();
-            var w1 = model.get_parameter("stack.1.weight").clone();
-            var b1 = model.get_parameter("stack.1.bias").clone();
-            var rm = model.get_buffer("stack.1.running_mean").clone();
-            var rv = model.get_buffer("stack.1.running_var").clone();
-            var nm = model.get_buffer("stack.1.num_batches_tracked").clone();
+            var w0 = model.get_parameter("stack.0.weight")!.clone();
+            var w1 = model.get_parameter("stack.1.weight")!.clone();
+            var b1 = model.get_parameter("stack.1.bias")!.clone();
+            var rm = model.get_buffer("stack.1.running_mean")!.clone();
+            var rv = model.get_buffer("stack.1.running_var")!.clone();
+            var nm = model.get_buffer("stack.1.num_batches_tracked")!.clone();
 
             model.load("bug510.dat");
 
@@ -520,7 +520,7 @@ namespace TorchSharp
             Assert.NotEqual(rm, rm_);
             Assert.NotEqual(rv, rv_);
             Assert.Equal(1, nm.item<long>());
-            Assert.Equal(0, nm_.item<long>());
+            Assert.Equal(0, nm_!.item<long>());
         }
 
         internal class Module510 : Module<Tensor, Tensor>
@@ -1612,7 +1612,7 @@ namespace TorchSharp
             Assert.NotNull(module.p.grad);
             Assert.NotNull(module.ln.weight!.grad);
             Assert.NotNull(module.ln.bias!.grad);
-            
+
         }
 
         [Fact]
@@ -1645,7 +1645,7 @@ namespace TorchSharp
             var y1 = torch.nn.functional.avg_pool1d(x, 2);
             Console.WriteLine(y1.metastr());
             Assert.Equal(64, y1.size(-1));
-            
+
             var y2 = torch.nn.AvgPool1d(2).call(x);
             Console.WriteLine(y2.metastr());
             Assert.Equal(64, y1.size(-1));
@@ -1674,7 +1674,7 @@ namespace TorchSharp
                     seq.save(stream);
             }
 
-            // This test will succeed if the following code doesn't crash. 
+            // This test will succeed if the following code doesn't crash.
             ms.Position = 0;
             using (var archive = new ZipArchive(ms)) {
                 seq.load(archive.GetEntry("seq")!.Open());

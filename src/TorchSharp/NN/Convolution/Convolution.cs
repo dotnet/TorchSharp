@@ -49,7 +49,7 @@ namespace TorchSharp
                 this.padding_mode = padding_mode;
 
                 // Set this so the constructor doesn't give a non-null error, and the actual value is set in the
-                // SetPadding function called right after. 
+                // SetPadding function called right after.
                 this._reversed_padding_repeated_twice = Array.Empty<long>();
                 if (padding_type.HasValue)
                     SetPadding(padding_type.Value);
