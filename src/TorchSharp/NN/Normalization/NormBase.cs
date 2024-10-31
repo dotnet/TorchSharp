@@ -66,6 +66,9 @@ namespace TorchSharp
             {
                 _weight?.Dispose();
                 _bias?.Dispose();
+                _running_mean?.Dispose();
+                _running_var?.Dispose();
+                _num_batches_tracked?.Dispose();
                 base.Dispose(disposing);
             }
 
@@ -115,6 +118,66 @@ namespace TorchSharp
                     _num_batches_tracked = value?.DetachFromDisposeScope();
                     ConditionallyRegisterBuffer(nameof(num_batches_tracked), _num_batches_tracked);
                 }
+            }
+
+            // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, device, _weight, out var w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, device, _bias, out var b)) {
+                    bias = b!;
+                }
+                if (_running_mean is not null && ReplaceBuffer(dtype, device, _running_mean, out Tensor? rm)) {
+                    running_mean = rm!;
+;               }
+                if (_running_var is not null && ReplaceBuffer(dtype, device, _running_var, out Tensor? rv)) {
+                    running_var = rv!;
+;               }
+                if (_num_batches_tracked is not null && ReplaceBuffer(dtype, device, _num_batches_tracked, out Tensor? nbt)) {
+                    num_batches_tracked = nbt!;
+;               }
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
+            {
+                var device = new Device(deviceType, deviceIndex);
+                if (_weight is not null && ReplaceParameter(_weight.dtype, device, _weight, out var w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(_bias.dtype, device, _bias, out var b)) {
+                    bias = b!;
+                }
+                if (_running_mean is not null && ReplaceBuffer(_running_mean.dtype, device, _running_mean, out Tensor? rm)) {
+                    running_mean = rm!;
+;               }
+                if (_running_var is not null && ReplaceBuffer(_running_var.dtype, device, _running_var, out Tensor? rv)) {
+                    running_var = rv!;
+;               }
+                if (_num_batches_tracked is not null && ReplaceBuffer(_num_batches_tracked.dtype, device, _num_batches_tracked, out Tensor? nbt)) {
+                    num_batches_tracked = nbt!;
+;               }
+                return this;
+            }
+
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out var w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, _bias.device, _bias, out var b)) {
+                    bias = b!;
+                }
+                if (_running_mean is not null && ReplaceBuffer(dtype, _running_mean.device, _running_mean, out Tensor? rm)) {
+                    running_mean = rm!;
+;               }
+                if (_running_var is not null && ReplaceBuffer(dtype, _running_var.device, _running_var, out Tensor? rv)) {
+                    running_var = rv!;
+;               }
+                if (_num_batches_tracked is not null && ReplaceBuffer(dtype, _num_batches_tracked.device, _num_batches_tracked, out Tensor? nbt)) {
+                    num_batches_tracked = nbt!;
+;               }
+                return this;
             }
 
             public long num_features { get; private set; }

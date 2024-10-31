@@ -253,44 +253,21 @@ namespace TorchSharp
 
                     var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-                    var propsByName = new Dictionary<string, PropertyInfo>();
-                    foreach (var p in props) {
-                        // There may be duplicates, and this just overwrites it.
-                        propsByName[p.Name] = p;
-                    }
+                    // var propsByName = new Dictionary<string, PropertyInfo>();
+                    // foreach (var p in props) {
+                    //     // There may be duplicates, and this just overwrites it.
+                    //     propsByName[p.Name] = p;
+                    // }
+
+                    var propsByName = props.ToDictionary(prop => prop.Name);
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
-                        using var grad = param.grad;
 
-                        if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
-                            (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
-                            continue;
-
-                        Parameter p;
-                        ScalarType paramType =
-                            dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
-
-                        // When moving the parameter, we don't want the autograd to track this movement on the graph.
-                        // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
-                        // disable grad we would need to call .detach() on the moved tensor.
-                        using (var d = torch.no_grad()) {
-                            p = new Parameter(
-                                data: param.to(paramType, device ?? param.device),
-                                requires_grad: param.requires_grad);
-                            _ = p.DetachFromDisposeScope();
-
-                            // Copy the gradient over as well, if it exists
-                            if (grad is not null) {
-                                using var newGrad = grad.to(paramType, device ?? param.device)
-                                    .with_requires_grad(grad.requires_grad);
-                                p.grad = newGrad;
-                            }
-                        }
+                        if (!ReplaceParameter(dtype, device, param, out var p)) continue;
 
                         if (propsByName.TryGetValue(name, out var property)) {
                             property.SetValue(this, p);
-                        }
-                        else {
+                        } else {
                             param?.Dispose();
 
                             ConditionallyRegisterParameter(name, p);
@@ -304,17 +281,11 @@ namespace TorchSharp
 
                     foreach (var (name, buffer) in named_buffers(false).ToList()) {
 
-                        if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
+                        if (!ReplaceBuffer(dtype, device, buffer, out var t)) continue;
 
-                        ScalarType bufferType =
-                            dtype != null && (buffer.dtype.IsFloatingPoint() || buffer.dtype.IsComplex()) ? dtype.Value : buffer.dtype;
-
-                        // Buffers don't get grads so we don't need to detach them afterwards
-                        var t = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true).DetachFromDisposeScope();
                         if (propsByName.TryGetValue(name, out var property)) {
                             property.SetValue(this, t);
-                        }
-                        else {
+                        } else {
                             ConditionallyRegisterBuffer(name, t);
                             if (fieldsByComponentName.TryGetValue(name, out var field))
                                 field.SetValue(this, t);
@@ -325,6 +296,51 @@ namespace TorchSharp
                         _deviceType = device.type;
                         _deviceIndex = device.index;
                     }
+                }
+
+                protected static bool  ReplaceBuffer(ScalarType? dtype, Device? device, Tensor buffer, out Tensor? result)
+                {
+                    result = null;
+
+                    if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) return false;
+
+                    ScalarType bufferType =
+                        dtype != null && (buffer.dtype.IsFloatingPoint() || buffer.dtype.IsComplex()) ? dtype.Value : buffer.dtype;
+
+                    // Buffers don't get grads so we don't need to detach them afterwards
+                    result = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true).DetachFromDisposeScope();
+                    return true;
+                }
+
+                protected static bool ReplaceParameter(ScalarType? dtype, Device? device, Parameter param, out Parameter? p)
+                {
+                    Tensor? grad = param.grad;
+                    p = null;
+
+                    if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
+                        (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                        return false;
+
+                    ScalarType paramType =
+                        dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
+
+                    // When moving the parameter, we don't want the autograd to track this movement on the graph.
+                    // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
+                    // disable grad we would need to call .detach() on the moved tensor.
+                    using (var d = torch.no_grad()) {
+                        p = new Parameter(
+                            data: param.to(paramType, device ?? param.device),
+                            requires_grad: param.requires_grad);
+                        _ = p.DetachFromDisposeScope();
+
+                        // Copy the gradient over as well, if it exists
+                        if (grad is not null) {
+                            using var newGrad = grad.to(paramType, device ?? param.device)
+                                .with_requires_grad(grad.requires_grad);
+                            p.grad = newGrad;
+                        }
+                    }
+                    return true;
                 }
 
                 private static IEnumerable<FieldInfo> GetFieldsRecursive(Type type, BindingFlags bindingFlags) {

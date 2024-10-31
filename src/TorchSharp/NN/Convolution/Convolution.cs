@@ -154,6 +154,39 @@ namespace TorchSharp
                 }
             }
 
+            // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
+            {
+                var device = new Device(deviceType, deviceIndex);
+                if (_weight is not null && ReplaceParameter(_weight.dtype, device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(_bias.dtype, device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, _bias.device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
             [ComponentName(Name = BiasComponentName)]
             protected Parameter? _bias;
             [ComponentName(Name = WeightComponentName)]

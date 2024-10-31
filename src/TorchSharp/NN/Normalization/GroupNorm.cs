@@ -33,7 +33,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                if (tensor.Dimensions < 3) 
+                if (tensor.Dimensions < 3)
                     throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
                 return F.group_norm(tensor, num_groups, weight, bias, eps);
             }
@@ -64,6 +64,39 @@ namespace TorchSharp
                         ConditionallyRegisterParameter(nameof(weight), _weight);
                     }
                 }
+            }
+
+            // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
+            {
+                var device = new Device(deviceType, deviceIndex);
+                if (_weight is not null && ReplaceParameter(_weight.dtype, device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(_bias.dtype, device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, _bias.device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
             }
 
             [ComponentName(Name = nameof(bias))]
