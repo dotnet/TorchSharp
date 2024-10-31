@@ -13,7 +13,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxPool1D module.
         /// </summary>
-        public sealed class MaxPool1d : ParamLessModule<Tensor, Tensor>
+        public sealed class MaxPool1d : ParameterLessModule<Tensor, Tensor>
         {
             internal MaxPool1d(long kernel_size, long? stride = null, long? padding = null, long? dilation = null, bool ceil_mode = false) : base(nameof(MaxPool1d))
             {

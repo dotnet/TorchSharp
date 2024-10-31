@@ -13,7 +13,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an Upsample module.
         /// </summary>
-        public sealed class Upsample : ParamLessModule<Tensor, Tensor>
+        public sealed class Upsample : ParameterLessModule<Tensor, Tensor>
         {
             internal Upsample(long[]? size, double[]? scale_factor, UpsampleMode mode, bool? align_corners, bool? recompute_scale_factor) : base(nameof(Upsample))
             {
@@ -50,12 +50,6 @@ namespace TorchSharp
 
             private long[]? _size;
             private double[]? _scale_factor;
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -238,5 +232,5 @@ namespace TorchSharp
             }
         }
     }
-    
+
 }

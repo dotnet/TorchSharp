@@ -121,7 +121,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class DropBlock2d : torch.nn.Module<Tensor,Tensor>
+        public class DropBlock2d : ParameterLessModule<Tensor,Tensor>
         {
             public DropBlock2d(double p, long block_size, bool inplace = false, double eps = 1e-6) : base(nameof(DropBlock2d))
             {
@@ -137,19 +137,13 @@ namespace TorchSharp
                 return torchvision.ops.drop_block2d(input, p, block_size, inplace, eps, training);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-
             private bool inplace;
             private double p;
             private long block_size;
             private double eps;
         }
 
-        public class DropBlock3d : torch.nn.Module<Tensor, Tensor>
+        public class DropBlock3d : ParameterLessModule<Tensor, Tensor>
         {
             public DropBlock3d(double p, long block_size, bool inplace = false, double eps = 1e-6) : base(nameof(DropBlock3d))
             {
@@ -164,12 +158,6 @@ namespace TorchSharp
             {
                 return torchvision.ops.drop_block3d(input, p, block_size, inplace, eps, training);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             private bool inplace;
             private double p;

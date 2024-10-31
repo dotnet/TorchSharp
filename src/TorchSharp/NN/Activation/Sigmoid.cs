@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sigmoid module.
         /// </summary>
-        public sealed class Sigmoid : ParamLessModule<Tensor, Tensor>
+        public sealed class Sigmoid : ParameterLessModule<Tensor, Tensor>
         {
             internal Sigmoid(bool inplace) : base(nameof(Sigmoid))
             {
@@ -23,12 +23,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.sigmoid(tensor, inplace);
             }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public bool inplace {get; set; }
         }

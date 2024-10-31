@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LPPool2D module.
         /// </summary>
-        public sealed class LPPool2d : ParamLessModule<Tensor, Tensor>
+        public sealed class LPPool2d : ParameterLessModule<Tensor, Tensor>
         {
             internal LPPool2d(double norm_type, long[] kernel_size, long[] stride = null, bool ceil_mode = false) : base(nameof(LPPool2d))
             {

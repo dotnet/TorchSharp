@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public sealed class PixelShuffle : ParamLessModule<Tensor, Tensor>
+        public sealed class PixelShuffle : ParameterLessModule<Tensor, Tensor>
         {
             internal PixelShuffle(long upscale_factor) : base(nameof(PixelShuffle))
             {
@@ -28,7 +28,7 @@ namespace TorchSharp
             {
                 return torch.nn.functional.pixel_shuffle(input, this.upscale_factor);
             }
-            
+
             public long upscale_factor { get; set; }
         }
     }

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a log softmax module.
         /// </summary>
-        public sealed class LogSoftmax : ParamLessModule<Tensor, Tensor>
+        public sealed class LogSoftmax : ParameterLessModule<Tensor, Tensor>
         {
             internal LogSoftmax(long dim) : base(nameof(LogSoftmax))
             {
@@ -24,12 +24,6 @@ namespace TorchSharp
                 return torch.nn.functional.log_softmax(tensor, dim);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-            
             public long dim { get; set; }
         }
     }

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LogSigmoid module.
         /// </summary>
-        public sealed class LogSigmoid : ParamLessModule<Tensor, Tensor>
+        public sealed class LogSigmoid : ParameterLessModule<Tensor, Tensor>
         {
             internal LogSigmoid() : base(nameof(LogSigmoid))
             {
@@ -22,12 +22,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.logsigmoid(tensor);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
     public static partial class torch

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveMaxPool3D module.
         /// </summary>
-        public sealed class AdaptiveMaxPool3d : ParamLessModule<Tensor, Tensor>
+        public sealed class AdaptiveMaxPool3d : ParameterLessModule<Tensor, Tensor>
         {
             internal AdaptiveMaxPool3d(long[] output_size) : base(nameof(AdaptiveMaxPool3d))
             {

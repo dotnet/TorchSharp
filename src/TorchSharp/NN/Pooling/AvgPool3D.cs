@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AvgPool3D module.
         /// </summary>
-        public sealed class AvgPool3d : ParamLessModule<Tensor, Tensor>
+        public sealed class AvgPool3d : ParameterLessModule<Tensor, Tensor>
         {
             internal AvgPool3d(long[] kernel_size, long[] stride = null, long[] padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null) : base(nameof(AvgPool3d))
             {

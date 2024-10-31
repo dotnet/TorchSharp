@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveAvgPool3D module.
         /// </summary>
-        public sealed class AdaptiveAvgPool3d : ParamLessModule<Tensor, Tensor>
+        public sealed class AdaptiveAvgPool3d : ParameterLessModule<Tensor, Tensor>
         {
             internal AdaptiveAvgPool3d(long[] output_size) : base(nameof(AdaptiveAvgPool3d))
             {

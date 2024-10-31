@@ -14,7 +14,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReLU6 module.
         /// </summary>
-        public sealed class ReLU6 : ParamLessModule<Tensor, Tensor>
+        public sealed class ReLU6 : ParameterLessModule<Tensor, Tensor>
         {
             internal ReLU6(bool inplace) : base(nameof(ReLU6))
             {
@@ -26,12 +26,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.relu6(tensor, inplace);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public bool inplace {get; set; }
         }

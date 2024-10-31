@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmax2d module.
         /// </summary>
-        public sealed class Softmax2d : ParamLessModule<Tensor, Tensor>
+        public sealed class Softmax2d : ParameterLessModule<Tensor, Tensor>
         {
             internal Softmax2d() : base(nameof(Softmax2d)) { }
 
@@ -20,12 +20,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.softmax2d(tensor);
             }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
     public static partial class torch

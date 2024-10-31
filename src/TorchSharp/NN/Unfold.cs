@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Unfold : ParamLessModule<Tensor, Tensor>
+        public sealed class Unfold : ParameterLessModule<Tensor, Tensor>
         {
             internal Unfold((long, long) kernel_size, (long, long) dilation, (long, long) padding, (long, long) stride) : base(nameof(Unfold))
             {
@@ -29,13 +29,6 @@ namespace TorchSharp
             public (long, long) dilation { get; set; }
             public (long, long) padding { get; set; }
             public (long, long) stride { get; set; }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-
         }
     }
 

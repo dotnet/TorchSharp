@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softplus module.
         /// </summary>
-        public sealed class Softplus : ParamLessModule<Tensor, Tensor>
+        public sealed class Softplus : ParameterLessModule<Tensor, Tensor>
         {
             internal Softplus(int beta = 1, int threshold = 20) : base(nameof(Softplus))
             {
@@ -25,12 +25,6 @@ namespace TorchSharp
                 return torch.nn.functional.softplus(tensor, beta, threshold);
             }
 
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-            
             public int beta {get; set;}
             public int threshold {get; set;}
         }

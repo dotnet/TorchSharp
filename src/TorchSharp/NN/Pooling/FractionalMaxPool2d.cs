@@ -13,7 +13,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a FractionalMaxPool2D module.
         /// </summary>
-        public sealed class FractionalMaxPool2d : ParamLessModule<Tensor, Tensor>
+        public sealed class FractionalMaxPool2d : ParameterLessModule<Tensor, Tensor>
         {
             internal FractionalMaxPool2d(long[] kernel_size, long[] output_size = null, double[] output_ratio = null) : base(nameof(FractionalMaxPool2d))
             {

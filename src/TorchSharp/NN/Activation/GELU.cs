@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GELU module.
         /// </summary>
-        public sealed class GELU : ParamLessModule<Tensor, Tensor>
+        public sealed class GELU : ParameterLessModule<Tensor, Tensor>
         {
             internal GELU(bool inplace) : base(nameof(GELU))
             {
@@ -23,12 +23,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.gelu(tensor, inplace);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public bool inplace {get; set; }
         }

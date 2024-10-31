@@ -12,10 +12,10 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Threshold module.
         /// </summary>
-        public sealed class Threshold : ParamLessModule<Tensor, Tensor>
+        public sealed class Threshold : ParameterLessModule<Tensor, Tensor>
         {
-            internal Threshold(double threshold, double value, bool inplace) : base(nameof(Threshold)) 
-            { 
+            internal Threshold(double threshold, double value, bool inplace) : base(nameof(Threshold))
+            {
                 this.inplace = inplace;
                 this.threshold = threshold;
                 this.value = value;
@@ -26,12 +26,6 @@ namespace TorchSharp
                 return torch.nn.functional.threshold(tensor, threshold, value, inplace);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-            
             public double threshold {get; set;}
 
             public double value {get; set;}

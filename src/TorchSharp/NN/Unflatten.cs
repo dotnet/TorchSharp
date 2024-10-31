@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an unflattening operation.
         /// </summary>
-        public sealed class Unflatten : ParamLessModule<Tensor, Tensor>
+        public sealed class Unflatten : ParameterLessModule<Tensor, Tensor>
         {
             internal Unflatten(long dim, long[] unflattened_size) : base(nameof(Unflatten))
             {
@@ -25,12 +25,6 @@ namespace TorchSharp
                 return tensor.unflatten(dim, unflattened_size);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-            
             public long dim { get; set; }
             public long[] unflattened_size { get; set; }
         }

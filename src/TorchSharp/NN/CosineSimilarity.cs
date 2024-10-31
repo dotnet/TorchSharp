@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// A cosine similarity module.
         /// </summary>
-        public sealed class CosineSimilarity : ParamLessModule<Tensor, Tensor, Tensor>
+        public sealed class CosineSimilarity : ParameterLessModule<Tensor, Tensor, Tensor>
         {
             internal CosineSimilarity(long dim = 1, double eps = 1e-8) : base(nameof(CosineSimilarity))
             {

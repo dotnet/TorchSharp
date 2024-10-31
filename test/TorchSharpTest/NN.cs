@@ -6784,7 +6784,7 @@ namespace TorchSharp
             Assert.Throws<InvalidOperationException>(() => cnp.register_parameter("test", new Parameter(torch.rand(10))));
         }
 
-        class CustomNoParameters : ParamLessModule<Tensor, Tensor>
+        class CustomNoParameters : ParameterLessModule<Tensor, Tensor>
         {
             public CustomNoParameters(string name) : base(name)
             {

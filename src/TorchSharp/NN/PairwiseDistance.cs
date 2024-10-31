@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// Computes the pairwise distance between vectors using the p-norm.
         /// </summary>
-        public sealed class PairwiseDistance : ParamLessModule<Tensor, Tensor, Tensor>
+        public sealed class PairwiseDistance : ParameterLessModule<Tensor, Tensor, Tensor>
         {
             public double norm { get; set; }
             public double eps { get; set; }
@@ -31,12 +31,6 @@ namespace TorchSharp
             {
                 return nn.functional.pairwise_distance(input1, input2, norm, eps, keepdim);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 

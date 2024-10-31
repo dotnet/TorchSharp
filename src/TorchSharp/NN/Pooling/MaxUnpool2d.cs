@@ -13,7 +13,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxUnpool2D module.
         /// </summary>
-        public sealed class MaxUnpool2d : ParamLessModule<Tensor, Tensor, long[], Tensor>
+        public sealed class MaxUnpool2d : ParameterLessModule<Tensor, Tensor, long[], Tensor>
         {
             internal MaxUnpool2d(long[] kernel_size, long[] stride = null, long[] padding = null) : base(nameof(MaxUnpool2d))
             {

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardtanh module.
         /// </summary>
-        public sealed class Hardtanh : ParamLessModule<Tensor, Tensor>
+        public sealed class Hardtanh : ParameterLessModule<Tensor, Tensor>
         {
             internal Hardtanh(double min_val = -1.0, double max_val = 1.0, bool inplace = false) : base(nameof(Hardtanh))
             {
@@ -30,12 +30,6 @@ namespace TorchSharp
             {
                 return typeof(Hardtanh).Name;
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public double min_val { get; set; }
             public double max_val { get; set; }

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module for 2d/3d convolutational layers.
         /// </summary>
-        public sealed class FeatureAlphaDropout : ParamLessModule<Tensor, Tensor>
+        public sealed class FeatureAlphaDropout : ParameterLessModule<Tensor, Tensor>
         {
             internal FeatureAlphaDropout(double p = 0.5, bool inplace = false) : base(nameof(FeatureAlphaDropout))
             {
@@ -24,12 +24,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.feature_alpha_dropout(input, this.p, this.training, this.inplace);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public bool inplace { get; set; }
             public double p { get; set; }

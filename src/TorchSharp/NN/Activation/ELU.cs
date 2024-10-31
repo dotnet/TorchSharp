@@ -12,10 +12,10 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ELU module.
         /// </summary>
-        public sealed class ELU : ParamLessModule<Tensor, Tensor>
+        public sealed class ELU : ParameterLessModule<Tensor, Tensor>
         {
             internal ELU(double alpha, bool inplace) : base(nameof(ELU))
-            { 
+            {
                 this.alpha = alpha;
                 this.inplace = inplace;
             }
@@ -25,12 +25,6 @@ namespace TorchSharp
                 return torch.nn.functional.elu(tensor, alpha, inplace);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-            
             public double alpha {get; set;}
 
             public bool inplace {get; set;}

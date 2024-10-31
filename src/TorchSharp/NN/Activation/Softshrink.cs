@@ -12,10 +12,10 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softshrink module.
         /// </summary>
-        public sealed class Softshrink : ParamLessModule<Tensor, Tensor>
+        public sealed class Softshrink : ParameterLessModule<Tensor, Tensor>
         {
-            internal Softshrink(double lambda = 0.5) : base(nameof(Softshrink)) 
-            { 
+            internal Softshrink(double lambda = 0.5) : base(nameof(Softshrink))
+            {
                 this.lambda = lambda;
             }
 
@@ -23,12 +23,6 @@ namespace TorchSharp
             {
                 return torch.nn.functional.softshrink(tensor, lambda);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             public double lambda {get; set; }
         }

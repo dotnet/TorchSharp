@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LPPool1D module.
         /// </summary>
-        public sealed class LPPool1d : ParamLessModule<Tensor, Tensor>
+        public sealed class LPPool1d : ParameterLessModule<Tensor, Tensor>
         {
             internal LPPool1d(double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false) : base(nameof(LPPool1d))
             {
@@ -65,7 +65,7 @@ namespace TorchSharp
                 public static Tensor lp_pool1d(Tensor input, double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
                 {
                     var kernels = new[] { kernel_size };
-                    var strides = stride.HasValue ? new[] { stride.Value } : Array.Empty<long>(); 
+                    var strides = stride.HasValue ? new[] { stride.Value } : Array.Empty<long>();
 
                     unsafe {
                         fixed (long* pkernel_size = kernels, pstrides = strides) {
