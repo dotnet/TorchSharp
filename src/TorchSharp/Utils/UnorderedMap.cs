@@ -81,8 +81,10 @@ namespace TorchSharp.Utils
         }
         public new TValue this[TKey tk] {
             get {
-                /*if (!this.ContainsKey(tk) && default_dict == null)
-                    return default_dict;*/
+                if (base.Count == 0 && !this.ContainsKey(tk) && default_dict != null) {
+                    base[tk] = default_dict;
+                    return base[tk];
+                }
                 if (this.ContainsKey(tk))
                     return base[tk];
                 var t = typeof(TValue);

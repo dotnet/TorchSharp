@@ -7,13 +7,18 @@ using TorchSharp.Modules;
 using Xunit;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-namespace TorchSharpTest
+namespace TorchSharpTest.WithCudaBinaries
 {
     public class TestGradScaler
     {
-        internal DeviceType device = DeviceType.CPU;
+        //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13
+        internal DeviceType device = DeviceType.CUDA;
         internal ScalarType dtype = ScalarType.Float32;
-
+        private static void CheckCUDA()
+        {
+            if (!torch.cuda_is_available())
+                throw new Exception("CUDA IS NOT AVAILABLE");
+        }
         private (Sequential modctrl, Sequential modscal, torch.optim.Optimizer optctrl, torch.optim.Optimizer optscal) create_scaling_model_optimizer(DeviceType dev = DeviceType.CUDA)
         {
             var mod_control =Sequential(torch.nn.Linear(8,8), torch.nn.Linear(8, 8));
@@ -87,10 +92,11 @@ namespace TorchSharpTest
         [TestOf(nameof(GradScaler))]
         public void TestGradScalingUnscaleSparse()
         {
+            CheckCUDA();
             var scaler = new GradScaler(new Device(device));
             var inv_scale = torch.full(1, 0.25, dtype, new Device(device));
             var found_inf = torch.empty(1, dtype, new Device(device));
-            var cur = found_inf.device;
+            var cur = found_inf.device.type;
             var i = torch.tensor(new long[,] { { 0, 1, 1 }, { 2, 0, 2 } }, ScalarType.Int64, new Device(DeviceType.CUDA));
             var v = torch.tensor(new float[] { 16.0f,32.0f,64.0f}, ScalarType.Float32, new Device(DeviceType.CUDA));
             var s = torch.sparse_coo_tensor(i,v, new long[]{2,3}, dtype, new Device(DeviceType.CUDA));
@@ -98,6 +104,7 @@ namespace TorchSharpTest
             var p = s.clone();
             Assert.True(p.is_sparse);
             var optA = torch.optim.SGD(new[] { new Parameter(p) }, 1.0);
+            
             p.grad = s.clone();
             found_inf.zero_();
             found_inf = scaler.unscale_grads(optA, inv_scale, found_inf, false)[cur];
@@ -261,18 +268,19 @@ namespace TorchSharpTest
                         optimizer.zero_grad();
                         var output = model.forward(ipair.Key);
                         var loss = loss_fn.forward(output, ipair.Value);
-                        List<Tensor> grad_params = new List<Tensor>();
+                        IList<Tensor> grad_params = new List<Tensor>();
                         if (try_scaling_api) {
                             //throw new NotImplementedException();
                             //TODO: RESEARCH TORCH::AUTOGRAD:GRAD THE SECOND ARGUMENT SHOULD HAVE model->parameters();
-                            //grad_params = torch.autograd.grad(new List<Tensor>(){scaler.scale(loss)}, model.parameters())
+                            //grad_params = torch.autograd.grad(new List<Tensor>() { scaler.scale(loss) }, model.parameters());
+                            grad_params = torch.autograd.grad(new List<Tensor>() { scaler.scale(loss) }, model.parameters(),create_graph:true);
                             var inv_scale = 1.0f / scaler.get_scale();
                             for (int i = 0; i < grad_params.Count; i++)
                                 grad_params[i] *= inv_scale;
                         } else {
                             //throw new NotImplementedException();
                             //TODO: RESEARCH TORCH::AUTOGRAD:GRAD THE SECOND ARGUMENT SHOULD HAVE model->parameters();
-                            //grad_params = torch.autograd.grad(new List<Tensor>(){scaler.scale(loss)}, model.parameters())
+                            grad_params = torch.autograd.grad(new List<Tensor>() { scaler.scale(loss) }, model.parameters(), create_graph: true);
                         }
 
                         var grad_norm = torch.zeros(new long[] { 1 }).to(ipair.Key.device);

@@ -13,25 +13,31 @@ namespace TorchSharpTest.WithCudaBinaries
     {
         internal const ScalarType f32 = ScalarType.Float32;
         internal const ScalarType f16 = ScalarType.Float16;
+        internal static DeviceType availableDevice;
         private static void CheckCUDA()
         {
-            if (!torch.cuda_is_available())
-                throw new Exception("CUDA IS NOT AVAILABLE");
+            if (!torch.cuda_is_available()) {
+                availableDevice = DeviceType.CPU;
+                //throw new Exception("CUDA IS NOT AVAILABLE");
+            } else {
+                availableDevice= DeviceType.CUDA;
+            }
+
             AutocastMode.GetInstance(true);
             Assert.True(AutocastMode.IsAutocastEnabled());
         }
         private Tensor randnf32cuda(long dim0)
         {
-            return torch.randn(dim0, f32, new Device(DeviceType.CUDA));
+            return torch.randn(dim0, f32, new Device(availableDevice));
         }
 
         private Tensor randnf32cuda(long dim0, long dim1)
         {
-            return torch.randn(dim0, dim1, f32, new Device(DeviceType.CUDA));
+            return torch.randn(dim0, dim1, f32, new Device(availableDevice));
         }
         private Tensor randnf32cuda(long dim0, long dim1, long dim2)
         {
-            return torch.randn(dim0, dim1,dim2, f32, new Device(DeviceType.CUDA));
+            return torch.randn(dim0, dim1,dim2, f32, new Device(availableDevice));
         }
         [Fact]
         [TestOf("AutocastF16")]
@@ -67,7 +73,7 @@ namespace TorchSharpTest.WithCudaBinaries
             Assert.Equal(ScalarType.Float16, f.dtype);
             Assert.Equal(ScalarType.Float16, g.dtype);
             Assert.Equal(ScalarType.Float16, h.dtype);
-            Assert.Equal(ScalarType.Float16, i.dtype);
+            Assert.Equal(ScalarType.Float16, i.dtype); 
             Assert.Equal(ScalarType.Float16, j.dtype);*/
             //throw new NotImplementedException();
         }
@@ -94,8 +100,8 @@ namespace TorchSharpTest.WithCudaBinaries
             var mat2 = randnf32cuda(3, 3);
 
             var M3 = randnf32cuda(4, 3);
-            var vec1 = torch.rand(4, f32, new Device(DeviceType.CUDA));
-            var vec2 = torch.rand(3, f32, new Device(DeviceType.CUDA));
+            var vec1 = torch.rand(4, f32, new Device(availableDevice));
+            var vec2 = torch.rand(3, f32, new Device(availableDevice));
             using (AutocastMode.GetInstance().Enter()) {
                 var c = cm.matmul(dm);
                 var d = M.addbmm(batch1, batch2);
@@ -124,16 +130,16 @@ namespace TorchSharpTest.WithCudaBinaries
         {
             CheckCUDA();
             //Like GRUCell, LSTM, RNN
-            var l = Linear(4, 4).to(DeviceType.CUDA);
-            var gru = GRUCell(4, 4).to(DeviceType.CUDA);
-            var lstm = LSTMCell(10, 20).to(DeviceType.CUDA);
-            var rnn = RNNCell(10,20).to(DeviceType.CUDA);
+            var l = Linear(4, 4).to(availableDevice);
+            var gru = GRUCell(4, 4).to(availableDevice);
+            var lstm = LSTMCell(10, 20).to(availableDevice);
+            var rnn = RNNCell(10,20).to(availableDevice);
             
-            var a = torch.rand(4,4, f32, new Device(DeviceType.CUDA));
-            var b = torch.rand(4,4, f32, new Device(DeviceType.CUDA));
-            var inpRNN = torch.rand(3,10, f32, new Device(DeviceType.CUDA));
-            var hx = torch.rand(3,20, f32, new Device(DeviceType.CUDA));
-            var cx = torch.rand(3,20, f32, new Device(DeviceType.CUDA));
+            var a = torch.rand(4,4, f32, new Device(availableDevice));
+            var b = torch.rand(4,4, f32, new Device(availableDevice));
+            var inpRNN = torch.rand(3,10, f32, new Device(availableDevice));
+            var hx = torch.rand(3,20, f32, new Device(availableDevice));
+            var cx = torch.rand(3,20, f32, new Device(availableDevice));
 
             Assert.Equal(f32, a.dtype);
             Assert.Equal(f32, b.dtype);
@@ -161,8 +167,8 @@ namespace TorchSharpTest.WithCudaBinaries
         {
             //Like Linear, prelu, etc.
             CheckCUDA();
-            var pr = PReLU(8).to(DeviceType.CUDA);
-            var a = torch.rand(8, 8, ScalarType.Float32, new Device(DeviceType.CUDA));
+            var pr = PReLU(8).to(availableDevice);
+            var a = torch.rand(8, 8, ScalarType.Float32, new Device(availableDevice));
             Assert.Equal(f32, a.dtype);
             using (AutocastMode.GetInstance().Enter()) {
                 a = pr.forward(a);
@@ -180,13 +186,13 @@ namespace TorchSharpTest.WithCudaBinaries
         {
             CheckCUDA();
             //Conv 1d,2d,3d, conv_transpose 1d,2d,3d
-            var c1 =Conv1d(4,4, 3).to(DeviceType.CUDA);
-            var c2 =Conv2d(4,4, 3).to(DeviceType.CUDA);
-            var c3 =Conv3d(4,4, 3).to(DeviceType.CUDA);
+            var c1 =Conv1d(4,4, 3).to(availableDevice);
+            var c2 =Conv2d(4,4, 3).to(availableDevice);
+            var c3 =Conv3d(4,4, 3).to(availableDevice);
 
-            var a = torch.rand(4, 4, f32, new Device(DeviceType.CUDA));
-            var b = torch.rand(4, 4,3, f32, new Device(DeviceType.CUDA));
-            var c = torch.rand(4, 4,4,3, f32, new Device(DeviceType.CUDA));
+            var a = torch.rand(4, 4, f32, new Device(availableDevice));
+            var b = torch.rand(4, 4,3, f32, new Device(availableDevice));
+            var c = torch.rand(4, 4,4,3, f32, new Device(availableDevice));
             Assert.Equal(f32, a.dtype);
             using (AutocastMode.GetInstance().Enter()) {
                 a = c1.forward(a);
@@ -215,7 +221,7 @@ namespace TorchSharpTest.WithCudaBinaries
         {
             CheckCUDA();
             //Purpose rand f16 because inside autocast with these operations should return as f32
-            var a = torch.rand(3, 2, 4, f16, new Device(DeviceType.CUDA));
+            var a = torch.rand(3, 2, 4, f16, new Device(availableDevice));
             /*var b = torch.rand(3, 2, 4, f16, new Device(DeviceType.CUDA));
             var vec1 = torch.rand(3, f16, new Device(DeviceType.CUDA));
             var vec2 = torch.rand(3, f16, new Device(DeviceType.CUDA));*/
@@ -238,7 +244,7 @@ namespace TorchSharpTest.WithCudaBinaries
         public void TestAutocastF32Logarithmic()
         {
             CheckCUDA();
-            var a = torch.rand(3, 2, 4, f16, new Device(DeviceType.CUDA));
+            var a = torch.rand(3, 2, 4, f16, new Device(availableDevice));
             /*var b = torch.rand(3, 2, 4, f16, new Device(DeviceType.CUDA));
             var vec1 = torch.rand(3, f16, new Device(DeviceType.CUDA));
             var vec2 = torch.rand(3, f16, new Device(DeviceType.CUDA));*/
@@ -272,12 +278,12 @@ namespace TorchSharpTest.WithCudaBinaries
         public void TestAutocastF32Loss()
         {
             CheckCUDA();
-            var a = torch.rand(3, 2, 4, f16, new Device(DeviceType.CUDA));
-            var b = torch.rand(3, 2, 4, f16, new Device(DeviceType.CUDA));
-            var vec1 = torch.rand(3, f16, new Device(DeviceType.CUDA));
-            var vec2 = torch.rand(3, f16, new Device(DeviceType.CUDA));
+            var a = torch.rand(3, 2, 4, f16, new Device(availableDevice));
+            var b = torch.rand(3, 2, 4, f16, new Device(availableDevice));
+            var vec1 = torch.rand(3, f16, new Device(availableDevice));
+            var vec2 = torch.rand(3, f16, new Device(availableDevice));
             using (AutocastMode.AutoCastEnter()) {
-                var c = torch.nn.L1Loss().to(DeviceType.CUDA).forward(a,b);
+                var c = torch.nn.L1Loss().to(availableDevice).forward(a,b);
                 Assert.Equal(f32, c.dtype);
             }
         }

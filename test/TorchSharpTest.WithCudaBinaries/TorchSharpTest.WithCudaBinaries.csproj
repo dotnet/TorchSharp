@@ -26,6 +26,8 @@
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="..\TorchSharpTest\TestAutocast.cs" Link="TestAutocast.cs" />
+    <Compile Include="..\TorchSharpTest\TestGradScaler.cs" Link="TestGradScaler.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestJacobian.cs" Link="TestJacobian.cs" />
     <Compile Include="..\TorchSharpTest\TestJIT.cs" Link="TestJIT.cs" />

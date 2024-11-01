@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using TorchSharp.Modules;
 using TorchSharp.Utils;
 
@@ -28,7 +30,7 @@ namespace TorchSharp.Amp
         private UnorderedMap<string, object> _refresh_per_optimizer_state()
         {
             return new UnorderedMap<string, object>() {
-                { "state", OptState.Ready }, { "found_inf_per_device", null}
+                { "stage", OptState.Ready }, { "found_inf_per_device", null}
             };
         }
         //https://github.com/pytorch/pytorch/blob/main/torch/amp/grad_scaler.py
@@ -36,7 +38,7 @@ namespace TorchSharp.Amp
             float backoff_factor = 0.5f, int growth_interval = 2000, bool enabled = true)
         {
             //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13
-            Debug.Assert(dev == torch.CPU || dev == torch.CUDA);
+            Debug.Assert(dev.type == DeviceType.CPU || dev.type== DeviceType.CUDA);
             device = dev;
             Enabled = enabled;
             InitScale = init_scale;
@@ -56,16 +58,18 @@ namespace TorchSharp.Amp
         private Tuple<torch.Tensor, torch.Tensor> check_scale_growth_tracker(string name)
         {
             var fix = "This may indicate your script did not use scaler.scale(loss or outputs) earlier in the iteration.";
-            Debug.Assert(_scale is null, $"Attempted {name} but {nameof(_scale)} is None {fix}");
-            Debug.Assert(_growth_tracker is null, $"Attempted {name} but {nameof(_growth_tracker)} is None {fix}");
+            Debug.Assert(!(_scale is null), $"Attempted {name} but {nameof(_scale)} is None {fix}");
+            Debug.Assert(!(_growth_tracker is null), $"Attempted {name} but {nameof(_growth_tracker)} is None {fix}");
             return new Tuple<torch.Tensor, torch.Tensor>(_scale, _growth_tracker);
         }
 
 
         private void LazyInitScaleGrowthTracker(torch.Device dev)
         {
-            _scale = torch.full(0, InitScale, torch.ScalarType.Float32, device: dev);
-            _growth_tracker = torch.full(0, InitGrowthTracker, torch.ScalarType.Int32, device: dev);
+            Debug.Assert(_growth_tracker is null, "_growth_tracker initialized before _scale");
+
+            _scale = torch.full(1, InitScale, torch.ScalarType.Float32, device: dev);
+            _growth_tracker = torch.full(1, InitGrowthTracker, torch.ScalarType.Int32, device: dev);
         }
         //private Dictionary<string, object>
 
@@ -89,17 +93,17 @@ namespace TorchSharp.Amp
         {
             private readonly torch.Tensor master;
 
-            internal readonly Dictionary<torch.Device, torch.Tensor> per_device_tensors = new Dictionary<torch.Device, torch.Tensor>();
+            internal readonly Dictionary<DeviceType, torch.Tensor> per_device_tensors = new Dictionary<DeviceType, torch.Tensor>();
             public MultiDeviceReplicator(torch.Tensor master_tensor)
             {
                 master = master_tensor;
             }
 
-            public torch.Tensor Get(torch.Device device)
+            public torch.Tensor Get(DeviceType device)
             {
                 torch.Tensor retval=null;
                 if (!per_device_tensors.ContainsKey(device)) {
-                    retval = master.to(device, true, non_blocking: true);
+                    retval = master.to(new torch.Device(device), true, non_blocking: true);
                     per_device_tensors.Add(device, retval);
                 }
                 return retval;
@@ -115,7 +119,7 @@ namespace TorchSharp.Amp
                 }
                 stash.Add(new MultiDeviceReplicator(_scale));
             }
-            return scale * stash[0].Get(scale.device);
+            return scale * stash[0].Get(scale.device.type);
         }
 
         private void apply_scale(IList<torch.Tensor> scales)
@@ -123,51 +127,51 @@ namespace TorchSharp.Amp
             for (int i = 0; i < scales.Count; i++)
                 scales[i] = apply_scale(scales[i]);
         }
-        public Dictionary<torch.Device, torch.Tensor> unscale_grads(torch.optim.Optimizer optimizer, torch.Tensor inv_scale, torch.Tensor found_inf, bool allow_fp16)
+        public Dictionary<DeviceType, torch.Tensor> unscale_grads(torch.optim.Optimizer optimizer, torch.Tensor inv_scale, torch.Tensor found_inf, bool allow_fp16)
         {
             var per_device_inv_scale = new MultiDeviceReplicator(inv_scale);
             var per_device_found_inf= new MultiDeviceReplicator(found_inf);
-            Dictionary<torch.Device, Dictionary<torch.ScalarType, IList<torch.Tensor>>> per_device_and_dtype_grads = new Dictionary<torch.Device, Dictionary<torch.ScalarType, IList<torch.Tensor>>>();
+            Dictionary<DeviceType, Dictionary<torch.ScalarType, List<torch.Tensor>>> per_device_and_dtype_grads = new Dictionary<DeviceType, Dictionary<torch.ScalarType, List<torch.Tensor>>>();
 
             using (torch.no_grad()) {
-                if (optimizer is AdamW adamW){ //Some optimizer have parameter tensor for unscale_grads i need that. [20/10/24 WHY I DO THIS???? ]
-                    using (var enumer = adamW.parameters().GetEnumerator()) {
-                        while (enumer.MoveNext()) {
-                            var param = enumer.Current;
-                            if (param is null) 
-                                continue;
-                            if (!allow_fp16 && param.dtype == torch.ScalarType.Float16)
-                                throw new Exception("Attempting to unscale FP16 Gradients");
-                            torch.Tensor to_unscale;
-                            if (param.grad.is_sparse) {
-                                if (param.grad.dtype == torch.ScalarType.Float16) {
-                                    param.grad = param.grad.coalesce();
-                                }
-
-                                to_unscale = param.grad.SparseValues;
-                            } else {
-                                to_unscale = param.grad;
+            
+                using (var enumer = optimizer.parameters().GetEnumerator()) {
+                    while (enumer.MoveNext()) {
+                        var param = enumer.Current;
+                        if (param is null) 
+                            continue;
+                        if (!allow_fp16 && param.dtype == torch.ScalarType.Float16)
+                            throw new Exception("Attempting to unscale FP16 Gradients");
+                        torch.Tensor to_unscale;
+                        if (param.grad.is_sparse) {
+                            if (param.grad.dtype == torch.ScalarType.Float16) {
+                                param.grad = param.grad.coalesce();
                             }
 
-                            if (!per_device_and_dtype_grads.ContainsKey(to_unscale.device)) {
-                                per_device_and_dtype_grads.Add(to_unscale.device, new Dictionary<torch.ScalarType, IList<torch.Tensor>>());
-                                per_device_and_dtype_grads[to_unscale.device].Add(to_unscale.dtype, new List<torch.Tensor>());
-                                per_device_and_dtype_grads[to_unscale.device][to_unscale.dtype].Add(to_unscale);
-                            } else {
-                                if (!per_device_and_dtype_grads[to_unscale.device].ContainsKey(to_unscale.dtype)) {
-                                    per_device_and_dtype_grads[to_unscale.device].Add(to_unscale.dtype, new List<torch.Tensor>());
-                                } else {
-                                    per_device_and_dtype_grads[to_unscale.device][to_unscale.dtype].Add(to_unscale);
-                                }
-                            }
-
+                            to_unscale = param.grad.SparseValues;
+                        } else {
+                            to_unscale = param.grad;
                         }
-                    }
 
-                    foreach (var d in per_device_and_dtype_grads)
-                        foreach (var g in d.Value)
-                            torch._amp_foreach_non_finite_check_and_unscale_(g.Value, per_device_found_inf.Get(d.Key), per_device_inv_scale.Get(d.Key));
+                        if (!per_device_and_dtype_grads.ContainsKey(to_unscale.device.type)) {
+                            per_device_and_dtype_grads.Add(to_unscale.device.type, new Dictionary<torch.ScalarType, List<torch.Tensor>>());
+                            per_device_and_dtype_grads[to_unscale.device.type].Add(to_unscale.dtype, new List<torch.Tensor>());
+                            per_device_and_dtype_grads[to_unscale.device.type][to_unscale.dtype].Add(to_unscale);
+                        } else {
+                            if (!per_device_and_dtype_grads[to_unscale.device.type].ContainsKey(to_unscale.dtype)) {
+                                per_device_and_dtype_grads[to_unscale.device.type].Add(to_unscale.dtype, new List<torch.Tensor>());
+                            } else {
+                                per_device_and_dtype_grads[to_unscale.device.type][to_unscale.dtype].Add(to_unscale);
+                            }
+                        }
+
+                    }
                 }
+
+                foreach (var d in per_device_and_dtype_grads)
+                    foreach (var g in d.Value)
+                        torch._amp_foreach_non_finite_check_and_unscale_(g.Value, per_device_found_inf.Get(d.Key), per_device_inv_scale.Get(d.Key));
+                
             }
 
             return per_device_found_inf.per_device_tensors;
@@ -182,7 +186,7 @@ namespace TorchSharp.Amp
             //if(_per_optimizer_states.ContainsKey(optimizer.GetHashCode()))
 
             var optimizer_state = _per_optimizer_states[optimizer.GetHashCode()];
-            if (optimizer_state["state"] is OptState state) {
+            if (optimizer_state["stage"] is OptState state) {
                 if (state == OptState.Unscaled) {
                     throw new Exception($"{nameof(unscale)} has already been called on this optimizer since the last update()");
                 }
@@ -191,47 +195,95 @@ namespace TorchSharp.Amp
             }
 
             Debug.Assert(!(_scale is null));
-            var inv_scale = _scale.@double().reciprocal().@float();
-            var found_inf = torch.full(new ReadOnlySpan<long>(new long[] { 0 }), 0.0f, torch.ScalarType.Float32,_scale.device);
+            var inv_scale = _scale.to(torch.ScalarType.Float64).reciprocal().to(torch.ScalarType.Float32);
+            var found_inf = torch.full(1, 0.0f, torch.ScalarType.Float32,_scale.device);
 
             optimizer_state["found_inf_per_device"] = unscale_grads(optimizer, inv_scale, found_inf, false);
 
             optimizer_state["stage"] = OptState.Unscaled;
         }
+        /*
+         *
 
-        private float? maybe_opt_step(torch.optim.Optimizer optimizer, UnorderedMap<string, object> optimizer_state)
+	template <typename Type = double>
+	inline auto sum(PerDeviceTensors const& per_device)
+	{
+		Type sum = Type(0);
+		for (auto&& [_, v] : per_device)
+			sum += v.item<Type>();
+		return sum;
+	}
+         *
+         */
+        private Scalar maybe_opt_step(torch.optim.Optimizer optimizer, UnorderedMap<string, object> optimizer_state, Func<torch.Tensor> closure = null)
         {
             //https://github.com/pytorch/pytorch/blob/a00fad017719346bac6e08da0819358146e647e3/torch/amp/grad_scaler.py#L351
-            float? retval=0;
-            foreach(var d in optimizer_state)
-                if (d.Value is torch.Tensor t)
-                    retval += t.item<float>();
-            if (retval==0)
-                retval = optimizer.step().item<float>();
-            return retval;
+            if (optimizer_state.ContainsKey("found_inf_per_device")) {
+
+                double? retval = 0;
+                if (optimizer_state["found_inf_per_device"] is Dictionary<DeviceType, torch.Tensor> dict) {
+                    foreach (var d in dict)
+                    {
+                        retval += (double)d.Value.item<float>();
+                        //retval += d.Value.Sum(x=>x.item<double>());
+                        /*foreach(var t in d.Value)
+                            retval += t.item<double>();*/
+                        //retval += d.Value.item<double>();
+                    }
+                    /*if (retval.HasValue) {
+                        if(retval.Value > 0)
+                            return 
+                    }*/
+
+                    //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13#file-gradscaler-hpp-L209   
+                }
+                /*foreach (var d in optimizer_state)
+                    if (d.Value is torch.Tensor t)
+                        retval += t.item<float>();*/
+                var res = optimizer.step(closure);
+                if (!(res is null)) {
+                    return res.item<float>();
+                }
+
+                /*if (retval == 0)
+                    retval = .item<float>();
+                return retval;*/
+            }
+
+            return null;
         }
 
-        public float? step(torch.optim.Optimizer optimizer, params object[] obj)
+        public Scalar step(torch.optim.Optimizer optimizer, Func<torch.Tensor> optimizer_args = null)
         {
-            if (obj.Length == 0)
-                throw new Exception("The obj param cannot be empty");
             if (!Enabled) {
-                if(obj.Length == 1 && obj[0] is Func<torch.Tensor> closure)
-                    return optimizer.step(closure).item<float>();
+                var res = optimizer.step(optimizer_args);
+                if (!(res is null))
+                    return res.item<float>();
                 return null;
             }
 
+            if (optimizer_args != null)
+                throw new Exception("Closure use is not currently supported if GradScaler is Enabled");
+
+            /*if (!Enabled) {
+                if(obj.Length == 1 && obj[0] is Func<torch.Tensor> closure)
+                    return optimizer.step(closure).item<float>();
+                return null;
+            }*/
+
             check_scale_growth_tracker(nameof(step));
             var optimizer_state = _per_optimizer_states[optimizer.GetHashCode()];
+            
             if (optimizer_state["stage"] is OptState state && state == OptState.Stepped)
                 throw new Exception($"{nameof(step)} has already been called since the last update()");
-            float? retval;
+            Scalar retval=null;
 
             //https://github.com/pytorch/pytorch/blob/a00fad017719346bac6e08da0819358146e647e3/torch/amp/grad_scaler.py#L398
             var f = optimizer.GetType().GetField("_step_support_amp_scaling");
             if (f != null && f.GetValue(optimizer) is bool b && !b) {
                 bool has_grad_scaler = false;//I dont know how deal this...
                 if (has_grad_scaler) {
+
                     throw new NotImplementedException();
                 } else {
                     if (optimizer_state["stage"] is OptState optstate && optstate == OptState.Ready)
@@ -260,8 +312,12 @@ namespace TorchSharp.Amp
             }
             if (optimizer_state["stage"] is OptState state1 && state1 == OptState.Ready)
                 unscale(optimizer);
-            Debug.Assert((optimizer_state["found_inf_per_device"] as torch.Tensor[])?.Length > 0, "(optimizer_state['found_inf_per_device'] as torch.Tensor).size(0) > 0");
-            retval = maybe_opt_step(optimizer, optimizer_state);
+            if (optimizer_state["found_inf_per_device"] is ICollection col)
+            {
+                Debug.Assert(col.Count > 0, "(optimizer_state['found_inf_per_device'] as torch.Tensor).size(0) > 0");
+            }
+            //Debug.Assert((optimizer_state["found_inf_per_device"] as Dictionary<DeviceType, List<torch.Tensor>>)?.Count > 0, "(optimizer_state['found_inf_per_device'] as torch.Tensor).size(0) > 0");
+            retval = maybe_opt_step(optimizer, optimizer_state, optimizer_args);
             optimizer_state["stage"] = OptState.Stepped;
             return retval;
         }
@@ -294,11 +350,25 @@ namespace TorchSharp.Amp
                     _scale.copy_(t);
                 }
             } else {
-                IList<torch.Tensor> found_infs = new List<torch.Tensor>();
-                foreach (var state in _per_optimizer_states)
-                    foreach (var found_inf in state.Value)
-                        if(found_inf.Value is torch.Tensor t)
-                            found_infs.Add(t);
+                List<torch.Tensor> found_infs = new List<torch.Tensor>();
+                foreach (var state in _per_optimizer_states) {
+                    if (state.Value["found_inf_per_device"] is Dictionary<DeviceType, torch.Tensor> d) {
+                        foreach(var found_inf in d.Values)
+                            found_infs.Add(found_inf.to(_scale.device, true));
+                    }
+                }
+
+                /*foreach (var found_inf in state.Value) {
+                    if (found_inf.Value is torch.Tensor t) {
+                        found_infs.Add(t);
+                    }
+
+                    if (found_inf.Value is List<torch.Tensor> ts) {
+                        foreach(var te in ts)
+                            found_infs.Add(te);
+                    }
+                }*/
+
                 Debug.Assert(found_infs.Count > 0, "No inf checks were recorded prior to update.");
                 torch.Tensor found_inf_combined = found_infs[0];
                 if (found_infs.Count > 1)
