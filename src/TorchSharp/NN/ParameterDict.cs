@@ -98,6 +98,11 @@ namespace TorchSharp
                     _list[i] = (name, p);
                     _dict[name] = p;
                 }
+
+                if (device is not null) {
+                    _deviceType = device.type;
+                    _deviceIndex = device.index;
+                }
             }
 
             /// <summary>

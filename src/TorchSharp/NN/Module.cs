@@ -203,8 +203,8 @@ namespace TorchSharp
                     return this;
                 }
 
-                private DeviceType _deviceType = DeviceType.CPU;
-                private int _deviceIndex = -1;
+                protected DeviceType _deviceType = DeviceType.CPU;
+                protected int _deviceIndex = -1;
 
                 /// <summary>
                 /// Convert the parameters and buffers.

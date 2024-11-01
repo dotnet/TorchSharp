@@ -90,6 +90,11 @@ namespace TorchSharp
 
                     _list[i] = p;
                 }
+
+                if (device is not null) {
+                    _deviceType = device.type;
+                    _deviceIndex = device.index;
+                }
             }
 
             private bool _registered = false;

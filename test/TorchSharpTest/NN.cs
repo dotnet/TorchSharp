@@ -3180,6 +3180,32 @@ namespace TorchSharp
                     Assert.NotNull(grad);
                 }
             }
+            if (torch.mps_is_available()) {
+                var module = new TestModule1(torch.randn(2, 2), true);
+
+                // Move the device to MPS, and make sure gradients are calculated for all the parameters
+                module.to(torch.MPS);
+                var x = torch.randn(2, 2, device: torch.MPS);
+                var y = torch.randn(2, device: torch.MPS);
+                torch.nn.functional.mse_loss(module.call(x), y).backward();
+                foreach (var (pName, parm) in module.named_parameters()) {
+                    var grad = parm.grad;
+                    Assert.NotNull(grad);
+                }
+
+                // Reset and then try again with moving back to CPU
+                module.zero_grad();
+
+                // Try moving back to CPU
+                module.to(torch.CPU);
+                x = torch.randn(2, 2);
+                y = torch.randn(2);
+                torch.nn.functional.mse_loss(module.call(x), y).backward();
+                foreach (var (pName, parm) in module.named_parameters()) {
+                    var grad = parm.grad;
+                    Assert.NotNull(grad);
+                }
+            }
         }
 
         [Fact]
