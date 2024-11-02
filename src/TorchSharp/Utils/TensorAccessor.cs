@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -55,9 +56,134 @@ namespace TorchSharp.Utils
                     return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(Cnt)).ToArray();
                 }
             }
-            var result = new T[Cnt];
+            unsafe {
+                var rere = new T[Cnt];
+                T* ptr = (T*)_tensor_data_ptr;
+                if (ptr == null)
+                    throw new Exception($"Ptr of {nameof(_tensor_data_ptr)} is null");
+                var shape = _tensor.shape;
+                var strides = _tensor.stride();
+                for (long index = 0; index < Cnt; index++) {
+                    long offset = index;
+                    long ptrIndex = 0;
+                    for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+                    {
+                        long i = offset % shape[d]; // Current index in dimension d
+                        ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                        offset /= shape[d]; // Move to the next dimension
+                    }
+                    rere[index] = ptr[ptrIndex];
+                }
+                return rere;
+            }
+            /*else if(!_tensor.is_contiguous() && _tensor.ndim ==3){
+                //This work but i want procedural
+                unsafe {
+                    var rere = new T[Cnt];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    var shape = _tensor.shape;
+                    var strides = _tensor.stride();
+                    long index = 0;
+                    for (long i0 = 0; i0 < shape[0]; i0++)
+                    for (long i1 = 0; i1 < shape[1]; i1++)
+                    for (long i2 = 0; i2 < shape[2]; i2++) {
+                        //long index = i0 + shape[1] * (i1 + shape[2] * i2); // Flattened index for result
+                        long ptrIndex = i0 * strides[0] + i1 * strides[1] + i2 * strides[2]; // Index for ptr
+                        rere[index++] = ptr[ptrIndex];
+                    }
+                    return rere;
+                }
+            }*/
+            /*else {
+                unsafe {
+                    var rere = new T[Cnt];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    var shape = _tensor.shape;
+                    var strides = _tensor.stride();
+                    var ndim = _tensor.ndim;
+                    for (long index = 0; index < Cnt; index++) {
+                        long offset = index;
+                        long ptrIndex = 0;
+                        for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+                        //for (long d = 0; d < ndim; d++) {
+                        {
+                            long i = offset % shape[d]; // Current index in dimension d
+                            ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                            offset /= shape[d]; // Move to the next dimension
+                        }
+                        rere[index] = ptr[ptrIndex];
+                    }
+                    return rere;
+                }
+            }
+            */
+            /*} else if(!_tensor.is_contiguous() && _tensor.ndim == 2) {
+                //Test.
+                var rere = new T[Cnt];
+                var shape = _tensor.shape;
+                var strides = _tensor.stride();
+                long ndim = _tensor.ndim;
+                unsafe {
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i = ndim; i >0; i--) {
+                        //ndim can be [BCHW] or [CHW] etc.
+                        for (long j = 0; j < ndim; j++) {
+
+                            //this is for shape
+                            for (long k = 0; k < shape[j]; k++) {
+                                long precalc = (shape[i-1] +k) * shape[i];
+
+                            }
+                        }
+                    }
+                }
+
+                unsafe {
+                    T* ptr = (T*)_tensor_data_ptr;
+                    long index = 0;
+                    for (long i0 = 0; i0 < shape[0]; i0++) {
+                        for (long i1 = 0; i1 < shape[1]; i1++) {
+                            //long index = i0 * shape[1] + i1; // Flattened index for result
+                            long ptrIndex = i0 * strides[0] + i1 * strides[1]; // Index for ptr
+                            rere[index++] = ptr[ptrIndex];
+                        }
+                    }
+                    return rere;
+                }
+            }
+            else if (!_tensor.is_contiguous() && _tensor.ndim == 3) {
+                unsafe {
+                    var rere = new T[Cnt];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    var shape = _tensor.shape;
+                    var strides = _tensor.stride();
+                    var ndim = _tensor.ndim;
+                    long idx = 0;
+                    for (long index = 0; index < Cnt; index++) {
+                        long offset = index;
+                        long ptrIndex = 0;
+
+                        for (long d = 0; d < ndim; d++) {
+                            long i = offset % shape[d];  // Current index in dimension d
+                            ptrIndex += i * strides[d];  // Calculate ptrIndex using strides
+                            offset /= shape[d];           // Move to the next dimension
+                        }
+                        rere[idx++] = ptr[ptrIndex];
+                    }
+
+                    //for (long i0 = 0; i0 < shape[0]; i0++)
+                    //for (long i1 = 0; i1 < shape[1]; i1++)
+                    //for (long i2 = 0; i2 < shape[2]; i2++) {
+                    //    //long index = i0 + shape[1] * (i1 + shape[2] * i2); // Flattened index for result
+                    //    long ptrIndex = i0 * strides[0] + i1 * strides[1]+ i2*strides[2]; // Index for ptr
+                    //    rere[index++] = ptr[ptrIndex];
+                    //}
+                    return rere;
+                }
+            }*/
+            /*var result = new T[Cnt];
             CopyTo(result);
-            return result;
+            return result;*/
         }
 
         /// <summary>
@@ -267,13 +393,14 @@ namespace TorchSharp.Utils
                 CopyContiguous(array, arrayIndex, array.Length);
                 return;
             }
-
-            int idx = arrayIndex;
+            ToArray().CopyTo(array, 0);
+            return;
+            /*int idx = arrayIndex;
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
                 if (idx >= array.Length) break;
                 unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
                 idx += 1;
-            }
+            }*/
         }
 
         public void CopyTo(Span<T> array, int arrayIndex = 0, long tensorIndex = 0)
