@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8087,6 +8088,50 @@ namespace TorchSharp
                 Assert.Equal(20, a.GetLength(0));
                 Assert.Equal(30, a.GetLength(1));
                 Assert.Equal(2, a.GetLength(2));
+            }
+        }
+        [Fact]
+        [TestOf(nameof(TorchSharp.Utils.TensorAccessor<float>.ToArray))]
+        public void ToArrayFastTensorAccessor()
+        {
+            {
+                var t = arange(0, 12, ScalarType.Float32).view(2, 3, 2).transpose(2, 1);
+                Assert.False(t.is_contiguous());
+                //var t = arange(0, 12, ScalarType.Float32).view(2, 3, 2);
+                t = t[TensorIndex.Colon, TensorIndex.Slice(1, null)];
+                float[] v = t.data<float>().ToArray();
+                var tt = tensor(v, t.shape, t.dtype);
+                Assert.True(tt.equal(t).all().item<bool>());
+            }
+            {
+                var t = randn(4, 4, 3);
+                t = t[2, TensorIndex.Ellipsis];
+                Assert.True(t.is_contiguous());
+                t = t.transpose(1, 0);
+                Assert.False(t.is_contiguous());
+                Assert.Equal(24, t.storage_offset());
+                float[] v = t.data<float>().ToArray();
+                var tt = tensor(v, t.shape, t.dtype);
+                Assert.True(tt.equal(t).all().item<bool>());
+            }
+            {
+                var t = arange(0,128).reshape(4,4,-1);
+                t = t[2, TensorIndex.Ellipsis];
+                Assert.True(t.is_contiguous());
+                t = t[TensorIndex.Colon, 2];
+                Assert.False(t.is_contiguous());
+                Assert.Equal(66, t.storage_offset());
+                long[] v = t.data<long>().ToArray();
+                var tt = tensor(v, t.shape, t.dtype);
+                Assert.True(tt.equal(t).all().item<bool>());
+            }
+            {
+                var t = arange(0, 128).reshape(4, 4, -1);
+                Assert.True(t.is_contiguous());
+                long[] v = t.data<long>().ToArray();
+                var tt = tensor(v, t.shape, t.dtype);
+                Assert.Equal(0, t.storage_offset());
+                Assert.True(tt.equal(t).all().item<bool>());
             }
         }
 
