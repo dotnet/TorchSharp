@@ -75,11 +75,10 @@ namespace TorchSharp.Utils
                 if (count > Cnt)
                     Cnt = count;
             }
-            unsafe {
-                var res = new T[count];
-                SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? Cnt-count : Cnt, from_index);
-                return res;
-            }
+
+            var res = new T[count];
+            SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? Cnt-count : Cnt, from_index);
+            return res;
         }
 
         private unsafe T* GetAndValidatePTR()
@@ -96,15 +95,7 @@ namespace TorchSharp.Utils
             long idxforThis = 0;
             long cnt = (idx == 0 || (res.Length + idx > count) ? count : res.Length + idx);
             for (long index = idx; index < cnt; index++) {
-                long offset = index;
-                long ptrIndex = 0;
-                for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
-                {
-                    long i = offset % shape[d]; // Current index in dimension d
-                    ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
-                    offset /= shape[d]; // Move to the next dimension
-                }
-
+                long ptrIndex = TranslateIndex(index, shape, strides);
                 if (onThis) {
                     if (res.Length <= idxforThis)
                         break;
@@ -121,40 +112,44 @@ namespace TorchSharp.Utils
         /// <returns>An array object, which should be cast to the concrete array type.</returns>
         public Array ToNDArray()
         {
+            return ToNDArrayV2(_tensor.shape, _tensor.stride());
+        }
+
+        //This "replace" the original ToNDArray. I put 'V2' for test, is work very well i will replace this to 'ToNDArray'
+        private Array ToNDArrayV2(long[] shape, long[] strides)
+        {
             long ndim = _tensor.ndim;
-            if (ndim == 0) {
-                unsafe {
+            unsafe {
+                T* ptr = GetAndValidatePTR();
+                if (ndim == 0) {
                     var result = new T[1];
-                    T* ptr = (T*)_tensor_data_ptr;
                     result[0] = ptr[0];
                     return result;
                 }
-            }
-            var shape = _tensor.shape;
-            var strides = _tensor.stride();
-            unsafe {
                 Array array = Array.CreateInstance(typeof(T), shape);
-                T* ptr = GetAndValidatePTR();
                 long Cnt = Count;
                 long[] ndIndices = new long[ndim];
                 for (long index = 0; index < Cnt; index++) {
-                    long offset = index;
-                    long ptrIndex = 0;
-                    long linearIndex = index;
-
-                    for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
-                    {
-                        long i = offset % shape[d]; // Current index in dimension d
-                        ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
-                        offset /= shape[d]; // Move to the next dimension
-                        
-                        ndIndices[d] = linearIndex % shape[d];
-                        linearIndex /= shape[d]; 
-                    }
-                    array.SetValue(ptr[ptrIndex],ndIndices);
+                    long ptrIndex = TranslateIndex(index, shape, strides, ndIndices);
+                    array.SetValue(ptr[ptrIndex], ndIndices);
                 }
                 return array;
             }
+        }
+
+        private long TranslateIndex(long index, long[] shape, long[] strides, long[] ndindices =null)
+        {
+            long offset = index;
+            long ptrIndex = 0;
+            for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+            {
+                long i = offset % shape[d]; // Current index in dimension d
+                ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                if (ndindices != null)
+                    ndindices[d] = i;
+                offset /= shape[d]; // Move to the next dimension
+            }
+            return ptrIndex;
         }
 
         private Array ToNDArray(long[] shape, long[] strides)
@@ -253,6 +248,12 @@ namespace TorchSharp.Utils
              if (array is double[] da)
                  Marshal.Copy(_tensor_data_ptr, da, index, count);
         }
+
+        /*public float[] GetFloats()
+        {
+            //TODO: Get float from Storage.cpp. Adapt the code maybe have better performance than copy
+        }*/
+
         public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
             if (_tensor.is_contiguous()) {
@@ -274,18 +275,13 @@ namespace TorchSharp.Utils
         public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
             SetValueTensor(ref array, _tensor.shape, _tensor.stride(), Count, arrayIndex, onThis:true);
-            /*int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
-                idx += 1;
-            }*/
         }
 
         public void CopyFrom(ReadOnlySpan<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
             unsafe {
-                //SetValueTensor(ref array, _tensor.shape, _tensor.stride(), Count, 0, true);
+                /*var arr = array.ToArray();
+                SetValueTensor(ref arr, _tensor.shape, _tensor.stride(), Count, 0, true);*/
                 T* ptr = GetAndValidatePTR();
                 long count = Count;
                 var shape = _tensor.shape;
