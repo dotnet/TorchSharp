@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -57,28 +56,63 @@ namespace TorchSharp.Utils
                 }
             }
             unsafe {
-                var rere = new T[Cnt];
-                T* ptr = (T*)_tensor_data_ptr;
-                if (ptr == null)
-                    throw new Exception($"Ptr of {nameof(_tensor_data_ptr)} is null");
-                var shape = _tensor.shape;
-                var strides = _tensor.stride();
-                for (long index = 0; index < Cnt; index++) {
-                    long offset = index;
-                    long ptrIndex = 0;
-                    for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
-                    {
-                        long i = offset % shape[d]; // Current index in dimension d
-                        ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
-                        offset /= shape[d]; // Move to the next dimension
-                    }
-                    rere[index] = ptr[ptrIndex];
-                }
-                return rere;
+                var res = new T[Cnt];
+                SetValueTensor(ref res, _tensor.shape, _tensor.stride(), Cnt);
+                return res;
             }
-            /*var result = new T[Cnt];
-            CopyTo(result);
-            return result;*/
+        }
+
+        public T[] ToArray(long from_index, long count=0)
+        {
+            long Cnt = this.Count;
+            bool countDefined = count != 0;
+            if (count != 0) {
+                if (from_index + count >= Cnt) {
+                    throw new Exception("Out-bound");
+                }
+            } else {
+                count += from_index;
+                if (count > Cnt)
+                    Cnt = count;
+            }
+            unsafe {
+                var res = new T[count];
+                SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? Cnt-count : Cnt, from_index);
+                return res;
+            }
+        }
+
+        private unsafe T* GetAndValidatePTR()
+        {
+            T* ptr = (T*)_tensor_data_ptr;
+            if(ptr == null)
+                throw new Exception($"Ptr of {nameof(_tensor_data_ptr)} is null");
+            return ptr;
+        }
+
+        private unsafe void SetValueTensor(ref T[] res, long[] shape, long[] strides, long count, long idx=0, bool onThis=false)
+        {
+            T* ptr = GetAndValidatePTR();
+            long idxforThis = 0;
+            long cnt = (idx == 0 || (res.Length + idx > count) ? count : res.Length + idx);
+            for (long index = idx; index < cnt; index++) {
+                long offset = index;
+                long ptrIndex = 0;
+                for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+                {
+                    long i = offset % shape[d]; // Current index in dimension d
+                    ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                    offset /= shape[d]; // Move to the next dimension
+                }
+
+                if (onThis) {
+                    if (res.Length <= idxforThis)
+                        break;
+                    ptr[ptrIndex]= res[idxforThis++];
+                    continue;
+                }
+                res[idx != 0 ?  index-idx : index] = ptr[ptrIndex];
+            }
         }
 
         /// <summary>
@@ -100,9 +134,7 @@ namespace TorchSharp.Utils
             var strides = _tensor.stride();
             unsafe {
                 Array array = Array.CreateInstance(typeof(T), shape);
-                T* ptr = (T*)_tensor_data_ptr;
-                if(ptr == null)
-                    throw new Exception($"Ptr of {nameof(_tensor_data_ptr)} is null");
+                T* ptr = GetAndValidatePTR();
                 long Cnt = Count;
                 long[] ndIndices = new long[ndim];
                 for (long index = 0; index < Cnt; index++) {
@@ -121,7 +153,6 @@ namespace TorchSharp.Utils
                     }
                     array.SetValue(ptr[ptrIndex],ndIndices);
                 }
-
                 return array;
             }
         }
@@ -228,14 +259,7 @@ namespace TorchSharp.Utils
                 CopyContiguous(array, arrayIndex, array.Length);
                 return;
             }
-            ToArray().CopyTo(array, 0);
-            return;
-            /*int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
-                idx += 1;
-            }*/
+            ToArray().CopyTo(array, arrayIndex);
         }
 
         public void CopyTo(Span<T> array, int arrayIndex = 0, long tensorIndex = 0)
@@ -245,32 +269,38 @@ namespace TorchSharp.Utils
                 return;
             }
             ToArray().CopyTo(array);
-            return;
-            /*int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
-                idx += 1;
-            }*/
         }
 
         public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
-            int idx = arrayIndex;
+            SetValueTensor(ref array, _tensor.shape, _tensor.stride(), Count, arrayIndex, onThis:true);
+            /*int idx = arrayIndex;
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
                 if (idx >= array.Length) break;
                 unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
                 idx += 1;
-            }
+            }*/
         }
 
         public void CopyFrom(ReadOnlySpan<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
-            int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
-                idx += 1;
+            unsafe {
+                //SetValueTensor(ref array, _tensor.shape, _tensor.stride(), Count, 0, true);
+                T* ptr = GetAndValidatePTR();
+                long count = Count;
+                var shape = _tensor.shape;
+                var strides = _tensor.stride();
+                for (long index = arrayIndex; index < count; index++) {
+                    long offset = index;
+                    long ptrIndex = 0;
+                    for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+                    {
+                        long i = offset % shape[d]; // Current index in dimension d
+                        ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                        offset /= shape[d]; // Move to the next dimension
+                    }
+                    ptr[ptrIndex] = array[(int)index];
+                }
             }
         }
 

@@ -8097,7 +8097,6 @@ namespace TorchSharp
             {
                 var t = arange(0, 12, ScalarType.Float32).view(2, 3, 2).transpose(2, 1);
                 Assert.False(t.is_contiguous());
-                //var t = arange(0, 12, ScalarType.Float32).view(2, 3, 2);
                 t = t[TensorIndex.Colon, TensorIndex.Slice(1, null)];
                 float[] v = t.data<float>().ToArray();
                 var tt = tensor(v, t.shape, t.dtype);
