@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TorchSharp.Modules;
 using TorchSharp.PInvoke;
+using TorchSharp.Utils;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -620,6 +621,16 @@ namespace TorchSharp
             {
                 return THSCuda_get_global_total_memory(device);
             }
+            /*public static cudaDeviceProp get_device_prop(int device)
+            {
+#if CUDA_TOOLKIT_FOUND
+                cudaDeviceProp cdp = new cudaDeviceProp();
+                throw new NotImplementedException("Implement the cudaDeviceProp THSCuda");
+                //return cdp;
+#else
+                return null;
+#endif
+            }*/
         }
 
         /// <summary>

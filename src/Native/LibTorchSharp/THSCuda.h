@@ -6,18 +6,19 @@
 #include "torch/torch.h"
 
 #ifdef TORCHSHARP_CUDA_TOOLKIT_FOUND
+//#undef CUDA_TOOLKIT_FOUND
 #define CUDA_TOOLKIT_FOUND 1
 #else
-#define CUDA_TOOLKIT_FOUND 0
+#undef CUDA_TOOLKIT_FOUND
 #endif
 
-#define RETURN_CUDA_DEVICE(x) \
+/*#define RETURN_CUDA_DEVICE(x) \
     if(CUDA_TOOLKIT_FOUND)  \
         return x; \
     else \
-        return -1; 
+        return -1; */
 
-#ifdef TORCHSHARP_CUDA_TOOLKIT_FOUND
+#ifdef CUDA_TOOLKIT_FOUND
 #include "cuda.h"
 #include "cuda_runtime_api.h"
 

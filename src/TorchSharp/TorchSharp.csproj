@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Compile Remove="Amp\AMPManager.cs" />
+    <Compile Remove="Utils\TorchCudaStruct.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -34,6 +34,7 @@ namespace TorchSharp.Amp
         private static AutocastMode instance;
         public static AutocastMode GetInstance(bool enabled=false)
         {
+            //https://github.com/pytorch/pytorch/blob/e6ff07f00e04a9b58efb86a3dd70ed7280ae8522/torch/fx/experimental/proxy_tensor.py#L1251
             return instance ??= new AutocastMode(torch.cuda_is_available() ? torch.CUDA : torch.CPU, enabled:enabled,cache_enabled:true);
         }
 
@@ -45,7 +46,7 @@ namespace TorchSharp.Amp
             this.device = dev.type;
             if (!torch.is_autocast_available(device))
                 throw new Exception($"User specified an unsupported autocast device_type {device}");
-            fast_dtype = torch.get_autocast_dtype(device);
+            fast_dtype = torch.get_autocast_dtype(device); //If device is CPU this may return as BFloat16 
             _cache_enabled = torch.is_autocast_cache_enabled();
             if (enabled && !torch.cuda_is_available() && dev.type == DeviceType.CUDA) //Is not available for doing multicast
                 enabled = false;
@@ -55,9 +56,16 @@ namespace TorchSharp.Amp
                 _cache_enabled = cache_enabled.Value;
             if (dev.type != DeviceType.CPU && dev.type != DeviceType.CUDA && enabled)
                 throw new Exception($"Currently autocast does not support {dev.type} only CPU or CUDA");
+            /*if (dev.type == DeviceType.CPU) {
+                if (torch.get_autocast_dtype(device) != torch.ScalarType.Float32) {
+                    Debug.WriteLine($"Currently is not support {torch.get_autocast_dtype(device)} on CPU, that feature will be add.");
+                }
+                fast_dtype = torch.ScalarType.Float32;
+            }*/
             if (dev.type == DeviceType.CPU) {
-                if (fast_dtype != torch.ScalarType.Float16 || fast_dtype != torch.ScalarType.BFloat16) {
-                    Debug.WriteLine($"In CPU autocast, but the target d type is not suported. Disabling autocast. CPU autocast only supports dtype of {torch.ScalarType.Float16} or {torch.ScalarType.BFloat16}");
+                //https://github.com/pytorch/pytorch/blob/e6ff07f00e04a9b58efb86a3dd70ed7280ae8522/torch/amp/autocast_mode.py#L277
+                if (enabled && (fast_dtype != torch.ScalarType.Float16 || fast_dtype != torch.ScalarType.BFloat16)) {
+                    Debug.WriteLine($"In CPU autocast, but the target dtype is not suported. Disabling autocast. CPU autocast only supports dtype of {torch.ScalarType.Float16} or {torch.ScalarType.BFloat16}");
                     enabled = false;
                 }
             } else if (dev.type == DeviceType.CUDA) {
@@ -127,10 +135,12 @@ namespace TorchSharp.Amp
         }
         public static IntPtr ToIf(IntPtr ptr, torch.ScalarType type)
         {
-            if (!IsAutocastEnabled() || !GetInstance().IsEnter)
-                return ptr;
+            if(GetInstance().device != DeviceType.CPU) //Warning: Remove this if is finished and working the struct BFloat16 C10
+                if (!IsAutocastEnabled() || !GetInstance().IsEnter)
+                    return ptr;
             if (GetDtype(ptr) == type) //if already have same dtype is not necesary convert to dtype, right???
                 return ptr;
+
             //TODO: Check if is from CPU to passing BFloat16 if support
             /*if (!NativeMethods.THSAmp_is_autocast_enabled(NativeMethods.THSTensor_device_type(ptr)))
                 return ptr;*/

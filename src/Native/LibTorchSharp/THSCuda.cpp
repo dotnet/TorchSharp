@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef TORCHSHARP_CUDA_TOOLKIT_FOUND
+#ifdef CUDA_TOOLKIT_FOUND
 cudaDeviceProp THSCuda_get_device_prop(int device)
 {
     cudaDeviceProp cdp;
@@ -16,18 +16,30 @@ cudaDeviceProp THSCuda_get_device_prop(int device)
 
 int THSCuda_get_major_compute_capability(int device)
 {
-    RETURN_CUDA_DEVICE(THSCuda_get_device_prop(device).major)
+#ifdef CUDA_TOOLKIT_FOUND
+    return THSCuda_get_device_prop(device).major;
+#else
+    return -1;
+#endif
 }
 
 int THSCuda_get_minor_compute_capability(int device)
 {
-    RETURN_CUDA_DEVICE(THSCuda_get_device_prop(device).minor)
+#ifdef CUDA_TOOLKIT_FOUND
+    return THSCuda_get_device_prop(device).minor;
+#else
+    return -1;
+#endif
 }
 
 
 int THSCuda_get_device_count(int* count)
 {
-    RETURN_CUDA_DEVICE(cudaGetDeviceCount(count))
+#ifdef CUDA_TOOLKIT_FOUND
+    return cudaGetDeviceCount(count);
+#else
+    return -1;
+#endif
 }
 
 int THSCuda_get_free_total(int device, int* id, size_t* free, size_t* total)
@@ -47,13 +59,22 @@ int THSCuda_get_free_total(int device, int* id, size_t* free, size_t* total)
 
 size_t THSCuda_get_total_memory(int device)
 {
-    RETURN_CUDA_DEVICE(THSCuda_get_device_prop(device).totalConstMem)
+#ifdef CUDA_TOOLKIT_FOUND
+    return THSCuda_get_device_prop(device).totalConstMem;
+#else
+    return 0; //Is size_t (unsigned long) so cant be negative.
+#endif
+    //RETURN_CUDA_DEVICE(THSCuda_get_device_prop(device).totalConstMem)
 }
 
 
 size_t THSCuda_get_global_total_memory(int device)
 {
-    RETURN_CUDA_DEVICE(THSCuda_get_device_prop(device).totalGlobalMem)
+#ifdef CUDA_TOOLKIT_FOUND
+    return THSCuda_get_device_prop(device).totalGlobalMem;
+#else
+    return 0;
+#endif  
 }
 
 //TODO: implement more function
