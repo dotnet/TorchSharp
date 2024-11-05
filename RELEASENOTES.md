@@ -2,24 +2,28 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-
 # NuGet Version 0.104.0
 
 This is a big change in implementation, but not as big in API surface area. Many of the builtin modules, but not all, were re-implemented in managed code calling into native code via the functional APIs. This has several advantages:
 
-1. Align with the Pytorch implementations.
-2. More easily expose module attributes as properties as Pytorch does.
-3. In some cases, avoid native code altogether.
-4. The builtin modules can serve as "best practice" examples for custom module authors.
+1. Align with the Pytorch implementations.<br/>
+2. More easily expose module attributes as properties as Pytorch does.<br/>
+3. In some cases, avoid native code altogether.<br/>
+4. The builtin modules can serve as "best practice" examples for custom module authors.<br/>
 
 __Breaking Changes__:
 
 The names of several arguments have been changed to align better with Pytorch naming. This may break code that passes such arguments by name, but will be caught at compile time.
 
+The argument defaults for `torch.diagonal()` and `Tensor.diagonal()` arguments have been corrected.
+
 __Issues fixed__:
 
 #1397 Look into whether parameter creation from a tensor leads to incorrect dispose scope statistics. This bug was discovered during testing of the PR.<br/>
 #1210 Attribute omissions.<br/>
+#1210 Attribute omissions.<br/>
+#1400 There may be an error in torchvision.transforms.GaussianBlur<br/>
+#1402 diagonal() has incorrect default<br/>
 
 # NuGet Version 0.103.1
 
