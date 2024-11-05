@@ -1612,7 +1612,7 @@ namespace TorchSharp
             Assert.NotNull(module.p.grad);
             Assert.NotNull(module.ln.weight!.grad);
             Assert.NotNull(module.ln.bias!.grad);
-            
+
         }
 
         [Fact]
@@ -1645,7 +1645,7 @@ namespace TorchSharp
             var y1 = torch.nn.functional.avg_pool1d(x, 2);
             Console.WriteLine(y1.metastr());
             Assert.Equal(64, y1.size(-1));
-            
+
             var y2 = torch.nn.AvgPool1d(2).call(x);
             Console.WriteLine(y2.metastr());
             Assert.Equal(64, y1.size(-1));
@@ -1674,12 +1674,33 @@ namespace TorchSharp
                     seq.save(stream);
             }
 
-            // This test will succeed if the following code doesn't crash. 
+            // This test will succeed if the following code doesn't crash.
             ms.Position = 0;
             using (var archive = new ZipArchive(ms)) {
                 seq.load(archive.GetEntry("seq")!.Open());
             }
 #endif
+        }
+
+        [Fact]
+        public void Validate1400()
+        {
+            long kernel = 21;
+            float sigma = 11;
+            var trans = torchvision.transforms.GaussianBlur(kernel, sigma); //System.ArgumentException:“Invalid GaussianBlur arguments.”
+
+            var img = torch.rand(1,3,256,256);
+            var t = trans.call(img);
+        }
+
+        [Fact]
+        public void Validate1402()
+        {
+            var t = torch.arange(100).reshape(10,10);
+
+            var d = t.diagonal();
+
+            Assert.Equal(new long[]{0, 11, 22, 33, 44, 55, 66, 77, 88, 99}, d.data<long>().ToArray());
         }
     }
 }

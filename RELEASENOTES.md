@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.104.0
+
+__Breaking Changes__:
+
+The argument defaults for `torch.diagonal()` and `Tensor.diagonal()` arguments have been changed.
+
+__Bug Fixes__:
+
+#1400 There may be an error in torchvision.transforms.GaussianBlur
+#1402 diagonal() has incorrect default
+
 # NuGet Version 0.103.1
 
 __Breaking Changes__:

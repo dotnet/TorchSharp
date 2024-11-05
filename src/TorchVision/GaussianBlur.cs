@@ -9,29 +9,44 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-        internal class GaussianBlur : ITransform
+        internal class GaussianBlur : torch.nn.Module<Tensor,Tensor>, ITransform
         {
-            internal GaussianBlur(IList<long> kernelSize, float min, float max)
+            internal GaussianBlur(IList<long> kernelSize, float sigma): base(nameof(GaussianBlur))
             {
                 if (kernelSize == null || kernelSize.Count != 2 || kernelSize.Any(x => x <= 0)) {
                     throw new ArgumentException("Invalid kernel size argument.");
                 }
-                if (min < 0 || max < 0 || min >= max) {
-                    throw new ArgumentException("Invalid GaussianBlur arguments.");
+                if (sigma <= 0) {
+                    throw new ArgumentException("Invalid GaussianBlur arguments: sigma must be positive.");
                 }
-                this.sigma = (min == max) ?
-                    min :
-                    (float)(new Random().NextDouble() * (max - min) + min);
+                this.sigma = sigma;
                 this.kernelSize = kernelSize.ToArray();
             }
 
-            public Tensor call(Tensor input)
+            internal GaussianBlur(IList<long> kernelSize, float sigma_min, float sigma_max) : base(nameof(GaussianBlur))
             {
-                return transforms.functional.gaussian_blur(input, kernelSize, new float[] { sigma });
+                if (kernelSize == null || kernelSize.Count != 2 || kernelSize.Any(x => x <= 0)) {
+                    throw new ArgumentException("Invalid kernel size argument.");
+                }
+                if (sigma_min < 0 || sigma_max < 0 || sigma_min > sigma_max) {
+                    throw new ArgumentException("Invalid GaussianBlur arguments: min and max must be positive and min <= max");
+                }
+                // Leave 'this.sigma' null.
+                this.sigma_min = sigma_min;
+                this.sigma_max = sigma_max;
+                this.kernelSize = kernelSize.ToArray();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var s = sigma.HasValue ? sigma.Value : torch.empty(1).uniform_(sigma_min, sigma_max).item<float>();
+                return transforms.functional.gaussian_blur(input, kernelSize,  stackalloc[]{s, s});
             }
 
             protected long[] kernelSize;
-            protected float sigma;
+            protected float? sigma;
+            protected float sigma_min;
+            protected float sigma_max;
         }
 
         public static partial class transforms
@@ -44,7 +59,7 @@ namespace TorchSharp
             /// <returns></returns>
             static public ITransform GaussianBlur(IList<long> kernelSize, float sigma)
             {
-                return new GaussianBlur(kernelSize, sigma, sigma);
+                return new GaussianBlur(kernelSize, sigma);
             }
 
             /// <summary>
