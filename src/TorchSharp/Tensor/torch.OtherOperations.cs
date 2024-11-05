@@ -313,7 +313,7 @@ namespace TorchSharp
         /// Applying torch.diag_embed() to the output of this function with the same arguments yields a diagonal matrix with the diagonal entries of the input.
         /// However, torch.diag_embed() has different default dimensions, so those need to be explicitly specified.
         /// </remarks>
-        public static Tensor diagonal(Tensor input, long offset = 0, long dim1 = 0, long dim2 = 0) => input.diagonal(offset, dim1, dim2);
+        public static Tensor diagonal(Tensor input, long offset = 0L, long dim1 = 0L, long dim2 = 1L) => input.diagonal(offset, dim1, dim2);
 
         // https://pytorch.org/docs/stable/generated/torch.diff
         /// <summary>

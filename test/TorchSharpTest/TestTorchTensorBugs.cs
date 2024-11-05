@@ -1692,5 +1692,15 @@ namespace TorchSharp
             var img = torch.rand(1,3,256,256);
             var t = trans.call(img);
         }
+
+        [Fact]
+        public void Validate1402()
+        {
+            var t = torch.arange(100).reshape(10,10);
+
+            var d = t.diagonal();
+
+            Assert.Equal(new long[]{0, 11, 22, 33, 44, 55, 66, 77, 88, 99}, d.data<long>().ToArray());
+        }
     }
 }
