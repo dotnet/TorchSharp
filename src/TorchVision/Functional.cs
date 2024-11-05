@@ -443,7 +443,7 @@ namespace TorchSharp
                 /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
                 /// </summary>
                 /// <returns></returns>
-                public static Tensor gaussian_blur(Tensor input, IList<long> kernelSize, ReadOnlySpan<float> sigma)
+                public static Tensor gaussian_blur(Tensor input, IList<long> kernelSize, IList<float> sigma)
                 {
                     var dtype = torch.is_integral(input.dtype) ? ScalarType.Float32 : input.dtype;
 
@@ -451,13 +451,13 @@ namespace TorchSharp
                         kernelSize = new long[] { kernelSize[0], kernelSize[0] };
                     }
 
-                    if (sigma == null || sigma.Length == 0)
+                    if (sigma == null || sigma.Count == 0)
                     {
                         sigma = new float[] {
                             0.3f * ((kernelSize[0] - 1) * 0.5f - 1) + 0.8f,
                             0.3f * ((kernelSize[1] - 1) * 0.5f - 1) + 0.8f,
                         };
-                    } else if (sigma.Length == 1) {
+                    } else if (sigma.Count == 1) {
                         sigma = new float[] {
                             sigma[0],
                             sigma[0],
@@ -892,7 +892,7 @@ namespace TorchSharp
                     return pdf / sum;
                 }
 
-                private static Tensor GetGaussianKernel2d(IList<long> kernelSize, ReadOnlySpan<float> sigma, ScalarType dtype, torch.Device device)
+                private static Tensor GetGaussianKernel2d(IList<long> kernelSize, IList<float> sigma, ScalarType dtype, torch.Device device)
                 {
                     using var tX1 = GetGaussianKernel1d(kernelSize[0], sigma[0]);
                     using var tX2 = tX1.to(dtype, device);
