@@ -40,7 +40,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 var s = sigma.HasValue ? sigma.Value : torch.empty(1).uniform_(sigma_min, sigma_max).item<float>();
-                return transforms.functional.gaussian_blur(input, kernelSize,  stackalloc[]{s, s});
+                return transforms.functional.gaussian_blur(input, kernelSize, new []{s,s});
             }
 
             protected long[] kernelSize;
