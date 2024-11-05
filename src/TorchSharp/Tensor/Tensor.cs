@@ -6576,15 +6576,17 @@ namespace TorchSharp
 
                 var dim = t.dim();
 
-                if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
+
+                if (dim == 0) {
+                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                    return sb.ToString(); ;
+                }
+
                 sb.Append('[');
                 var currentSize = t.size()[0];
                 if (currentSize == 0) {
                     // print nothing
-                }
-                else if (dim == 0) {
-                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
                 }
                 else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {

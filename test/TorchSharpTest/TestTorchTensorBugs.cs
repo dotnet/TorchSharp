@@ -1661,6 +1661,15 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void Validate_1250a()
+        {
+            var scalar = torch.zeros(Array.Empty<long>());
+            Assert.Equal("0", scalar.npstr());
+            Assert.Equal("[], type = Float32, device = cpu, value = 0", scalar.cstr());
+            Assert.Equal("[], type = Float32, device = cpu, value = 0", scalar.jlstr());
+        }
+
+        [Fact]
         public void ValidateLoadWithDeflateStream()
         {
 #if NET6_0_OR_GREATER
