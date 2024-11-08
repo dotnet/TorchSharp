@@ -21,9 +21,12 @@ __Issues fixed__:
 
 #1397 Look into whether parameter creation from a tensor leads to incorrect dispose scope statistics. This bug was discovered during testing of the PR.<br/>
 #1210 Attribute omissions.<br/>
-#1210 Attribute omissions.<br/>
 #1400 There may be an error in torchvision.transforms.GaussianBlur<br/>
 #1402 diagonal() has incorrect default<br/>
+
+__API Changes__:
+
+ #1382: Add support for torch.nn.functional.normalize<br/>
 
 # NuGet Version 0.103.1
 

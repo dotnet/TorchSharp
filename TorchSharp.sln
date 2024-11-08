@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TorchSharp", "TorchSharp", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibTorchSharp", "bin\obj\x64.Debug\Native\LibTorchSharp\LibTorchSharp.vcxproj", "{CAD9DB7F-3223-3324-884D-FA2381593DA7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibTorchSharp", "bin\obj\x64.Release\Native\LibTorchSharp\LibTorchSharp.vcxproj", "{E4C0DBEE-0815-311B-9065-137BB50BD793}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibTorchSharp", "bin\obj\x64.Release\Native\LibTorchSharp\LibTorchSharp.vcxproj", "{BB811429-0DF1-3D22-B664-09C2F5A9E0AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Debug", "Native-Debug", "{CF2C1A9E-3A8A-4329-8A6E-7880C15AAC3D}"
 	ProjectSection(SolutionItems) = preProject
