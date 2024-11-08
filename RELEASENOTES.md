@@ -25,6 +25,10 @@ __Issues fixed__:
 #1400 There may be an error in torchvision.transforms.GaussianBlur<br/>
 #1402 diagonal() has incorrect default<br/>
 
+__API Changes__:
+
+ #1382: Add support for torch.nn.functional.normalize<br/>
+
 # NuGet Version 0.103.1
 
 __Breaking Changes__:
