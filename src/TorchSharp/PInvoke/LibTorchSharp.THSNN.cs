@@ -852,6 +852,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_Unflatten_ctor(long dim, IntPtr shape, long shape_len, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_normalize(IntPtr input, double p, long dim, double eps);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_batch_norm(IntPtr input, IntPtr running_mean, IntPtr running_var, IntPtr weight, IntPtr bias, [MarshalAs(UnmanagedType.U1)] bool training, double momentum, double eps);
 
         [DllImport("LibTorchSharp")]

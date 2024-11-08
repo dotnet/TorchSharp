@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+ // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -4815,6 +4815,36 @@ namespace TorchSharp
         private Tensor NormalizeTensor(Tensor x, Tensor x_mean, Tensor x_var, double eps = 1e-5)
         {
             return (x - x_mean) / torch.sqrt(eps + x_var);
+        }
+
+        [Fact]
+        public void TestNormalizeFunc()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.from_array(new double[]
+                    { -1.0786,  0.3455,  1.2929,  0.5030,
+                      -0.2930,  1.0420, -0.1082, -0.2943,
+                      -0.3989, -0.8311,  0.7103, -1.5878,
+                       0.6331,  1.0106,  0.5128, -2.2565,
+                       1.2044, -0.6916, -0.1242,  0.6808,
+                       0.1672,  0.1105, -1.7364,  0.0669
+                    }).reshape(3,2,4);
+                var y = torch.nn.functional.normalize(x);
+                Assert.Equal(x.shape, y.shape);
+                Assert.Equal(x.device_type, y.device_type);
+
+                var expected = torch.from_array(new double[]
+                    { -0.9650,  0.3147,  0.9965,  0.8631,
+                      -0.2621,  0.9492, -0.0834, -0.5050,
+                      -0.5331, -0.6352,  0.8108, -0.5755,
+                       0.8460,  0.7724,  0.5853, -0.8178,
+                       0.9905, -0.9875, -0.0713,  0.9952,
+                       0.1375,  0.1577, -0.9975,  0.0978
+                    }).reshape(3, 2, 4);
+
+
+                Assert.True(y.allclose(expected, rtol: 0.005, atol: 0.005));
+            }
         }
 
         [Fact]

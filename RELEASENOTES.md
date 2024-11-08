@@ -10,8 +10,12 @@ The argument defaults for `torch.diagonal()` and `Tensor.diagonal()` arguments h
 
 __Bug Fixes__:
 
-#1400 There may be an error in torchvision.transforms.GaussianBlur
-#1402 diagonal() has incorrect default
+#1400 There may be an error in torchvision.transforms.GaussianBlur<br/>
+#1402 diagonal() has incorrect default<br/>
+
+__API Changes__:
+
+ #1382: Add support for torch.nn.functional.normalize<br/>
 
 # NuGet Version 0.103.1
 
