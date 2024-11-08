@@ -11,6 +11,18 @@ namespace TorchSharp
             public static partial class functional
             {
                 /// <summary>
+                /// Perform normalization of inputs over specified dimension.
+                /// </summary>
+                /// <param name="input">Input tensor of any shape.</param>
+                /// <param name="p">the exponent value in the norm formulation</param>
+                /// <param name="dim">the dimension to reduce</param>
+                /// <param name="eps">small value to avoid division by zero</param>
+                public static Tensor normalize(Tensor input, double p = 2.0, long dim = 1L, double eps = 1e-12)
+                {
+                    return null;
+                }
+
+                /// <summary>
                 /// Applies Batch Normalization for each channel across a batch of data.
                 /// </summary>
                 public static Tensor batch_norm(Tensor input, Tensor running_mean, Tensor running_var, Tensor weight = null, Tensor bias = null, bool training = false, double momentum = 0.1, double eps = 1e-5)

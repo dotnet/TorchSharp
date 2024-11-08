@@ -607,6 +607,15 @@ Tensor THSNN_batch_norm(const Tensor input, Tensor running_mean, const Tensor ru
     CATCH_TENSOR(torch::nn::functional::batch_norm(*input, *running_mean, *running_var, opts));
 }
 
+Tensor THSNN_normalize(const Tensor input, const double p, const int64_t dim, const double eps)
+{
+    auto opts = torch::nn::functional::NormalizeFuncOptions()
+        .p(p)
+        .dim(dim)
+        .eps(eps);
+    CATCH_TENSOR(torch::nn::functional::normalize(*input, opts));
+}
+
 Tensor THSNN_group_norm(const Tensor input, const int64_t num_groups, const Tensor weight, const Tensor bias, const double eps)
 {
     auto opts = torch::nn::functional::GroupNormFuncOptions(num_groups)
