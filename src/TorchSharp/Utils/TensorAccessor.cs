@@ -66,7 +66,7 @@ namespace TorchSharp.Utils
         {
             long Cnt = this.Count;
             bool countDefined = count != 0;
-            if (count != 0) {
+            if (countDefined) {
                 if (from_index + count >= Cnt) {
                     throw new Exception("Out-bound");
                 }
@@ -75,9 +75,8 @@ namespace TorchSharp.Utils
                 if (count > Cnt)
                     Cnt = count;
             }
-
             var res = new T[count];
-            SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? Cnt-count : Cnt, from_index);
+            SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? from_index+(Cnt-count) : Cnt, from_index);
             return res;
         }
 
@@ -233,6 +232,8 @@ namespace TorchSharp.Utils
              var Cnt = Count;
              if (count > Cnt || count == 0)
                  count = (int)Cnt;
+             if (Cnt > array.Length)
+                 count = array.Length+index;
              if (array is byte[] ba)
                  Marshal.Copy(_tensor_data_ptr, ba, index, count);
              if (array is short[] sa)

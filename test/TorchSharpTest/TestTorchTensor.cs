@@ -8133,7 +8133,60 @@ namespace TorchSharp
                 Assert.True(tt.equal(t).all().item<bool>());
             }
         }
+        [Fact]
+        [TestOf(nameof(TorchSharp.Utils.TensorAccessor<float>.ToArray)+"Index")]
+        public void ToArrayIndexFastTensorAccessor()
+        {
+            {
+                var t = rand(2,1,3, ScalarType.Float32);
+                Assert.True(t.is_contiguous());
 
+                float[] v = t.data<float>().ToArray(4);
+                float[] res = new float[v.Length];
+                res[0] = t[1, 0, 1].item<float>();
+                res[1] = t[1, 0, 2].item<float>();
+                Assert.Equal(res, v);
+            }
+            {
+                var t = rand(2, 1, 3, ScalarType.Float32);
+                Assert.True(t.is_contiguous());
+                float[] v = t.data<float>().ToArray(3, 2);
+                t = t.flatten();
+                float[] r = new float[] { t[3].item<float>(), t[4].item<float>() };
+                Assert.Equal(v, r);
+            }
+        }
+        [Fact]
+        [TestOf(nameof(TorchSharp.Utils.TensorAccessor<float>.ToArray) + "CopyFrom")]
+        public void CopyFromFastTensorAccessor()
+        {
+            {
+                float[] toCopy = new float[] { 1, 2 };
+                var t = rand(2, 1, 3, ScalarType.Float32);
+                t.data<float>().CopyFrom(toCopy);
+                Assert.True(t[0,0,0].item<float>() == toCopy[0]);
+                Assert.True(t[0,0,1].item<float>() == toCopy[1]);
+            }
+            {
+                //With offset
+                float[] toCopy = new float[] { 9, 3 };
+                var t = rand(2, 1, 3, ScalarType.Float32);
+                t.data<float>().CopyFrom(toCopy, 2);
+                Assert.True(t[0, 0, 2].item<float>() == toCopy[0]);
+                Assert.True(t[1, 0, 0].item<float>() == toCopy[1]);
+            }
+        }
+        [Fact]
+        [TestOf(nameof(TorchSharp.Utils.TensorAccessor<float>.ToArray) + "CopyTo")]
+        public void CopyToFastTensorAccessor()
+        {
+            {
+                var t = rand(2, 1, 3, ScalarType.Float32);
+                float[] toCopy = new float[t.numel()];
+                t.data<float>().CopyTo(toCopy);
+                Assert.Equal(t.data<float>().ToArray(), toCopy);
+            }
+        }
         [Fact]
         public void MeshGrid()
         {
