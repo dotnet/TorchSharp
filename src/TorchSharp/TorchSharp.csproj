@@ -3,20 +3,25 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-      <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-      <LangVersion>9.0</LangVersion>
-      <IncludeInPackage>TorchSharp</IncludeInPackage>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
-      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-      <IsPackable>false</IsPackable>
-      <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
+    <IncludeInPackage>TorchSharp</IncludeInPackage>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+    <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+    <IsPackable>false</IsPackable>
+    <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="TorchVision\**" />
     <EmbeddedResource Remove="TorchVision\**" />
     <None Remove="TorchVision\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Amp\AMPManager.cs" />
+    <Compile Remove="Utils\TorchCudaStruct.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,12 +54,22 @@
 
 
   <PropertyGroup>
-      <PackDependsOn>
-          $(PackDependsOn);
-          RealPack
-      </PackDependsOn>
-      <SignAssembly>True</SignAssembly>
-      <AssemblyOriginatorKeyFile>..\..\build\TorchSharp.snk</AssemblyOriginatorKeyFile>
+    <PackDependsOn>
+      $(PackDependsOn);
+      RealPack
+    </PackDependsOn>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\TorchSharp.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
 

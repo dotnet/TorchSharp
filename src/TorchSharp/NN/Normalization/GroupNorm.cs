@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -25,6 +26,7 @@ namespace TorchSharp
                 if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
                 var res = THSNN_GroupNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res= AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
 
@@ -79,6 +81,7 @@ namespace TorchSharp
                 unsafe {
                     var handle = THSNN_GroupNorm_ctor(num_groups, num_channels, eps, affine, out var boxedHandle);
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    handle= AutocastMode.AutoCast(handle, ScalarType.Float32);
                     return new GroupNorm(handle, boxedHandle).MoveModule<GroupNorm>(device, dtype);
                 }
             }

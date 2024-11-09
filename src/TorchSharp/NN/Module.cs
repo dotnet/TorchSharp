@@ -697,6 +697,8 @@ namespace TorchSharp
 
                     if (!_internal_buffers.TryAdd(name, (tensor, persistent)))
                         throw new InvalidOperationException($"Tensor {name} is already registered.");
+
+
                 }
 
                 /// <summary>
@@ -716,6 +718,13 @@ namespace TorchSharp
 
                     if (!_internal_params.TryAdd(name, param))
                         throw new InvalidOperationException($"Parameter {name} is already registered.");
+
+                    /*if (is_autocast_cache_enabled()) {
+                        if (is_autocast_gpu_enabled())
+                            param = param.to(get_autocast_dtype(CUDA)).AsParameter();
+                        if (is_autocast_cpu_enabled())
+                            param = param.to(get_autocast_dtype(CPU)).AsParameter();
+                    }*/
                 }
 
                 /// <summary>
@@ -756,9 +765,27 @@ namespace TorchSharp
                         }
 
                         submodule.RegisterComponents();
-
+                        /*if (!is_autocast_cache_enabled()) {
+                            _internal_submodules.Add(name, submodule);
+                            return;
+                        }
+                        if (is_autocast_gpu_enabled())
+                            submodule = submodule.to(get_autocast_dtype(CUDA));
+                        if (is_autocast_cpu_enabled())
+                            submodule = submodule.to(get_autocast_dtype(CPU));
+                        */
                         _internal_submodules.Add(name, submodule);
                     }
+                }
+
+                public virtual void unregister_module(string name)
+                {
+                    if (_internal_submodules.ContainsKey(name))
+                        _internal_submodules.Remove(name);
+                }
+                public virtual void unregister_module(Module module)
+                {
+                    unregister_module(module.GetName());
                 }
 
                 protected void ConditionallyRegisterParameter(string name, Tensor value)
@@ -1058,6 +1085,8 @@ namespace TorchSharp
                     _areComponentsRegistered = true;
                 }
 
+
+
                 protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device device = null, ScalarType? dtype = null)
                 {
                     if (!dtype.HasValue)
@@ -1335,6 +1364,10 @@ namespace TorchSharp
                         if (modified is not null)
                             input = modified;
                     }
+
+                    /*if (is_autocast_cache_enabled()) { //Should i cast this for better managment???
+                        if(input is Tensor) 
+                    }*/
 
                     var result = forward(input);
 

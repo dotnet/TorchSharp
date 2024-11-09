@@ -36,6 +36,19 @@ namespace TorchSharp
             {
             }
 
+            /// <summary>
+            /// For prevent cast as torch.Tensor i provided the data method for get Tensor.
+            /// https://github.com/ultralytics/ultralytics/blob/dcde8bd23d12bbb4867ebf45f936dd37c2445974/ultralytics/nn/modules/conv.py#L78
+            /// </summary>
+            /// <returns></returns>
+            public torch.Tensor data {
+                get {
+                    return new Tensor(base.handle);
+                }
+                set {
+                    handle = value.handle;
+                }
+            }
         };
     }
 

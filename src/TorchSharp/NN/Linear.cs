@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -11,14 +12,30 @@ namespace TorchSharp
 
     namespace Modules
     {
+        public class LinearInfo
+        {
+            public long InFeatures { get; }
+            public long OutFeatures { get; }
+            public LinearInfo(long inFeatures, long outFeatures)
+            {
+                InFeatures = inFeatures;
+                OutFeatures = outFeatures;
+            }
+        }
         public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
-            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            public LinearInfo linearInfo;
+            /*internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
+            }*/
+            internal Linear(IntPtr handle, IntPtr boxedHandle, long inFeat, long outFeat) : base(handle, boxedHandle)
+            {
+                linearInfo = new LinearInfo(inFeat, outFeat);
             }
 
             public override Tensor forward(Tensor tensor)
             {
+                //tensor.handle = Amp.AMPManager.GetInstance().AutoCast(tensor.handle); //WARNING should be here???? Research
                 var res = THSNN_Linear_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -71,7 +88,7 @@ namespace TorchSharp
                 var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
 
-                return new Linear(res, boxedHandle).MoveModule<Linear>(device, dtype);
+                return new Linear(res, boxedHandle, inputSize, outputSize).MoveModule<Linear>(device, dtype);
             }
 
             public static partial class functional
@@ -88,6 +105,7 @@ namespace TorchSharp
                     IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
                     var res = THSNN_functional_linear(input.Handle, weights.Handle, bPtr);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    res = AutocastMode.AutoCast(res);
                     return new Tensor(res);
                 }
             }

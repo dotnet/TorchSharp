@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -7,6 +8,7 @@ using static TorchSharp.PInvoke.NativeMethods;
 #nullable enable
 namespace TorchSharp
 {
+    using System.Linq;
     using Modules;
 
     namespace Modules
@@ -93,6 +95,16 @@ namespace TorchSharp
                     IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
                     var res = THSNN_functional_bilinear(input1.Handle, input2.Handle, weight.Handle, bPtr);
                     if (res == IntPtr.Zero) { CheckForErrors(); }
+                    /*if (AutocastMode.IsAutocastEnabled()) {
+                        var st = input1.dtype;
+                        var st1 = input2.dtype;
+                        var st2 = weight.dtype;
+                        var sts = new[] { st, st1, st2 };
+                        if (sts.All(x => x == ScalarType.Float16))
+                            (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float16);
+                        if (sts.Any(x => x == ScalarType.Float32))
+                            (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float32);
+                    }*/
                     return new Tensor(res);
                 }
             }

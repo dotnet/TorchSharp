@@ -92,7 +92,6 @@
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
-
   <PropertyGroup>
     <!-- turned on/off manually in separate CI jobs -->
     <SkipCuda Condition="'$(TargetOS)' == 'mac'">true</SkipCuda>
@@ -163,6 +162,9 @@
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>$(DefineContants);DEBUG</DefineConstants>
     <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(SkipCuda)' != 'true' and '$(SkipNative)' != 'true'">
+    <DefineConstants>$(DefineContants);CUDA_TOOLKIT_FOUND</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.StartsWith('Release'))">
     <Optimize>true</Optimize>

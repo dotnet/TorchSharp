@@ -986,8 +986,8 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_GELU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GELU_ctor(out IntPtr pBoxedModule);
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern IntPtr THSNN_GELU_ctor(out IntPtr pBoxedModule, [MarshalAs(UnmanagedType.LPStr)] string approximate);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_GLU_forward(torch.nn.Module.HType module, IntPtr tensor);
@@ -1045,6 +1045,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_scaled_dot_product_attention(IntPtr query, IntPtr key, IntPtr value, IntPtr attention_mask, double p, [MarshalAs(UnmanagedType.U1)] bool casual);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_normalize(IntPtr input, float p, long dim, float eps, out IntPtr output);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_SELU_forward(torch.nn.Module.HType module, IntPtr tensor);
@@ -1327,6 +1330,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_MaxUnpool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, out IntPtr pBoxedModule);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSNN_Print_Module(torch.nn.Module.HType module);
     }
 #pragma warning restore CA2101
 }
