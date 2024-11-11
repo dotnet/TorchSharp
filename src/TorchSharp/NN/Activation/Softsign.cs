@@ -54,6 +54,13 @@ namespace TorchSharp
                     using var y = 1 + abs;
                     return inplace ? x.div_(y).alias() : x.div(y);
                 }
+
+                /// <summary>
+                /// Softsign
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor Softsign(Tensor x) => softsign(x, false);
             }
         }
     }

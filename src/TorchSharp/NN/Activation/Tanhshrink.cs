@@ -35,6 +35,14 @@ namespace TorchSharp
             /// <summary>
             /// Tanhshrink
             /// </summary>
+            public static Tanhshrink Tanhshrink()
+            {
+                return new Tanhshrink(false);
+            }
+
+            /// <summary>
+            /// Tanhshrink
+            /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
             public static Tanhshrink Tanhshrink(bool inplace = false)
             {
@@ -53,6 +61,13 @@ namespace TorchSharp
                     using var tanh_x = x.tanh();
                     return inplace ? x.sub_(tanh_x).alias() : x.sub(tanh_x);
                 }
+
+                /// <summary>
+                /// Tanhshrink
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor tanhshrink(Tensor x) => tanhshrink(x, false);
             }
         }
     }

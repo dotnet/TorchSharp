@@ -35,8 +35,16 @@ namespace TorchSharp
             /// <summary>
             /// Gaussian Error Linear Units
             /// </summary>
+            public static GELU GELU()
+            {
+                return new GELU(false);
+            }
+
+            /// <summary>
+            /// Gaussian Error Linear Units
+            /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
-            public static GELU GELU(bool inplace = false)
+            public static GELU GELU(bool inplace)
             {
                 return new GELU(inplace);
             }
@@ -48,9 +56,19 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
-                public static Tensor gelu(Tensor x, bool inplace = false)
+                public static Tensor gelu(Tensor x, bool inplace)
                 {
                     return inplace ? x.gelu_().alias() : x.gelu();
+                }
+
+                /// <summary>
+                /// Gaussian Error Linear Units
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
+                public static Tensor gelu(Tensor x)
+                {
+                    return gelu(x,false);
                 }
             }
         }

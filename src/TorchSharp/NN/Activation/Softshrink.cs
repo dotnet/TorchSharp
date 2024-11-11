@@ -57,6 +57,14 @@ namespace TorchSharp
                     if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(result);
                 }
+
+                /// <summary>
+                /// Softshrink
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="lambda">The λ value for the Softshrink formulation. Default: 0.5</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor Softshrink(Tensor x, double lambda = 0.5) => softshrink(x, lambda);
             }
         }
     }
