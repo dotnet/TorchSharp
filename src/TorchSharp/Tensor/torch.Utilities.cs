@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics.Contracts;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     // https://pytorch.org/docs/stable/torch#utilities

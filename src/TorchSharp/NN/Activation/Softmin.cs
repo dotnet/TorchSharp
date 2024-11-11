@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmin module.
         /// </summary>
-        public sealed class Softmin : torch.nn.Module<Tensor, Tensor>
+        public sealed class Softmin : ParameterLessModule<Tensor, Tensor>
         {
-            internal Softmin(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Softmin(long dim) : base(nameof(Softmin))
+            {
+                this.dim = dim;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Softmin_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.softmin(tensor, dim);
             }
 
-            public override string GetName()
-            {
-                return typeof(Softmin).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long dim {get; set;}
         }
     }
 
@@ -47,9 +39,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Softmin Softmin(long dim)
             {
-                var handle = THSNN_Softmin_ctor(dim, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Softmin(handle, boxedHandle);
+                return new Softmin(dim);
             }
 
             public static partial class functional
@@ -62,9 +52,8 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor softmin(Tensor x, long dim)
                 {
-                    using (var m = nn.Softmin(dim)) {
-                        return m.call(x);
-                    }
+                    using var minus_x = -x;
+                    return softmax(minus_x, dim);
                 }
             }
         }

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -20,7 +21,7 @@ namespace TorchSharp
                     /// </summary>
                     public sealed class PackedSequence : IDisposable
                     {
-                        internal DisposeScope OwningDisposeScope {
+                        internal DisposeScope? OwningDisposeScope {
                             get => mOwningDisposeScope;
                             set {
                                 mOwningDisposeScope = value;
@@ -81,7 +82,7 @@ namespace TorchSharp
                         /// </summary>
                         internal bool IsInvalid => handle.IsInvalid;
                         private HType handle;
-                        private DisposeScope mOwningDisposeScope;
+                        private DisposeScope? mOwningDisposeScope;
 
                         internal PackedSequence(HType handle)
                         {
@@ -137,7 +138,7 @@ namespace TorchSharp
                             return MoveToOtherDisposeScope(other.OwningDisposeScope);
                         }
 
-                        public PackedSequence MoveToOtherDisposeScope(DisposeScope other)
+                        public PackedSequence MoveToOtherDisposeScope(DisposeScope? other)
                         {
                             if (OwningDisposeScope == null && other != null) {
                                 other.Attach(this);

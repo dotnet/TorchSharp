@@ -51,7 +51,7 @@ type Model(name,device:torch.Device) as this =
     let fc1 = Linear(9216L, 128L)
     let fc2 = Linear(128L, 10L)
 
-    let pool1 = MaxPool2d(kernelSize=[|2L; 2L|])
+    let pool1 = MaxPool2d(kernel_size=[|2L; 2L|])
 
     let relu = ReLU()
 

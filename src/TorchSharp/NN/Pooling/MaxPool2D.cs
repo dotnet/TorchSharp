@@ -13,30 +13,32 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxPool2D module.
         /// </summary>
-        public sealed class MaxPool2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class MaxPool2d : ParameterLessModule<Tensor, Tensor>
         {
-            internal MaxPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal MaxPool2d(long[] kernel_size, long[] stride = null, long[] padding = null, long[] dilation = null, bool ceil_mode = false) : base(nameof(MaxPool2d))
             {
+                this.kernel_size = kernel_size;
+                this.stride = stride;
+                this.padding = padding;
+                this.dilation = dilation;
+                this.ceil_mode = ceil_mode;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_MaxPool2d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
-            {
-                var res = THSNN_MaxPool2d_forward_with_indices(handle, tensor.Handle, out var indices);
-                if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new Tensor(res), new Tensor(indices));
+                return torch.nn.functional.max_pool2d(input, kernel_size, stride, padding, dilation, ceil_mode);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor input)
+            {
+                return torch.nn.functional.max_pool2d_with_indices(input, kernel_size, stride, padding, dilation, ceil_mode);
+            }
+
+            public long[] kernel_size { get; set; }
+            public long[] stride { get; set; }
+            public long[] padding { get; set; }
+            public long[] dilation { get; set; }
+            public bool ceil_mode { get; set; }
         }
     }
 
@@ -47,74 +49,53 @@ namespace TorchSharp
             /// <summary>
             /// Applies a 2D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
+            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static unsafe MaxPool2d MaxPool2d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
+            public static MaxPool2d MaxPool2d(long kernel_size, long? stride = null, long? padding = null, long? dilation = null, bool ceil_mode = false)
             {
-                long svalue = stride.HasValue ? stride.Value : kernelSize;
-                long pvalue = padding.HasValue ? padding.Value : 0;
-                long dvalue = dilation.HasValue ? dilation.Value : 1;
+                long[] kernelValue = new[] { kernel_size, kernel_size };
+                long[] strideValue = stride.HasValue ? new[] { stride.Value, stride.Value } : kernelValue.ToArray();
+                long[] paddingValue = padding.HasValue ? new[] { padding.Value, padding.Value } : new[] { 0L, 0L };
+                long[] dilationValue = dilation.HasValue ? new[] { dilation.Value, dilation.Value } : new[] { 1L, 1L };
 
-                long* pStride = stackalloc long[2] { svalue, svalue };
-                long* pPadding = stackalloc long[2] { pvalue, pvalue };
-                long* pDilation = stackalloc long[2] { dvalue, dvalue };
-
-                long* pkernelSize = stackalloc long[2] { kernelSize, kernelSize };
-
-                var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pStride, 2, (IntPtr)pPadding, 2, (IntPtr)pDilation, 2, ceilMode, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new MaxPool2d(handle, boxedHandle);
+                return new MaxPool2d(kernelValue, strideValue, paddingValue, dilationValue, ceil_mode);
             }
 
             /// <summary>
             /// Applies a 2D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
+            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static unsafe MaxPool2d MaxPool2d((long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null, (long, long)? dilation = null, bool ceilMode = false)
+            public static unsafe MaxPool2d MaxPool2d((long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null, (long, long)? dilation = null, bool ceil_mode = false)
             {
-                long svalue1 = stride != null ? stride.Value.Item1 : kernelSize.Item1;
-                long svalue2 = stride != null ? stride.Value.Item2 : kernelSize.Item2;
-                long pvalue1 = padding != null ? padding.Value.Item1 : 0;
-                long pvalue2 = padding != null ? padding.Value.Item2 : 0;
-                long dvalue1 = dilation != null ? dilation.Value.Item1 : 1;
-                long dvalue2 = dilation != null ? dilation.Value.Item2 : 1;
+                long[] kernelValue = new[] { kernel_size.Item1, kernel_size.Item2 };
+                long[] strideValue = stride.HasValue ? new[] { stride.Value.Item1, stride.Value.Item2 } : kernelValue.ToArray();
+                long[] paddingValue = padding.HasValue ? new[] { padding.Value.Item1, padding.Value.Item2 } : new[] { 0L, 0L };
+                long[] dilationValue = dilation.HasValue ? new[] { dilation.Value.Item1, dilation.Value.Item2 } : new[] { 1L, 1L };
 
-                long* pStride = stackalloc long[2] { svalue1, svalue2 };
-                long* pPadding = stackalloc long[2] { pvalue1, pvalue2 };
-                long* pDilation = stackalloc long[2] { dvalue1, dvalue2 };
-
-                long* pkernelSize = stackalloc long[2] { kernelSize.Item1, kernelSize.Item2 };
-
-                var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pStride, 2, (IntPtr)pPadding, 2, (IntPtr)pDilation, 2, ceilMode, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new MaxPool2d(handle, boxedHandle);
+                return new MaxPool2d(kernelValue, strideValue, paddingValue, dilationValue, ceil_mode);
             }
 
             /// <summary>
             /// Applies a 2D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
-            /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
+            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
+            /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static unsafe MaxPool2d MaxPool2d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
+            public static MaxPool2d MaxPool2d(long[] kernel_size, long[] stride = null, long[] padding = null, long[] dilation = null, bool ceil_mode = false)
             {
-                fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {
-                    var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), (IntPtr)pPadding, (padding == null ? 0 : padding.Length), (IntPtr)pDilation, (dilation == null ? 0 : dilation.Length), ceilMode, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new MaxPool2d(handle, boxedHandle);
-                }
+                return new MaxPool2d(kernel_size, stride, padding, dilation, ceil_mode);
             }
 
             public static partial class functional
@@ -123,23 +104,23 @@ namespace TorchSharp
                 /// Applies a 2D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernelSize"></param>
+                /// <param name="kernel_size"></param>
                 /// <param name="strides"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static Tensor max_pool2d(Tensor input, long[] kernelSize, long[] strides = null,
+                public static Tensor max_pool2d(Tensor input, long[] kernel_size, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    strides = strides ?? kernelSize;
-                    padding = padding ?? kernelSize.Select(x => 0L).ToArray();
-                    dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
+                    strides = strides ?? kernel_size;
+                    padding = padding ?? kernel_size.Select(x => 0L).ToArray();
+                    dilation = dilation ?? kernel_size.Select(x => 1L).ToArray();
                     unsafe {
-                        fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                        fixed (long* pkernel_size = kernel_size, pstrides = strides, ppadding = padding, pdilation = dilation) {
                             var res =
                                 THSTensor_max_pool2d(input.Handle,
-                                    (IntPtr)pkernelSize, kernelSize.Length,
+                                    (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)pdilation, dilation.Length,
@@ -154,16 +135,16 @@ namespace TorchSharp
                 /// Applies a 2D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernelSize"></param>
+                /// <param name="kernel_size"></param>
                 /// <param name="stride"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static unsafe Tensor max_pool2d(Tensor input, long kernelSize, long? stride = null,
+                public static unsafe Tensor max_pool2d(Tensor input, long kernel_size, long? stride = null,
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
-                    long svalue = stride.HasValue ? stride.Value : kernelSize;
+                    long svalue = stride.HasValue ? stride.Value : kernel_size;
                     long pvalue = padding.HasValue ? padding.Value : 0;
                     long dvalue = dilation.HasValue ? dilation.Value : 1;
 
@@ -171,10 +152,10 @@ namespace TorchSharp
                     long* pPadding = stackalloc long[2] { pvalue, pvalue };
                     long* pDilation = stackalloc long[2] { dvalue, dvalue };
 
-                    long* pkernelSize = stackalloc long[2] { kernelSize, kernelSize };
+                    long* pkernel_size = stackalloc long[2] { kernel_size, kernel_size };
 
                     var res = THSTensor_max_pool2d(input.Handle,
-                                    (IntPtr)pkernelSize, 2,
+                                    (IntPtr)pkernel_size, 2,
                                     (IntPtr)pStride, 2,
                                     (IntPtr)pPadding, 2,
                                     (IntPtr)pDilation, 2,
@@ -187,17 +168,17 @@ namespace TorchSharp
                 /// Applies a 2D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernelSize"></param>
+                /// <param name="kernel_size"></param>
                 /// <param name="stride"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static unsafe Tensor max_pool2d(Tensor input, (long, long) kernelSize, (long, long)? stride = null,
+                public static unsafe Tensor max_pool2d(Tensor input, (long, long) kernel_size, (long, long)? stride = null,
                     (long, long)? padding = null, (long, long)? dilation = null, bool ceil_mode = false)
                 {
-                    long svalue1 = stride != null ? stride.Value.Item1 : kernelSize.Item1;
-                    long svalue2 = stride != null ? stride.Value.Item2 : kernelSize.Item2;
+                    long svalue1 = stride != null ? stride.Value.Item1 : kernel_size.Item1;
+                    long svalue2 = stride != null ? stride.Value.Item2 : kernel_size.Item2;
                     long pvalue1 = padding != null ? padding.Value.Item1 : 0;
                     long pvalue2 = padding != null ? padding.Value.Item2 : 0;
                     long dvalue1 = dilation != null ? dilation.Value.Item1 : 1;
@@ -207,10 +188,10 @@ namespace TorchSharp
                     long* pPadding = stackalloc long[2] { pvalue1, pvalue2 };
                     long* pDilation = stackalloc long[2] { dvalue1, dvalue2 };
 
-                    long* pkernelSize = stackalloc long[2] { kernelSize.Item1, kernelSize.Item2 };
+                    long* pkernel_size = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
 
                     var res = THSTensor_max_pool2d(input.Handle,
-                                    (IntPtr)pkernelSize, 2,
+                                    (IntPtr)pkernel_size, 2,
                                     (IntPtr)pStride, 2,
                                     (IntPtr)pPadding, 2,
                                     (IntPtr)pDilation, 2,
@@ -223,26 +204,26 @@ namespace TorchSharp
                 /// Applies a 2D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernelSize"></param>
+                /// <param name="kernel_size"></param>
                 /// <param name="strides"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static (Tensor output, Tensor indices) max_pool2d_with_indices(Tensor input, long[] kernelSize, long[] strides = null,
+                public static (Tensor output, Tensor indices) max_pool2d_with_indices(Tensor input, long[] kernel_size, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    strides = strides ?? kernelSize;
-                    padding = padding ?? kernelSize.Select(x => 0L).ToArray();
-                    dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
+                    strides = strides ?? kernel_size;
+                    padding = padding ?? kernel_size.Select(x => 0L).ToArray();
+                    dilation = dilation ?? kernel_size.Select(x => 1L).ToArray();
                     IntPtr[] ptrArray;
 
                     using (var pa = new PinnedArray<IntPtr>()) {
                         unsafe {
-                            fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                            fixed (long* pkernel_size = kernel_size, pstrides = strides, ppadding = padding, pdilation = dilation) {
                                 THSTensor_max_pool2d_with_indices(input.Handle,
                                     pa.CreateArray,
-                                    (IntPtr)pkernelSize, kernelSize.Length,
+                                    (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)pdilation, dilation.Length,

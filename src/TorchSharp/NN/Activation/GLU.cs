@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GLU (gated linear unit) module.
         /// </summary>
-        public sealed class GLU : torch.nn.Module<Tensor, Tensor>
+        public sealed class GLU : ParameterLessModule<Tensor, Tensor>
         {
-            internal GLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal GLU(long dim) : base(nameof(GLU))
+            {
+                this.dim = dim;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_GLU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.glu(tensor, dim);
             }
 
-            public override string GetName()
-            {
-                return typeof(GLU).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long dim {get; set;}
         }
     }
 
@@ -47,9 +39,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static GLU GLU(long dim = -1)
             {
-                var handle = THSNN_GLU_ctor(dim, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new GLU(handle, boxedHandle);
+                return new GLU(dim);
             }
 
             public static partial class functional
@@ -62,9 +52,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor glu(Tensor input, long dim = -1)
                 {
-                    using (var m = nn.GLU(dim)) {
-                        return m.call(input);
-                    }
+                    return input.glu(dim);
                 }
             }
         }

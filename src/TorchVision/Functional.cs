@@ -488,9 +488,9 @@ namespace TorchSharp
                 /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
                 /// </summary>
                 /// <returns></returns>
-                public static Tensor gaussian_blur(Tensor input, long kernelSize, float sigma)
+                public static Tensor gaussian_blur(Tensor input, long kernel_size, float sigma)
                 {
-                    return gaussian_blur(input, new long[] { kernelSize, kernelSize }, new float[] { sigma });
+                    return gaussian_blur(input, new long[] { kernel_size, kernel_size }, new float[] { sigma });
                 }
 
                 /// <summary>

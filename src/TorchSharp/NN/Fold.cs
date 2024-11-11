@@ -11,12 +11,12 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Fold : torch.nn.Module<Tensor, Tensor>
+        public sealed class Fold : ParameterLessModule<Tensor, Tensor>
         {
             internal Fold((long, long) output_size, (long, long) kernel_size, (long, long) dilation, (long, long) padding, (long, long) stride) : base(nameof(Fold))
             {
-                this.outputSize = output_size;
-                this.kernelSize = kernel_size;
+                this.output_size = output_size;
+                this.kernel_size = kernel_size;
                 this.dilation = dilation;
                 this.padding = padding;
                 this.stride = stride;
@@ -24,14 +24,14 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.fold(tensor, outputSize , kernelSize, dilation, padding, stride);
+                return torch.nn.functional.fold(tensor, output_size , kernel_size, dilation, padding, stride);
             }
 
-            private (long, long) outputSize;
-            private (long, long) kernelSize;
-            private (long, long) dilation;
-            private (long, long) padding;
-            private (long, long) stride;
+            public (long, long) output_size { get; set; }
+            public (long, long) kernel_size { get; set; }
+            public (long, long) dilation { get; set; }
+            public (long, long) padding { get; set; }
+            public (long, long) stride { get; set; }
         }
     }
 

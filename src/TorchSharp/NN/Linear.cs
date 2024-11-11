@@ -8,49 +8,119 @@ using static TorchSharp.PInvoke.NativeMethods;
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.Utils;
 
     namespace Modules
     {
         public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
-            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            const string WeightComponentName = nameof(weight);
+            const string BiasComponentName = nameof(bias);
+
+            internal Linear(Parameter weight, Parameter? bias = null) : base(nameof(Linear))
             {
+                this.in_features = weight.shape[1];
+                this.out_features = weight.shape[0];
+
+                this.weight = weight;
+                if (bias is not null) {
+                    this.bias = bias;
+                }
+            }
+
+            internal Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Linear))
+            {
+                this.in_features = inputSize;
+                this.out_features = outputSize;
+
+                weight = torch.empty(outputSize, inputSize, device: device, dtype: dtype).AsParameter();
+                init.kaiming_uniform_(weight, a: _sqrt5);
+
+                if (hasBias) {
+                    bias = torch.empty(outputSize, device: device, dtype: dtype).AsParameter();
+                    var (fanIn, _) = init.CalculateFanInAndFanOut(weight);
+                    var bound = fanIn > 0 ? 1 / Math.Sqrt(fanIn) : 0;
+                    init.uniform_(_bias, -bound, bound);
+                }
+                //NOTE: it's important not to call 'RegisterComponents' here.
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Linear_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.linear(tensor, _weight!, _bias);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    _weight?.Dispose();
+                    _bias?.Dispose();
+                }
             }
 
             public Parameter? bias {
-                get {
-                    var res = THSNN_Linear_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
-                }
+                get => _bias;
                 set {
-                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
-                    THSNN_Linear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+                    _bias?.Dispose();
+                    _bias = value?.DetachFromDisposeScope() as Parameter;
+                    ConditionallyRegisterParameter(BiasComponentName, _bias);
                 }
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_Linear_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
+            public Parameter weight {
+                get => _weight!;
                 set {
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
-                    THSNN_Linear_set_weight(handle, value!.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
+                    if (value is null) throw new ArgumentNullException(nameof(weight));
+                    if (value.Handle != _weight?.Handle) {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(WeightComponentName, _weight);
+                    }
                 }
             }
+
+            // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, device, _weight, out var w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, device, _bias, out var b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
+            {
+                var device = new Device(deviceType, deviceIndex);
+                if (_weight is not null && ReplaceParameter(_weight.dtype, device, _weight, out var w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(_bias.dtype, device, _bias, out var b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+                if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out var w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, _bias.device, _bias, out var b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+
+            [ComponentName(Name = BiasComponentName)]
+            private Parameter? _bias;
+            [ComponentName(Name = WeightComponentName)]
+            private Parameter? _weight;
+
+            public long in_features { get; set; }
+            public long out_features { get; set; }
+
+            private static readonly double _sqrt5 = Math.Sqrt(5);
         }
     }
 
@@ -59,7 +129,7 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Applies a linear transformation to the incoming data.
+            /// Create a Linear module initialized with random weights and bias.
             /// </summary>
             /// <param name="inputSize">Size of each input sample</param>
             /// <param name="outputSize">Size of each output sample</param>
@@ -68,10 +138,17 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             public static Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Linear(inputSize, outputSize, hasBias, device, dtype);
+            }
 
-                return new Linear(res, boxedHandle).MoveModule<Linear>(device, dtype);
+            /// <summary>
+            /// Create a Linear module with the given weights and bias.
+            /// </summary>
+            /// <param name="weight">The linear weight attribute.</param>
+            /// <param name="bias">The additive linear bias. Optional.</param>
+            public static Linear Linear(Parameter weight, Parameter? bias = null)
+            {
+                return new Linear(weight, bias);
             }
 
             public static partial class functional

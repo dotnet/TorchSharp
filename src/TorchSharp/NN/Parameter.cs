@@ -24,8 +24,12 @@ namespace TorchSharp
             /// <param name="data">A tensor, which will become empty.</param>
             /// <param name="requires_grad"></param>
             public Parameter(Tensor data, bool requires_grad = true) :
-                base(data.with_requires_grad(requires_grad).MoveHandle())
+                base(data.with_requires_grad(requires_grad).MoveHandle(), false)
             {
+                var scope = data.OwningDisposeScope;
+                if (scope is not null) {
+                    DisposeScope.ReplaceWith(data, this);
+                }
             }
 
             /// <summary>
@@ -35,7 +39,6 @@ namespace TorchSharp
             internal Parameter(System.IntPtr handle) : base(handle)
             {
             }
-
         };
     }
 

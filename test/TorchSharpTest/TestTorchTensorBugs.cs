@@ -455,7 +455,7 @@ namespace TorchSharp
         {
             using var _ = NewDisposeScope();
 
-            var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
+            var c2 = torch.nn.Conv2d(3, 16, kernel_size: (1, 7), stride: (1, 1), padding: (0, 3));
             var Win = torch.rand(16, 3, 8, 8);
             var s = c2.call(Win).shape;
             Assert.Equal(new long[] { 16, 16, 8, 8 }, s);
@@ -498,12 +498,12 @@ namespace TorchSharp
             var model = new Module510(1, 32);
             model.call(torch.randn(16, 1, 32));
 
-            var w0 = model.get_parameter("stack.0.weight").clone();
-            var w1 = model.get_parameter("stack.1.weight").clone();
-            var b1 = model.get_parameter("stack.1.bias").clone();
-            var rm = model.get_buffer("stack.1.running_mean").clone();
-            var rv = model.get_buffer("stack.1.running_var").clone();
-            var nm = model.get_buffer("stack.1.num_batches_tracked").clone();
+            var w0 = model.get_parameter("stack.0.weight")!.clone();
+            var w1 = model.get_parameter("stack.1.weight")!.clone();
+            var b1 = model.get_parameter("stack.1.bias")!.clone();
+            var rm = model.get_buffer("stack.1.running_mean")!.clone();
+            var rv = model.get_buffer("stack.1.running_var")!.clone();
+            var nm = model.get_buffer("stack.1.num_batches_tracked")!.clone();
 
             model.load("bug510.dat");
 
@@ -520,7 +520,7 @@ namespace TorchSharp
             Assert.NotEqual(rm, rm_);
             Assert.NotEqual(rv, rv_);
             Assert.Equal(1, nm.item<long>());
-            Assert.Equal(0, nm_.item<long>());
+            Assert.Equal(0, nm_!.item<long>());
         }
 
         internal class Module510 : Module<Tensor, Tensor>
@@ -1027,7 +1027,7 @@ namespace TorchSharp
             public GitTestCnn(string name, Device? device = null) : base(name)
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
-                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernel_size: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
                 layers0 = Sequential(modules);
 
                 RegisterComponents();

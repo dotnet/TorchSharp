@@ -22,8 +22,7 @@ set(SOURCES
 	crc32c.c
 	THSActivation.cpp
     THSAutograd.cpp
-	THSConvolution.cpp
-    THSData.cpp
+	THSData.cpp
 	THSFFT.cpp
     THSJIT.cpp
 	THSLinearAlgebra.cpp

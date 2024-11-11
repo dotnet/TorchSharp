@@ -12,24 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LPPool2D module.
         /// </summary>
-        public sealed class LPPool2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class LPPool2d : ParameterLessModule<Tensor, Tensor>
         {
-            internal LPPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal LPPool2d(double norm_type, long[] kernel_size, long[] stride = null, bool ceil_mode = false) : base(nameof(LPPool2d))
             {
+                this.norm_type = norm_type;
+                this.kernel_size = kernel_size;
+                this.stride = stride;
+                this.ceil_mode = ceil_mode;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_LPPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.lp_pool2d(input, norm_type, kernel_size, stride, ceil_mode);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public double norm_type { get; set; }
+            public long[] kernel_size { get; set; }
+            public long[] stride { get; set; }
+            public bool ceil_mode { get; set; }
         }
     }
 
@@ -42,18 +43,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="norm_type">The LP norm (exponent)</param>
             /// <param name="kernel_size">The size of the window</param>
-            /// <param name="strides">The stride of the window. Default value is kernel_size</param>
+            /// <param name="stride">The stride of the window. Default value is kernel_size</param>
             /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
             /// <returns></returns>
-            public static LPPool2d LPPool2d(double norm_type, long[] kernel_size, long[] strides = null, bool ceil_mode = false)
+            public static LPPool2d LPPool2d(double norm_type, long[] kernel_size, long[] stride = null, bool ceil_mode = false)
             {
-                unsafe {
-                    fixed (long* pkernelSize = kernel_size, pstrides = strides) {
-                        var handle = THSNN_LPPool2d_ctor(norm_type, (IntPtr)pkernelSize, kernel_size.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), ceil_mode, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new LPPool2d(handle, boxedHandle);
-                    }
-                }
+                return new LPPool2d(norm_type, kernel_size, stride, ceil_mode);
             }
 
             /// <summary>
@@ -66,9 +61,46 @@ namespace TorchSharp
             /// <returns></returns>
             public static LPPool2d LPPool2d(double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
             {
-                return stride.HasValue ?
-                    LPPool2d(norm_type, new long[] { kernel_size, kernel_size }, new long[] { stride.Value, stride.Value }, ceil_mode) :
-                    LPPool2d(norm_type, new long[] { kernel_size, kernel_size }, null, ceil_mode);
+                return new LPPool2d(norm_type, new[] { kernel_size, kernel_size }, stride.HasValue ? new[] { stride.Value, stride.Value } : null, ceil_mode);
+            }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 2D power-average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor</param>
+                /// <param name="norm_type">The LP norm (exponent)</param>
+                /// <param name="kernel_size">The size of the window</param>
+                /// <param name="stride">The stride of the window. Default value is kernel_size</param>
+                /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
+                /// <returns></returns>
+                public static Tensor lp_pool2d(Tensor input, double norm_type, long[] kernel_size, long[] stride = null, bool ceil_mode = false)
+                {
+                    stride ??= Array.Empty<long>();
+
+                    unsafe {
+                        fixed (long* pkernel_size = kernel_size, pstrides = stride) {
+                            var res = THSTensor_lp_pool2d(input.Handle, norm_type, (IntPtr)pkernel_size, kernel_size.Length, (IntPtr)pstrides, stride.Length, ceil_mode);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Applies a 2D power-average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor</param>
+                /// <param name="norm_type">The LP norm (exponent)</param>
+                /// <param name="kernel_size">The size of the window</param>
+                /// <param name="stride">The stride of the window.</param>
+                /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
+                /// <returns></returns>
+                public static Tensor lp_pool2d(Tensor input, double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
+                {
+                    return lp_pool2d(input, norm_type, new[] { kernel_size, kernel_size }, stride.HasValue ? new[] { stride.Value, stride.Value } : null, ceil_mode);
+                }
             }
         }
     }

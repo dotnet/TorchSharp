@@ -98,7 +98,7 @@ namespace TorchSharp.Modules
                 this.conv = nn.Conv1d(
                     in_channels: in_channels,
                     out_channels: out_channels,
-                    kernelSize: kernel_size,
+                    kernel_size: kernel_size,
                     stride: stride,
                     bias: bias);
                 RegisterComponents();
@@ -250,7 +250,7 @@ namespace TorchSharp.Modules
                 this.embed_dim = embed_dim;
                 // TODO: Replace when nn.utils.weight_norm() is supported.
                 // https://github.com/dotnet/TorchSharp/issues/357
-                // this.conv = nn.Conv1d(inputChannel: embed_dim, outputChannel: embed_dim, kernelSize: kernel_size, padding: kernel_size / 2, groups: groups);
+                // this.conv = nn.Conv1d(inputChannel: embed_dim, outputChannel: embed_dim, kernel_size: kernel_size, padding: kernel_size / 2, groups: groups);
                 // this.conv = nn.utils.weight_norm(this.conv, name: "weight", dim: 2);
                 this.conv = new WeightNormConv1d(
                     "WeightNormConv1d",

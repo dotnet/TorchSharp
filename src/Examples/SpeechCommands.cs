@@ -235,16 +235,16 @@ namespace TorchSharp.Examples
 
             public M5(string name, int n_input = 1, int n_output = 35, int stride = 16, int n_channel = 32) : base(name)
             {
-                conv1 = nn.Conv1d(n_input, n_channel, kernelSize: 80, stride: stride);
+                conv1 = nn.Conv1d(n_input, n_channel, kernel_size: 80, stride: stride);
                 bn1 = nn.BatchNorm1d(n_channel);
                 pool1 = nn.MaxPool1d(4);
-                conv2 = nn.Conv1d(n_channel, n_channel, kernelSize: 3);
+                conv2 = nn.Conv1d(n_channel, n_channel, kernel_size: 3);
                 bn2 = nn.BatchNorm1d(n_channel);
                 pool2 = nn.MaxPool1d(4);
-                conv3 = nn.Conv1d(n_channel, 2 * n_channel, kernelSize: 3);
+                conv3 = nn.Conv1d(n_channel, 2 * n_channel, kernel_size: 3);
                 bn3 = nn.BatchNorm1d(2 * n_channel);
                 pool3 = nn.MaxPool1d(4);
-                conv4 = nn.Conv1d(2 * n_channel, 2 * n_channel, kernelSize: 3);
+                conv4 = nn.Conv1d(2 * n_channel, 2 * n_channel, kernel_size: 3);
                 bn4 = nn.BatchNorm1d(2 * n_channel);
                 pool4 = nn.MaxPool1d(4);
                 fc1 = nn.Linear(2 * n_channel, n_output);

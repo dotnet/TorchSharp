@@ -22,6 +22,7 @@
     <Compile Include="..\TorchSharpTest\LinearAlgebra.cs" Link="LinearAlgebra.cs" />
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
     <Compile Include="..\TorchSharpTest\PointwiseTensorMath.cs" Link="PointwiseTensorMath.cs" />
+    <Compile Include="..\TorchSharpTest\TestAutogradFunction.cs" Link="TestAutogradFunction.cs" />
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -34,10 +35,12 @@
     <Compile Include="..\TorchSharpTest\TestSaveSD.cs" Link="TestSaveSD.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchAudio.cs" Link="TestTorchAudio.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchAudioModels.cs" Link="TestTorchAudioModels.cs" />
+    <Compile Include="..\TorchSharpTest\TestTorchHub.cs" Link="TestTorchHub.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchSharp.cs" Link="TestTorchSharp.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensor.cs" Link="TestTorchTensor.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensorBugs.cs" Link="TestTorchTensorBugs.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchVision.cs" Link="TestTorchVision.cs" />
+    <Compile Include="..\TorchSharpTest\TestTorchVisionDatasets.cs" Link="TestTorchVisionDatasets.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchVisionTransforms.cs" Link="TestTorchVisionTransforms.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchVisionUtils.cs" Link="TestTorchVisionUtils.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchVisionOps.cs" Link="TestTorchVisionOps.cs" />

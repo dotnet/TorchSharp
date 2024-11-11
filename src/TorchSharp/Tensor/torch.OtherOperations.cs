@@ -6,6 +6,7 @@ using System.Linq;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     // https://pytorch.org/docs/stable/torch#other-operations

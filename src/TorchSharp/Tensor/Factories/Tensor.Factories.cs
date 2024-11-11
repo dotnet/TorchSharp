@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Utils;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -134,7 +135,7 @@ namespace TorchSharp
         /// <returns>A constructed tensor with elements of `dtype`</returns>
         /// <exception cref="ArgumentException"></exception>
         private static Tensor _tensor_generic(Array rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requires_grad, bool clone = true, string[]? names = null)
-        {           
+        {
             {
                 // Validate the sizes before handing over storage to native code...
                 var prod = 1L;
@@ -189,10 +190,10 @@ namespace TorchSharp
         }
 
         private static Tensor _tensor_generic<T>(Memory<T> rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requires_grad, bool clone = true, string[]? names = null)
-        {           
-            if (clone) 
-            { 
-                return _tensor_generic(rawArray.ToArray(), dimensions, origType, dtype, device, requires_grad, false, names); 
+        {
+            if (clone)
+            {
+                return _tensor_generic(rawArray.ToArray(), dimensions, origType, dtype, device, requires_grad, false, names);
             }
 
             {
@@ -215,7 +216,7 @@ namespace TorchSharp
 
                 var dataHandle = rawArray.Pin();
                 var dataArrayAddr = (IntPtr)dataHandle.Pointer;
-                
+
                 TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
                 deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
                     dataHandle.Dispose();
@@ -225,7 +226,7 @@ namespace TorchSharp
 
                 void *ptr = null;
                 IntPtr iPtr = (IntPtr)ptr;
-                
+
                 fixed (long* shape = dimensions) {
                     var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
 
@@ -585,7 +586,7 @@ namespace TorchSharp
 
                 var tensor = torch.empty(loadedShape, dtype: type);
                 tensor.ReadBytesFromStream(reader.BaseStream);
-                
+
                 return tensor;
             }
 

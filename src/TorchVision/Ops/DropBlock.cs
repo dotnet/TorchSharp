@@ -53,7 +53,7 @@ namespace TorchSharp
 
                 var pad = block_size / 2;
                 noise = torch.nn.functional.pad(noise, (pad, pad, pad, pad), value: 0);
-                noise = torch.nn.functional.max_pool2d(noise, stride: 1, kernelSize: block_size, padding: block_size / 2);
+                noise = torch.nn.functional.max_pool2d(noise, stride: 1, kernel_size: block_size, padding: block_size / 2);
                 noise = 1 - noise;
 
                 var normalize_scale = noise.numel() / (eps + noise.sum());
@@ -94,7 +94,7 @@ namespace TorchSharp
                 var pad = block_size / 2;
                 var padding = new[] { pad, pad, pad, pad, pad, pad };
                 noise = torch.nn.functional.pad(noise, padding, value: 0);
-                noise = torch.nn.functional.max_pool3d(noise, strides: new long[] { 1, 1, 1 }, kernelSize: new[] { block_size, block_size, block_size }, padding: new long[] { pad });
+                noise = torch.nn.functional.max_pool3d(noise, strides: new long[] { 1, 1, 1 }, kernel_size: new[] { block_size, block_size, block_size }, padding: new long[] { pad });
                 noise = 1 - noise;
 
                 var normalize_scale = noise.numel() / (eps + noise.sum());
@@ -121,7 +121,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class DropBlock2d : torch.nn.Module<Tensor,Tensor>
+        public class DropBlock2d : ParameterLessModule<Tensor,Tensor>
         {
             public DropBlock2d(double p, long block_size, bool inplace = false, double eps = 1e-6) : base(nameof(DropBlock2d))
             {
@@ -137,19 +137,13 @@ namespace TorchSharp
                 return torchvision.ops.drop_block2d(input, p, block_size, inplace, eps, training);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-
             private bool inplace;
             private double p;
             private long block_size;
             private double eps;
         }
 
-        public class DropBlock3d : torch.nn.Module<Tensor, Tensor>
+        public class DropBlock3d : ParameterLessModule<Tensor, Tensor>
         {
             public DropBlock3d(double p, long block_size, bool inplace = false, double eps = 1e-6) : base(nameof(DropBlock3d))
             {
@@ -164,12 +158,6 @@ namespace TorchSharp
             {
                 return torchvision.ops.drop_block3d(input, p, block_size, inplace, eps, training);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             private bool inplace;
             private double p;

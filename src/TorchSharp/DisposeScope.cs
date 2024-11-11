@@ -224,6 +224,21 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Replaces registration of one tensor with another.
+        /// </summary>
+        /// <param name="original">The original tensor, possibly registered under a dispose scope.</param>
+        /// <param name="replacement">The replacement tensor.</param>
+        internal static void ReplaceWith(torch.Tensor original, torch.Tensor replacement)
+        {
+            DisposeScope? scope = original.OwningDisposeScope;
+
+            if (scope != null && scope.Disposables.Remove(original)) {
+                original.OwningDisposeScope = null;
+                AddToOther(scope, replacement);
+            }
+        }
+
         public void Attach(IDisposable disposable)
         {
             _ = Attach((IEnumerable<IDisposable>)new[] { disposable });
@@ -369,10 +384,10 @@ namespace TorchSharp
         /// <returns></returns>
         public bool Contains(IDisposable disposable) => Disposables.Contains(disposable);
 
-        private bool AddToOther(DisposeScope scope, IDisposable disposable)
+        private static bool AddToOther(DisposeScope scope, IDisposable disposable)
         {
-            if (this._disposeScopeManager is null)
-                throw new ObjectDisposedException(this.GetType().FullName);
+            // if (this._disposeScopeManager is null)
+            //     throw new ObjectDisposedException(this.GetType().FullName);
 
             DisposeScope? oldScope;
             if (disposable is torch.Tensor t) {

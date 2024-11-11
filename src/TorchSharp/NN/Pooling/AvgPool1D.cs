@@ -12,24 +12,27 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AvgPool1D module.
         /// </summary>
-        public sealed class AvgPool1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class AvgPool1d : ParameterLessModule<Tensor, Tensor>
         {
-            internal AvgPool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal AvgPool1d(long kernel_size, long? stride = null, long? padding = null, bool ceil_mode = false, bool count_include_pad = true) : base(nameof(AvgPool1d))
             {
+                this.kernel_size = kernel_size;
+                this.stride = stride;
+                this.padding = padding;
+                this.ceil_mode = ceil_mode;
+                this.count_include_pad = count_include_pad;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_AvgPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.avg_pool1d(input, kernel_size, stride, padding, ceil_mode, count_include_pad);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long kernel_size { get; set; }
+            public long? stride { get; set; }
+            public long? padding { get; set; }
+            public bool ceil_mode { get; set; }
+            public bool count_include_pad { get; set; }
         }
     }
 
@@ -45,32 +48,9 @@ namespace TorchSharp
             /// <param name="padding">implicit zero padding to be added on both sides</param>
             /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
             /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
-            /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
-            public static AvgPool1d AvgPool1d(long kernel_size, long? stride = null, long padding = 0, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
+            public static AvgPool1d AvgPool1d(long kernel_size, long? stride = null, long padding = 0, bool ceil_mode = false, bool count_include_pad = true)
             {
-                return stride.HasValue ?
-                    AvgPool1d(new long[] { kernel_size }, new long[] { stride.Value }, new long[] { padding }, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0) :
-                    AvgPool1d(new long[] { kernel_size }, null, new long[] { padding }, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0);
-            }
-
-            /// <summary>
-            /// Applies a 1D average pooling over an input signal composed of several input planes.
-            /// </summary>
-            /// <param name="kernel_size">The size of the window</param>
-            /// <param name="strides">The stride of the window. Default value is kernel_size</param>
-            /// <param name="padding">implicit zero padding to be added on both sides</param>
-            /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
-            /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
-            /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
-            private static AvgPool1d AvgPool1d(long[] kernel_size, long[] strides = null, long[] padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
-            {
-                unsafe {
-                    fixed (long* pkernelSize = kernel_size, pstrides = strides, ppadding = padding) {
-                        var handle = THSNN_AvgPool1d_ctor((IntPtr)pkernelSize, (IntPtr)pstrides, (IntPtr)ppadding, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AvgPool1d(handle, boxedHandle);
-                    }
-                }
+                return new AvgPool1d(kernel_size, stride, padding, ceil_mode, count_include_pad);
             }
 
             public static partial class functional
@@ -89,14 +69,14 @@ namespace TorchSharp
                 public static Tensor avg_pool1d(Tensor input, long kernel_size, long? stride = null,
                     long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
                 {
-                    var kernelSizes = new long[] { kernel_size };
+                    var kernel_sizes = new long[] { kernel_size };
                     var strides = new long[] { stride ?? kernel_size };
                     var paddings = new long[] { padding ?? 0 };
                     unsafe {
-                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                        fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings) {
                             var res =
                                 THSTensor_avg_pool1d(input.Handle,
-                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                                    (IntPtr)pkernel_size, kernel_sizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,

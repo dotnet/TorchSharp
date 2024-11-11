@@ -31,12 +31,12 @@ namespace TorchSharp
                 /// <summary>
                 /// Applies Batch Normalization for each channel across a batch of data.
                 /// </summary>
-                public static Tensor batch_norm(Tensor input, Tensor running_mean, Tensor running_var, Tensor? weight = null, Tensor? bias = null, bool training = false, double momentum = 0.1, double eps = 1e-5)
+                public static Tensor batch_norm(Tensor input, Tensor? running_mean, Tensor? running_var, Tensor? weight = null, Tensor? bias = null, bool training = false, double momentum = 0.1, double eps = 1e-5)
                 {
                     var res = THSNN_batch_norm(
                         input.Handle,
-                        running_mean.Handle,
-                        running_var.Handle,
+                        running_mean is not null ? running_mean.Handle : IntPtr.Zero,
+                        running_var is not null ? running_var.Handle : IntPtr.Zero,
                         weight is not null ? weight.Handle : IntPtr.Zero,
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         training,
@@ -102,16 +102,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                /// <summary>
-                /// Applies Local Normalization.
-                /// </summary>
-                public static Tensor local_response_norm(Tensor input, long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
-                {
-                    var res = THSNN_local_response_norm(input.Handle, size, alpha, beta, k);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
-                }
             }
         }
     }

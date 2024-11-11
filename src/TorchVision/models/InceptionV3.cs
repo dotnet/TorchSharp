@@ -25,7 +25,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.inception_v3(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -119,10 +119,10 @@ namespace TorchSharp
                 Conv2d_1a_3x3 =  conv_block(3, 32, kernel_size: 3, stride: 2);
                 Conv2d_2a_3x3 = conv_block(32, 32, kernel_size: 3);
                 Conv2d_2b_3x3 = conv_block(32, 64, kernel_size: 3, padding: 1);
-                maxpool1 = MaxPool2d(kernelSize: 3, stride: 2);
+                maxpool1 = MaxPool2d(kernel_size: 3, stride: 2);
                 Conv2d_3b_1x1 = conv_block(64, 80, kernel_size: 1);
                 Conv2d_4a_3x3 = conv_block(80, 192, kernel_size: 3);
-                maxpool2 = MaxPool2d(kernelSize: 3, stride: 2);
+                maxpool2 = MaxPool2d(kernel_size: 3, stride: 2);
 
                 Mixed_5b = inception_a(192, pool_features: 32);
                 Mixed_5c = inception_a(256, pool_features: 64);
@@ -170,7 +170,7 @@ namespace TorchSharp
                             break;
                         }
                     }
-                    this.load(weights_file, skip: skipfc ? new[] { "fc.weight", "fc.bias", "AuxLogits.fc.weight", "AuxLogits.fc.bias" } : null);
+                    this.load(weights_file!, skip: skipfc ? new[] { "fc.weight", "fc.bias", "AuxLogits.fc.weight", "AuxLogits.fc.bias" } : null);
                 }
 
                 if (device != null && device.type != DeviceType.CPU)
@@ -181,7 +181,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
             {
                 return Sequential(
-                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
+                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernel_size: kernel_size, stride: stride, padding: padding)),
                     ("bn", BatchNorm2d(out_channels, eps: 0.001)),
                     ("relu", ReLU(true))
                     );
@@ -190,7 +190,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
             {
                 return Sequential(
-                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
+                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernel_size: kernel_size, stride: stride, padding: padding)),
                     ("bn", BatchNorm2d(out_channels, eps: 0.001)),
                     ("relu", ReLU(true))
                     );
@@ -292,7 +292,7 @@ namespace TorchSharp
                     branch3x3dbl = branch3x3dbl_2.call(branch3x3dbl);
                     branch3x3dbl = branch3x3dbl_3.call(branch3x3dbl);
 
-                    var branch_pool_ = functional.avg_pool2d(x, kernelSize: 3, stride: 1, padding: 1);
+                    var branch_pool_ = functional.avg_pool2d(x, kernel_size: 3, stride: 1, padding: 1);
                     branch_pool_ = branch_pool.call(branch_pool_);
 
                     var outputs = new [] { branch1x1_, branch5x5, branch3x3dbl, branch_pool_ };
@@ -341,7 +341,7 @@ namespace TorchSharp
                     branch3x3dbl = branch3x3dbl_2.call(branch3x3dbl);
                     branch3x3dbl = branch3x3dbl_3.call(branch3x3dbl);
 
-                    var branch_pool = functional.max_pool2d(x, kernelSize: 3, stride: 2);
+                    var branch_pool = functional.max_pool2d(x, kernel_size: 3, stride: 2);
 
                     var outputs = new[] { branch3x3_, branch3x3dbl, branch_pool };
 
@@ -425,7 +425,7 @@ namespace TorchSharp
                     branch7x7dbl = branch7x7dbl_4.call(branch7x7dbl);
                     branch7x7dbl = branch7x7dbl_5.call(branch7x7dbl);
 
-                    var branch_pool_ = functional.avg_pool2d(x, kernelSize: 3, stride: 1, padding: 1);
+                    var branch_pool_ = functional.avg_pool2d(x, kernel_size: 3, stride: 1, padding: 1);
                     branch_pool_ = branch_pool.call(branch_pool_);
 
                     var outputs = new[] { branch1x1_, branch7x7, branch7x7dbl, branch_pool_ };
@@ -475,7 +475,7 @@ namespace TorchSharp
                     branch7x7x3 = branch7x7x3_3.call(branch7x7x3);
                     branch7x7x3 = branch7x7x3_4.call(branch7x7x3);
 
-                    var branch_pool = functional.max_pool2d(x, kernelSize: 3, stride: 2);
+                    var branch_pool = functional.max_pool2d(x, kernel_size: 3, stride: 2);
                     var outputs = new[] { branch3x3, branch7x7x3, branch_pool };
 
 
@@ -537,7 +537,7 @@ namespace TorchSharp
                     branch3x3dbl = branch3x3dbl_2.call(branch3x3dbl);
                     branch3x3dbl = torch.cat(new[] { branch3x3dbl_3a.call(branch3x3dbl), branch3x3dbl_3b.call(branch3x3dbl) }, 1);
 
-                    var branch_pool_ = functional.avg_pool2d(x, kernelSize: 3, stride: 1, padding: 1);
+                    var branch_pool_ = functional.avg_pool2d(x, kernel_size: 3, stride: 1, padding: 1);
                     branch_pool_ = branch_pool.call(branch_pool_);
 
                     var outputs = new[] { branch1x1_, branch3x3, branch3x3dbl, branch_pool_ };
@@ -575,7 +575,7 @@ namespace TorchSharp
                 public override Tensor forward(Tensor x)
                 {
                     // N x 768 x 17 x 17
-                    x = functional.avg_pool2d(x, kernelSize: 5, stride: 3);
+                    x = functional.avg_pool2d(x, kernel_size: 5, stride: 3);
                     // N x 768 x 5 x 5
                     x = conv0.call(x);
                     // N x 128 x 5 x 5
