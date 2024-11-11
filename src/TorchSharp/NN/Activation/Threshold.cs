@@ -59,11 +59,19 @@ namespace TorchSharp
                 /// <param name="threshold">The value to threshold at</param>
                 /// <param name="value">The value to replace with</param>
                 /// <param name="inplace">Do the operation in-place</param>
-                /// <returns></returns>
                 public static Tensor threshold(Tensor x, double threshold, double value, bool inplace = false)
                 {
                     return inplace ? x.threshold_(threshold, value).alias() : x.threshold(threshold, value);
                 }
+
+                /// <summary>
+                /// Thresholds each element of the input Tensor.
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="threshold">The value to threshold at</param>
+                /// <param name="value">The value to replace with</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor Threshold(Tensor x, double threshold, double value) => nn.functional.threshold(x, threshold, value, false);
             }
         }
     }

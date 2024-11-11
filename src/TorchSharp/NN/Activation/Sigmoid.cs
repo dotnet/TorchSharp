@@ -34,6 +34,15 @@ namespace TorchSharp
             /// <summary>
             /// Sigmoid activation
             /// </summary>
+            /// <returns></returns>
+            public static Sigmoid Sigmoid()
+            {
+                return new Sigmoid(false);
+            }
+
+            /// <summary>
+            /// Sigmoid activation
+            /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
             public static Sigmoid Sigmoid(bool inplace = false)
@@ -49,9 +58,19 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                public static Tensor sigmoid(Tensor x, bool inplace = false)
+                public static Tensor sigmoid(Tensor x, bool inplace)
                 {
                     return inplace ? x.sigmoid_().alias() : x.sigmoid();
+                }
+
+                /// <summary>
+                /// Gaussian Error Linear Units
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
+                public static Tensor sigmoid(Tensor x)
+                {
+                    return sigmoid(x,false);
                 }
             }
         }

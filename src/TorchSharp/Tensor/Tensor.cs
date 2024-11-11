@@ -2724,7 +2724,7 @@ namespace TorchSharp
                 torch.special.softmax(this, dim, dtype);
 
 
-            public Tensor softplus(int beta = 1, int threshold = 20) =>
+            public Tensor softplus(double beta = 1, double threshold = 20) =>
                 softplus1(beta, threshold);
 
             private Tensor softplus1(Scalar beta, Scalar threshold)

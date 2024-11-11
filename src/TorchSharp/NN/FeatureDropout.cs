@@ -42,9 +42,21 @@ namespace TorchSharp
             /// </summary>
             /// <param name="p">Dropout probability of a channel to be zeroed. Default: 0.5</param>
             /// <param name="inplace">If set to true, will do this operation in-place. Default: false</param>
-            public static FeatureAlphaDropout FeatureAlphaDropout(double p = 0.5, bool inplace = false)
+            public static FeatureAlphaDropout FeatureAlphaDropout(double p, bool inplace)
             {
                 return new FeatureAlphaDropout(p, inplace);
+            }
+
+            /// <summary>
+            /// Randomly masks out entire channels (a channel is a feature map, e.g. the j-th channel of the i-th sample in the batch input is a tensor input[i,j]) of the input tensor.
+            /// Instead of setting activations to zero, as in regular Dropout, the activations are set to the negative saturation value of the SELU activation function.
+            /// Each element will be masked independently on every forward call with probability p using samples from a Bernoulli distribution.The elements to be masked are
+            /// randomized on every forward call, and scaled and shifted to maintain zero mean and unit variance.
+            /// </summary>
+            /// <param name="p">Dropout probability of a channel to be zeroed. Default: 0.5</param>
+            public static FeatureAlphaDropout FeatureAlphaDropout(double p = 0.5)
+            {
+                return new FeatureAlphaDropout(p, false);
             }
 
             public static partial class functional

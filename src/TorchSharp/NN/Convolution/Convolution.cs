@@ -187,6 +187,12 @@ namespace TorchSharp
                 return this;
             }
 
+            // Included to avoid API compat issues.
+            [Obsolete("Deprecated API", true)]
+            protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle) {
+                throw new NotImplementedException("Deprecated API.");
+            }
+
             [ComponentName(Name = BiasComponentName)]
             protected Parameter? _bias;
             [ComponentName(Name = WeightComponentName)]
@@ -197,6 +203,9 @@ namespace TorchSharp
             // implemented as two ops: padding + conv). `F.pad` accepts paddings in
             // reverse order than the dimension.
             protected long[] _reversed_padding_repeated_twice;
+
+            [Obsolete("Deprecated.", true)]
+            protected long input_channels;
 
             public long in_channels { get; }
             public long out_channels { get; }

@@ -41,6 +41,15 @@ namespace TorchSharp
             /// Tanh activation
             /// </summary>
             /// <returns></returns>
+            public static Tanh Tanh()
+            {
+                return new Tanh(false);
+            }
+
+            /// <summary>
+            /// Tanh activation
+            /// </summary>
+            /// <returns></returns>
             public static Tanh Tanh(bool inplace = false)
             {
                 return new Tanh(inplace);

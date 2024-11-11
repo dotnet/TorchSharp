@@ -35,8 +35,16 @@ namespace TorchSharp
             /// <summary>
             /// A Self Regularized Non-Monotonic Neural Activation Function.
             /// </summary>
+            public static Mish Mish()
+            {
+                return new Mish(false);
+            }
+
+            /// <summary>
+            /// A Self Regularized Non-Monotonic Neural Activation Function.
+            /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
-            public static Mish Mish(bool inplace = false)
+            public static Mish Mish(bool inplace)
             {
                 return new Mish(inplace);
             }
@@ -54,6 +62,13 @@ namespace TorchSharp
                     using var t2 = t1.tanh();
                     return inplace ? x.mul_(t2).alias() : x.mul(t2);
                 }
+
+                /// <summary>
+                /// A Self Regularized Non-Monotonic Neural Activation Function.
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor Mish(Tensor x) => mish(x, false);
             }
         }
     }

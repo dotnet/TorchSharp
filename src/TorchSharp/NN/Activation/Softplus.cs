@@ -14,7 +14,7 @@ namespace TorchSharp
         /// </summary>
         public sealed class Softplus : ParameterLessModule<Tensor, Tensor>
         {
-            internal Softplus(int beta = 1, int threshold = 20) : base(nameof(Softplus))
+            internal Softplus(double beta = 1, double threshold = 20) : base(nameof(Softplus))
             {
                 this.beta = beta;
                 this.threshold = threshold;
@@ -25,8 +25,8 @@ namespace TorchSharp
                 return torch.nn.functional.softplus(tensor, beta, threshold);
             }
 
-            public int beta {get; set;}
-            public int threshold {get; set;}
+            public double beta {get; set;}
+            public double threshold {get; set;}
         }
     }
 
@@ -40,7 +40,7 @@ namespace TorchSharp
             /// <param name="beta">The β value for the Softplus formulation.</param>
             /// <param name="threshold">Values above this revert to a linear function</param>
             /// <returns></returns>
-            public static Softplus Softplus(int beta = 1, int threshold = 20)
+            public static Softplus Softplus(double beta = 1, double threshold = 20)
             {
                 return new Softplus(beta, threshold);
             }
@@ -54,7 +54,7 @@ namespace TorchSharp
                 /// <param name="beta">The β value for the Softplus formulation.</param>
                 /// <param name="threshold">Values above this revert to a linear function</param>
                 /// <returns></returns>
-                public static Tensor softplus(Tensor x, int beta = 1, int threshold = 20)
+                public static Tensor softplus(Tensor x, double beta = 1, double threshold = 20)
                 {
                     return x.softplus(beta, threshold);
                 }

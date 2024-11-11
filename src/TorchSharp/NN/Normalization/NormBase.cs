@@ -52,6 +52,9 @@ namespace TorchSharp
                 }
             }
 
+            // For backward compat.
+            public void reset_running_stats() => ResetRunningStats();
+
             public void reset_parameters() {
                 ResetRunningStats();
                 if (affine) {

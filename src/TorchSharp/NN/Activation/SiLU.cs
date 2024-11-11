@@ -39,7 +39,15 @@ namespace TorchSharp
             /// <summary>
             /// Sigmoid-Weighted Linear Unit
             /// </summary>
-            public static SiLU SiLU(bool inplace = false)
+            public static SiLU SiLU()
+            {
+                return new SiLU(false);
+            }
+
+            /// <summary>
+            /// Sigmoid-Weighted Linear Unit
+            /// </summary>
+            public static SiLU SiLU(bool inplace)
             {
                 return new SiLU(inplace);
             }
