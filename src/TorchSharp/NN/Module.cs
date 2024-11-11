@@ -818,6 +818,11 @@ namespace TorchSharp
                     }
                 }
 
+                protected void ConditionallyRegisterParameter(string name, Tensor value)
+                {
+                    ConditionallyRegisterParameter(name, value as Parameter);
+                }
+
                 protected void ConditionallyRegisterParameter(string name, Parameter? value)
                 {
                     if (value is null) {

@@ -67,7 +67,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 [Obsolete("Not using the PyTorch naming convention.",false)]
-                public static Tensor tanhshrink(Tensor x) => tanhshrink(x, false);
+                public static Tensor Tanhshrink(Tensor x) => tanhshrink(x, false);
             }
         }
     }
