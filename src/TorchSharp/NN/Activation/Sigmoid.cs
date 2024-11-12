@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sigmoid module.
         /// </summary>
-        public sealed class Sigmoid : torch.nn.Module<Tensor, Tensor>
+        public sealed class Sigmoid : ParameterLessModule<Tensor, Tensor>
         {
-            internal Sigmoid(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Sigmoid(bool inplace) : base(nameof(Sigmoid))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Sigmoid_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.sigmoid(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(Sigmoid).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
     public static partial class torch
@@ -45,9 +37,17 @@ namespace TorchSharp
             /// <returns></returns>
             public static Sigmoid Sigmoid()
             {
-                var handle = THSNN_Sigmoid_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Sigmoid(handle, boxedHandle);
+                return new Sigmoid(false);
+            }
+
+            /// <summary>
+            /// Sigmoid activation
+            /// </summary>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
+            /// <returns></returns>
+            public static Sigmoid Sigmoid(bool inplace)
+            {
+                return new Sigmoid(inplace);
             }
 
             public static partial class functional
@@ -56,10 +56,21 @@ namespace TorchSharp
                 /// Sigmoid activation
                 /// </summary>
                 /// <param name="x">The input tensor</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
+                public static Tensor sigmoid(Tensor x, bool inplace)
+                {
+                    return inplace ? x.sigmoid_().alias() : x.sigmoid();
+                }
+
+                /// <summary>
+                /// Gaussian Error Linear Units
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
                 public static Tensor sigmoid(Tensor x)
                 {
-                    return x.sigmoid();
+                    return sigmoid(x,false);
                 }
             }
         }

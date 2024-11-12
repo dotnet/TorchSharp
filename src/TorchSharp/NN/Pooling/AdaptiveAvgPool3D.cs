@@ -12,24 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveAvgPool3D module.
         /// </summary>
-        public sealed class AdaptiveAvgPool3d : torch.nn.Module<Tensor, Tensor>
+        public sealed class AdaptiveAvgPool3d : ParameterLessModule<Tensor, Tensor>
         {
-            internal AdaptiveAvgPool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal AdaptiveAvgPool3d(long[] output_size) : base(nameof(AdaptiveAvgPool3d))
             {
+                this.output_size = output_size;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_AdaptiveAvgPool3d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.adaptive_avg_pool3d(input, this.output_size);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long[] output_size { get; set; }
         }
     }
 
@@ -41,44 +36,33 @@ namespace TorchSharp
             /// Applies a 3D adaptive average pooling over an input signal composed of several input planes.
             /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size of the image of the form D x H x W.</param>
+            /// <param name="output_size">The target output size of the image of the form D x H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d(long[] outputSize)
+            public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d(long[] output_size)
             {
-                fixed (long* pkernelSize = outputSize) {
-                    var handle = THSNN_AdaptiveAvgPool3d_ctor((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new AdaptiveAvgPool3d(handle, boxedHandle);
-                }
+                return new AdaptiveAvgPool3d(output_size);
             }
 
             /// <summary>
             /// Applies a 3D adaptive average pooling over an input signal composed of several input planes.
             /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size (D,H,W) of the image of the form D x H x W.</param>
+            /// <param name="output_size">The target output size (D,H,W) of the image of the form D x H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d((long, long, long) outputSize)
+            public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d((long, long, long) output_size)
             {
-                long* pkernelSize = stackalloc long[3] { outputSize.Item1, outputSize.Item2, outputSize.Item3 };
-
-                var handle = THSNN_AdaptiveAvgPool3d_ctor((IntPtr)pkernelSize, 3, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new AdaptiveAvgPool3d(handle, boxedHandle);
+                return new AdaptiveAvgPool3d(new[] { output_size.Item1, output_size.Item2, output_size.Item3 });
             }
 
             /// <summary>
             /// Applies a 3D adaptive average pooling over an input signal composed of several input planes.
             /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size (D,H,W) of the image of the form H x W.</param>
+            /// <param name="output_size">The target output size (D,H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d(long outputSize)
+            public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d(long output_size)
             {
-                long* pkernelSize = stackalloc long[3] { outputSize, outputSize, outputSize };
-                var handle = THSNN_AdaptiveAvgPool3d_ctor((IntPtr)pkernelSize, 3, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new AdaptiveAvgPool3d(handle, boxedHandle);
+                return new AdaptiveAvgPool3d(new [] { output_size, output_size, output_size });
             }
 
             public static partial class functional

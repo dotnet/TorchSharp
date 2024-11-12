@@ -12,21 +12,24 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public sealed class PixelShuffle : torch.nn.Module<Tensor, Tensor>
+        public sealed class PixelShuffle : ParameterLessModule<Tensor, Tensor>
         {
-            internal PixelShuffle(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal PixelShuffle(long upscale_factor) : base(nameof(PixelShuffle))
+            {
+                this.upscale_factor = upscale_factor;
+            }
 
             /// <summary>
             /// Forward pass.
             /// </summary>
-            /// <param name="tensor">Input tensor</param>
+            /// <param name="input">Input tensor</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_PixelShuffle_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.pixel_shuffle(input, this.upscale_factor);
             }
+
+            public long upscale_factor { get; set; }
         }
     }
 
@@ -38,13 +41,11 @@ namespace TorchSharp
             /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
             /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
             /// </summary>
-            /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
+            /// <param name="upscale_factor">Factor to increase spatial resolution by</param>
             /// <returns></returns>
-            public static PixelShuffle PixelShuffle(long upscaleFactor)
+            public static PixelShuffle PixelShuffle(long upscale_factor)
             {
-                var handle = THSNN_PixelShuffle_ctor(upscaleFactor, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new PixelShuffle(handle, boxedHandle);
+                return new PixelShuffle(upscale_factor);
             }
 
             public static partial class functional
@@ -53,15 +54,15 @@ namespace TorchSharp
                 /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
                 /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
                 /// </summary>
-                /// <param name="x">Input tensor</param>
-                /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
+                /// <param name="input">Input tensor</param>
+                /// <param name="upscale_factor">Factor to increase spatial resolution by</param>
                 /// <returns></returns>
                 /// <returns></returns>
-                public static Tensor pixel_shuffle(Tensor x, long upscaleFactor)
+                public static Tensor pixel_shuffle(Tensor input, long upscale_factor)
                 {
-                    using (var d = nn.PixelShuffle(upscaleFactor)) {
-                        return d.call(x);
-                    }
+                    var res = THSNN_pixel_shuffle(input.Handle, upscale_factor);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

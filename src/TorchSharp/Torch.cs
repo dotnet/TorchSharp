@@ -13,6 +13,7 @@ using TorchSharp.Modules;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -494,6 +495,16 @@ namespace TorchSharp
                     var bias = new Parameter(fused_b, linear_b.requires_grad);
 
                     return scope.MoveToOuter(weight, bias);
+                }
+
+                public static Linear fuse_linear_bn_eval(Linear linear, BatchNorm bn)
+                {
+                    if (linear.training || bn.training)
+                        throw new InvalidOperationException("Fusing operators is valid only for eval mode.");
+
+                    var (weight, bias) = fuse_linear_bn_weights(linear.weight, linear.bias, bn.running_mean!, bn.running_var!, bn.eps, bn.weight, bn.bias!);
+
+                    return Linear(weight, bias);
                 }
             }
         }

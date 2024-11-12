@@ -14,27 +14,20 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReLU6 module.
         /// </summary>
-        public sealed class ReLU6 : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReLU6 : ParameterLessModule<Tensor, Tensor>
         {
-            internal ReLU6(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal ReLU6(bool inplace) : base(nameof(ReLU6))
+            {
+                this.inplace = inplace;
+            }
+
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = NativeMethods.THSNN_ReLU6_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.relu6(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(ReLU6).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
 
@@ -51,9 +44,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReLU6 ReLU6(bool inplace = false)
             {
-                var handle = NativeMethods.THSNN_ReLU6_ctor(inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReLU6(handle, boxedHandle);
+                return new ReLU6(inplace);
             }
 
             public static partial class functional
@@ -68,9 +59,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor relu6(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.ReLU6(inplace)) {
-                        return m.call(x);
-                    }
+                    return inplace ? x.relu6_().alias() : x.relu6();
                 }
             }
         }

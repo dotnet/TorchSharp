@@ -12,24 +12,24 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveMaxPool2D module.
         /// </summary>
-        public sealed class AdaptiveMaxPool2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class AdaptiveMaxPool2d : ParameterLessModule<Tensor, Tensor>
         {
-            internal AdaptiveMaxPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal AdaptiveMaxPool2d(long[] output_size) : base(nameof(AdaptiveMaxPool2d))
             {
+                this.output_size = output_size;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_AdaptiveMaxPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.adaptive_max_pool2d(input, this.output_size);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public (Tensor output, Tensor indices) forward_with_indices(Tensor input)
+            {
+                return torch.nn.functional.adaptive_max_pool2d_with_indices(input, this.output_size);
+            }
+
+            public long[] output_size { get; set; }
         }
     }
 
@@ -41,18 +41,12 @@ namespace TorchSharp
             /// Applies a 2D adaptive max pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
+            /// <param name="output_size">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
             /// <returns></returns>
-            public static AdaptiveMaxPool2d AdaptiveMaxPool2d(long[] outputSize)
+            public static AdaptiveMaxPool2d AdaptiveMaxPool2d(long[] output_size)
             {
-                unsafe {
-                    fixed (long* pkernelSize = outputSize) {
-                        var handle = THSNN_AdaptiveMaxPool2d_ctor((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveMaxPool2d(handle, boxedHandle);
-                    }
-                }
+                return new AdaptiveMaxPool2d(output_size);
             }
 
             public static partial class functional
@@ -61,14 +55,33 @@ namespace TorchSharp
                 /// Applies a 2D adaptive max pooling over an input signal composed of several input planes.
                 /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
+                /// <param name="input"></param>
+                /// <param name="output_size">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
                 /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
                 /// <returns></returns>
-                public static Tensor adaptive_max_pool2d(Tensor x, long[] outputSize)
+                public static Tensor adaptive_max_pool2d(Tensor input, long[] output_size)
                 {
-                    using (var d = nn.AdaptiveMaxPool2d(outputSize)) {
-                        return d.call(x);
+                    var ret = adaptive_max_pool2d_with_indices(input, output_size);
+                    ret.Indices.Dispose();
+                    return ret.Values;
+                }
+
+                /// <summary>
+                /// Applies a 2D adaptive max pooling over an input signal composed of several input planes.
+                /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="output_size">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
+                /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
+                /// <returns></returns>
+                public static (Tensor Values, Tensor Indices) adaptive_max_pool2d_with_indices(Tensor input, long[] output_size)
+                {
+                    unsafe {
+                        fixed (long* poutputSize = output_size) {
+                            var resOutput = THSTensor_adaptive_max_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length, out var resIndices);
+                            if (resOutput == IntPtr.Zero || resIndices == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return (new Tensor(resOutput), new Tensor(resIndices));
+                        }
                     }
                 }
             }

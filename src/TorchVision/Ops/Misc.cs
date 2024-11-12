@@ -50,7 +50,7 @@ namespace TorchSharp
                         nn.Conv2d(
                             in_channels,
                             out_channels,
-                            kernelSize: kernel_size,
+                            kernel_size: kernel_size,
                             stride: stride,
                             padding: padding.Value,
                             dilation: dilation,
@@ -61,7 +61,7 @@ namespace TorchSharp
                         nn.Conv3d(
                             in_channels,
                             out_channels,
-                            kernelSize: kernel_size,
+                            kernel_size: kernel_size,
                             stride: stride,
                             padding: padding.Value,
                             dilation: dilation,

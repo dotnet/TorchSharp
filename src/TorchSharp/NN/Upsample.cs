@@ -8,6 +8,51 @@ namespace TorchSharp
 {
     using Modules;
 
+    namespace Modules
+    {
+        /// <summary>
+        /// This class is used to represent an Upsample module.
+        /// </summary>
+        public sealed class Upsample : ParameterLessModule<Tensor, Tensor>
+        {
+            internal Upsample(long[]? size, double[]? scale_factor, UpsampleMode mode, bool? align_corners, bool? recompute_scale_factor) : base(nameof(Upsample))
+            {
+                this._size = size;
+                this._scale_factor = scale_factor;
+                this.mode = mode;
+                this.align_corners = align_corners;
+                this.recompute_scale_factor = recompute_scale_factor;
+            }
+
+            /// <summary>
+            /// Forward pass.
+            /// </summary>
+            /// <param name="input">Input tensor</param>
+            /// <returns></returns>
+            public override Tensor forward(Tensor input)
+            {
+                return torch.nn.functional.interpolate(input, _size, _scale_factor, (InterpolationMode)mode, align_corners, recompute_scale_factor ?? false);
+            }
+
+            public bool? recompute_scale_factor { get; set; }
+
+            public UpsampleMode mode { get; private set; }
+
+            public bool? align_corners { get; private set; }
+
+            public ReadOnlySpan<long> size {
+                get { return _size is null ? null : new ReadOnlySpan<long>(_size!); }
+            }
+
+            public ReadOnlySpan<double> scale_factor {
+                get { return _scale_factor is null ? null : new ReadOnlySpan<double>(_scale_factor!); }
+            }
+
+            private long[]? _size;
+            private double[]? _scale_factor;
+        }
+    }
+
     public static partial class torch
     {
         public static partial class nn
@@ -22,19 +67,11 @@ namespace TorchSharp
             /// <param name="mode">The upsampling algorithm: one of 'nearest', 'linear', 'bilinear', 'bicubic' and 'trilinear'. Default: 'nearest'</param>
             /// <param name="align_corners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
             /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
+            /// <param name="recompute_scale_factor">recompute the scale_factor for use in the interpolation calculation. If `recompute_scale_factor` is ``True``, then `scale_factor` must be passed in and `scale_factor` is used to compute the output `size`. The computed output `size` will be used to infer new scales for the interpolation. Note that when `scale_factor` is floating-point, it may differ from the recomputed `scale_factor` due to rounding and precision issues. If `recompute_scale_factor` is ``False``, then `size` or `scale_factor` will be used directly for interpolation.</param>
             /// <returns></returns>
-            public static Upsample Upsample(long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool? align_corners = null)
+            public static Upsample Upsample(long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool? align_corners = null, bool? recompute_scale_factor = null)
             {
-                unsafe {
-                    fixed (long* psize = size) {
-                        fixed (double* pSF = scale_factor) {
-                            byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
-                            var res = THSNN_Upsample_ctor((IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, out var boxedHandle);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Upsample(res, boxedHandle, size, scale_factor, mode, align_corners);
-                        }
-                    }
-                }
+                return new Upsample(size, scale_factor, mode, align_corners, recompute_scale_factor);
             }
 
             public static partial class functional
@@ -44,20 +81,17 @@ namespace TorchSharp
                 /// The input data is assumed to be of the form minibatch x channels x[optional depth] x[optional height] x width.
                 /// Hence, for spatial inputs, we expect a 4D Tensor and for volumetric inputs, we expect a 5D Tensor.
                 /// </summary>
-                /// <param name="x">Input tensor</param>
+                /// <param name="input">Input tensor</param>
                 /// <param name="size">Output spatial sizes</param>
                 /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
                 /// <param name="mode">The upsampling algorithm: one of 'nearest', 'linear', 'bilinear', 'bicubic' and 'trilinear'. Default: 'nearest'</param>
                 /// <param name="align_corners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                public static Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool align_corners = false)
+                public static Tensor upsample(Tensor input, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool align_corners = false)
                 {
-                    using (var d = nn.Upsample(size, scale_factor, mode, align_corners)) {
-                        return d.call(x);
-                    }
+                    return interpolate(input, size, scale_factor, (InterpolationMode)mode, align_corners);
                 }
-
 
                 /// <summary>
                 /// Upsamples the input, using nearest neighbours’ pixel values.
@@ -199,53 +233,4 @@ namespace TorchSharp
         }
     }
 
-    namespace Modules
-    {
-        /// <summary>
-        /// This class is used to represent an Upsample module.
-        /// </summary>
-        public sealed class Upsample : torch.nn.Module<Tensor, Tensor>
-        {
-            internal Upsample(IntPtr handle, IntPtr boxedHandle, long[]? size, double[]? scale_factor, UpsampleMode mode, bool? align_corners) : base(handle, boxedHandle)
-            {
-                this._size = size;
-                this._scale_factor = scale_factor;
-                this.mode = mode;
-                this.align_corners = align_corners;
-            }
-
-            /// <summary>
-            /// Forward pass.
-            /// </summary>
-            /// <param name="tensor">Input tensor</param>
-            /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
-            {
-                var res = THSNN_Upsample_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            public UpsampleMode mode { get; private set; }
-
-            public bool? align_corners { get; private set; }
-
-            public ReadOnlySpan<long> size {
-                get { return _size is null ? null : new ReadOnlySpan<long>(_size!); }
-            }
-
-            public ReadOnlySpan<double> scale_factor {
-                get { return _scale_factor is null ? null : new ReadOnlySpan<double>(_scale_factor!); }
-            }
-
-            private long[]? _size;
-            private double[]? _scale_factor;
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-        }
-    }
 }

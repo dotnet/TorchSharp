@@ -10,26 +10,23 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// This class is used to represent a dropout module for 2d/3d convolutational layers.
+        /// This class is used to represent a flattening of the input tensors.
         /// </summary>
-        public sealed class Flatten : torch.nn.Module<Tensor, Tensor>
+        public sealed class Flatten : ParameterLessModule<Tensor, Tensor>
         {
-            internal Flatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal Flatten(long start_dim = 1, long end_dim = -1) : base(nameof(Flatten))
             {
+                this.start_dim = start_dim;
+                this.end_dim = end_dim;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_Flatten_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return input.flatten(start_dim, end_dim);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long start_dim { get; set; }
+            public long end_dim { get; set; }
         }
     }
 
@@ -40,14 +37,12 @@ namespace TorchSharp
             /// <summary>
             /// Flattens a contiguous range of dims into a tensor. For use with Sequential.
             /// </summary>
-            /// <param name="startDim">First dim to flatten (default = 1).</param>
-            /// <param name="endDim">Last dim to flatten (default = -1).</param>
+            /// <param name="start_dim">First dim to flatten (default = 1).</param>
+            /// <param name="end_dim">Last dim to flatten (default = -1).</param>
             /// <returns></returns>
-            public static Flatten Flatten(long startDim = 1, long endDim = -1)
+            public static Flatten Flatten(long start_dim = 1, long end_dim = -1)
             {
-                var handle = THSNN_Flatten_ctor(startDim, endDim, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Flatten(handle, boxedHandle);
+                return new Flatten(start_dim, end_dim);
             }
         }
     }

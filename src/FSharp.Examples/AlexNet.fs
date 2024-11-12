@@ -47,19 +47,19 @@ let getDataFiles sourceDir targetDir =
 type Model(name,device:torch.Device) as this =
     inherit Module<torch.Tensor,torch.Tensor>(name)
 
-    let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
+    let features = Sequential(("c1", Conv2d(3L, 64L, kernel_size=3L, stride=2L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
                               ("r1", ReLU(inplace=true) :> Module<torch.Tensor,torch.Tensor>),
-                              ("mp1", MaxPool2d(kernelSize=[|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>),
-                              ("c2", Conv2d(64L, 192L, kernelSize=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
+                              ("mp1", MaxPool2d(kernel_size=[|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>),
+                              ("c2", Conv2d(64L, 192L, kernel_size=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
                               ("r2", ReLU(inplace=true) :> Module<torch.Tensor,torch.Tensor>),
-                              ("mp2", MaxPool2d(kernelSize=[|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>),
-                              ("c3", Conv2d(192L, 384L, kernelSize=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
+                              ("mp2", MaxPool2d(kernel_size=[|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>),
+                              ("c3", Conv2d(192L, 384L, kernel_size=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
                               ("r3", ReLU(inplace=true) :> Module<torch.Tensor,torch.Tensor>),
-                              ("c4", Conv2d(384L, 256L, kernelSize=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
+                              ("c4", Conv2d(384L, 256L, kernel_size=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
                               ("r4", ReLU(inplace=true) :> Module<torch.Tensor,torch.Tensor>),
-                              ("c5", Conv2d(256L, 256L, kernelSize=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
+                              ("c5", Conv2d(256L, 256L, kernel_size=3L, padding=1L) :> Module<torch.Tensor,torch.Tensor>),
                               ("r5", ReLU(inplace=true) :> Module<torch.Tensor,torch.Tensor>),
-                              ("mp3", MaxPool2d(kernelSize=[|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>),
+                              ("mp3", MaxPool2d(kernel_size=[|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>),
                               ("avg", AdaptiveAvgPool2d([|2L; 2L|]) :> Module<torch.Tensor,torch.Tensor>))
 
     let classifier = Sequential(("d1", Dropout() :> Module<torch.Tensor,torch.Tensor>),

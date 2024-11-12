@@ -8,6 +8,7 @@ using System.Threading;
 
 namespace TorchSharp
 {
+    [Collection("Sequential")]
     public class TestAutogradFunction
     {
 
@@ -161,7 +162,7 @@ namespace TorchSharp
         public void TestCustomLinearXORLearn_CPU()
         {
             float loss = TrainXOR(torch.CPU);
-            LossIsClose(loss, 0.4513f);
+            LossIsClose(0.4513f, loss);
         }
 
         [Fact]
@@ -169,7 +170,7 @@ namespace TorchSharp
         {
             if (torch.cuda.is_available()) {
                 float loss = TrainXOR(torch.CUDA);
-                LossIsClose(loss, 0.4513f);
+                LossIsClose(0.4513f, loss);
             }
         }
 
@@ -178,7 +179,7 @@ namespace TorchSharp
         {
             Enumerable.Range(0, 20).AsParallel().ForAll(i => {
                 float loss = TrainXOR(torch.CPU);
-                LossIsClose(loss, 0.4513f);
+                LossIsClose(0.4513f, loss);
             });
         }
 

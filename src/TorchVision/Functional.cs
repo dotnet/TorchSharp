@@ -451,16 +451,17 @@ namespace TorchSharp
                         kernelSize = new long[] { kernelSize[0], kernelSize[0] };
                     }
 
-                    if (sigma == null) {
+                    if (sigma == null || sigma.Count == 0)
+                    {
                         sigma = new float[] {
-                        0.3f * ((kernelSize[0] - 1) * 0.5f - 1) + 0.8f,
-                        0.3f * ((kernelSize[1] - 1) * 0.5f - 1) + 0.8f,
-                    };
+                            0.3f * ((kernelSize[0] - 1) * 0.5f - 1) + 0.8f,
+                            0.3f * ((kernelSize[1] - 1) * 0.5f - 1) + 0.8f,
+                        };
                     } else if (sigma.Count == 1) {
                         sigma = new float[] {
-                        sigma[0],
-                        sigma[0],
-                    };
+                            sigma[0],
+                            sigma[0],
+                        };
                     }
                     using var t0 = GetGaussianKernel2d(kernelSize, sigma, dtype, input.device);
                     using var kernel = t0.expand(input.shape[input.shape.Length - 3], 1, t0.shape[0], t0.shape[1]);
@@ -487,9 +488,9 @@ namespace TorchSharp
                 /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
                 /// </summary>
                 /// <returns></returns>
-                public static Tensor gaussian_blur(Tensor input, long kernelSize, float sigma)
+                public static Tensor gaussian_blur(Tensor input, long kernel_size, float sigma)
                 {
-                    return gaussian_blur(input, new long[] { kernelSize, kernelSize }, new float[] { sigma });
+                    return gaussian_blur(input, new long[] { kernel_size, kernel_size }, new float[] { sigma });
                 }
 
                 /// <summary>
@@ -755,7 +756,7 @@ namespace TorchSharp
                             throw new ArgumentException("Crop dimensions exceed image size.", nameof(input));
                         break;
                     default: // Any number of batch dimensions
-                        if (top + height > input.shape[input.ndim-2] || left + width > input.shape[input.ndim-1]) 
+                        if (top + height > input.shape[input.ndim-2] || left + width > input.shape[input.ndim-1])
                             throw new ArgumentException("Crop dimensions exceed image size.", nameof(input));
                         break;
                     case 1:

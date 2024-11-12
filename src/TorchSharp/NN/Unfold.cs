@@ -6,16 +6,15 @@ using static TorchSharp.PInvoke.NativeMethods;
 #nullable enable
 namespace TorchSharp
 {
-    using System.Security.Cryptography;
     using Modules;
 
     namespace Modules
     {
-        public sealed class Unfold : torch.nn.Module<Tensor, Tensor>
+        public sealed class Unfold : ParameterLessModule<Tensor, Tensor>
         {
             internal Unfold((long, long) kernel_size, (long, long) dilation, (long, long) padding, (long, long) stride) : base(nameof(Unfold))
             {
-                this.kernelSize = kernel_size;
+                this.kernel_size = kernel_size;
                 this.dilation = dilation;
                 this.padding = padding;
                 this.stride = stride;
@@ -23,19 +22,13 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.unfold(tensor, kernelSize, dilation, padding, stride);
+                return torch.nn.functional.unfold(tensor, kernel_size, dilation, padding, stride);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-
-            private (long, long) kernelSize;
-            private (long, long) dilation;
-            private (long, long) padding;
-            private (long, long) stride;
+            public (long, long) kernel_size { get; set; }
+            public (long, long) dilation { get; set; }
+            public (long, long) padding { get; set; }
+            public (long, long) stride { get; set; }
         }
     }
 
@@ -51,7 +44,7 @@ namespace TorchSharp
             /// <param name="padding">Implicit zero padding to be added on both sides of input.</param>
             /// <param name="stride">The stride of the sliding blocks in the input spatial dimensions.</param>
             /// <remarks>Currently, only 4-D input tensors (batched image-like tensors) are supported.</remarks>
-            public unsafe static Unfold Unfold(long kernel_size, long dilation = 1, long padding = 0, long stride = 1)
+            public static Unfold Unfold(long kernel_size, long dilation = 1, long padding = 0, long stride = 1)
             {
                 return new Unfold((kernel_size, kernel_size), (dilation, dilation), (padding, padding), (stride, stride));
             }
@@ -64,7 +57,7 @@ namespace TorchSharp
             /// <param name="padding">Implicit zero padding to be added on both sides of input.</param>
             /// <param name="stride">The stride of the sliding blocks in the input spatial dimensions.</param>
             /// <remarks>Currently, only 4-D input tensors (batched image-like tensors) are supported.</remarks>
-            public unsafe static Unfold Unfold((long, long) kernel_size, (long, long)? dilation = null, (long, long)? padding = null, (long, long)? stride = null)
+            public static Unfold Unfold((long, long) kernel_size, (long, long)? dilation = null, (long, long)? padding = null, (long, long)? stride = null)
             {
                 dilation ??= (1, 1);
                 stride ??= (1, 1);
@@ -83,7 +76,7 @@ namespace TorchSharp
                 /// <param name="dilation">A parameter that controls the stride of elements within the neighborhood.</param>
                 /// <param name="padding">Implicit zero padding to be added on both sides of input.</param>
                 /// <param name="stride">The stride of the sliding blocks in the input spatial dimensions.</param>
-                public unsafe static Tensor unfold(Tensor input, long kernel_size, long dilation = 1, long padding = 0, long stride = 1)
+                public static Tensor unfold(Tensor input, long kernel_size, long dilation = 1, long padding = 0, long stride = 1)
                 {
                     var res = THSNN_unfold(input.Handle, kernel_size, kernel_size, stride, stride, padding, padding, dilation, dilation);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -98,7 +91,7 @@ namespace TorchSharp
                 /// <param name="dilation">A parameter that controls the stride of elements within the neighborhood.</param>
                 /// <param name="padding">Implicit zero padding to be added on both sides of input.</param>
                 /// <param name="stride">The stride of the sliding blocks in the input spatial dimensions.</param>
-                public unsafe static Tensor unfold(Tensor input, (long, long) kernel_size, (long, long)? dilation = null, (long, long)? padding = null, (long, long)? stride = null)
+                public static Tensor unfold(Tensor input, (long, long) kernel_size, (long, long)? dilation = null, (long, long)? padding = null, (long, long)? stride = null)
                 {
                     dilation ??= (1, 1);
                     stride ??= (1, 1);

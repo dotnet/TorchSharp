@@ -6,11 +6,14 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+
+using static System.Linq.Enumerable;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.NativeMethods;
 using TorchSharp.Utils;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -34,7 +37,7 @@ namespace TorchSharp
                 /// </summary>
                 protected internal sealed class HType : SafeHandle
                 {
-                    public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType> dispose = null)
+                    public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType>? dispose = null)
                         : base(IntPtr.Zero, ownsHandle)
                     {
                         _dispose = dispose ?? THSNN_Module_dispose;
@@ -50,7 +53,7 @@ namespace TorchSharp
 
                     protected override bool ReleaseHandle()
                     {
-                        if (!IsInvalid) {
+                        if (!IsInvalid && _dispose is not null) {
                             _dispose(this);
                         }
                         SetHandle(IntPtr.Zero);
@@ -64,13 +67,13 @@ namespace TorchSharp
                         }
                     }
 
-                    private Action<HType> _dispose;
+                    private Action<HType>? _dispose;
                 }
 
                 internal HType handle;
 
                 /// Stores the AnyModule corresponding to this module.
-                internal BoxedModule boxedModule;
+                internal BoxedModule? boxedModule;
 
                 internal BoxedModule BoxedModule {
                     get {
@@ -127,10 +130,10 @@ namespace TorchSharp
                     if (disposing && !handle.IsInvalid) {
 
                         foreach (var (_, p) in named_buffers(false)) {
-                            p.Dispose();
+                            p.DetachFromDisposeScope().Dispose();
                         }
                         foreach (var (_, b) in named_parameters(false)) {
-                            b.Dispose();
+                            b.DetachFromDisposeScope().Dispose();
                         }
 
                         foreach (var (_, m) in named_modules()) {
@@ -149,7 +152,7 @@ namespace TorchSharp
                 /// <param name="device">The target device.</param>
                 /// <param name="dtype">The target element type.</param>
                 /// <param name="non_blocking">
-                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
                 /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
                 /// </param>
                 protected internal virtual Module _to(Device device, ScalarType dtype, bool non_blocking)
@@ -176,7 +179,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <param name="non_blocking">
-                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
                 /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
                 /// </param>
                 /// <returns></returns>
@@ -200,8 +203,8 @@ namespace TorchSharp
                     return this;
                 }
 
-                private DeviceType _deviceType = DeviceType.CPU;
-                private int _deviceIndex = -1;
+                protected DeviceType _deviceType = DeviceType.CPU;
+                protected int _deviceIndex = -1;
 
                 /// <summary>
                 /// Convert the parameters and buffers.
@@ -235,66 +238,58 @@ namespace TorchSharp
                     _toEpilog(null, new Device(deviceType, deviceIndex), non_blocking);
                 }
 
-                private void _toEpilog(ScalarType? dtype, Device device, bool non_blocking)
+                protected virtual void _toEpilog(ScalarType? dtype, Device? device, bool non_blocking)
                 {
+                    if (dtype is null && device is null) throw new ArgumentNullException($"{nameof(dtype)} and {nameof(device)} are both null,");
+
                     foreach (var (_, sm) in named_children()) {
-                        if (device is null) sm._to(dtype.Value, non_blocking);
+                        if (device is null) sm._to(dtype!.Value, non_blocking);
                         else if (dtype is null) sm._to(device.type, device.index, non_blocking);
                         else sm._to(device, dtype.Value, non_blocking);
                     }
 
-                    var fieldsByComponentName = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
-                                                            .ToDictionary(field => field.ComponentName());
+                    var fieldsByComponentName =
+                        GetFieldsRecursive(GetType(), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).ToDictionary(field => field.ComponentName());
+
+                    var props = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                    // var propsByName = new Dictionary<string, PropertyInfo>();
+                    // foreach (var p in props) {
+                    //     // There may be duplicates, and this just overwrites it.
+                    //     propsByName[p.Name] = p;
+                    // }
+
+                    var propsByName = props.ToDictionary(prop => prop.Name);
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
-                        using var grad = param.grad;
 
-                        if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
-                            (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
-                            continue;
+                        if (!ReplaceParameter(dtype, device, param, out var p)) continue;
 
-                        Parameter p;
-                        ScalarType paramType =
-                            dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
+                        if (propsByName.TryGetValue(name, out var property)) {
+                            property.SetValue(this, p);
+                        } else {
+                            param?.Dispose();
 
-                        // When moving the parameter, we don't want the autograd to track this movement on the graph.
-                        // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
-                        // disable grad we would need to call .detach() on the moved tensor.
-                        using (var d = torch.no_grad()) {
-                            p = new Parameter(
-                                data: param.to(paramType, device ?? param.device),
-                                requires_grad: param.requires_grad);
-                            _ = p.DetachFromDisposeScope();
+                            ConditionallyRegisterParameter(name, p);
 
-                            // Copy the gradient over as well, if it exists
-                            if (grad is not null) {
-                                using var newGrad = grad.to(paramType, device ?? param.device)
-                                    .with_requires_grad(grad.requires_grad);
-                                p.grad = newGrad;
-                            }
-
-                            // Dispose the param
-                            param.Dispose();
+                            // If this parameter is a field, set it
+                            if (fieldsByComponentName.TryGetValue(name, out var field))
+                                field.SetValue(this, p);
                         }
-                        ConditionallyRegisterParameter(name, p);
 
-                        // If this parameter is a field, set it
-                        if (fieldsByComponentName.TryGetValue(name, out var field))
-                            field.SetValue(this, p);
                     }
 
                     foreach (var (name, buffer) in named_buffers(false).ToList()) {
-                        if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
 
-                        ScalarType bufferType =
-                            dtype != null && (buffer.dtype.IsFloatingPoint() || buffer.dtype.IsComplex()) ? dtype.Value : buffer.dtype;
+                        if (!ReplaceBuffer(dtype, device, buffer, out var t)) continue;
 
-                        // Buffers don't get grads so we don't need to detach them afterwards
-                        var t = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true).DetachFromDisposeScope();
-                        ConditionallyRegisterBuffer(name, t);
-
-                        if (fieldsByComponentName.TryGetValue(name, out var field))
-                            field.SetValue(this, t);
+                        if (propsByName.TryGetValue(name, out var property)) {
+                            property.SetValue(this, t);
+                        } else {
+                            ConditionallyRegisterBuffer(name, t);
+                            if (fieldsByComponentName.TryGetValue(name, out var field))
+                                field.SetValue(this, t);
+                        }
                     }
 
                     if (device is not null) {
@@ -303,12 +298,74 @@ namespace TorchSharp
                     }
                 }
 
+                protected static bool  ReplaceBuffer(ScalarType? dtype, Device? device, Tensor buffer, out Tensor? result)
+                {
+                    result = null;
+
+                    if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) return false;
+
+                    ScalarType bufferType =
+                        dtype != null && (buffer.dtype.IsFloatingPoint() || buffer.dtype.IsComplex()) ? dtype.Value : buffer.dtype;
+
+                    // Buffers don't get grads so we don't need to detach them afterwards
+                    result = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true).DetachFromDisposeScope();
+                    return true;
+                }
+
+                protected static bool ReplaceParameter(ScalarType? dtype, Device? device, Parameter param, out Parameter? p)
+                {
+                    Tensor? grad = param.grad;
+                    p = null;
+
+                    if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
+                        (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                        return false;
+
+                    ScalarType paramType =
+                        dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
+
+                    // When moving the parameter, we don't want the autograd to track this movement on the graph.
+                    // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
+                    // disable grad we would need to call .detach() on the moved tensor.
+                    using (var d = torch.no_grad()) {
+                        p = new Parameter(
+                            data: param.to(paramType, device ?? param.device),
+                            requires_grad: param.requires_grad);
+                        _ = p.DetachFromDisposeScope();
+
+                        // Copy the gradient over as well, if it exists
+                        if (grad is not null) {
+                            using var newGrad = grad.to(paramType, device ?? param.device)
+                                .with_requires_grad(grad.requires_grad);
+                            p.grad = newGrad;
+                        }
+                    }
+                    return true;
+                }
+
+                private static IEnumerable<FieldInfo> GetFieldsRecursive(Type type, BindingFlags bindingFlags) {
+
+                    Type? currentType = type;
+                    var seenFields = new HashSet<string>();  // Track field names we've seen
+
+                    while (currentType != null && currentType != typeof(object)) {
+                        var fields = currentType.GetFields(bindingFlags);
+
+                        foreach (var field in fields) {
+                            if (seenFields.Add(field.Name))
+                                yield return field;
+                        }
+
+                        currentType = currentType.BaseType;
+                    }
+                }
+
                 /// <summary>
                 /// Moves and converts the parameters and buffers.
                 /// </summary>
                 /// <param name="other">The tensor serving as a template.</param>
                 /// <param name="non_blocking">
-                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+                /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
                 /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
                 /// </param>
                 /// <returns></returns>
@@ -462,7 +519,7 @@ namespace TorchSharp
                 /// <param name="destination">An optional dictionary where the state should be accumulated.</param>
                 /// <param name="prefix">A prefix string to use when entering the name of entries into the dictionary.</param>
                 /// <returns></returns>
-                public virtual Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor> destination = null, string prefix = null)
+                public virtual Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor>? destination = null, string? prefix = null)
                 {
                     destination ??= new Dictionary<string, Tensor>();
 
@@ -493,7 +550,7 @@ namespace TorchSharp
                 /// <param name="strict">Whether to strictly enforce that the keys in state_dict match the keys returned by this module’s state_dict() function.</param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
                 /// <returns></returns>
-                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true, IList<string> skip = null)
+                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true, IList<string>? skip = null)
                 {
                     List<string> missing = new List<string>();
                     List<string> unexpected = new List<string>();
@@ -519,7 +576,7 @@ namespace TorchSharp
                         throw new InvalidOperationException("The loaded state_dict is not identical to the target dictionary.");
 
                     // The copy_ operation is an in-place operation which can't be performed on a leaf variable which
-                    // requires_grad. Therefore, we will perform the copy in a no_grad context. 
+                    // requires_grad. Therefore, we will perform the copy in a no_grad context.
                     using var d = torch.no_grad();
 
                     foreach (var key in source.Keys) {
@@ -541,7 +598,7 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Parameter(x))).ToArray();
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i])!, new Parameter(x))).ToArray();
                 }
 
                 protected virtual (string name, Tensor buffer)[] _named_buffers()
@@ -553,7 +610,7 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i])!, new Tensor(x))).ToArray();
                 }
 
                 /// <summary>
@@ -638,7 +695,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="target">The fully-qualified string name of the buffer to look for.</param>
                 /// <returns>The tensor referenced by target</returns>
-                public virtual Tensor get_buffer(string target)
+                public virtual Tensor? get_buffer(string target)
                 {
                     if (target is null) throw new ArgumentNullException("target");
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
@@ -660,7 +717,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="target">The fully-qualified string name of the Parameter to look for.</param>
                 /// <returns>The Parameter referenced by target</returns>
-                public virtual Parameter get_parameter(string target)
+                public virtual Parameter? get_parameter(string target)
                 {
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return parameter;
@@ -763,6 +820,11 @@ namespace TorchSharp
 
                 protected void ConditionallyRegisterParameter(string name, Tensor value)
                 {
+                    ConditionallyRegisterParameter(name, value as Parameter);
+                }
+
+                protected void ConditionallyRegisterParameter(string name, Parameter? value)
+                {
                     if (value is null) {
                         if (_internal_params.ContainsKey(name)) {
                             _internal_params.Remove(name);
@@ -780,7 +842,7 @@ namespace TorchSharp
                     }
                 }
 
-                protected void ConditionallyRegisterBuffer(string name, Tensor value, bool persistent = true)
+                protected void ConditionallyRegisterBuffer(string name, Tensor? value, bool persistent = true)
                 {
                     if (value is null) {
                         if (_internal_buffers.ContainsKey(name)) {
@@ -797,6 +859,8 @@ namespace TorchSharp
 
                 public virtual string GetName()
                 {
+                    if (!string.IsNullOrEmpty(this.name)) return this.name!;
+
                     var res = THSNN_Module_name(handle);
                     CheckForErrors();
                     return res;
@@ -808,7 +872,7 @@ namespace TorchSharp
                 /// <param name="location">The file path.</param>
                 /// <param name="skip">A list of keys not to consider when saving the weights.</param>
                 /// <returns></returns>
-                public Module save(string location, IList<string> skip = null)
+                public Module save(string location, IList<string>? skip = null)
                 {
                     using var stream = System.IO.File.Create(location);
                     using var writer = new System.IO.BinaryWriter(stream);
@@ -823,7 +887,7 @@ namespace TorchSharp
                 /// <param name="writer">A binary writer instance.</param>
                 /// <param name="skip">A list of keys not to consider when saving the weights.</param>
                 /// <returns></returns>
-                public Module save(System.IO.BinaryWriter writer, IList<string> skip = null)
+                public Module save(System.IO.BinaryWriter writer, IList<string>? skip = null)
                 {
                     var sd = state_dict();
 
@@ -839,7 +903,7 @@ namespace TorchSharp
                 /// <param name="stream">A writable stream instance.</param>
                 /// <param name="skip">A list of keys not to consider when saving the weights.</param>
                 /// <returns></returns>
-                public Module save(System.IO.Stream stream, IList<string> skip = null)
+                public Module save(System.IO.Stream stream, IList<string> ?skip = null)
                 {
                     using var writer = new System.IO.BinaryWriter(stream);
                     return save(writer, skip);
@@ -851,7 +915,7 @@ namespace TorchSharp
                 /// <param name="writer">A binary writer instance.</param>
                 /// <param name="skip">A list of keys not to consider when saving the weights.</param>
                 /// <param name="sd">A dictionary containing all the buffers and parameters of the module.</param>
-                public static void save_state_dict(System.IO.BinaryWriter writer, Dictionary<string, Tensor> sd, IList<string> skip = null)
+                public static void save_state_dict(System.IO.BinaryWriter writer, Dictionary<string, Tensor> sd, IList<string>? skip = null)
                 {
                     if (skip is not null && skip.Count > 0) {
                         // We need to make a copy, so that the passed-in 'sd' isn't modified.
@@ -887,7 +951,7 @@ namespace TorchSharp
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(string location, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
+                public virtual Module load(string location, bool strict = true, IList<string>? skip = null, Dictionary<string, bool>? loadedParameters = null)
                 {
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
@@ -916,7 +980,7 @@ namespace TorchSharp
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string>? skip = null, Dictionary<string, bool>? loadedParameters = null)
                 {
                     skip ??= Array.Empty<string>();
 
@@ -975,7 +1039,7 @@ namespace TorchSharp
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string>? skip = null, Dictionary<string, bool>? loadedParameters = null)
                 {
                     using var reader = new System.IO.BinaryReader(stream);
                     return load(reader, strict, skip, loadedParameters);
@@ -1024,7 +1088,7 @@ namespace TorchSharp
                 }
 
                 private void _init_parameters()
-                { 
+                {
                     // In this case, the parameter registration was not done yet.
                     foreach (var (parameterName, parameter) in _named_parameters()) {
                         register_parameter(parameterName, parameter);
@@ -1035,7 +1099,7 @@ namespace TorchSharp
                 {
                     if (_areComponentsRegistered) return;
 
-                    foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+                    foreach (var field in GetFieldsRecursive(GetType(), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 
                         var fieldName = field.ComponentName();
                         if (_internal_submodules.ContainsKey(fieldName) || _internal_params.ContainsKey(fieldName) || _internal_buffers.ContainsKey(fieldName)) continue;
@@ -1058,7 +1122,7 @@ namespace TorchSharp
                     _areComponentsRegistered = true;
                 }
 
-                protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device device = null, ScalarType? dtype = null)
+                protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device? device = null, ScalarType? dtype = null)
                 {
                     if (!dtype.HasValue)
                         dtype = get_default_dtype();
@@ -1071,7 +1135,7 @@ namespace TorchSharp
                     return (device, dtype.Value);
                 }
 
-                internal T MoveModule<T>(Device device, ScalarType? dtype) where T : Module
+                internal T MoveModule<T>(Device? device, ScalarType? dtype) where T : Module
                 {
                     T module = (T)this;
 
@@ -1089,8 +1153,8 @@ namespace TorchSharp
                 protected Utils.OrderedDict<string, Parameter> _internal_params = new Utils.OrderedDict<string, Parameter>();
 
                 /// Keeps the callback delegate alive
-                private ForwardFunctionC _forwardNative;
-                protected string name;
+                private ForwardFunctionC? _forwardNative;
+                protected string? name;
             }
 
             internal class BoxedModule : IDisposable
@@ -1329,7 +1393,7 @@ namespace TorchSharp
                     foreach (var hook in module_pre_hooks.Values) {
                         hook(this);
                     }
-                    
+
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input);
                         if (modified is not null)
@@ -1383,7 +1447,7 @@ namespace TorchSharp
                     foreach (var hook in module_pre_hooks.Values) {
                         hook(this);
                     }
-                    
+
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2);
                         if (modified.HasValue) {
@@ -1440,7 +1504,7 @@ namespace TorchSharp
                     foreach (var hook in module_pre_hooks.Values) {
                         hook(this);
                     }
-                    
+
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3);
                         if (modified.HasValue) {
@@ -1499,7 +1563,7 @@ namespace TorchSharp
                     foreach (var hook in module_pre_hooks.Values) {
                         hook(this);
                     }
-                    
+
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3, input4);
                         if (modified.HasValue) {
@@ -1560,7 +1624,7 @@ namespace TorchSharp
                     foreach (var hook in module_pre_hooks.Values) {
                         hook(this);
                     }
-                    
+
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3, input4, input5);
                         if (modified.HasValue) {
@@ -1623,7 +1687,7 @@ namespace TorchSharp
                     foreach (var hook in module_pre_hooks.Values) {
                         hook(this);
                     }
-                    
+
                     foreach (var hook in pre_hooks.Values) {
                         var modified = hook(this, input1, input2, input3, input4, input5, input6);
                         if (modified.HasValue) {
@@ -1664,7 +1728,7 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="type">The target element type.</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T to<T>(this T module, torch.ScalarType type, bool non_blocking = false) where T : torch.nn.Module
@@ -1679,7 +1743,7 @@ namespace TorchSharp
         /// <param name="device">The target device.</param>
         /// <param name="type">The target element type.</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T to<T>(this T module, torch.Device device, torch.ScalarType type, bool non_blocking = false) where T : torch.nn.Module
@@ -1694,7 +1758,7 @@ namespace TorchSharp
         /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
         /// <param name="deviceIndex">The optional device index.</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T to<T>(this T module, DeviceType deviceType, int deviceIndex = -1, bool non_blocking = false) where T : torch.nn.Module
@@ -1708,7 +1772,7 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>"
         /// <param name="device">The target device</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         /// <returns></returns>
@@ -1720,7 +1784,7 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="device">A string denoting the target device.</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         /// <returns></returns>
@@ -1737,7 +1801,7 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="other">The tensor serving as a template.</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         /// <returns></returns>
@@ -1759,7 +1823,7 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T cuda<T>(this T module, int deviceIndex = -1, bool non_blocking = false) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex, non_blocking);
@@ -1769,7 +1833,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @bool<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Bool);
@@ -1779,7 +1843,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @byte<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Byte, non_blocking);
@@ -1789,7 +1853,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @char<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int8, non_blocking);
@@ -1799,7 +1863,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @short<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int16, non_blocking);
@@ -1809,7 +1873,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @int<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int32, non_blocking);
@@ -1819,7 +1883,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @long<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Int64, non_blocking);
@@ -1829,7 +1893,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T half<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Float16, non_blocking);
@@ -1839,7 +1903,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T bfloat16<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.BFloat16, non_blocking);
@@ -1849,7 +1913,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @float<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Float32, non_blocking);
@@ -1859,7 +1923,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T @double<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.Float64, non_blocking);
@@ -1869,7 +1933,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T cfloat<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat32, non_blocking);
@@ -1879,7 +1943,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="module">The module to convert</param>
         /// <param name="non_blocking">
-        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible, 
+        /// When non_blocking is set, it tries to convert/move asynchronously with respect to the host if possible,
         /// e.g., moving CPU Tensors with pinned memory to CUDA devices.
         /// </param>
         public static T cdouble<T>(this T module, bool non_blocking = false) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat64, non_blocking);

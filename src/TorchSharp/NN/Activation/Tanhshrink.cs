@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Tanhshrink module.
         /// </summary>
-        public sealed class Tanhshrink : torch.nn.Module<Tensor, Tensor>
+        public sealed class Tanhshrink : ParameterLessModule<Tensor, Tensor>
         {
-            internal Tanhshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Tanhshrink(bool inplace) : base(nameof(Tanhshrink))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Tanhshrink_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.tanhshrink(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(Tanhshrink).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
 
@@ -43,12 +35,18 @@ namespace TorchSharp
             /// <summary>
             /// Tanhshrink
             /// </summary>
-            /// <returns></returns>
             public static Tanhshrink Tanhshrink()
             {
-                var handle = THSNN_Tanhshrink_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tanhshrink(handle, boxedHandle);
+                return new Tanhshrink(false);
+            }
+
+            /// <summary>
+            /// Tanhshrink
+            /// </summary>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
+            public static Tanhshrink Tanhshrink(bool inplace = false)
+            {
+                return new Tanhshrink(inplace);
             }
 
             public static partial class functional
@@ -57,13 +55,19 @@ namespace TorchSharp
                 /// Tanhshrink
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <returns></returns>
-                public static Tensor Tanhshrink(Tensor x)
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
+                public static Tensor tanhshrink(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.Tanhshrink()) {
-                        return m.call(x);
-                    }
+                    using var tanh_x = x.tanh();
+                    return inplace ? x.sub_(tanh_x).alias() : x.sub(tanh_x);
                 }
+
+                /// <summary>
+                /// Tanhshrink
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor Tanhshrink(Tensor x) => tanhshrink(x, false);
             }
         }
     }

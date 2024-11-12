@@ -23,7 +23,7 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-        public sealed class Permute : nn.Module<Tensor, Tensor>
+        public sealed class Permute : ParameterLessModule<Tensor, Tensor>
         {
             public Permute(IEnumerable<long> dims) : base(nameof(Permute))
             {
@@ -34,11 +34,6 @@ namespace TorchSharp
             {
                 return torch.permute(input, dims);
             }
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
 
             private long[] dims;
         }

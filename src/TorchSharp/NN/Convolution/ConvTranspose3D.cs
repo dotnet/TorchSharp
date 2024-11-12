@@ -10,46 +10,18 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class ConvTranspose3d : Convolution
+        public sealed class ConvTranspose3d : ConvolutionTranspose
         {
-            internal ConvTranspose3d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
+            internal ConvTranspose3d(long in_channels, long out_channels, (long, long, long) kernel_size, (long, long, long) stride, (long, long, long) padding, (long, long, long) dilation, (long, long, long) output_padding, long groups = 1, bool bias = true, PaddingModes padding_mode = PaddingModes.Zeros, torch.Device? device = null, ScalarType? dtype = null)
+                        : base(nameof(ConvTranspose3d), in_channels, out_channels, new[] { kernel_size.Item1, kernel_size.Item2, kernel_size.Item3 }, new[] { stride.Item1, stride.Item2, stride.Item3 }, new[] { padding.Item1, padding.Item2, padding.Item3 }, null, new[] { dilation.Item1, dilation.Item2, dilation.Item3 }, true, new[] { output_padding.Item1, output_padding.Item2, output_padding.Item3 }, groups, bias, padding_mode, device, dtype) { }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input, long[]? output_size)
             {
-                if (ValidateShape(input, 3)) {
-                    var res = THSNN_ConvTranspose3d_forward(handle, input.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
-                }
-                throw new ArgumentException($"Expected 4D (unbatched) or 5D (batched) input with {input_channels} channels to ConvTranspose3d.");
-            }
+                if (!ValidateShape(input, 3))
+                    throw new ArgumentException($"Expected 4D (unbatched) or 5D (batched) input with {in_channels} channels to ConvTranspose3d.");
 
-            public Parameter? bias {
-                get {
-                    var res = THSNN_ConvTranspose3d_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
-                    THSNN_ConvTranspose3d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
-                }
-            }
-            public Parameter? weight {
-                get {
-                    var res = THSNN_ConvTranspose3d_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'"); THSNN_ConvTranspose3d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
-                }
+                var output_padding = this._output_padding(input, output_size, kernel_size, stride, padding!, dilation, 3);
+                return torch.nn.functional.conv_transpose3d(input, weight, bias, stride, padding!, output_padding, dilation, groups);
             }
         }
     }
@@ -63,7 +35,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernelSize">Size of the convolving kernel</param>
+            /// <param name="kernel_size">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: 1</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
             /// <param name="output_padding">Additional size added to one side of the output shape. Default: 0</param>
@@ -74,11 +46,9 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            public static ConvTranspose3d ConvTranspose3d(long in_channels, long out_channels, long kernelSize, long stride = 1, long padding = 0, long output_padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static ConvTranspose3d ConvTranspose3d(long in_channels, long out_channels, long kernel_size, long stride = 1, long padding = 0, long output_padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_ConvTranspose3d_ctor(in_channels, out_channels, kernelSize, stride, padding, output_padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ConvTranspose3d(res, boxedHandle, in_channels).MoveModule<ConvTranspose3d>(device, dtype);
+                return new ConvTranspose3d(in_channels, out_channels, (kernel_size, kernel_size, kernel_size), (stride, stride, stride), (padding, padding, padding), (dilation, dilation, dilation), (output_padding, output_padding, output_padding), groups, bias, padding_mode, device, dtype);
             }
 
             /// <summary>
@@ -86,7 +56,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernelSize">Size of the convolving kernel</param>
+            /// <param name="kernel_size">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: (1,1,1)</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: (0,0,0)</param>
             /// <param name="output_padding">Additional size added to one side of the output shape. Default: 0</param>
@@ -96,16 +66,13 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            public static ConvTranspose3d ConvTranspose3d(long in_channels, long out_channels, (long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? output_padding = null, (long, long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static ConvTranspose3d ConvTranspose3d(long in_channels, long out_channels, (long, long, long) kernel_size, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? output_padding = null, (long, long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                if (stride == null) stride = (1, 1, 1);
-                if (padding == null) padding = (0, 0, 0);
-                if (output_padding == null) output_padding = (0, 0, 0);
-                if (dilation == null) dilation = (1, 1, 1);
-
-                var res = THSNN_ConvTranspose3d_ctor_1(in_channels, out_channels, kernelSize.Item1, kernelSize.Item2, kernelSize.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding.Value.Item1, padding.Value.Item2, padding.Value.Item3, output_padding.Value.Item1, output_padding.Value.Item2, output_padding.Value.Item3, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)padding_mode, groups, bias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ConvTranspose3d(res, boxedHandle, in_channels).MoveModule<ConvTranspose3d>(device, dtype);
+                stride ??= (1, 1, 1);
+                padding ??= (0, 0, 0);
+                output_padding ??= (0, 0, 0);
+                dilation ??= (1, 1, 1);
+                return new ConvTranspose3d(in_channels, out_channels, kernel_size, stride.Value, padding.Value, dilation.Value, output_padding.Value, groups, bias, padding_mode, device, dtype);
             }
 
             public static partial class functional

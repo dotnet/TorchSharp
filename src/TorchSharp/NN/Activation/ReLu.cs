@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReLU module.
         /// </summary>
-        public sealed class ReLU : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReLU : ParameterLessModule<Tensor, Tensor>
         {
-            internal ReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal ReLU(bool inplace) : base(nameof(ReLU))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_ReLU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.relu(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(ReLU).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
     public static partial class torch
@@ -46,9 +38,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReLU ReLU(bool inplace = false)
             {
-                var handle = THSNN_ReLU_ctor(inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReLU(handle, boxedHandle);
+                return new ReLU(inplace);
             }
 
             public static partial class functional

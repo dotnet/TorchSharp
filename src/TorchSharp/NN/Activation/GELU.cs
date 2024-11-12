@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GELU module.
         /// </summary>
-        public sealed class GELU : torch.nn.Module<Tensor, Tensor>
+        public sealed class GELU : ParameterLessModule<Tensor, Tensor>
         {
-            internal GELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal GELU(bool inplace) : base(nameof(GELU))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_GELU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.gelu(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(GELU).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
 
@@ -43,12 +35,18 @@ namespace TorchSharp
             /// <summary>
             /// Gaussian Error Linear Units
             /// </summary>
-            /// <returns></returns>
             public static GELU GELU()
             {
-                var handle = THSNN_GELU_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new GELU(handle, boxedHandle);
+                return new GELU(false);
+            }
+
+            /// <summary>
+            /// Gaussian Error Linear Units
+            /// </summary>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
+            public static GELU GELU(bool inplace)
+            {
+                return new GELU(inplace);
             }
 
             public static partial class functional
@@ -57,12 +55,20 @@ namespace TorchSharp
                 /// Gaussian Error Linear Units
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <returns></returns>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
+                public static Tensor gelu(Tensor x, bool inplace)
+                {
+                    return inplace ? x.gelu_().alias() : x.gelu();
+                }
+
+                /// <summary>
+                /// Gaussian Error Linear Units
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
                 public static Tensor gelu(Tensor x)
                 {
-                    using (var m = nn.GELU()) {
-                        return m.call(x);
-                    }
+                    return gelu(x,false);
                 }
             }
         }

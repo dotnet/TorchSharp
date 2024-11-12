@@ -12,27 +12,14 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmax2d module.
         /// </summary>
-        public sealed class Softmax2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class Softmax2d : ParameterLessModule<Tensor, Tensor>
         {
-            internal Softmax2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Softmax2d() : base(nameof(Softmax2d)) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Softmax2d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.softmax2d(tensor);
             }
-
-            public override string GetName()
-            {
-                return typeof(Softmax2d).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
     public static partial class torch
@@ -45,9 +32,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Softmax2d Softmax2d()
             {
-                var handle = THSNN_Softmax2d_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Softmax2d(handle, boxedHandle);
+                return new Softmax2d();
             }
 
             public static partial class functional
@@ -59,9 +44,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor softmax2d(Tensor x)
                 {
-                    using (var m = nn.Softmax2d()) {
-                        return m.call(x);
-                    }
+                    return torch.nn.functional.softmax(x, -3);
                 }
             }
         }
