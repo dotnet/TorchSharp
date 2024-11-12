@@ -35,8 +35,16 @@ namespace TorchSharp
             /// <summary>
             /// Softsign
             /// </summary>
+            public static Softsign Softsign()
+            {
+                return new Softsign(false);
+            }
+
+            /// <summary>
+            /// Softsign
+            /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
-            public static Softsign Softsign(bool inplace = false)
+            public static Softsign Softsign(bool inplace)
             {
                 return new Softsign(inplace);
             }

@@ -2812,11 +2812,11 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor elu(double alpha = 1) =>  elu1(alpha, 1.0, 1.0);
+            public Tensor elu(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
 
-            public Tensor elu_(double alpha = 1) =>  elu2(alpha, 1.0, 1.0);
+            public Tensor elu_(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
 
-            private Tensor elu1(Scalar alpha, Scalar scale, Scalar input_scale)
+            public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 var res = NativeMethods.THSTensor_elu(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
                 if (res == IntPtr.Zero)
@@ -2824,7 +2824,7 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            private Tensor elu2(Scalar alpha, Scalar scale, Scalar input_scale)
+            public Tensor elu_(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 NativeMethods.THSTensor_elu_(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
                 CheckForErrors();

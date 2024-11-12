@@ -70,8 +70,9 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="threshold">The value to threshold at</param>
                 /// <param name="value">The value to replace with</param>
+                /// <param name="inplace">Do the operation in-place</param>
                 [Obsolete("Not using the PyTorch naming convention.",false)]
-                public static Tensor Threshold(Tensor x, double threshold, double value) => nn.functional.threshold(x, threshold, value, false);
+                public static Tensor Threshold(Tensor x, double threshold, double value, bool inplace = false) => nn.functional.threshold(x, threshold, value, inplace);
             }
         }
     }

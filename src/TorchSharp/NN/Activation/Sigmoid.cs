@@ -45,7 +45,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            public static Sigmoid Sigmoid(bool inplace = false)
+            public static Sigmoid Sigmoid(bool inplace)
             {
                 return new Sigmoid(inplace);
             }
