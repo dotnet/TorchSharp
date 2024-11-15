@@ -7,6 +7,7 @@ using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TorchSharp.Modules;
 using TorchSharp.Utils;
 
 namespace TorchSharp

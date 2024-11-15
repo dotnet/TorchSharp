@@ -25,24 +25,6 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// The base interface for all Datasets.
-                /// </summary>
-                public interface IDataset<out T> : IDisposable
-                {
-                    /// <summary>
-                    /// Size of dataset
-                    /// </summary>
-                    long Count { get; }
-
-                    /// <summary>
-                    /// Get tensor according to index
-                    /// </summary>
-                    /// <param name="index">Index for tensor</param>
-                    /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
-                    T this[long index] { get; }
-                }
-
-                /// <summary>
                 /// The base nterface for all Datasets.
                 /// </summary>
                 public abstract class Dataset<T> : IDataset<T>, IDisposable
@@ -71,6 +53,27 @@ namespace TorchSharp
                     }
                 }
             }
+        }
+    }
+
+    namespace Modules
+    {
+        /// <summary>
+        /// The base interface for all Datasets.
+        /// </summary>
+        public interface IDataset<out T> : IDisposable
+        {
+            /// <summary>
+            /// Size of dataset
+            /// </summary>
+            long Count { get; }
+
+            /// <summary>
+            /// Get tensor according to index
+            /// </summary>
+            /// <param name="index">Index for tensor</param>
+            /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
+            T this[long index] { get; }
         }
     }
 }
