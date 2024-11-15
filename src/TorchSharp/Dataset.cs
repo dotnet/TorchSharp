@@ -27,7 +27,7 @@ namespace TorchSharp
                 /// <summary>
                 /// The base nterface for all Datasets.
                 /// </summary>
-                public abstract class Dataset<T> : IDataset<T>, IDisposable
+                public abstract class Dataset<T> : Modules.IDataset<T>, IDisposable
                 {
                     public void Dispose()
                     {

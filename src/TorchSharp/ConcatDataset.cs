@@ -22,7 +22,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class ConcatDataset<T> : IDataset<T>
+        public sealed class ConcatDataset<T> : IDataset<T>
         {
             private static IEnumerable<long> Cumsum(IEnumerable<IDataset<T>> datasets)
             {
