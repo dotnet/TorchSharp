@@ -192,6 +192,29 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.print))]
+        public void TestTensorDefaultPrint()
+        {
+            // Arrange
+            Tensor t = torch.ones(2,2);
+
+            // Default parameters for the print
+            string expectedOutput = tensor.ToString(TensorStringStyle.Default, "g5", 100, null, "\n");
+
+            using (var sw = new StringWriter())
+            {
+                Console.SetOut(sw);
+
+                // Act
+                tensor.print();
+
+                // Assert
+                var result = sw.ToString().Trim();
+                Assert.Equal(expectedOutput, result);
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.ToString))]
         public void Test4DToJuliaString()
         {
