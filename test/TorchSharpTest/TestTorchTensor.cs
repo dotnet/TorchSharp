@@ -287,15 +287,14 @@ namespace TorchSharp
         public void TestTensorPrint()
         {
             Tensor t = torch.zeros(2, 2);
-            string expectedOutput = t.ToString(TensorStringStyle.Default, "g5", 100, null, "\n");
+            string expectedOutput = t.ToString(TensorStringStyle.Default, "g5", 100, null, Environment.NewLine);
             using (var sw = new StringWriter())
             {
                 Console.SetOut(sw);
                 t.print();
-                var result = sw.ToString().Trim();
+                var result = sw.ToString();
                 Assert.Equal(expectedOutput, result);
             }
-
         }
 
         [Fact]
