@@ -244,7 +244,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Uses Console.WriteLine to print a tensor expression on stdout. This is intended for
+        /// Uses Console.Write to print a tensor expression on stdout. This is intended for
         /// interactive notebook use, primarily.
         /// </summary>
         /// <param name="t">The input tensor.</param>
@@ -261,7 +261,7 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = null, CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
-            Console.WriteLine(t.ToString(style, fltFormat, width, cultureInfo, newLine));
+            Console.Write(t.ToString(style, fltFormat, width, cultureInfo, newLine));
             return t;
         }
 
