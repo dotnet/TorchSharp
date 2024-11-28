@@ -259,7 +259,7 @@ namespace TorchSharp
         /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = null, CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = Environment.newLine, CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             Console.Write(t.ToString(style, fltFormat, width, cultureInfo, newLine));
             return t;
