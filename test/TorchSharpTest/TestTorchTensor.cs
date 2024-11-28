@@ -292,6 +292,7 @@ namespace TorchSharp
             {
                 Console.SetOut(sw);
                 t.print();
+                Console.Out.Flush();
                 var result = sw.ToString();
                 Assert.Equal(expectedOutput, result);
             }
