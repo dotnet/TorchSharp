@@ -288,7 +288,7 @@ namespace TorchSharp
         {
             Tensor t = torch.zeros(2, 2);
             string expectedOutput = t.ToString(TensorStringStyle.Default, "g5", 100, null, "\n");
-            var sw = new StringWriter())
+            var sw = new StringWriter();
             Console.SetOut(sw);
             t.print();
             Console.Out.Flush();
