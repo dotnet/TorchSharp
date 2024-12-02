@@ -40,6 +40,7 @@ __Bug Fixes__:
 #1387 Attaching tensor to a DisposeScope no longer makes Statistics.DetachedFromScopeCount go negative.<br/>
 #1390 DisposeScopeManager.Statistics now includes DisposedOutsideScopeCount and AttachedToScopeCount. ThreadTotalLiveCount is now exact instead of approximate. ToString gives a useful debug string, and documentation is added for how to troubleshoot memory leaks. Also DisposeScopeManager.Statistics.TensorStatistics and DisposeScopeManager.Statistics.PackedSequenceStatistics provide separate metrics for these objects.<br/>
 #1392 ToTensor() extension method memory leaks fixed.<br/>
+#1414 tensor.print() - Missing default "newLine" Parameter<br/>
 
 # NuGet Version 0.103.0
 
