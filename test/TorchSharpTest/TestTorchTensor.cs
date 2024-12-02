@@ -291,13 +291,15 @@ namespace TorchSharp
             var originalOut = Console.Out;
             using (var sw = new StringWriter())
             {
-                try {
+                try 
+                {
                     Console.SetOut(sw);
                     t.print();
                     var result = sw.ToString();
                     Assert.Equal(expectedOutput, result);
                 }
-                finally {
+                finally 
+                {
                     Console.SetOut(originalOut);
                 }
             }
