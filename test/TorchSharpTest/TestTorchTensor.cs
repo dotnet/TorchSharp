@@ -284,6 +284,29 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.print))]
+        public void TestTensorDefaultPrint()
+        {
+            Tensor t = torch.zeros(2, 2);
+            string expectedOutput = t.ToString(TensorStringStyle.Default, "g5", 100, null, "\n") + Environment.NewLine;
+            var originalOut = Console.Out;
+            using (var sw = new StringWriter())
+            {
+                try 
+                {
+                    Console.SetOut(sw);
+                    t.print();
+                    var result = sw.ToString();
+                    Assert.Equal(expectedOutput, result);
+                }
+                finally 
+                {
+                    Console.SetOut(originalOut);
+                }
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.ToString))]
         public void Test1DToCSharpString()
         {
