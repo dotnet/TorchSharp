@@ -6523,9 +6523,6 @@ namespace TorchSharp
                 var nl = newLine is null ? torch.newLine : newLine;
                 var fmt = fltFormat is null ? torch.floatFormat : fltFormat;
 
-                if (String.IsNullOrEmpty(newLine))
-                    newLine = Environment.NewLine;
-
                 if (device_type == DeviceType.META)
                     return ToMetadataString();
 
