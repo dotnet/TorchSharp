@@ -185,9 +185,9 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
                 var str = t.jlstr("0.0000000", cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x2x4], type = Float32, device = cpu\n[0,..,..] =\n 0.0000000   3.1410000 6.2834000    3.1415200\n" +
+                Assert.Equal(($"[2x2x4], type = Float32, device = cpu\n[0,..,..] =\n 0.0000000   3.1410000 6.2834000    3.1415200\n" +
                              $" 0.0000063 -13.1415300 0.0100000 4713.1400000\n\n[1,..,..] =\n 0.0100000 0.0000000 0.0000000 0.0000000\n" +
-                             $" 0.0000000 0.0000000 0.0000000 0.0000000\n".Replace("\n", Environment.NewLine),
+                             $" 0.0000000 0.0000000 0.0000000 0.0000000\n").Replace("\n", Environment.NewLine),
                              str);
             }
         }
