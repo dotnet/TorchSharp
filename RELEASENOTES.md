@@ -13,9 +13,9 @@ This is a big change in implementation, but not as big in API surface area. Many
 
 __Breaking Changes__:
 
-The names of several arguments have been changed to align better with Pytorch naming. This may break code that passes such arguments by name, but will be caught at compile time.
-
-The argument defaults for `torch.diagonal()` and `Tensor.diagonal()` arguments have been corrected.
+The names of several arguments have been changed to align better with Pytorch naming. This may break code that passes such arguments by name, but will be caught at compile time.<br/>
+The argument defaults for `torch.diagonal()` and `Tensor.diagonal()` arguments have been corrected.<br/>
+The default `newLine` for `str`, `jlstr`, `npstr`, `cstr` and `print` have been corrected.<br/>
 
 Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.<br/>
 
