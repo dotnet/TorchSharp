@@ -161,16 +161,19 @@ namespace TorchSharp
                             : grad.alias();
 
                         var sign = grad.mul(state.prev).sign();
+                        Console.WriteLine(sign);
+                        Console.WriteLine(state.step_size);
                         sign[sign.gt(0)] = (Tensor)etaplus;
                         sign[sign.lt(0)] = (Tensor)etaminus;
                         sign[sign.eq(0)] = (Tensor)1;
-
+                        
                         state.step_size.mul_(sign).clamp_(min_step, max_step);
 
                         grad = grad.clone();
 
                         grad.index_put_(0, sign.eq(etaminus));
-
+                        Console.WriteLine(grad);
+                        Console.WriteLine(param);
                         param.addcmul_(grad.sign(), state.step_size, -1);
 
                         state.prev.copy_(grad);
