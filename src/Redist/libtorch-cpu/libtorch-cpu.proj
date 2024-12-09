@@ -52,6 +52,7 @@
     <File Include="libtorch\lib\libtorch_python.dylib" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
+    <File Include= "libtorch\lib\libaoti_custom_ops.so" />
     <File Include="libtorch\lib\libbackend_with_compiler.so"/>
     <File Include="libtorch\lib\libc10.so"/>
     <File Include="libtorch\lib\libgomp-98b21ff3.so.1"/>
