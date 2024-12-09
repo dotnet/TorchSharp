@@ -34,10 +34,8 @@
     <File Include="libtorch\lib\asmjit.dll" />
     <File Include="libtorch\lib\c10.dll" />
     <File Include="libtorch\lib\fbgemm.dll" />
-    <File Include="libtorch\lib\fbjni.dll" />
     <File Include="libtorch\lib\libiomp5md.dll" />
     <File Include="libtorch\lib\libiompstubs5md.dll" />
-    <File Include="libtorch\lib\pytorch_jni.dll" />
     <File Include="libtorch\lib\torch.dll" />
     <File Include="libtorch\lib\torch_cpu.dll" />
     <File Include="libtorch\lib\torch_global_deps.dll" />
@@ -46,8 +44,6 @@
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(TargetOS)' == 'mac'">
     <File Include="libtorch\lib\libc10.dylib" />
     <File Include="libtorch\lib\libshm.dylib" />
-    <File Include="libtorch\lib\libfbjni.dylib" />
-    <File Include="libtorch\lib\libpytorch_jni.dylib" />
     <!-- libomp.dylib is required for libtorch, but it is only bundled with libtorch 2.4.0 and above. -->
     <File Include="libtorch\lib\libomp.dylib"/>
     <File Include="libtorch\lib\libtorch.dylib" />
