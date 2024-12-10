@@ -20,8 +20,8 @@ namespace TorchSharp
     {
 #if LIBTORCH_2_2_2_0
         const string libtorchPackageVersion = "2.2.2.0";
-#elif LIBTORCH_2_4_0_0
-        const string libtorchPackageVersion = "2.4.0.0";
+#elif LIBTORCH_2_5_1_0
+        const string libtorchPackageVersion = "2.5.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
