@@ -6519,18 +6519,16 @@ namespace TorchSharp
                                    CultureInfo? cultureInfo = null,
                                    string? newLine = null)
             {
-                var w = width.HasValue ? width.Value : torch.lineWidth;
-                var nl = newLine is null ? torch.newLine : newLine;
-                var fmt = fltFormat is null ? torch.floatFormat : fltFormat;
+                var w = width ?? torch.lineWidth;
+                var nl = newLine ?? torch.newLine;
+                var fmt = fltFormat ?? torch.floatFormat;
 
-                if (String.IsNullOrEmpty(newLine))
-                    newLine = Environment.NewLine;
-
-                if (device_type == DeviceType.META)
-                    return ToMetadataString();
+                if (style is TensorStringStyle.Default)
+                    style = torch.TensorStringStyle;
+                if (device_type is DeviceType.META)
+                    style = TensorStringStyle.Metadata;
 
                 return style switch {
-                    TensorStringStyle.Default => ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, nl),
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fmt, w, cultureInfo, nl),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fmt, cultureInfo, nl),
