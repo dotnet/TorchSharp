@@ -2,6 +2,20 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# Next Version
+
+__Breaking Changes__:
+
+__Issues fixed__:
+
+__API Changes__:
+
+Add support for torch.utils.data.ConcatDataset.<br/>
+A new interface `IDataset<out T>` has been added, and now `Dataset<T>` implements it.<br/>
+More overloads of DataLoader() has been added, to accept `IDataset`.<br/>
+Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.<br/>
+Type of `DataLoaders<T>.collate_fn` has been changed to `Func<IReadOnlyList<T>, Device, S>`.<br/>
+
 # NuGet Version 0.104.0
 
 This is a big change in implementation, but not as big in API surface area. Many of the builtin modules, but not all, were re-implemented in managed code calling into native code via the functional APIs. This has several advantages:
@@ -26,7 +40,7 @@ __Issues fixed__:
 
 __API Changes__:
 
- #1382: Add support for torch.nn.functional.normalize<br/>
+#1382: Add support for torch.nn.functional.normalize<br/>
 
 # NuGet Version 0.103.1
 
