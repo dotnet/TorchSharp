@@ -156,24 +156,21 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        grad = (max_step != 0)
-                            ? grad.add(param, alpha: max_step)
-                            : grad.alias();
+                        var grad_prod = grad.mul(state.prev);
 
-                        var sign = grad.mul(state.prev).sign();
-                        Console.WriteLine(sign);
-                        Console.WriteLine(state.step_size);
-                        sign[sign.gt(0)] = (Tensor)etaplus;
-                        sign[sign.lt(0)] = (Tensor)etaminus;
-                        sign[sign.eq(0)] = (Tensor)1;
-                        
-                        state.step_size.mul_(sign).clamp_(min_step, max_step);
+                        var pos_mask = grad_prod.gt(0);
+                        var neg_mask = grad_prod.lt(0);
+                        var zero_mask = grad_prod.eq(0);
+
+                        var step_size_update = pos_mask.to(torch.float32) * etaplus +
+                                               neg_mask.to(torch.float32) * etaminus +
+                                               zero_mask.to(torch.float32);
+
+                        state.step_size.mul_(step_size_update).clamp_(min_step, max_step);
 
                         grad = grad.clone();
+                        grad.masked_fill_(neg_mask, 0);
 
-                        grad.index_put_(0, sign.eq(etaminus));
-                        Console.WriteLine(grad);
-                        Console.WriteLine(param);
                         param.addcmul_(grad.sign(), state.step_size, -1);
 
                         state.prev.copy_(grad);
