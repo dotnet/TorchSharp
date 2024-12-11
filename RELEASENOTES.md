@@ -6,8 +6,6 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Breaking Changes__:
 
-Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.<br/>
-
 __Issues fixed__:
 
 __API Changes__:
@@ -15,6 +13,7 @@ __API Changes__:
 Add support for torch.utils.data.ConcatDataset.<br/>
 A new interface `IDataset<out T>` has been added, and now `Dataset<T>` implements it.<br/>
 More overloads of DataLoader() has been added, to accept `IDataset`.<br/>
+Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.<br/>
 Type of `DataLoaders<T>.collate_fn` has been changed to `Func<IReadOnlyList<T>, Device, S>`.<br/>
 
 # NuGet Version 0.104.0
