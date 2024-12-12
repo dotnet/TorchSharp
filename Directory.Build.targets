@@ -12,17 +12,15 @@
     <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbgemm" />
-    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
-    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="uv" />
   </ItemGroup>
 
-  <!-- Windows CUDA 11.3 libtorch binary list used for examples and testing -->
+  <!-- Windows CUDA 12.1 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
     <NativeAssemblyReference Include="c10" Variant="cuda\" />
@@ -47,14 +45,12 @@
     <NativeAssemblyReference Include="cusolverMg64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusparse64_12" Variant="cuda\" />
     <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
-    <NativeAssemblyReference Include="fbjni" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
     <NativeAssemblyReference Include="nvJitLink_120_0" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc-builtins64_121" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc64_120_0" Variant="cuda\" />
-    <NativeAssemblyReference Include="pytorch_jni" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cuda" Variant="cuda\" />
@@ -63,28 +59,10 @@
     <NativeAssemblyReference Include="zlibwapi" Variant="cuda\" />
   </ItemGroup>
 
-  <!-- Mac x64 libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
-    <NativeAssemblyReference Include="backend_with_compiler" />
-    <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="fbjni" />
-    <NativeAssemblyReference Include="iomp5" />
-    <NativeAssemblyReference Include="jitbackend_test" />
-    <NativeAssemblyReference Include="pytorch_jni" />
-    <NativeAssemblyReference Include="shm" />
-    <NativeAssemblyReference Include="torch" />
-    <NativeAssemblyReference Include="torch_cpu" />
-    <NativeAssemblyReference Include="torch_global_deps" />
-    <NativeAssemblyReference Include="torch_python" />
-    <NativeAssemblyReference Include="torchbind_test" />
-  </ItemGroup>
-
 	<!-- Mac arm64 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="omp" />
-    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
@@ -94,6 +72,7 @@
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="aoti_custom_ops" />
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="jitbackend_test" />
