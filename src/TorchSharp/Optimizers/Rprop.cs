@@ -162,9 +162,9 @@ namespace TorchSharp
                         var neg_mask = grad_prod.lt(0);
                         var zero_mask = grad_prod.eq(0);
 
-                        var step_size_update = pos_mask.to(torch.float32) * etaplus +
-                                               neg_mask.to(torch.float32) * etaminus +
-                                               zero_mask.to(torch.float32);
+                        var step_size_update = pos_mask.to(torch.float64) * etaplus +
+                                               neg_mask.to(torch.float64) * etaminus +
+                                               zero_mask.to(torch.float64);
 
                         state.step_size.mul_(step_size_update).clamp_(min_step, max_step);
 

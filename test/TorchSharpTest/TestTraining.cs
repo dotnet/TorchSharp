@@ -1297,8 +1297,7 @@ namespace TorchSharp
                 }
             }
 
-            // Assertions to validate training
-            Assert.True(errors.Count > 0, "Errors list should not be empty.");
+
             Assert.True(errors[errors.Count - 1] < 0.003, "Final loss should be less than 0.1.");
         }
 
