@@ -1170,8 +1170,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            //LossIsClose(229.68f, loss);
-            Assert.True(loss < 230f);
+            LossIsClose(229.68f, loss);
         }
 
 
@@ -1188,8 +1187,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
 
-            //LossIsClose(229.68f, -loss);
-            Assert.True(loss < 0);
+            LossIsClose(229.68f, -loss);
         }
 
         [Fact]
@@ -1221,8 +1219,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            //LossIsClose(221.365f, loss);
-            Assert.True(loss < 222f);
+            LossIsClose(221.365f, loss);
         }
 
 
@@ -1243,8 +1240,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            //LossIsClose(78.619f, loss);
-            Assert.True(loss < 79f);
+            LossIsClose(78.619f, loss);
         }
 
         [Fact]
@@ -1298,7 +1294,7 @@ namespace TorchSharp
             }
 
 
-            Assert.True(errors[errors.Count - 1] < 0.003, "Final loss should be less than 0.1.");
+            Assert.True(errors[errors.Count - 1] < 0.003, "Final loss should be less than 0.003.");
         }
 
         /// <summary>
