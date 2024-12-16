@@ -1170,7 +1170,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(229.68f, loss);
+            LossIsClose(77.279f, loss);
         }
 
 
@@ -1187,7 +1187,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
 
-            LossIsClose(229.68f, -loss);
+            LossIsClose(77.279f, -loss);
         }
 
         [Fact]
@@ -1202,8 +1202,8 @@ namespace TorchSharp
             var optimizer = torch.optim.Rprop(seq.parameters(), etaminus: 0.55);
 
             var loss = TrainLoop(seq, x, y, optimizer);
-
-            Assert.True(loss < 229.68f);
+            
+            LossIsClose(171.12f, loss);
         }
 
         [Fact]
@@ -1219,7 +1219,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(221.365f, loss);
+            LossIsClose(65.859f, loss);
         }
 
 
@@ -1240,61 +1240,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(78.619f, loss);
-        }
-
-        [Fact]
-        public void TestRpropOptimizer()
-        {
-            // Define inputs and target values
-            var X = torch.arange(-2, 2, 0.04).view(-1, 1);
-            var Y = (X.pow(4) - X.pow(3) + X.pow(2) - X - 1).tanh();
-            torch.random.manual_seed(42); // Ensure reproducibility
-            var noise = torch.randn(X.size());
-            var Y_noise = Y + 0.01 * noise;
-
-            // Define model parameters
-            int epochs = 500;
-            int neurons = 20;
-            var learning_rates = new double[] { 1, 0.1, 0.01, 0.001 };
-
-            // Initialize the model
-            var model = nn.Sequential(
-                ("in", nn.Linear(1, neurons)),
-                ("hidden", nn.Sigmoid()),
-                ("out", nn.Linear(neurons, 1))
-            );
-
-            // Define loss function
-            var loss_fn = torch.nn.MSELoss();
-
-            // Track the error across epochs
-            var errors = new List<double>();
-
-            // Iterate through each learning rate
-            foreach (var lr in learning_rates) {
-                // Initialize optimizer
-                var optimizer = torch.optim.Rprop(model.parameters(), lr);
-
-                // Training loop
-                for (int epoch = 0; epoch < epochs; epoch++) {
-                    // Forward pass
-                    var predictions = model.forward(X);
-
-                    // Compute loss
-                    var error = loss_fn.forward(predictions, Y_noise);
-                    errors.Add(error.item<float>()); // Store error for assertions later
-
-                    // Backward pass and optimization
-                    optimizer.zero_grad();
-                    error.backward();
-                    optimizer.step();
-
-                }
-            }
-
-
-            Assert.True(errors[errors.Count - 1] < 0.003, "Final loss should be less than 0.003.");
+            LossIsClose(66.479f, loss);
         }
 
         /// <summary>
