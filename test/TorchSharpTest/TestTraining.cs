@@ -1202,7 +1202,7 @@ namespace TorchSharp
             var optimizer = torch.optim.Rprop(seq.parameters(), etaminus: 0.55);
 
             var loss = TrainLoop(seq, x, y, optimizer);
-            
+
             LossIsClose(171.12f, loss);
         }
 
