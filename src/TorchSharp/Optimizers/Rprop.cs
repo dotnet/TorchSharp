@@ -86,7 +86,7 @@ namespace TorchSharp
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
-            public Rprop(IEnumerable<Parameter> parameters, double lr = 0.01, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
+            public Rprop(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
                 : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, etaminus, etaplus, min_step, max_step, maximize)
             {
             }
@@ -155,10 +155,6 @@ namespace TorchSharp
                         var state = (State)_state[param.handle];
 
                         state.step += 1;
-
-                        grad = (max_step != 0)
-                            ? grad.add(param, alpha: max_step)
-                            : grad.alias();
 
                         var sign = grad.mul(state.prev).sign();
                         sign[sign.gt(0)] = (Tensor)etaplus;
