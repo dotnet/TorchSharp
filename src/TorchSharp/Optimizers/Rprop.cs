@@ -156,8 +156,6 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        var grad_prod = grad.mul(state.prev);
-
                         var sign = grad.mul(state.prev).sign();
                         sign[sign.gt(0)] = (Tensor)etaplus;
                         sign[sign.lt(0)] = (Tensor)etaminus;
