@@ -24,6 +24,19 @@ namespace TorchSharp
         {
             public static partial class functional
             {
+
+                private static bool IsTensorImage(Tensor img)
+                {
+                    return img.ndim >= 2;
+                }
+
+                private static bool AssertTensorImage(Tensor img)
+                {
+                    if (!IsTensorImage(img))
+                        throw new ArgumentException("Tensor is not a torch image.");
+                    return true;
+                }
+
                 /// <summary>
                 /// Get the image dimensions
                 /// </summary>
@@ -533,20 +546,29 @@ namespace TorchSharp
                 /// <param name="input">An image tensor.</param>
                 /// <param name="means">Sequence of means for each channel.</param>
                 /// <param name="stdevs">Sequence of standard deviations for each channel.</param>
-                /// <param name="dtype">Bool to make this operation inplace.</param>
+                /// <param name="inplace">Bool to make this operation inplace.</param>
                 /// <returns></returns>
-                public static Tensor normalize(Tensor input, double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32)
+                public static Tensor normalize(Tensor input, double[] means, double[] stdevs, bool inplace = false)
                 {
-                    if (means.Length != stdevs.Length)
-                        throw new ArgumentException("means and stdevs must be the same length in call to Normalize");
-                    if (means.Length != input.shape[1])
-                        throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
+                    using var _ = NewDisposeScope();
+                    AssertTensorImage(input);
+                    if (!input.is_floating_point())
+                        throw new ArgumentException($"Input tensor should be a float tensor. Got {input.dtype}.");
+                    if (input.ndim < 3)
+                        throw new ArgumentException($"Expected tensor to be a tensor image of size (..., C, H, W). Got tensor.size() = {input.size()}");
+                    if (!inplace)
+                        input = input.clone();
 
-                    using var mean = means.ToTensor(new long[] { 1, means.Length, 1, 1 }).to(input.dtype, input.device);     // Assumes NxCxHxW
-                    using var stdev = stdevs.ToTensor(new long[] { 1, stdevs.Length, 1, 1 }).to(input.dtype, input.device);  // Assumes NxCxHxW
-                    using var t0 = input - mean;
 
-                    return t0 / stdev;
+                    var mean = as_tensor(means, dtype: input.dtype, device: input.device);
+                    var stdev = as_tensor(stdevs, dtype: input.dtype, device: input.device);
+                    if (stdev.eq(0).any().ToBoolean())
+                        throw new ArgumentException($"std evaluated to zero after conversion to {input.dtype}, leading to division by zero.");
+                    if (mean.ndim == 1)
+                        mean = mean.view(-1, 1, 1);
+                    if (stdev.ndim == 1)
+                        stdev = stdev.view(-1, 1, 1);
+                    return input.sub_(mean).div_(stdev).MoveToOuterDisposeScope();
                 }
 
                 private static Tensor _pad(Tensor input, ReadOnlySpan<long> padding, double fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
