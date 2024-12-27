@@ -562,7 +562,7 @@ namespace TorchSharp
 
                     var mean = as_tensor(means, dtype: input.dtype, device: input.device);
                     var stdev = as_tensor(stdevs, dtype: input.dtype, device: input.device);
-                    if (stdev.eq(0).any().ToBoolean())
+                    if ((stdev == 0).any().item<bool>())
                         throw new ArgumentException($"std evaluated to zero after conversion to {input.dtype}, leading to division by zero.");
                     if (mean.ndim == 1)
                         mean = mean.view(-1, 1, 1);
