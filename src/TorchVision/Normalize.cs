@@ -13,6 +13,8 @@ namespace TorchSharp
             {
                 if (means is null) throw new ArgumentNullException(nameof(means));
                 if (stdevs is null) throw new ArgumentNullException(nameof(stdevs));
+                if (means.Length != stdevs.Length)
+                    throw new ArgumentException($"{nameof(means)} and {nameof(stdevs)} must be the same length in call to Normalize");
                 this.means = means;
                 this.stdevs = stdevs;
                 this.inplace = inplace;
@@ -21,6 +23,9 @@ namespace TorchSharp
 
             public Tensor call(Tensor input)
             {
+                var expectedChannels = (input.shape.Length == 4) ? input.size(1) : input.size(0);
+                if (expectedChannels != means.Length)
+                    throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
                 return transforms.functional.normalize(input, means, stdevs, inplace);
             }
 
