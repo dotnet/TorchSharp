@@ -37,6 +37,17 @@ namespace TorchSharp
                     return true;
                 }
 
+                public static long GetImageNumChannels(Tensor img)
+                {
+                    AssertTensorImage(img);
+                    var ndim_ = img.ndim;
+                    return ndim_ switch {
+                        2 => 1,
+                        > 2 => img.shape[ndim_ - 3],
+                        _ => throw new ArgumentException($"Input ndim should be 2 or more. Got {ndim_}"),
+                    };
+                }
+
                 /// <summary>
                 /// Get the image dimensions
                 /// </summary>
