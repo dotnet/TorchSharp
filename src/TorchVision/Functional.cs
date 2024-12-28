@@ -555,7 +555,7 @@ namespace TorchSharp
                     if (!input.is_floating_point())
                         throw new ArgumentException($"Input tensor should be a float tensor. Got {input.dtype}.");
                     if (input.ndim < 3)
-                        throw new ArgumentException($"Expected tensor to be a tensor image of size (..., C, H, W). Got tensor.size() = {input.size()}");
+                        throw new ArgumentException($"Expected tensor to be a tensor image of size (..., C, H, W). Got tensor.size() = ({string.Join(", ", input.shape)})");
                     if (!inplace)
                         input = input.clone();
 
