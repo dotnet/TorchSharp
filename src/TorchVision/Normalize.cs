@@ -23,7 +23,7 @@ namespace TorchSharp
 
             public Tensor call(Tensor input)
             {
-                var expectedChannels = transforms.functional.GetImageNumChannels(input);
+                var expectedChannels = transforms.functional.get_image_num_channels(input);
                 if (expectedChannels != means.Length)
                     throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
                 return transforms.functional.normalize(input, means, stdevs, inplace);

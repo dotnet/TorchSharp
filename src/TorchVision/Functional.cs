@@ -37,7 +37,12 @@ namespace TorchSharp
                     return true;
                 }
 
-                public static long GetImageNumChannels(Tensor img)
+                /// <summary>
+                /// Returns the number of channels of an image.
+                /// </summary>
+                /// <param name="img">(Tensor) – The image to be checked.</param>
+                /// <returns>The number of channels.</returns>
+                public static long get_image_num_channels(Tensor img)
                 {
                     AssertTensorImage(img);
                     var ndim_ = img.ndim;
