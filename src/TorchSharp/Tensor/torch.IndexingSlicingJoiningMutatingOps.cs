@@ -40,7 +40,7 @@ namespace TorchSharp
             switch (tensors.Count)
             {
                 case <=0: throw new ArgumentException(nameof(tensors));
-                case 1: return tensors[0];
+                case 1: return tensors[0].alias();
             }
 
             using var parray = new PinnedArray<IntPtr>();
