@@ -15,43 +15,43 @@ namespace TorchSharp
             public static Tensor operator +(Tensor left, int right)
             {
                 using Scalar scalar = right;
-                return left.add(scalar);
+                return left + scalar;
             }
             public static Tensor operator +(Tensor left, long right)
             {
                 using Scalar scalar = right;
-                return left.add(scalar);
+                return left + scalar;
             }
             public static Tensor operator +(Tensor left, float right)
             {
                 using Scalar scalar = right;
-                return left.add(scalar);
+                return left + scalar;
             }
             public static Tensor operator +(Tensor left, double right)
             {
                 using Scalar scalar = right;
-                return left.add(scalar);
+                return left + scalar;
             }
 
             public static Tensor operator +(int left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.add(scalar);
+                return scalar + right;
             }
             public static Tensor operator +(long left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.add(scalar);
+                return scalar + right;
             }
             public static Tensor operator +(float left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.add(scalar);
+                return scalar + right;
             }
             public static Tensor operator +(double left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.add(scalar);
+                return scalar + right;
             }
 
             public static Tensor operator *(Tensor left, Tensor right) => left.mul(right);
@@ -61,43 +61,43 @@ namespace TorchSharp
             public static Tensor operator *(Tensor left, int right)
             {
                 using Scalar scalar = right;
-                return left.mul(scalar);
+                return left * scalar;
             }
             public static Tensor operator *(Tensor left, long right)
             {
                 using Scalar scalar = right;
-                return left.mul(scalar);
+                return left * scalar;
             }
             public static Tensor operator *(Tensor left, float right)
             {
                 using Scalar scalar = right;
-                return left.mul(scalar);
+                return left * scalar;
             }
             public static Tensor operator *(Tensor left, double right)
             {
                 using Scalar scalar = right;
-                return left.mul(scalar);
+                return left * scalar;
             }
 
             public static Tensor operator *(int left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.mul(scalar);
+                return scalar * right;
             }
             public static Tensor operator *(long left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.mul(scalar);
+                return scalar * right;
             }
             public static Tensor operator *(float left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.mul(scalar);
+                return scalar * right;
             }
             public static Tensor operator *(double left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.mul(scalar);
+                return scalar * right;
             }
 
             public static Tensor operator -(Tensor left, Tensor right) => left.sub(right);
@@ -107,43 +107,43 @@ namespace TorchSharp
             public static Tensor operator -(Tensor left, int right)
             {
                 using Scalar scalar = right;
-                return left.sub(scalar);
+                return left - scalar;
             }
             public static Tensor operator -(Tensor left, long right)
             {
                 using Scalar scalar = right;
-                return left.sub(scalar);
+                return left - scalar;
             }
             public static Tensor operator -(Tensor left, float right)
             {
                 using Scalar scalar = right;
-                return left.sub(scalar);
+                return left - scalar;
             }
             public static Tensor operator -(Tensor left, double right)
             {
                 using Scalar scalar = right;
-                return left.sub(scalar);
+                return left - scalar;
             }
 
             public static Tensor operator -(int left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.negative().add(scalar);
+                return scalar - right;
             }
             public static Tensor operator -(long left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.negative().add(scalar);
+                return scalar - right;
             }
             public static Tensor operator -(float left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.negative().add(scalar);
+                return scalar - right;
             }
             public static Tensor operator -(double left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.negative().add(scalar);
+                return scalar - right;
             }
 
             public static Tensor operator /(Tensor left, Tensor right) => left.div(right);
@@ -153,43 +153,43 @@ namespace TorchSharp
             public static Tensor operator /(Tensor left, int right)
             {
                 using Scalar scalar = right;
-                return left.div(scalar);
+                return left / scalar;
             }
             public static Tensor operator /(Tensor left, long right)
             {
                 using Scalar scalar = right;
-                return left.div(scalar);
+                return left / scalar;
             }
             public static Tensor operator /(Tensor left, float right)
             {
                 using Scalar scalar = right;
-                return left.div(scalar);
+                return left / scalar;
             }
             public static Tensor operator /(Tensor left, double right)
             {
                 using Scalar scalar = right;
-                return left.div(scalar);
+                return left / scalar;
             }
 
             public static Tensor operator /(int left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.reciprocal().mul(scalar);
+                return scalar / right;
             }
             public static Tensor operator /(long left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.reciprocal().mul(scalar);
+                return scalar / right;
             }
             public static Tensor operator /(float left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.reciprocal().mul(scalar);
+                return scalar / right;
             }
             public static Tensor operator /(double left, Tensor right)
             {
                 using Scalar scalar = left;
-                return right.reciprocal().mul(scalar);
+                return scalar / right;
             }
 
             public static Tensor operator %(Tensor left, Tensor right) => left.remainder(right);
@@ -198,22 +198,22 @@ namespace TorchSharp
             public static Tensor operator %(Tensor left, int right)
             {
                 using Scalar scalar = right;
-                return left.remainder(scalar);
+                return left % scalar;
             }
             public static Tensor operator %(Tensor left, long right)
             {
                 using Scalar scalar = right;
-                return left.remainder(scalar);
+                return left % scalar;
             }
             public static Tensor operator %(Tensor left, float right)
             {
                 using Scalar scalar = right;
-                return left.remainder(scalar);
+                return left % scalar;
             }
             public static Tensor operator %(Tensor left, double right)
             {
                 using Scalar scalar = right;
-                return left.remainder(scalar);
+                return left % scalar;
             }
 
             public static Tensor operator &(Tensor left, Tensor right) => left.bitwise_and(right);
