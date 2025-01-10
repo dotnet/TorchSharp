@@ -7,7 +7,7 @@
 
   <!-- Other/Non-Core Product Dependencies -->
   <PropertyGroup>
-    <LibTorchVersion>2.4.0</LibTorchVersion>
+    <LibTorchVersion>2.5.1</LibTorchVersion>
     <LibTorchVersion Condition="'$(TargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'">2.2.2</LibTorchVersion>
     <CudaVersionDot>12.1</CudaVersionDot>
     <CudaVersionNoDot>121</CudaVersionNoDot>

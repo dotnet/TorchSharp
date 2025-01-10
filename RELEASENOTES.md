@@ -2,19 +2,18 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+
 # Next Version
 
-__Breaking Changes__:
+- Add support for torch.utils.data.ConcatDataset.
+- A new interface `IDataset<out T>` has been added, and now `Dataset<T>` implements it.
+- More overloads of DataLoader() has been added, to accept `IDataset`.
+- Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.
+- Type of `DataLoaders<T>.collate_fn` has been changed to `Func<IReadOnlyList<T>, Device, S>`.
 
-__Issues fixed__:
+# NuGet Version 0.105.0
 
-__API Changes__:
-
-Add support for torch.utils.data.ConcatDataset.<br/>
-A new interface `IDataset<out T>` has been added, and now `Dataset<T>` implements it.<br/>
-More overloads of DataLoader() has been added, to accept `IDataset`.<br/>
-Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.<br/>
-Type of `DataLoaders<T>.collate_fn` has been changed to `Func<IReadOnlyList<T>, Device, S>`.<br/>
+Move to libtorch 2.5.1. As with the 2.4.0 release, MacOS / Intel is no longer supported by libtorch, so TorchSharp doesn, either.
 
 # NuGet Version 0.104.0
 
