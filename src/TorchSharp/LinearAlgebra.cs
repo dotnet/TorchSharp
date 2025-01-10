@@ -440,7 +440,7 @@ namespace TorchSharp
                     throw new ArgumentException(nameof(tensors));
                 }
                 if (tensors.Count == 1) {
-                    return tensors[0];
+                    return tensors[0].alias();
                 }
 
                 using (var parray = new PinnedArray<IntPtr>()) {
