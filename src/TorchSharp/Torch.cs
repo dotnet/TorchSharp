@@ -18,10 +18,10 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_2_2_0
-        const string libtorchPackageVersion = "2.2.2.0";
-#elif LIBTORCH_2_5_1_0
-        const string libtorchPackageVersion = "2.5.1.0";
+#if LIBTORCH_2_2_2
+        const string libtorchPackageVersion = "2.2.2";
+#elif LIBTORCH_2_5_1
+        const string libtorchPackageVersion = "2.5.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
