@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <WarningsNotAsErrors>CS8981</WarningsNotAsErrors>
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
     <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net8.0</TargetFrameworks>

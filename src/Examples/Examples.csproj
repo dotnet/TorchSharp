@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <WarningsNotAsErrors>CS8981</WarningsNotAsErrors>
     <OutputType>Exe</OutputType>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
