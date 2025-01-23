@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     
   <PropertyGroup>
+    <WarningsNotAsErrors>CS8981</WarningsNotAsErrors>
     <NoBuild>false</NoBuild>
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>

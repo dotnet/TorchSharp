@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <WarningsNotAsErrors>CS8981</WarningsNotAsErrors>
       <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
       <LangVersion>9.0</LangVersion>
       <IncludeInPackage>TorchAudio</IncludeInPackage>

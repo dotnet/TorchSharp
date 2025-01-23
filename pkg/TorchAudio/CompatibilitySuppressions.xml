@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.AudioEncoding</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.AudioFormat</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.DCTNorm</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.MelNorm</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.MelScale</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.models.FeatureExtractorNormMode</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:TorchSharp.torchaudio.ResamplingMethod</Target>
+    <Left>lib/net6.0/TorchAudio.dll</Left>
+    <Right>lib/netstandard2.0/TorchAudio.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>
