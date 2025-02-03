@@ -6669,6 +6669,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestInterpolateNearestExact()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.NearestExact)) {
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void TestUpsampleNearest()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
