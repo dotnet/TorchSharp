@@ -1398,7 +1398,7 @@ namespace TorchSharp
                 /// </param>
                 /// <param name="verbose">If true, prints a message to stdout for each update. Default: false.</param>
                 /// <returns>A scheduler</returns>
-                public static LRScheduler LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 5, int total_iters = 5, int last_epoch = -1, bool verbose = false)
+                public static LRScheduler LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 1.0, int total_iters = 5, int last_epoch = -1, bool verbose = false)
                 {
                     return new impl.LinearLR(optimizer, start_factor, end_factor, total_iters, last_epoch, verbose);
                 }
