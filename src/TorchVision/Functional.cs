@@ -694,13 +694,22 @@ namespace TorchSharp
                 /// <param name="input">An image tensor.</param>
                 /// <param name="height">The height of the resized image. Must be > 0.</param>
                 /// <param name="width">The width of the resized image. Must be > 0.</param>
+                /// <param name="interpolation">
+                /// Desired interpolation enum defined by TorchSharp.torch.InterpolationMode.
+                /// Default is InterpolationMode.Nearest; not InterpolationMode.Bilinear (incompatible to Python's torchvision v0.17 or later for historical reasons).
+                /// Only InterpolationMode.Nearest, InterpolationMode.NearestExact, InterpolationMode.Bilinear and InterpolationMode.Bicubic are supported.
+                /// </param>
                 /// <param name="maxSize">The maximum allowed for the longer edge of the resized image.</param>
+                /// <param name="antialias">
+                /// Whether to apply antialiasing.
+                /// It only affects bilinear or bicubic modes and it is ignored otherwise.
+                /// Possible values are:
+                /// * true: will apply antialiasing for bilinear or bicubic modes. Other mode aren't affected. This is probably what you want to use.
+                /// * false (default, incompatible to Python's torchvision v0.17 or later for historical reasons): will not apply antialiasing on any mode.
+                /// </param>
                 /// <returns></returns>
-                public static Tensor resize(Tensor input, int height, int width, int? maxSize = null)
+                public static Tensor resize(Tensor input, int height, int width, InterpolationMode interpolation = InterpolationMode.Nearest, int ? maxSize = null, bool antialias = false)
                 {
-                    // For now, we don't allow any other modes.
-                    const InterpolationMode interpolation = InterpolationMode.Nearest;
-
                     var hoffset = input.Dimensions - 2;
                     var iHeight = input.shape[hoffset];
                     var iWidth = input.shape[hoffset + 1];
@@ -727,9 +736,12 @@ namespace TorchSharp
                         }
                     }
 
+                    if (antialias && interpolation != InterpolationMode.Bilinear && interpolation != InterpolationMode.Bicubic)
+                        antialias = false;
+
                     using var img0 = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
-                    using var img1 = torch.nn.functional.interpolate(img0, new long[] { h, w }, mode: interpolation, align_corners: null);
+                    using var img1 = torch.nn.functional.interpolate(img0, new long[] { h, w }, mode: interpolation, align_corners: null, antialias: antialias);
 
                     return SqueezeOut(img1, needCast, needSqueeze, dtype);
                 }
