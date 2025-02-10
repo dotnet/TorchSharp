@@ -22,12 +22,6 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingEvalModes()
         {
-
-            var linear = Linear(10, 10);
-            linear.eval();
-
-            Assert.False(linear.training);
-
             var sequential = Sequential(
                 ("lin1", Linear(100, 10)),
                 ("lin2", Linear(10, 5))
@@ -41,6 +35,13 @@ namespace TorchSharp
             Assert.False(secondLayer.training);
 
             Assert.False(sequential.training);
+
+            sequential.train();
+
+            Assert.True(firstLayer.training);
+            Assert.True(secondLayer.training);
+            Assert.True(sequential.training);
+
         }
 
 
