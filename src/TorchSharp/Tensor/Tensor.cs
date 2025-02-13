@@ -1598,13 +1598,13 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
             /// </summary>
-            public Tensor index_put_(Tensor value, params TensorIndex[] indices)
+            public Tensor index_put_(Tensor value, TensorIndex[] indices, bool accumulate = false)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
                 unsafe {
                     fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
                         fixed (IntPtr* ptrTensors = arrTensors) {
-                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle);
+                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, accumulate);
                             CheckForErrors();
                             GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
                             GC.KeepAlive(value);
@@ -1617,7 +1617,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
             /// </summary>
-            public Tensor index_put_(Tensor value, params Tensor[] indices)
+            public Tensor index_put_(Tensor value, Tensor[] indices, bool accumulate = false)
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
@@ -1626,13 +1626,13 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
-            public Tensor index_put_(Scalar value, params TensorIndex[] indices)
+            public Tensor index_put_(Scalar value, TensorIndex[] indices, bool accumulate)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
                 unsafe {
                     fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
                         fixed (IntPtr* ptrTensors = arrTensors) {
-                            NativeMethods.THSTensor_index_put_scalar_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle);
+                            NativeMethods.THSTensor_index_put_scalar_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, accumulate);
                             CheckForErrors();
                             GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
                             GC.KeepAlive(value);
