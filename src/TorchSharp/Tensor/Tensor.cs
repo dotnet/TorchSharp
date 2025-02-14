@@ -48,7 +48,9 @@ namespace TorchSharp
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
-                OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+                if (register) {
+                    OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+                }
             }
 
             /// <summary>
@@ -226,6 +228,11 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Disassociates the native tensor handle from the managed Tensor.
+            /// </summary>
+            /// <remarks>Used to create a Parameter instance.</remarks>
+            /// <returns>The handle to the underlying native tensor.</returns>
             internal IntPtr MoveHandle()
             {
                 var h = handle;
@@ -2296,6 +2303,21 @@ namespace TorchSharp
                 return this;
             }
 
+            public Tensor threshold(Scalar threshold, Scalar value)
+            {
+                var res = NativeMethods.THSTensor_threshold(Handle, threshold.Handle, value.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor threshold_(Scalar threshold, Scalar value)
+            {
+                NativeMethods.THSTensor_threshold_(Handle, threshold.Handle, value.Handle);
+                CheckForErrors();
+                return this;
+            }
+
             /// <summary>
             /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
             /// </summary>
@@ -2824,9 +2846,13 @@ namespace TorchSharp
             public Tensor softmax(long dim, ScalarType? dtype = null) =>
                 torch.special.softmax(this, dim, dtype);
 
-            public Tensor softplus()
+
+            public Tensor softplus(double beta = 1, double threshold = 20) =>
+                softplus1(beta, threshold);
+
+            private Tensor softplus1(Scalar beta, Scalar threshold)
             {
-                var res = NativeMethods.THSTensor_softplus(Handle);
+                var res = NativeMethods.THSTensor_softplus(Handle, beta.Handle, threshold.Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -2870,20 +2896,48 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor celu()
+
+
+            private const double one_eighth = 1.0 / 8.0;
+            private const double one_third = 1.0 / 3.0;
+
+            public Tensor rrelu(double lower = one_eighth, double upper = one_third)
             {
-                var res = NativeMethods.THSTensor_celu(Handle);
+                var res = NativeMethods.THSTensor_rrelu(Handle, lower, upper);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
             }
 
-            public Tensor celu_()
+            public Tensor rrelu_(double lower = one_eighth, double upper = one_third)
             {
-                NativeMethods.THSTensor_celu_(Handle);
+                NativeMethods.THSTensor_rrelu_(Handle, lower, upper);
                 CheckForErrors();
                 return this;
             }
+
+            public Tensor celu() => this.celu(1.0);
+
+            public Tensor celu_() => this.celu_(1.0);
+
+            public Tensor celu(Scalar alpha)
+            {
+                var res = NativeMethods.THSTensor_celu(Handle, alpha.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor celu_(Scalar alpha)
+            {
+                NativeMethods.THSTensor_celu_(Handle, alpha.Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            public Tensor elu(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
+
+            public Tensor elu_(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
 
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
@@ -2903,6 +2957,22 @@ namespace TorchSharp
             public Tensor gelu()
             {
                 var res = NativeMethods.THSTensor_gelu(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor gelu_()
+            {
+                var res = NativeMethods.THSTensor_gelu_(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor glu(long dim = -1)
+            {
+                var res = NativeMethods.THSTensor_glu(Handle, dim);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -3454,8 +3524,9 @@ namespace TorchSharp
             /// Applying torch.diag_embed() to the output of this function with the same arguments yields a diagonal matrix with the diagonal entries of the input.
             /// However, torch.diag_embed() has different default dimensions, so those need to be explicitly specified.
             /// </remarks>
-            public Tensor diagonal(long offset = 0, long dim1 = 0, long dim2 = 0)
+            public Tensor diagonal(long offset = 0L, long dim1 = 0L, long dim2 = 1L)
             {
+                if (dim1 == dim2) throw new ArgumentException($"Diagonal dimensions cannot be identical {dim1}, {dim2}");
                 var res = NativeMethods.THSTensor_diagonal(Handle, offset, dim1, dim2);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -6590,18 +6661,16 @@ namespace TorchSharp
                                    CultureInfo? cultureInfo = null,
                                    string? newLine = null)
             {
-                var w = width.HasValue ? width.Value : torch.lineWidth;
-                var nl = newLine is null ? torch.newLine : newLine;
-                var fmt = fltFormat is null ? torch.floatFormat : fltFormat;
+                var w = width ?? torch.lineWidth;
+                var nl = newLine ?? torch.newLine;
+                var fmt = fltFormat ?? torch.floatFormat;
 
-                if (String.IsNullOrEmpty(newLine))
-                    newLine = Environment.NewLine;
-
-                if (device_type == DeviceType.META)
-                    return ToMetadataString();
+                if (style is TensorStringStyle.Default)
+                    style = torch.TensorStringStyle;
+                if (device_type is DeviceType.META)
+                    style = TensorStringStyle.Metadata;
 
                 return style switch {
-                    TensorStringStyle.Default => ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, nl),
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fmt, w, cultureInfo, nl),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fmt, cultureInfo, nl),
@@ -6647,15 +6716,17 @@ namespace TorchSharp
 
                 var dim = t.dim();
 
-                if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
+
+                if (dim == 0) {
+                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                    return sb.ToString(); ;
+                }
+
                 sb.Append('[');
                 var currentSize = t.size()[0];
                 if (currentSize == 0) {
                     // print nothing
-                }
-                else if (dim == 0) {
-                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
                 }
                 else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {

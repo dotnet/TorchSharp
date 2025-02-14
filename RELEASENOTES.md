@@ -2,6 +2,36 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.105.0
+
+Move to libtorch 2.5.1. As with the 2.4.0 release, MacOS / Intel is no longer supported by libtorch, so TorchSharp doesn, either.
+
+# NuGet Version 0.104.0
+
+This is a big change in implementation, but not as big in API surface area. Many of the builtin modules, but not all, were re-implemented in managed code calling into native code via the functional APIs. This has several advantages:
+
+1. Align with the Pytorch implementations.<br/>
+2. More easily expose module attributes as properties as Pytorch does.<br/>
+3. In some cases, avoid native code altogether.<br/>
+4. The builtin modules can serve as "best practice" examples for custom module authors.<br/>
+
+__Breaking Changes__:
+
+The names of several arguments have been changed to align better with Pytorch naming. This may break code that passes such arguments by name, but will be caught at compile time.<br/>
+The argument defaults for `torch.diagonal()` and `Tensor.diagonal()` arguments have been corrected.<br/>
+The default `newLine` for `str`, `jlstr`, `npstr`, `cstr` and `print` have been corrected.<br/>
+
+__Issues fixed__:
+
+#1397 Look into whether parameter creation from a tensor leads to incorrect dispose scope statistics. This bug was discovered during testing of the PR.<br/>
+#1210 Attribute omissions.<br/>
+#1400 There may be an error in torchvision.transforms.GaussianBlur<br/>
+#1402 diagonal() has incorrect default<br/>
+
+__API Changes__:
+
+ #1382: Add support for torch.nn.functional.normalize<br/>
+
 # NuGet Version 0.103.1
 
 __Breaking Changes__:
@@ -14,6 +44,7 @@ __Bug Fixes__:
 #1387 Attaching tensor to a DisposeScope no longer makes Statistics.DetachedFromScopeCount go negative.<br/>
 #1390 DisposeScopeManager.Statistics now includes DisposedOutsideScopeCount and AttachedToScopeCount. ThreadTotalLiveCount is now exact instead of approximate. ToString gives a useful debug string, and documentation is added for how to troubleshoot memory leaks. Also DisposeScopeManager.Statistics.TensorStatistics and DisposeScopeManager.Statistics.PackedSequenceStatistics provide separate metrics for these objects.<br/>
 #1392 ToTensor() extension method memory leaks fixed.<br/>
+#1414 tensor.print() - Missing default "newLine" Parameter<br/>
 
 # NuGet Version 0.103.0
 

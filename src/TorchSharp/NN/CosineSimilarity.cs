@@ -13,10 +13,12 @@ namespace TorchSharp
         /// <summary>
         /// A cosine similarity module.
         /// </summary>
-        public sealed class CosineSimilarity : torch.nn.Module<Tensor, Tensor, Tensor>
+        public sealed class CosineSimilarity : ParameterLessModule<Tensor, Tensor, Tensor>
         {
-            internal CosineSimilarity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal CosineSimilarity(long dim = 1, double eps = 1e-8) : base(nameof(CosineSimilarity))
             {
+                this.dim = dim;
+                this.eps = eps;
             }
 
             public override Tensor forward(Tensor input1, Tensor input2)
@@ -26,6 +28,9 @@ namespace TorchSharp
                 res= AutocastMode.AutoCast(res, ScalarType.Float32);
                 return new Tensor(res);
             }
+
+            public long dim { get; set; }
+            public double eps { get; set; }
         }
     }
 
@@ -59,9 +64,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
                 {
-                    using (var f = nn.CosineSimilarity(dim, eps)) {
-                        return f.call(x1, x2);
-                    }
+                    var res = THSNN_cosine_similarity(x1.Handle, x2.Handle, dim, eps);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

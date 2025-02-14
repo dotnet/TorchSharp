@@ -12,27 +12,21 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LeakyReLU module.
         /// </summary>
-        public sealed class LeakyReLU : torch.nn.Module<Tensor, Tensor>
+        public sealed class LeakyReLU : ParameterLessModule<Tensor, Tensor>
         {
-            internal LeakyReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal LeakyReLU(double negative_slope, bool inplace) : base(nameof(LeakyReLU))
+            {
+                this.inplace = inplace;
+                this.negative_slope = negative_slope;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_LeakyReLU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.leaky_relu(tensor, negative_slope, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(LeakyReLU).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
+            public double negative_slope {get; set;}
         }
     }
 
@@ -48,9 +42,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static LeakyReLU LeakyReLU(double negative_slope = 0.01, bool inplace = false)
             {
-                var handle = THSNN_LeakyReLU_ctor(negative_slope, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new LeakyReLU(handle, boxedHandle);
+                return new LeakyReLU(negative_slope, inplace);
             }
 
             public static partial class functional
@@ -64,9 +56,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor leaky_relu(Tensor input, double negative_slope = 0.01, bool inplace = false)
                 {
-                    using (var m = nn.LeakyReLU(negative_slope, inplace)) {
-                        return m.call(input);
-                    }
+                    return inplace ? input.leaky_relu_(negative_slope).alias() : input.leaky_relu(negative_slope);
                 }
             }
         }

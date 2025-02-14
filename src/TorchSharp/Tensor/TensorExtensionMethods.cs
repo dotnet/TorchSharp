@@ -148,7 +148,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static string str(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = null, CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             return tensor.ToString(style, fltFormat, width, cultureInfo, newLine);
         }
@@ -172,7 +172,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string jlstr(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string jlstr(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = null, CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Julia, fltFormat, width, cultureInfo, newLine);
         }
@@ -214,7 +214,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string npstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string npstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = null, CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Numpy, fltFormat, width, cultureInfo, newLine);
         }
@@ -238,7 +238,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string cstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string cstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = null, CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.CSharp, fltFormat, width, cultureInfo, newLine);
         }
@@ -259,7 +259,7 @@ namespace TorchSharp
         /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = null, CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             Console.WriteLine(t.ToString(style, fltFormat, width, cultureInfo, newLine));
             return t;

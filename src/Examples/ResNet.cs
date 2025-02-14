@@ -72,7 +72,7 @@ namespace TorchSharp.Examples
         {
             var modules = new List<(string, Module<Tensor, Tensor>)>();
 
-            modules.Add(($"conv2d-first", Conv2d(3, 64, kernelSize: 3, stride: 1, padding: 1, bias: false)));
+            modules.Add(($"conv2d-first", Conv2d(3, 64, kernel_size: 3, stride: 1, padding: 1, bias: false)));
             modules.Add(($"bnrm2d-first", BatchNorm2d(64)));
             modules.Add(($"relu-first", ReLU(inplace:true)));
             MakeLayer(modules, block, expansion, 64, num_blocks[0], 1);
@@ -124,17 +124,17 @@ namespace TorchSharp.Examples
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
 
-                modules.Add(($"{name}-conv2d-1", Conv2d(in_planes, planes, kernelSize: 3, stride: stride, padding: 1, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(in_planes, planes, kernel_size: 3, stride: stride, padding: 1, bias: false)));
                 modules.Add(($"{name}-bnrm2d-1", BatchNorm2d(planes)));
                 modules.Add(($"{name}-relu-1", ReLU(inplace: true)));
-                modules.Add(($"{name}-conv2d-2", Conv2d(planes, planes, kernelSize: 3, stride: 1, padding: 1, bias: false)));
+                modules.Add(($"{name}-conv2d-2", Conv2d(planes, planes, kernel_size: 3, stride: 1, padding: 1, bias: false)));
                 modules.Add(($"{name}-bnrm2d-2", BatchNorm2d(planes)));
 
                 layers = Sequential(modules);
 
                 if (stride != 1 || in_planes != expansion*planes) {
                     shortcut = Sequential(
-                        ($"{name}-conv2d-3", Conv2d(in_planes, expansion * planes, kernelSize: 1, stride: stride, bias: false)),
+                        ($"{name}-conv2d-3", Conv2d(in_planes, expansion * planes, kernel_size: 1, stride: stride, bias: false)),
                         ($"{name}-bnrm2d-3", BatchNorm2d(expansion * planes)));
                 }
                 else {
@@ -175,20 +175,20 @@ namespace TorchSharp.Examples
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
 
-                modules.Add(($"{name}-conv2d-1", Conv2d(in_planes, planes, kernelSize: 1, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(in_planes, planes, kernel_size: 1, bias: false)));
                 modules.Add(($"{name}-bnrm2d-1", BatchNorm2d(planes)));
                 modules.Add(($"{name}relu-1", ReLU(inplace:true)));
-                modules.Add(($"{name}-conv2d-2", Conv2d(planes, planes, kernelSize: 3, stride: stride, padding: 1, bias: false)));
+                modules.Add(($"{name}-conv2d-2", Conv2d(planes, planes, kernel_size: 3, stride: stride, padding: 1, bias: false)));
                 modules.Add(($"{name}-bnrm2d-2", BatchNorm2d(planes)));
                 modules.Add(($"{name}relu-2", ReLU(inplace: true)));
-                modules.Add(($"{name}-conv2d-3", Conv2d(planes, expansion * planes, kernelSize: 1, bias: false)));
+                modules.Add(($"{name}-conv2d-3", Conv2d(planes, expansion * planes, kernel_size: 1, bias: false)));
                 modules.Add(($"{name}-bnrm2d-3", BatchNorm2d(expansion * planes)));
 
                 layers = Sequential(modules);
 
                 if (stride != 1 || in_planes != expansion * planes) {
                     shortcut = Sequential(
-                        ($"{name}-conv2d-4", Conv2d(in_planes, expansion * planes, kernelSize: 1, stride: stride, bias: false)),
+                        ($"{name}-conv2d-4", Conv2d(in_planes, expansion * planes, kernel_size: 1, stride: stride, bias: false)),
                         ($"{name}-bnrm2d-4", BatchNorm2d(expansion * planes)));
                 } else {
                     shortcut = Sequential();

@@ -51,40 +51,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_grid_sample(IntPtr input, IntPtr grid, byte mode, byte padding_mode, byte align_corners);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_AlphaDropout_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_AlphaDropout_ctor(double p, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_alpha_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Bilinear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_ctor(long in1_features, long in2_features, long output_size, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_functional_bilinear(IntPtr input1, IntPtr input2, IntPtr weights, IntPtr bias);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_CosineSimilarity_ctor(long dim, double eps, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_CosineSimilarity_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
+        internal static extern IntPtr THSNN_cosine_similarity(IntPtr input1, IntPtr input2, long dim, double eps);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
@@ -150,12 +123,6 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_EmbeddingBag_from_pretrained(IntPtr embeddings, [MarshalAs(UnmanagedType.U1)] bool freeze, double max_norm, [MarshalAs(UnmanagedType.U1)] bool hasMN, double norm_type, [MarshalAs(UnmanagedType.U1)] bool scale_grad_by_freq, long mode, [MarshalAs(UnmanagedType.U1)] bool sparse, [MarshalAs(UnmanagedType.U1)] bool include_last_offset, long padding_idx, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_FeatureAlphaDropout_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_FeatureAlphaDropout_ctor(double p, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_feature_alpha_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
@@ -435,22 +402,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_one_hot(IntPtr self, long num_classes);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
+        internal static extern IntPtr THSNN_pairwise_distance(IntPtr input1, IntPtr input2, double p, double eps, [MarshalAs(UnmanagedType.U1)] bool keepdim);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PairwiseDistance_ctor(double p, double eps, [MarshalAs(UnmanagedType.U1)] bool keep_dim, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_pixel_unshuffle(IntPtr tensor, long downscale_factor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PixelUnshuffle_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PixelUnshuffle_ctor(long downscaleFactor, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PixelShuffle_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_PixelShuffle_ctor(long upscaleFactor, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_pixel_shuffle(IntPtr tensor, long upscale_factor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_GRUCell_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0);
@@ -549,307 +507,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_affine_grid(IntPtr theta, IntPtr size, int size_len, [MarshalAs(UnmanagedType.U1)] bool align_corners);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_CELU_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_CELU_ctor(double alpha, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LeakyReLU_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LeakyReLU_ctor(double negative_slope, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LogSoftmax_forward(torch.nn.Module.HType handle, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LogSoftmax_ctor(long dim, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm3d_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm3d_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm3d_reset_stats(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_get_mean(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_get_var(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_get_batches(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm3d_set_mean(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm3d_set_var(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm3d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LayerNorm_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LayerNorm_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_LayerNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LayerNorm_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_LayerNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_LayerNorm_ctor(IntPtr norm_shape, long norm_shape_len, double eps, [MarshalAs(UnmanagedType.U1)] bool elementwise_affine, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm2d_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm2d_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm2d_reset_stats(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_get_mean(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_get_var(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_get_batches(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm2d_set_mean(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm2d_set_var(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm2d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm1d_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm1d_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm1d_reset_stats(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_get_mean(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_get_var(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_get_batches(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm1d_set_mean(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_InstanceNorm1d_set_var(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_InstanceNorm1d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv1d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv1d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Conv1d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv1d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Conv1d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv1d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv2d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv2d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Conv2d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv2d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Conv2d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv2d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv2d_ctor_1(long inputChannel, long outputChannel, long kernelSizeX, long kernelSizeY, long strideX, long strideY, long paddingX, long paddingY, long dilationX, long dilationY, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv3d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv3d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Conv3d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv3d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Conv3d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv3d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Conv3d_ctor_1(long inputChannel, long outputChannel, long kernelSizeX, long kernelSizeY, long kernelSizeZ, long strideX, long strideY, long strideZ, long paddingX, long paddingY, long paddingZ, long dilationX, long dilationY, long dilationZ, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose1d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose1d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_ConvTranspose1d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose1d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_ConvTranspose1d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose1d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose3d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose3d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_ConvTranspose3d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose3d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_ConvTranspose3d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose3d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose3d_ctor_1(long inputChannel, long outputChannel, long kernelSizeX, long kernelSizeY, long kernelSizeZ, long strideX, long strideY, long strideZ, long paddingX, long paddingY, long paddingZ, long outputPaddingX, long outputPaddingY, long outputPaddingZ, long dilationX, long dilationY, long dilationZ, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_BatchNorm1d_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_BatchNorm1d_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_BatchNorm1d_reset_stats(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_get_mean(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_get_var(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_get_batches(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_BatchNorm1d_set_mean(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_BatchNorm1d_set_var(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_BatchNorm1d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_GroupNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_GroupNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_ctor(long num_groups, long num_channels, double eps, [MarshalAs(UnmanagedType.U1)] bool affine, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_Unflatten_forward(torch.nn.Module.HType module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_Unflatten_ctor(long dim, IntPtr shape, long shape_len, out IntPtr pBoxedModule);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_normalize(IntPtr input, double p, long dim, double eps);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_batch_norm(IntPtr input, IntPtr running_mean, IntPtr running_var, IntPtr weight, IntPtr bias, [MarshalAs(UnmanagedType.U1)] bool training, double momentum, double eps);
@@ -882,7 +546,7 @@ namespace TorchSharp.PInvoke
         internal static extern void THSNN_ConvTranspose2d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_ConvTranspose2d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_ConvTranspose2d_ctor(long inputChannel, long outputChannel, long kernel_size, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_ConvTranspose2d_ctor_1(long inputChannel, long outputChannel, long kernelSizeX, long kernelSizeY, long strideX, long strideY, long paddingX, long paddingY, long outputPaddingX, long outputPaddingY, long dilationX, long dilationY, long paddingMode, long groups, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
@@ -1093,24 +757,6 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_Softshrink_ctor(double lambd, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Softsign_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Softsign_ctor(out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Tanh_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Tanh_ctor(out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Tanhshrink_forward(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Tanhshrink_ctor(out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_Threshold_forward(torch.nn.Module.HType module, IntPtr tensor);

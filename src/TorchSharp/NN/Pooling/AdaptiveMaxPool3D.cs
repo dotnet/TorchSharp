@@ -12,24 +12,24 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveMaxPool3D module.
         /// </summary>
-        public sealed class AdaptiveMaxPool3d : torch.nn.Module<Tensor, Tensor>
+        public sealed class AdaptiveMaxPool3d : ParameterLessModule<Tensor, Tensor>
         {
-            internal AdaptiveMaxPool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal AdaptiveMaxPool3d(long[] output_size) : base(nameof(AdaptiveMaxPool3d))
             {
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_AdaptiveMaxPool3d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.adaptive_max_pool3d(input, output_size);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public (Tensor output, Tensor indices) forward_with_indices(Tensor input)
+            {
+                return torch.nn.functional.adaptive_max_pool3d_with_indices(input, output_size);
+            }
+
+
+            public long[] output_size { get; set; }
         }
     }
 
@@ -41,18 +41,12 @@ namespace TorchSharp
             /// Applies a 3D adaptive max pooling over an input signal composed of several input planes.
             /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size of the image of the form D x H x W.
+            /// <param name="output_size">The target output size of the image of the form D x H x W.
             /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
             /// <returns></returns>
-            public static AdaptiveMaxPool3d AdaptiveMaxPool3d(long[] outputSize)
+            public static AdaptiveMaxPool3d AdaptiveMaxPool3d(long[] output_size)
             {
-                unsafe {
-                    fixed (long* pkernelSize = outputSize) {
-                        var handle = THSNN_AdaptiveMaxPool3d_ctor((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveMaxPool3d(handle, boxedHandle);
-                    }
-                }
+                return new AdaptiveMaxPool3d(output_size);
             }
 
             public static partial class functional
@@ -61,14 +55,33 @@ namespace TorchSharp
                 /// Applies a 3D adaptive max pooling over an input signal composed of several input planes.
                 /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
                 /// </summary>
-                /// <param name="x">The input tensor</param>
-                /// <param name="outputSize">The target output size of the image of the form D x H x W.
+                /// <param name="input">The input tensor</param>
+                /// <param name="output_size">The target output size of the image of the form D x H x W.
                 /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
                 /// <returns></returns>
-                public static Tensor adaptive_max_pool3d(Tensor x, long[] outputSize)
+                public static Tensor adaptive_max_pool3d(Tensor input, long[] output_size)
                 {
-                    using (var d = nn.AdaptiveMaxPool3d(outputSize)) {
-                        return d.call(x);
+                    var ret = adaptive_max_pool3d_with_indices(input, output_size);
+                    ret.Indices.Dispose();
+                    return ret.Values;
+                }
+
+                /// <summary>
+                /// Applies a 3D adaptive max pooling over an input signal composed of several input planes.
+                /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
+                /// </summary>
+                /// <param name="input">The input tensor</param>
+                /// <param name="output_size">The target output size of the image of the form D x H x W.
+                /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
+                /// <returns></returns>
+                public static (Tensor Values, Tensor Indices) adaptive_max_pool3d_with_indices(Tensor input, long[] output_size)
+                {
+                    unsafe {
+                        fixed (long* poutputSize = output_size) {
+                            var resOutput = THSTensor_adaptive_max_pool1d(input.Handle, (IntPtr)poutputSize, output_size.Length, out var resIndices);
+                            if (resOutput == IntPtr.Zero || resIndices == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return (new Tensor(resOutput), new Tensor(resIndices));
+                        }
                     }
                 }
             }

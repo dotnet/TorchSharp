@@ -248,10 +248,10 @@ namespace TorchSharp.Modules
             public ResBlock(string name, int n_freq = 128) : base(name)
             {
                 this.resblock_model = nn.Sequential(
-                    nn.Conv1d(in_channels: n_freq, out_channels: n_freq, kernelSize: 1, bias: false),
+                    nn.Conv1d(in_channels: n_freq, out_channels: n_freq, kernel_size: 1, bias: false),
                     nn.BatchNorm1d(n_freq),
                     nn.ReLU(inplace: true),
-                    nn.Conv1d(in_channels: n_freq, out_channels: n_freq, kernelSize: 1, bias: false),
+                    nn.Conv1d(in_channels: n_freq, out_channels: n_freq, kernel_size: 1, bias: false),
                     nn.BatchNorm1d(n_freq));
                 RegisterComponents();
             }
@@ -283,13 +283,13 @@ namespace TorchSharp.Modules
                 int kernel_size = 5) : base(name)
             {
                 var modules = new List<nn.Module<Tensor, Tensor>>();
-                modules.Add(nn.Conv1d(in_channels: n_freq, out_channels: n_hidden, kernelSize: kernel_size, bias: false));
+                modules.Add(nn.Conv1d(in_channels: n_freq, out_channels: n_hidden, kernel_size: kernel_size, bias: false));
                 modules.Add(nn.BatchNorm1d(n_hidden));
                 modules.Add(nn.ReLU(inplace: true));
                 for (int i = 0; i < n_res_block; i++) {
                     modules.Add(new ResBlock("resblock", n_hidden));
                 }
-                modules.Add(nn.Conv1d(in_channels: n_hidden, out_channels: n_output, kernelSize: 1));
+                modules.Add(nn.Conv1d(in_channels: n_hidden, out_channels: n_output, kernel_size: 1));
                 this.melresnet_model = nn.Sequential(modules);
                 RegisterComponents();
             }
@@ -358,7 +358,7 @@ namespace TorchSharp.Modules
                 var up_layers = new List<nn.Module<Tensor, Tensor>>();
                 foreach (var scale in upsample_scales) {
                     var stretch = new Stretch2d("stretch2d", scale, 1);
-                    var conv = nn.Conv2d(in_channels: 1, out_channels: 1, kernelSize: (1, scale * 2 + 1), padding: (0, scale), bias: false);
+                    var conv = nn.Conv2d(in_channels: 1, out_channels: 1, kernel_size: (1, scale * 2 + 1), padding: (0, scale), bias: false);
                     torch.nn.init.constant_(conv.weight, 1.0 / (scale * 2 + 1));
                     up_layers.Add(stretch);
                     up_layers.Add(conv);

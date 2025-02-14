@@ -455,7 +455,7 @@ namespace TorchSharp
         {
             using var _ = NewDisposeScope();
 
-            var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
+            var c2 = torch.nn.Conv2d(3, 16, kernel_size: (1, 7), stride: (1, 1), padding: (0, 3));
             var Win = torch.rand(16, 3, 8, 8);
             var s = c2.call(Win).shape;
             Assert.Equal(new long[] { 16, 16, 8, 8 }, s);
@@ -498,12 +498,12 @@ namespace TorchSharp
             var model = new Module510(1, 32);
             model.call(torch.randn(16, 1, 32));
 
-            var w0 = model.get_parameter("stack.0.weight").clone();
-            var w1 = model.get_parameter("stack.1.weight").clone();
-            var b1 = model.get_parameter("stack.1.bias").clone();
-            var rm = model.get_buffer("stack.1.running_mean").clone();
-            var rv = model.get_buffer("stack.1.running_var").clone();
-            var nm = model.get_buffer("stack.1.num_batches_tracked").clone();
+            var w0 = model.get_parameter("stack.0.weight")!.clone();
+            var w1 = model.get_parameter("stack.1.weight")!.clone();
+            var b1 = model.get_parameter("stack.1.bias")!.clone();
+            var rm = model.get_buffer("stack.1.running_mean")!.clone();
+            var rv = model.get_buffer("stack.1.running_var")!.clone();
+            var nm = model.get_buffer("stack.1.num_batches_tracked")!.clone();
 
             model.load("bug510.dat");
 
@@ -520,7 +520,7 @@ namespace TorchSharp
             Assert.NotEqual(rm, rm_);
             Assert.NotEqual(rv, rv_);
             Assert.Equal(1, nm.item<long>());
-            Assert.Equal(0, nm_.item<long>());
+            Assert.Equal(0, nm_!.item<long>());
         }
 
         internal class Module510 : Module<Tensor, Tensor>
@@ -1027,7 +1027,7 @@ namespace TorchSharp
             public GitTestCnn(string name, Device? device = null) : base(name)
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
-                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernel_size: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
                 layers0 = Sequential(modules);
 
                 RegisterComponents();
@@ -1612,7 +1612,7 @@ namespace TorchSharp
             Assert.NotNull(module.p.grad);
             Assert.NotNull(module.ln.weight!.grad);
             Assert.NotNull(module.ln.bias!.grad);
-            
+
         }
 
         [Fact]
@@ -1645,7 +1645,7 @@ namespace TorchSharp
             var y1 = torch.nn.functional.avg_pool1d(x, 2);
             Console.WriteLine(y1.metastr());
             Assert.Equal(64, y1.size(-1));
-            
+
             var y2 = torch.nn.AvgPool1d(2).call(x);
             Console.WriteLine(y2.metastr());
             Assert.Equal(64, y1.size(-1));
@@ -1658,6 +1658,15 @@ namespace TorchSharp
             Assert.Equal("[0]", torch.zeros(1).npstr());
             Assert.Equal("[0], type = Float32, device = cpu, value = float [] {}", torch.zeros(0).cstr());
             Assert.Equal("[1], type = Float32, device = cpu, value = float [] {0f}", torch.zeros(1).cstr());
+        }
+
+        [Fact]
+        public void Validate_1250a()
+        {
+            var scalar = torch.zeros(Array.Empty<long>());
+            Assert.Equal("0", scalar.npstr());
+            Assert.Equal("[], type = Float32, device = cpu, value = 0", scalar.cstr());
+            Assert.Equal("[], type = Float32, device = cpu, value = 0", scalar.jlstr());
         }
 
         [Fact]
@@ -1674,12 +1683,33 @@ namespace TorchSharp
                     seq.save(stream);
             }
 
-            // This test will succeed if the following code doesn't crash. 
+            // This test will succeed if the following code doesn't crash.
             ms.Position = 0;
             using (var archive = new ZipArchive(ms)) {
                 seq.load(archive.GetEntry("seq")!.Open());
             }
 #endif
+        }
+
+        [Fact]
+        public void Validate1400()
+        {
+            long kernel = 21;
+            float sigma = 11;
+            var trans = torchvision.transforms.GaussianBlur(kernel, sigma); //System.ArgumentException:“Invalid GaussianBlur arguments.”
+
+            var img = torch.rand(1,3,256,256);
+            var t = trans.call(img);
+        }
+
+        [Fact]
+        public void Validate1402()
+        {
+            var t = torch.arange(100).reshape(10,10);
+
+            var d = t.diagonal();
+
+            Assert.Equal(new long[]{0, 11, 22, 33, 44, 55, 66, 77, 88, 99}, d.data<long>().ToArray());
         }
     }
 }

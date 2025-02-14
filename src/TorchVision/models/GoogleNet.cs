@@ -26,7 +26,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.inception_v3(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -119,21 +119,21 @@ namespace TorchSharp
                 this.transform_input = transform_input;
 
                 conv1 = conv_block(3, 64, kernel_size: 7, stride: 2, padding: 3);
-                maxpool1 = MaxPool2d(kernelSize: 3, stride: 2, ceilMode: true);
+                maxpool1 = MaxPool2d(kernel_size: 3, stride: 2, ceil_mode: true);
                 conv2 = conv_block(64, 64, kernel_size: 1);
                 conv3 = conv_block(64, 192, kernel_size: 3, padding: 1);
-                maxpool2 = MaxPool2d(kernelSize: 3, stride: 2, ceilMode: true);
+                maxpool2 = MaxPool2d(kernel_size: 3, stride: 2, ceil_mode: true);
 
                 inception3a = inception_block(192, 64, 96, 128, 16, 32, 32);
                 inception3b = inception_block(256, 128, 128, 192, 32, 96, 64);
-                maxpool3 = nn.MaxPool2d(3, stride: 2, ceilMode: true);
+                maxpool3 = nn.MaxPool2d(3, stride: 2, ceil_mode: true);
 
                 inception4a = inception_block(480, 192, 96, 208, 16, 48, 64);
                 inception4b = inception_block(512, 160, 112, 224, 24, 64, 64);
                 inception4c = inception_block(512, 128, 128, 256, 24, 64, 64);
                 inception4d = inception_block(512, 112, 144, 288, 32, 64, 64);
                 inception4e = inception_block(528, 256, 160, 320, 32, 128, 128);
-                maxpool4 = nn.MaxPool2d(2, stride: 2, ceilMode: true);
+                maxpool4 = nn.MaxPool2d(2, stride: 2, ceil_mode: true);
 
                 inception5a = inception_block(832, 256, 160, 320, 32, 128, 128);
                 inception5b = inception_block(832, 384, 192, 384, 48, 128, 128);
@@ -170,7 +170,7 @@ namespace TorchSharp
                             break;
                         }
                     }
-                    this.load(weights_file, skip: skipfc ? new[] { "fc.weight", "fc.bias", "AuxLogits.fc.weight", "AuxLogits.fc.bias" } : null);
+                    this.load(weights_file!, skip: skipfc ? new[] { "fc.weight", "fc.bias", "AuxLogits.fc.weight", "AuxLogits.fc.bias" } : null);
                 }
 
                 if (device != null && device.type != DeviceType.CPU)
@@ -181,7 +181,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
             {
                 return Sequential(
-                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
+                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernel_size: kernel_size, stride: stride, padding: padding)),
                     ("bn", BatchNorm2d(out_channels, eps: 0.001)),
                     ("relu", ReLU(true))
                 );
@@ -190,7 +190,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
             {
                 return Sequential(
-                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
+                    ("conv", Conv2d(in_channels, out_channels, bias: false, kernel_size: kernel_size, stride: stride, padding: padding)),
                     ("bn", BatchNorm2d(out_channels, eps: 0.001)),
                     ("relu", ReLU(true))
                 );
@@ -280,7 +280,7 @@ namespace TorchSharp
                         conv_block(ch5x5red, ch5x5, kernel_size: 3, padding: 1)
                     );
                     branch4 = nn.Sequential(
-                        nn.MaxPool2d(kernelSize: 3, stride: 1, padding: 1, ceilMode: true),
+                        nn.MaxPool2d(kernel_size: 3, stride: 1, padding: 1, ceil_mode: true),
                         conv_block(in_channels, pool_proj, kernel_size: 1)
                     );
                     RegisterComponents();

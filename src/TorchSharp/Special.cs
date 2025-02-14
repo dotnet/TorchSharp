@@ -3,6 +3,7 @@ using System;
 using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -15,7 +16,7 @@ namespace TorchSharp
             /// <param name="input">Input tensor</param>
             /// <param name="out">Optional output tensor, will be modified if present.</param>
             /// <returns></returns>
-            public static Tensor airy_ai(Tensor input, Tensor @out = null)
+            public static Tensor airy_ai(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_airy_ai(input.Handle) :
@@ -30,7 +31,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor bessel_j0(Tensor input, Tensor @out = null)
+            public static Tensor bessel_j0(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_bessel_j0(input.Handle) :
@@ -45,7 +46,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor bessel_j1(Tensor input, Tensor @out = null)
+            public static Tensor bessel_j1(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_bessel_j1(input.Handle) :
@@ -60,7 +61,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor bessel_y0(Tensor input, Tensor @out = null)
+            public static Tensor bessel_y0(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_bessel_y0(input.Handle) :
@@ -75,7 +76,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor bessel_y1(Tensor input, Tensor @out = null)
+            public static Tensor bessel_y1(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_bessel_y1(input.Handle) :
@@ -90,7 +91,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor modified_bessel_i0(Tensor input, Tensor @out = null)
+            public static Tensor modified_bessel_i0(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_modified_bessel_i0(input.Handle) :
@@ -105,7 +106,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor modified_bessel_i1(Tensor input, Tensor @out = null)
+            public static Tensor modified_bessel_i1(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_modified_bessel_i1(input.Handle) :
@@ -120,7 +121,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor modified_bessel_k0(Tensor input, Tensor @out = null)
+            public static Tensor modified_bessel_k0(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_modified_bessel_k0(input.Handle) :
@@ -135,7 +136,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor modified_bessel_k1(Tensor input, Tensor @out = null)
+            public static Tensor modified_bessel_k1(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_modified_bessel_k1(input.Handle) :
@@ -150,7 +151,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor scaled_modified_bessel_k0(Tensor input, Tensor @out = null)
+            public static Tensor scaled_modified_bessel_k0(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_scaled_modified_bessel_k0(input.Handle) :
@@ -165,7 +166,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor scaled_modified_bessel_k1(Tensor input, Tensor @out = null)
+            public static Tensor scaled_modified_bessel_k1(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_scaled_modified_bessel_k1(input.Handle) :
@@ -180,7 +181,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <param name="out">An optional output tensor, which will be modified if present.</param>
-            public static Tensor spherical_bessel_j0(Tensor input, Tensor @out = null)
+            public static Tensor spherical_bessel_j0(Tensor input, Tensor? @out = null)
             {
                 var res = @out is null ?
                     THSSpecial_spherical_bessel_j0(input.Handle) :
@@ -198,7 +199,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor chebyshev_polynomial_t(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor chebyshev_polynomial_t(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_chebyshev_polynomial_t(x.Handle, n.Handle) :
@@ -217,7 +218,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor chebyshev_polynomial_u(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor chebyshev_polynomial_u(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_chebyshev_polynomial_u(x.Handle, n.Handle) :
@@ -235,7 +236,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor chebyshev_polynomial_v(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor chebyshev_polynomial_v(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_chebyshev_polynomial_v(x.Handle, n.Handle) :
@@ -253,7 +254,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor chebyshev_polynomial_w(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor chebyshev_polynomial_w(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_chebyshev_polynomial_w(x.Handle, n.Handle) :
@@ -271,7 +272,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor shifted_chebyshev_polynomial_t(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor shifted_chebyshev_polynomial_t(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_shifted_chebyshev_polynomial_t(x.Handle, n.Handle) :
@@ -290,7 +291,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor shifted_chebyshev_polynomial_u(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor shifted_chebyshev_polynomial_u(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_shifted_chebyshev_polynomial_u(x.Handle, n.Handle) :
@@ -308,7 +309,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor shifted_chebyshev_polynomial_v(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor shifted_chebyshev_polynomial_v(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_shifted_chebyshev_polynomial_v(x.Handle, n.Handle) :
@@ -326,7 +327,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor shifted_chebyshev_polynomial_w(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor shifted_chebyshev_polynomial_w(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_shifted_chebyshev_polynomial_w(x.Handle, n.Handle) :
@@ -344,7 +345,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor hermite_polynomial_h(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor hermite_polynomial_h(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_hermite_polynomial_h(x.Handle, n.Handle) :
@@ -362,7 +363,7 @@ namespace TorchSharp
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor hermite_polynomial_he(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor hermite_polynomial_he(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_hermite_polynomial_he(x.Handle, n.Handle) :
@@ -374,14 +375,14 @@ namespace TorchSharp
 
             /// <summary>
             /// Laguerre polynomials
-            /// 
+            ///
             /// See: https://en.wikipedia.org/wiki/Laguerre_polynomials
             /// </summary>
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
             /// <returns></returns>
-            public static Tensor laguerre_polynomial_l(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor laguerre_polynomial_l(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_laguerre_polynomial_l(x.Handle, n.Handle) :
@@ -393,13 +394,13 @@ namespace TorchSharp
 
             /// <summary>
             /// Legendre polynomials
-            /// 
+            ///
             /// https://en.wikipedia.org/wiki/Legendre_polynomials
             /// </summary>
             /// <param name="x">The input tensor.</param>
             /// <param name="n">n</param>
             /// <param name="out">An optional output tensor.</param>
-            public static Tensor legendre_polynomial_p(Tensor x, Tensor n, Tensor @out = null)
+            public static Tensor legendre_polynomial_p(Tensor x, Tensor n, Tensor? @out =null)
             {
                 var res = @out is null ?
                     THSSpecial_legendre_polynomial_p(x.Handle, n.Handle) :

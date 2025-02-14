@@ -117,7 +117,7 @@ namespace TorchSharp
             {
                 Tensor t = torch.zeros(4);
                 var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[4], type = Float32, device = cpu\n 0 0 0 0\n", str);
+                Assert.Equal($"[4], type = Float32, device = cpu{Environment.NewLine} 0 0 0 0{Environment.NewLine}", str);
             }
             {
                 Tensor t = torch.zeros(4, torch.complex64);
@@ -151,12 +151,12 @@ namespace TorchSharp
             {
                 Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4);
                 var str = t.str(cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x4], type = Float32, device = cpu\n        0   3.141 6.2834 3.1415\n 6.28e-06 -13.142   0.01 4713.1\n", str);
+                Assert.Equal($"[2x4], type = Float32, device = cpu{Environment.NewLine}        0   3.141 6.2834 3.1415{Environment.NewLine} 6.28e-06 -13.142   0.01 4713.1{Environment.NewLine}", str);
             }
             if (torch.cuda.is_available()) {
                 Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4, device: torch.CUDA);
                 var str = t.str(cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x4], type = Float32, device = cuda:0\n        0   3.141 6.2834 3.1415\n 6.28e-06 -13.142   0.01 4713.1\n", str);
+                Assert.Equal($"[2x4], type = Float32, device = cuda:0{Environment.NewLine}        0   3.141 6.2834 3.1415{Environment.NewLine} 6.28e-06 -13.142   0.01 4713.1{Environment.NewLine}", str);
             }
             {
                 Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4, device: torch.META);
@@ -185,9 +185,10 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
                 var str = t.jlstr("0.0000000", cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x2x4], type = Float32, device = cpu\n[0,..,..] =\n 0.0000000   3.1410000 6.2834000    3.1415200\n" +
+                Assert.Equal(($"[2x2x4], type = Float32, device = cpu\n[0,..,..] =\n 0.0000000   3.1410000 6.2834000    3.1415200\n" +
                              $" 0.0000063 -13.1415300 0.0100000 4713.1400000\n\n[1,..,..] =\n 0.0100000 0.0000000 0.0000000 0.0000000\n" +
-                             $" 0.0000000 0.0000000 0.0000000 0.0000000\n", str);
+                             $" 0.0000000 0.0000000 0.0000000 0.0000000\n").Replace("\n", Environment.NewLine),
+                             str);
             }
         }
 
@@ -280,6 +281,29 @@ namespace TorchSharp
             Tensor t = torch.zeros(2, 2);
             var str = t.ToString();
             Assert.Equal("[2x2], type = Float32, device = cpu", str);
+        }
+
+        [Fact]
+        [TestOf(nameof(TensorExtensionMethods.print))]
+        public void TestTensorDefaultPrint()
+        {
+            Tensor t = torch.zeros(2, 2);
+            string expectedOutput = t.ToString(TensorStringStyle.Default) + Environment.NewLine;
+            var originalOut = Console.Out;
+            using (var sw = new StringWriter())
+            {
+                try 
+                {
+                    Console.SetOut(sw);
+                    t.print();
+                    var result = sw.ToString();
+                    Assert.Equal(expectedOutput, result);
+                }
+                finally 
+                {
+                    Console.SetOut(originalOut);
+                }
+            }
         }
 
         [Fact]

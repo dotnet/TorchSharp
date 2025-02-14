@@ -14,14 +14,15 @@ using TorchSharp.PInvoke;
 using TorchSharp.Utils;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
     {
 #if LIBTORCH_2_2_2_0
         const string libtorchPackageVersion = "2.2.2.0";
-#elif LIBTORCH_2_4_0_0
-        const string libtorchPackageVersion = "2.4.0.0";
+#elif LIBTORCH_2_5_1_0
+        const string libtorchPackageVersion = "2.5.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -493,6 +494,16 @@ namespace TorchSharp
                     var bias = new Parameter(fused_b, linear_b.requires_grad);
 
                     return scope.MoveToOuter(weight, bias);
+                }
+
+                public static Linear fuse_linear_bn_eval(Linear linear, BatchNorm bn)
+                {
+                    if (linear.training || bn.training)
+                        throw new InvalidOperationException("Fusing operators is valid only for eval mode.");
+
+                    var (weight, bias) = fuse_linear_bn_weights(linear.weight, linear.bias, bn.running_mean!, bn.running_var!, bn.eps, bn.weight, bn.bias!);
+
+                    return Linear(weight, bias);
                 }
             }
         }

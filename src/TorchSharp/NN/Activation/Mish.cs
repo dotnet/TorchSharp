@@ -12,27 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Mish module.
         /// </summary>
-        public sealed class Mish : torch.nn.Module<Tensor, Tensor>
+        public sealed class Mish : ParameterLessModule<Tensor, Tensor>
         {
-            internal Mish(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Mish(bool inplace) : base(nameof(Mish))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Mish_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.mish(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(Mish).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
 
@@ -43,12 +35,18 @@ namespace TorchSharp
             /// <summary>
             /// A Self Regularized Non-Monotonic Neural Activation Function.
             /// </summary>
-            /// <returns></returns>
             public static Mish Mish()
             {
-                var handle = THSNN_Mish_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Mish(handle, boxedHandle);
+                return new Mish(false);
+            }
+
+            /// <summary>
+            /// A Self Regularized Non-Monotonic Neural Activation Function.
+            /// </summary>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
+            public static Mish Mish(bool inplace)
+            {
+                return new Mish(inplace);
             }
 
             public static partial class functional
@@ -57,13 +55,20 @@ namespace TorchSharp
                 /// A Self Regularized Non-Monotonic Neural Activation Function.
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <returns></returns>
-                public static Tensor Mish(Tensor x)
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
+                public static Tensor mish(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.Mish()) {
-                        return m.call(x);
-                    }
+                    using var t1 = softplus(x);
+                    using var t2 = t1.tanh();
+                    return inplace ? x.mul_(t2).alias() : x.mul(t2);
                 }
+
+                /// <summary>
+                /// A Self Regularized Non-Monotonic Neural Activation Function.
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                [Obsolete("Not using the PyTorch naming convention.",false)]
+                public static Tensor Mish(Tensor x) => mish(x, false);
             }
         }
     }

@@ -2,6 +2,7 @@
 using System;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
     /// <summary>

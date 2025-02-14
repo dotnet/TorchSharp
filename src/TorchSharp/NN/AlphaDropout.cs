@@ -17,7 +17,7 @@ namespace TorchSharp
         /// The elements to masked are randomized on every forward call, and scaled and shifted to maintain zero mean and unit standard deviation.
         /// During evaluation the module simply computes an identity function.
         /// </summary>
-        public sealed class AlphaDropout : torch.nn.Module<Tensor, Tensor>
+        public sealed class AlphaDropout : ParameterLessModule<Tensor, Tensor>
         {
             internal AlphaDropout(double p = 0.5, bool inplace = false) : base(nameof(Dropout1d))
             {
@@ -35,15 +35,8 @@ namespace TorchSharp
                 return torch.nn.functional.alpha_dropout(tensor, this.p, this.training, inplace);
             }
 
-
-              // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-
-            private bool inplace;
-            private double p;
+            public bool inplace { get; set; }
+            public double p { get; set;}
         }
     }
 

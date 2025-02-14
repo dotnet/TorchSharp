@@ -24,7 +24,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.alexnet(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -74,19 +74,19 @@ namespace TorchSharp
             public AlexNet(int numClasses, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null) : base(nameof(AlexNet))
             {
                 features = Sequential(
-                    Conv2d(3, 64, kernelSize: 11, stride: 4, padding: 2),
+                    Conv2d(3, 64, kernel_size: 11, stride: 4, padding: 2),
                     ReLU(inplace: true),
-                    MaxPool2d(kernelSize: 3, stride: 2),
-                    Conv2d(64, 192, kernelSize: 5, padding: 2),
+                    MaxPool2d(kernel_size: 3, stride: 2),
+                    Conv2d(64, 192, kernel_size: 5, padding: 2),
                     ReLU(inplace: true),
-                    MaxPool2d(kernelSize: 3, stride: 2),
-                    Conv2d(192, 384, kernelSize: 3, padding: 1),
+                    MaxPool2d(kernel_size: 3, stride: 2),
+                    Conv2d(192, 384, kernel_size: 3, padding: 1),
                     ReLU(inplace: true),
-                    Conv2d(384, 256, kernelSize: 3, padding: 1),
+                    Conv2d(384, 256, kernel_size: 3, padding: 1),
                     ReLU(inplace: true),
-                    Conv2d(256, 256, kernelSize: 3, padding: 1),
+                    Conv2d(256, 256, kernel_size: 3, padding: 1),
                     ReLU(inplace: true),
-                    MaxPool2d(kernelSize: 3, stride: 2)
+                    MaxPool2d(kernel_size: 3, stride: 2)
                 );
 
                 avgpool = AdaptiveAvgPool2d(new long[] { 6, 6 });
@@ -105,7 +105,7 @@ namespace TorchSharp
 
                 if (!string.IsNullOrEmpty(weights_file)) {
 
-                    this.load(weights_file, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
+                    this.load(weights_file!, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
                 }
 
                 if (device != null && device.type != DeviceType.CPU)

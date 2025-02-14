@@ -11,30 +11,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardsigmoid module.
         /// </summary>
-        public sealed class Hardsigmoid : torch.nn.Module<Tensor, Tensor>
+        public sealed class Hardsigmoid : ParameterLessModule<Tensor, Tensor>
         {
-            private readonly bool inplace;
-
-            internal Hardsigmoid(bool inplace = false) : base(nameof(Hardsigmoid))
+            internal Hardsigmoid(bool inplace) : base(nameof(Hardsigmoid))
             {
                 this.inplace = inplace;
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.hardsigmoid(tensor, this.inplace);
+                return torch.nn.functional.hardsigmoid(tensor, inplace);
             }
 
-            public override string GetName()
-            {
-                return typeof(Hardsigmoid).Name;
-            }
-
-           // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public bool inplace {get; set; }
         }
     }
 

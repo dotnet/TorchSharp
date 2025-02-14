@@ -11,13 +11,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ChannelShuffle module.
         /// </summary>
-        public sealed class ChannelShuffle : torch.nn.Module<Tensor, Tensor>
+        public sealed class ChannelShuffle : ParameterLessModule<Tensor, Tensor>
         {
             internal ChannelShuffle(long groups) : base(nameof(ChannelShuffle))
             {
                 this.groups = groups;
             }
-            private long groups;
 
             public override Tensor forward(Tensor tensor)
             {
@@ -29,11 +28,7 @@ namespace TorchSharp
                 return typeof(ChannelShuffle).Name;
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long groups { get; set; }
         }
     }
 

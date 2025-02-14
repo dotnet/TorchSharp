@@ -25,7 +25,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg11(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -63,7 +63,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg11_bn(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -101,7 +101,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg13(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -139,7 +139,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg13_bn(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -177,7 +177,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg16(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -215,7 +215,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg16_bn(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -253,7 +253,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg19(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -291,7 +291,7 @@ namespace TorchSharp
             ///
             /// from torchvision import models
             /// import exportsd
-            /// 
+            ///
             /// model = models.vgg19_bn(pretrained=True)
             /// f = open("model_weights.dat", "wb")
             /// exportsd.save_state_dict(model.state_dict(), f)
@@ -363,9 +363,9 @@ namespace TorchSharp
                 for (var i = 0; i < channels.Length; i++) {
 
                     if (channels[i] == 0) {
-                        layers.Add(MaxPool2d(kernelSize: 2, stride: 2));
+                        layers.Add(MaxPool2d(kernel_size: 2, stride: 2));
                     } else {
-                        layers.Add(Conv2d(in_channels, channels[i], kernelSize: 3, padding: 1));
+                        layers.Add(Conv2d(in_channels, channels[i], kernel_size: 3, padding: 1));
                         if (batch_norm) {
                             layers.Add(BatchNorm2d(channels[i]));
                         }
@@ -423,7 +423,7 @@ namespace TorchSharp
                         }
                     }
 
-                    this.load(weights_file, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
+                    this.load(weights_file!, skip: skipfc ? new[] { "classifier.6.weight", "classifier.6.bias" } : null);
                 }
 
                 if (device != null && device.type != DeviceType.CPU)
