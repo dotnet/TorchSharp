@@ -31,7 +31,6 @@
           Condition="'$(OS)' != 'Windows_NT'">
 
     <PropertyGroup>
-      
       <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripsymbols</StripArgs>
       <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
@@ -44,8 +43,12 @@
   <Target Name="BuildNativeWindows"
           Condition="'$(OS)' == 'Windows_NT'">
           
-    <PropertyGroup>
+    <PropertyGroup Condition="$(CustomLibTorchFullPath)==''">
      <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(CustomLibTorchFullPath)!=''">
+      <!--<CustomLibTorchFullPath>$(CustomLibTorchFullPath)\libtorch\share\cmake\Torch</CustomLibTorchFullPath>-->
+      <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(CustomLibTorchFullPath)</BuildArgs>
     </PropertyGroup>
 
     <!-- Run script that invokes Cmake to create VS files, and then calls msbuild to compile them -->

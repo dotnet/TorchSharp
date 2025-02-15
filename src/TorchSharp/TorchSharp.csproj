@@ -76,13 +76,14 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
-  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild">
+  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild" Condition="$(CustomLibTorchFullPath) == ''">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <Message Importance="High" Text="Using Version = $(Version)" />
     <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
 
     <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
-
+  </Target>
+  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild">
     <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
   </Target>
 
