@@ -27,7 +27,7 @@ namespace TorchSharp
                 ("lin2", Linear(10, 5))
             );
             sequential.eval();
-
+            // The entire sequential module and its layers should be in evaluation mode, not in training
             var firstLayer = (torch.nn.Module)sequential[0];
             Assert.False(firstLayer.training);
 
@@ -37,11 +37,10 @@ namespace TorchSharp
             Assert.False(sequential.training);
 
             sequential.train();
-
+            // The entire sequential module and its layers should be in training mode, not in evaluation
             Assert.True(firstLayer.training);
             Assert.True(secondLayer.training);
             Assert.True(sequential.training);
-
         }
 
 
