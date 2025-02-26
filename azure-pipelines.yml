@@ -107,7 +107,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 8.0.406
+      version: 8.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: ${{ variables.LinuxPrepScript }}
@@ -151,7 +151,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 8.0.406
+      version: 8.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
