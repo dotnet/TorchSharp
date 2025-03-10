@@ -16,6 +16,34 @@ namespace TorchSharp
     public class TestTraining
     {
 
+        // <summary>
+        /// Check if sequential module goes from training to eval mode
+        // </summary>
+        [Fact]
+        public void TestTrainingEvalModes()
+        {
+            var sequential = Sequential(
+                ("lin1", Linear(100, 10)),
+                ("lin2", Linear(10, 5))
+            );
+            sequential.eval();
+            // The entire sequential module and its layers should be in evaluation mode, not in training
+            var firstLayer = (torch.nn.Module)sequential[0];
+            Assert.False(firstLayer.training);
+
+            var secondLayer = (torch.nn.Module)sequential[1];
+            Assert.False(secondLayer.training);
+
+            Assert.False(sequential.training);
+
+            sequential.train();
+            // The entire sequential module and its layers should be in training mode, not in evaluation
+            Assert.True(firstLayer.training);
+            Assert.True(secondLayer.training);
+            Assert.True(sequential.training);
+        }
+
+
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using gradient descent.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
