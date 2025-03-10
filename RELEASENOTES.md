@@ -3,6 +3,10 @@
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 # NuGet Version 0.105.1
 
+__Breaking Changes__:
+
+.NET 6.0 is no longer supported. Due to .NET 7 reaching end of support soon, .NET 8.0 is now the minimum version. For .NET FX version support is still the same: 4.7.2 and higher.
+
 __Bug Fixes__:
 
 #1426 Sequential.eval() does not put model into eval mode<br/>
