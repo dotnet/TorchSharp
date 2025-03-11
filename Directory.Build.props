@@ -20,8 +20,8 @@
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
 
-    <LibTorchPackageVersion>2.5.1</LibTorchPackageVersion>
-    <LibTorchPackageVersion Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">2.2.2</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.5.1.0</LibTorchPackageVersion>
+    <LibTorchPackageVersion Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">2.2.2.0</LibTorchPackageVersion>
 
     <!-- when building on local machines the massive downloads get placed up one directory -->
     <!-- so we can clean without triggering a re-download-->
@@ -86,8 +86,8 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>2.5.1</LibTorchPackageVersion>
-    <LibTorchPackageVersion Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">2.2.2</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.5.1.0</LibTorchPackageVersion>
+    <LibTorchPackageVersion Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">2.2.2.0</LibTorchPackageVersion>
     <EnablePackageValidation>false</EnablePackageValidation>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>

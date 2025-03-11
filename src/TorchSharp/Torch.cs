@@ -18,10 +18,10 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_2_2
-        const string libtorchPackageVersion = "2.2.2";
-#elif LIBTORCH_2_5_1
-        const string libtorchPackageVersion = "2.5.1";
+#if LIBTORCH_2_2_2_0
+        const string libtorchPackageVersion = "2.2.2.0";
+#elif LIBTORCH_2_5_1_0
+        const string libtorchPackageVersion = "2.5.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -166,6 +166,10 @@ namespace TorchSharp
                     trace.AppendLine($"    packagesDir = {packagesDir}");
                     trace.AppendLine($"    torchsharpHome = {torchsharpHome}");
 
+                    Console.WriteLine($"    torchsharpLoc = {torchsharpLoc}");
+                    Console.WriteLine($"    packagesDir = {packagesDir}");
+                    Console.WriteLine($"    torchsharpHome = {torchsharpHome}");
+
                     if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
 
                         var torchSharpVersion = Path.GetFileName(torchsharpHome); // really GetDirectoryName
@@ -192,8 +196,11 @@ namespace TorchSharp
                             var consolidatedDir = Path.Combine(torchsharpLoc, $"cpu");
 
                             trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cpuRootPackage}-* binaries to {consolidatedDir}...");
-
+                            Console.WriteLine($"    cpuRootPackage = {cpuRootPackage}");
+                            Console.WriteLine($"    consolidatedDir = {consolidatedDir}");
+                            Console.WriteLine($"    libtorchPackageVersion = {libtorchPackageVersion}");
                             var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, libtorchPackageVersion, consolidatedDir, trace);
+                            
                             if (cpuOk) {
                                 cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir, trace);
                                 if (cpuOk) {
@@ -238,11 +245,16 @@ namespace TorchSharp
             // these will be resolved in subsequent iterations.
             trace.AppendLine($"    Consolidating native binaries, packagesDir={packagesDir}, packagePattern={packagePattern}, packageVersion={packageVersion} to target={target}...");
             if (Directory.Exists(packagesDir)) {
+                var versionParts = packageVersion.Split('.');
+                string majorMinorPatchVersion = $"{versionParts[0]}.{versionParts[1]}.{versionParts[2]}";
+                Console.WriteLine($"    majorMinorPatchVersion = {majorMinorPatchVersion}");
                 var packages =
                     Directory.GetDirectories(packagesDir, packagePattern)
-                       .Where(d => Directory.Exists(Path.Combine(d, packageVersion)))
+                       .Where(d => Directory.GetDirectories(d)
+                       .Any(subdir => Path.GetFileName(subdir).StartsWith(majorMinorPatchVersion)))
                        .ToArray();
-
+                Console.WriteLine($"    Found {packages.Length} packages matching {packagePattern} in {packagesDir}");
+                packages.ToList().ForEach(Console.WriteLine);
                 if (packages.Length > 0) {
                     if (!Directory.Exists(target))
                         Directory.CreateDirectory(target);
