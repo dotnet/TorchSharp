@@ -250,8 +250,7 @@ namespace TorchSharp
                 Console.WriteLine($"    majorMinorPatchVersion = {majorMinorPatchVersion}");
                 var packages =
                     Directory.GetDirectories(packagesDir, packagePattern)
-                       .Where(d => Directory.GetDirectories(d)
-                       .Any(subdir => Path.GetFileName(subdir).StartsWith(majorMinorPatchVersion)))
+                       .Where(d => Directory.Exists(Path.Combine(d, majorMinorPatchVersion)))
                        .ToArray();
                 Console.WriteLine($"    Found {packages.Length} packages matching {packagePattern} in {packagesDir}");
                 packages.ToList().ForEach(Console.WriteLine);
