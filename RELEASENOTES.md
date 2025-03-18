@@ -6,6 +6,10 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __Bug Fixes__:
 
 #1426 Sequential.eval() does not put model into eval mode<br/>
+
+__API Changes__:
+#1374 Add accumulate to index_put_<br/>
+
 # NuGet Version 0.105.0
 
 Move to libtorch 2.5.1. As with the 2.4.0 release, MacOS / Intel is no longer supported by libtorch, so TorchSharp doesn, either.
