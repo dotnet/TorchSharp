@@ -253,6 +253,7 @@ namespace TorchSharp
             /// </remarks>
             public override void train(bool on = true)
             {
+                base.train(on);
                 foreach (var m in _modules) { ((torch.nn.Module)m).train(on); }
             }
 
@@ -264,6 +265,7 @@ namespace TorchSharp
             /// </remarks>
             public override void eval()
             {
+                base.eval();
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
