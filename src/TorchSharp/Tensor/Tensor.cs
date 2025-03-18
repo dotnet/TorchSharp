@@ -1617,6 +1617,8 @@ namespace TorchSharp
             public Tensor index_put_(Tensor value, TensorIndex[] indices, bool accumulate = false)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+                if (accumulate && arrTensors == null)
+                    throw new Exception("Invalid 'indices' parameter. Must be an array of TensorIndex objects containing tensors with indices that match the shape of the tensor to update");
                 unsafe {
                     fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
                         fixed (IntPtr* ptrTensors = arrTensors) {
