@@ -8,6 +8,7 @@ __Bug Fixes__:
 #1426 Sequential.eval() does not put model into eval mode<br/>
 
 __API Changes__:
+
 #1374 Add accumulate to index_put_<br/>
 
 # NuGet Version 0.105.0
