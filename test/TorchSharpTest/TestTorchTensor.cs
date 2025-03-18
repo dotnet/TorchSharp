@@ -3219,10 +3219,8 @@ namespace TorchSharp
             var tensor = ones(5, 2);
             var indices = new TensorIndex[]
             {
-                TensorIndex.Tensor(new long[] { 1, 0 }),
-                TensorIndex.Tensor(new long[] { 2, 1 }),
-                TensorIndex.Tensor(new long[] { 0, 0 }),
-                TensorIndex.Tensor(new long[] { 3, 0 }),
+                TensorIndex.Tensor(new long[] { 1, 0, 2, 3 }),
+                TensorIndex.Tensor(new long[] { 0, 0, 1, 0 })
             };
             var values = torch.tensor(new float[] { 3.0f, 4.0f, 5.0f, 10f });
 
