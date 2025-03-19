@@ -1654,7 +1654,7 @@ namespace TorchSharp
             var scheduler2 = torch.optim.lr_scheduler.StepLR(optimizer, 2);
             var scheduler3 = torch.optim.lr_scheduler.MultiStepLR(optimizer, new[] { 2, 4 });
             var scheduler4 = torch.optim.lr_scheduler.ExponentialLR(optimizer);
-            var scheduler5 = torch.optim.lr_scheduler.PolynomialLR(optimizer, power: 2);
+            var scheduler5 = torch.optim.lr_scheduler.PolynomialLR(optimizer, power: 2.0);
             var scheduler6 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 5, 0.1);
             var scheduler7 = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75);
             var scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, new[] { scheduler0, scheduler1, scheduler2, scheduler3, scheduler4, scheduler5, scheduler6, scheduler7}, new[] { 5, 5, 5, 5, 5, 5, 5 });
