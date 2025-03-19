@@ -938,7 +938,7 @@ namespace TorchVision
             int size = 20;
             int? maxSize = 30;
             var input = torch.randn(1, 3, 256, 256);
-            var transform = Resize(size, maxSize);
+            var transform = Resize(size, maxSize: maxSize);
 
             //Act
             var result = transform.call(input);
@@ -1345,7 +1345,7 @@ namespace TorchVision
             int? maxSize = 8;
 
             // Act + Assert
-            Assert.Throws<System.ArgumentException>(() => functional.resize(input, height, -1, maxSize));
+            Assert.Throws<System.ArgumentException>(() => functional.resize(input, height, -1, maxSize: maxSize));
         }
 
         [Fact]
@@ -1357,7 +1357,7 @@ namespace TorchVision
             int? maxSize = 10;
 
             // Act + Assert
-            functional.resize(input, height, -1, maxSize);
+            functional.resize(input, height, -1, maxSize: maxSize);
         }
 
 

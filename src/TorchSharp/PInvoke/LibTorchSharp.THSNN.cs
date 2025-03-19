@@ -44,7 +44,7 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         // align_corners -- 0=None, 1=true, 2=false
-        internal static extern IntPtr THSNN_interpolate(IntPtr input, IntPtr size, int size_len, IntPtr scale_factor, int scale_factor_len, byte mode, byte align_corners, [MarshalAs(UnmanagedType.U1)] bool recompute_scale_factor);
+        internal static extern IntPtr THSNN_interpolate(IntPtr input, IntPtr size, int size_len, IntPtr scale_factor, int scale_factor_len, byte mode, byte align_corners, [MarshalAs(UnmanagedType.U1)] bool recompute_scale_factor, [MarshalAs(UnmanagedType.U1)] bool antialias);
 
         [DllImport("LibTorchSharp")]
         // align_corners -- 0=None, 1=true, 2=false
