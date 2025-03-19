@@ -6,6 +6,8 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __Bug Fixes__:
 
 #1426 Sequential.eval() does not put model into eval mode<br/>
+`torch.optim.lr_scheduler.LinearLR` `end_factor` default has been corrected, is now 1.0.<br/>
+
 # NuGet Version 0.105.0
 
 Move to libtorch 2.5.1. As with the 2.4.0 release, MacOS / Intel is no longer supported by libtorch, so TorchSharp doesn, either.
