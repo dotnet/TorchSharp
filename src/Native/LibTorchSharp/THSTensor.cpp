@@ -837,6 +837,31 @@ void THSTensor_index_put_(Tensor tensor,
     CATCH(tensor->index_put_(indices, *value););
 }
 
+void THSTensor_index_put_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value,
+    const bool accumulate)
+{
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
+    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    if (accumulate) {
+        c10::List<std::optional<at::Tensor>> indicesList = c10::List<std::optional<at::Tensor>>();
+        for (int i = 0; i < indicesLength; i++) {
+            indicesList.push_back(c10::optional<at::Tensor>(*indexTensors[i]));
+        }
+        CATCH(tensor->index_put_(indicesList, *value, accumulate););
+    }
+    else {
+        CATCH(tensor->index_put_(indices, *value););
+    }
+}
+
 void THSTensor_index_put_scalar_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,

@@ -683,7 +683,8 @@ EXPORT_API(void) THSTensor_index_put_(Tensor tensor,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
     const int indicesLength,
-    const Tensor value);
+    const Tensor value,
+    const bool accumulate = false);
 
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index);
 

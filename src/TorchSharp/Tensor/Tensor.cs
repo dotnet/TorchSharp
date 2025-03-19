@@ -1604,7 +1604,25 @@ namespace TorchSharp
                 unsafe {
                     fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
                         fixed (IntPtr* ptrTensors = arrTensors) {
-                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle);
+                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, false);
+                            CheckForErrors();
+                            GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                            GC.KeepAlive(value);
+                            return this;
+                        }
+                    }
+                }
+            }
+
+            public Tensor index_put_(Tensor value, TensorIndex[] indices, bool accumulate = false)
+            {
+                EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+                if (accumulate && arrTensors == null)
+                    throw new Exception("Invalid 'indices' parameter. Must be an array of TensorIndex objects containing tensors with indices that match the shape of the tensor to update");
+                unsafe {
+                    fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                        fixed (IntPtr* ptrTensors = arrTensors) {
+                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, accumulate);
                             CheckForErrors();
                             GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
                             GC.KeepAlive(value);
@@ -1620,6 +1638,11 @@ namespace TorchSharp
             public Tensor index_put_(Tensor value, params Tensor[] indices)
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
+            }
+
+            public Tensor index_put_(Tensor value, Tensor[] indices, bool accumulate = false)
+            {
+                return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray(), accumulate);
             }
 
 
