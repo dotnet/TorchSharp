@@ -3219,21 +3219,24 @@ namespace TorchSharp
             var tensor = ones(5, 2);
             var indices = new TensorIndex[]
             {
-                TensorIndex.Tensor(new long[] { 1, 2, 0, 3 }),
-                TensorIndex.Tensor(new long[] { 0, 1, 0, 0 })
+                TensorIndex.Tensor(new long[] { 1, 2, 0, 3 }), // for first tensor dimension (row)
+                TensorIndex.Tensor(new long[] { 0, 1, 0, 0 })  // for second tensor dimension (column)
             };
             var values = torch.tensor(new float[] { 3.0f, 4.0f, 5.0f, 10f });
 
             // default accumulate value is false, should only replace values at given indices with 3, 4, 5, 10 
+            // Indexes to be replaced: (1, 0) -> 3.0,  (2, 1) -> 4.0, (0, 0) -> 5.0, (3, 0) -> 10.0
             tensor.index_put_(values, indices);
             Assert.True(tensor.Equals(torch.tensor(new float[,] { { 5.0f, 1.0f }, { 3.0f, 1.0f }, { 1.0f, 4.0f }, { 10.0f, 1.0f }, { 1.0f, 1.0f } })));
 
             tensor = ones(5, 2);
             // accumulate value is true, should perform addition at given indices, 1 + 3 = 4, 1 + 4 = 5, 1 + 5 = 6, 1 + 10 = 11
+            // Indexes to be replaced: (1, 0) -> 4.0,  (2, 1) -> 5.0, (0, 0) -> 6.0, (3, 0) -> 11.0
             tensor.index_put_(values, indices, true);
             Assert.True(tensor.Equals(torch.tensor(new float[,] { { 6.0f, 1.0f }, { 4.0f, 1.0f }, { 1.0f, 5.0f }, { 11.0f, 1.0f }, { 1.0f, 1.0f } })));
 
             // accumulate value is false, explicitly set, should only replace values at given indices with 3, 4, 5, 10
+            // Indexes to be replaced: (1, 0) -> 3.0,  (2, 1) -> 4.0, (0, 0) -> 5.0, (3, 0) -> 10.0
             tensor.index_put_(values, indices, false);
             Assert.True(tensor.Equals(torch.tensor(new float[,] { { 5.0f, 1.0f }, { 3.0f, 1.0f }, { 1.0f, 4.0f }, { 10.0f, 1.0f }, { 1.0f, 1.0f } })));
         }
