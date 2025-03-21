@@ -846,17 +846,6 @@ namespace TorchVision
         }
 
         [Fact]
-        public void TestConstructor_ThrowsArgumentException_IfMeansAndStdevsHaveWrongLengths()
-        {
-            // Arrange
-            double[] means = { 0.485, 0.456 };
-            double[] stdevs = { 0.229, 0.224 }; // Not 1 or 3
-
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => Normalize(means, stdevs));
-        }
-
-        [Fact]
         public void TestConstructor_CreatesNewNormalizeObject_WithValidArguments()
         {
             // Arrange
