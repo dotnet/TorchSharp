@@ -12,6 +12,7 @@ __API Changes__:
 
 #1374 Add accumulate to index_put_<br/>
 `torch.optim.lr_scheduler.PolynomialLR` `power` type has been corrected, is now double.<br/>
+Returning an input tensor has been corrected, is now `alias()`.<br/>
 
 # NuGet Version 0.105.0
 
