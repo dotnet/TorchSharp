@@ -62,7 +62,7 @@ namespace TorchSharp
             string[] parts = versionString.Split('-', '+');
             string[] versionParts = parts[0].Split('.');
 
-            if (versionParts.Length < 2 || versionParts.Length > 4 || !versionParts.All(IsNumeric))
+            if (versionParts.Length < 2 || versionParts.Length > 4 || !versionParts.All(v => int.TryParse(v, out _)))
                 throw new ArgumentException($"Invalid NuGet version: {versionString}");
 
             string normalizedVersion = versionParts[0] + "." + versionParts[1];
@@ -74,7 +74,6 @@ namespace TorchSharp
 
             return normalizedVersion;
         }
-        private static bool IsNumeric(string str) => int.TryParse(str, out _);
 
         internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace) {
             bool ok;
