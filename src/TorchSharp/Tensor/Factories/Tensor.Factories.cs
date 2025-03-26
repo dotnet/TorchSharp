@@ -166,7 +166,7 @@ namespace TorchSharp
 
             unsafe {
                 void *ptr = null;
-                IntPtr iPtr = (IntPtr)ptr;
+                IntPtr iPtr = (IntPtr)ptr; //Warning: Unused variable 
 
                 fixed (long* shape = dimensions) {
                     var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
@@ -225,7 +225,7 @@ namespace TorchSharp
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
 
                 void *ptr = null;
-                IntPtr iPtr = (IntPtr)ptr;
+                IntPtr iPtr = (IntPtr)ptr; //Warning: Unused variable 
 
                 fixed (long* shape = dimensions) {
                     var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
@@ -243,6 +243,12 @@ namespace TorchSharp
                         tensor.rename_(names);
                     }
 
+                    /*if (!is_autocast_cache_enabled())
+                        return tensor;
+                    if (is_autocast_gpu_enabled())
+                        tensor = tensor.to(get_autocast_gpu_dtype());
+                    if (is_autocast_cpu_enabled())
+                        tensor = tensor.to(get_autocast_cpu_dtype());*/
                     return tensor;
                 }
             }

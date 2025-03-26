@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -22,7 +23,10 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                return torch.nn.functional.cosine_similarity(input1, input2, this.dim, this.eps);
+                var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res= AutocastMode.AutoCast(res, ScalarType.Float32);
+                return new Tensor(res);
             }
 
             public long dim { get; set; }
@@ -42,7 +46,10 @@ namespace TorchSharp
             /// <returns></returns>
             public static CosineSimilarity CosineSimilarity(long dim = 1, double eps = 1e-8)
             {
-                return new CosineSimilarity(dim, eps);
+                var handle = THSNN_CosineSimilarity_ctor(dim, eps, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                handle = AutocastMode.AutoCast(handle, ScalarType.Float32);
+                return new CosineSimilarity(handle, boxedHandle);
             }
 
             public static partial class functional

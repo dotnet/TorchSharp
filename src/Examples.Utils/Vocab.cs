@@ -88,12 +88,17 @@ namespace TorchText.Vocab
         {
             Add(item.Key, item.Value);
         }
-
+#if NETSTANDARD2_0
+        public bool TryGetValue(string key, out int value)
+        {
+            return _dict.TryGetValue(key, out value);
+        }
+#else
         public bool TryGetValue(string key, [MaybeNullWhen(false)] out int value)
         {
             return _dict.TryGetValue(key, out value);
         }
-
+#endif
         private Dictionary<string, int> _dict = new Dictionary<string, int>();
         private int _last = 0;
     }

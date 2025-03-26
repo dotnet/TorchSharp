@@ -273,3 +273,7 @@ packages/
 /.idea
 /test/TorchSharpTest/exportsd.py
 .vscode/settings.json
+/TestClear
+TestClear/
+/nuget.config
+/src/Native/LibTorchSharp/third_party

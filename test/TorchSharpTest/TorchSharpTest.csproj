@@ -5,7 +5,7 @@
     We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
     <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net6.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <IsPackable>false</IsPackable>
@@ -13,6 +13,7 @@
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
     <LangVersion>10.0</LangVersion>
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -118,6 +119,8 @@
     <PackageReference Include="coverlet.collector" Version="3.2.0" Condition="'$(TargetFramework)' != 'net472'" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Tensors" Version="7.0.0-rtm.22518.5" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.4.1" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
     <PackageReference Update="xunit" Version="2.4.2" />
@@ -133,4 +136,3 @@
   </PropertyGroup>
 
 </Project>
-

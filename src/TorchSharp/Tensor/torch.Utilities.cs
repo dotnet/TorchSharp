@@ -2,6 +2,8 @@
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
+using TorchSharp.Modules;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -80,5 +82,23 @@ namespace TorchSharp
 
         [Obsolete("not implemented", true)]
         public static void _assert(Func<bool> condition, string message) => throw new NotImplementedException();
+
+        public static void PrintModule(torch.nn.Module module)
+        {
+            if (module is Dropout2d drop2d) {
+                Console.WriteLine($"{module.GetName()}({drop2d.p}, {drop2d.inplace})");
+                return;
+            }
+
+            if (module is LayerNorm ln) {
+                string str= "[";
+                for (int i = 0; i < ln._normalized_shape.Length; i++)
+                    str += ln._normalized_shape[i] + ",";
+                str = str.TrimEnd(',')+"]";
+                Console.WriteLine($"{module.GetName()}({ln._eps}, {str})");
+                return;
+            }
+            NativeMethods.THSNN_Print_Module(module.handle);
+        }
     }
 }

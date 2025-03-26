@@ -1,15 +1,38 @@
 project(LibTorchSharp)
 
+find_package(CUDA)
+if(CUDA_FOUND)
+	include_directories(${CUDA_INCLUDE_DIRS})
+	link_directories(${CUDA_LIBRARY_DIRS})
+	add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
+endif()
+
+add_compile_definitions(NOMINMAX)
+
+
+#add_library(CUDA::nvToolsExt INTERFACE IMPORTED)
+# ensure that PyTorch is told to use NVTX3 headers
+#target_compile_definitions(CUDA::nvToolsExt INTERFACETORCH_CUDA_USE_NVTX3)
+#target_link_libraries(CUDA::nvToolsExt INTERFACE CUDA::nvtx3)
+
+
+
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
+
+#set(LIBTORCH_PATH "K:/FrameworksForC/LibTorch/libtorch-win-shared-with-deps-2.6.0+cu126")
 find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
+#find_package(Torch CONFIG)
 
 set(SOURCES
     cifar10.h
 	crc32c.h
+	THSAmp.h
     THSAutograd.h
+    THSBFloat16.h
+	THSCuda.h
     THSData.h
     THSJIT.h
     THSNN.h
@@ -21,8 +44,12 @@ set(SOURCES
     cifar10.cpp
 	crc32c.c
 	THSActivation.cpp
+	THSAmp.cpp
     THSAutograd.cpp
-	THSData.cpp
+	THSBFloat16.cpp
+	THSCuda.cpp
+	THSConvolution.cpp
+    THSData.cpp
 	THSFFT.cpp
     THSJIT.cpp
 	THSLinearAlgebra.cpp
@@ -69,6 +96,10 @@ endif()
 include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
+
+if(CUDA_FOUND)
+target_link_libraries(LibTorchSharp ${CUDA_LIBRARIES})
+endif()
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 

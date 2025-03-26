@@ -36,6 +36,8 @@ namespace TorchSharp.Examples
         // This path assumes that you're running this on Windows.
 #if NET472_OR_GREATER
         private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
+#elif NETSTANDARD2_0               
+        private readonly static string _dataLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
 #else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
 #endif // NET472_OR_GREATER

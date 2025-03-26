@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -33,9 +34,11 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                if (tensor.Dimensions < 3)
-                    throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
-                return F.group_norm(tensor, num_groups, weight, bias, eps);
+                if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
+                var res = THSNN_GroupNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                res= AutocastMode.AutoCast(res, ScalarType.Float32);
+                return new Tensor(res);
             }
 
             protected override void Dispose(bool disposing)
@@ -125,7 +128,12 @@ namespace TorchSharp
             /// <returns></returns>
             public static GroupNorm GroupNorm(long num_groups, long num_channels, double eps = 1e-05, bool affine = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new GroupNorm(num_groups, num_channels, eps, affine, device, dtype);
+                unsafe {
+                    var handle = THSNN_GroupNorm_ctor(num_groups, num_channels, eps, affine, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    handle= AutocastMode.AutoCast(handle, ScalarType.Float32);
+                    return new GroupNorm(handle, boxedHandle).MoveModule<GroupNorm>(device, dtype);
+                }
             }
         }
     }

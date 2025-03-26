@@ -143,7 +143,8 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.cholesky_solve
         /// <summary>
-        /// Solves a linear system of equations with a positive semidefinite matrix to be inverted given its Cholesky factor matrix u.
+        /// Solves a
+        /// system of equations with a positive semidefinite matrix to be inverted given its Cholesky factor matrix u.
         /// </summary>
         /// <returns></returns>
         public static Tensor cholesky_solve(Tensor input, Tensor input2, bool upper = false)
@@ -317,6 +318,7 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         public static Tensor mm(Tensor input, Tensor target) => input.mm(target);
+        
 
         // https://pytorch.org/docs/stable/generated/torch.mv
         /// <summary>
