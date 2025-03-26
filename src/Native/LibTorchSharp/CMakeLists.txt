@@ -7,13 +7,24 @@ if(CUDA_FOUND)
 	add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
 endif()
 
+add_compile_definitions(NOMINMAX)
+
+
+#add_library(CUDA::nvToolsExt INTERFACE IMPORTED)
+# ensure that PyTorch is told to use NVTX3 headers
+#target_compile_definitions(CUDA::nvToolsExt INTERFACETORCH_CUDA_USE_NVTX3)
+#target_link_libraries(CUDA::nvToolsExt INTERFACE CUDA::nvtx3)
+
+
+
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
 
-#set(LIBTORCH_PATH "K:/Proyects_Repos/TorchSharp/bin/obj/AnyCPU.Debug/libtorch-cuda-12.1/libtorch-win-shared-with-deps-debug-2.4.0cu121/libtorch")
+#set(LIBTORCH_PATH "K:/FrameworksForC/LibTorch/libtorch-win-shared-with-deps-2.6.0+cu126")
 find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
+#find_package(Torch CONFIG)
 
 set(SOURCES
     cifar10.h
