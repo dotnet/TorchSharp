@@ -7,6 +7,10 @@ __Bug Fixes__:
 
 #1426 Sequential.eval() does not put model into eval mode<br/>
 `torch.optim.lr_scheduler.LinearLR` `end_factor` default has been corrected, is now 1.0.<br/>
+
+__API Changes__:
+
+#1374 Add accumulate to index_put_<br/>
 `torch.optim.lr_scheduler.PolynomialLR` `power` type has been corrected, is now double.<br/>
 
 # NuGet Version 0.105.0

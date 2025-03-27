@@ -290,17 +290,13 @@ namespace TorchSharp
             Tensor t = torch.zeros(2, 2);
             string expectedOutput = t.ToString(TensorStringStyle.Default) + Environment.NewLine;
             var originalOut = Console.Out;
-            using (var sw = new StringWriter())
-            {
-                try 
-                {
+            using (var sw = new StringWriter()) {
+                try {
                     Console.SetOut(sw);
                     t.print();
                     var result = sw.ToString();
                     Assert.Equal(expectedOutput, result);
-                }
-                finally 
-                {
+                } finally {
                     Console.SetOut(originalOut);
                 }
             }
@@ -807,7 +803,7 @@ namespace TorchSharp
                         () => Assert.Equal(1, t.ndim),
                         () => Assert.Equal(ScalarType.Byte, t.dtype));
                 }
-                
+
                 {
                     var array = new Memory<long>(new long[8]);
                     using var t = torch.tensor(array, new long[] { 8 }, device: device);
@@ -816,11 +812,11 @@ namespace TorchSharp
                         () => Assert.Equal(1, t.ndim),
                         () => Assert.Equal(ScalarType.Int64, t.dtype));
                 }
-                
+
                 {
                     var array = new long[18];
                     array[5] = 17;
-                    var mem = new Memory<long>(array,4,10);
+                    var mem = new Memory<long>(array, 4, 10);
                     using var t = torch.tensor(mem, new long[] { 8 }, device: device);
                     Assert.Multiple(
                         () => Assert.Equal(device.type, t.device_type),
@@ -3166,6 +3162,86 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_put_))]
+        public void IndexPutOneValueOneIndex()
+        {
+            using var _ = NewDisposeScope();
+
+            var tensor = ones(5);
+            var indices = new TensorIndex[] { TensorIndex.Tensor(1) };
+            var values = torch.tensor(5.0f);
+
+            // default accumulate value is false, should only replace value at index 1 with 5 
+            tensor.index_put_(values, indices);
+            Assert.True(tensor.Equals(torch.tensor(new float[] { 1.0f, 5.0f, 1.0f, 1.0f, 1.0f })));
+
+            tensor = ones(5);
+            // accumulate value is false, explicitly set, should only replace value at index 1 with 5
+            tensor.index_put_(values, indices, accumulate: false);
+            Assert.True(tensor.Equals(torch.tensor(new float[] { 1.0f, 5.0f, 1.0f, 1.0f, 1.0f })));
+
+            tensor = ones(5);
+            // accumulate value is true, should add value to index 1, 1 + 5 = 6
+            tensor.index_put_(values, indices, accumulate: true);
+            Assert.True(tensor.Equals(torch.tensor(new float[] { 1.0f, 6.0f, 1.0f, 1.0f, 1.0f })));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.index_put_))]
+        public void IndexPutOneValueMultipleIndexes()
+        {
+            using var _ = NewDisposeScope();
+
+            var tensor = ones(5);
+            var indices = new TensorIndex[] { TensorIndex.Tensor(new long[] {1, 2}) };
+            var values = torch.tensor(10.0f);
+
+            // default accumulate value is false, should only replace value at given indexes
+            tensor.index_put_(values, indices);
+            Assert.True(tensor.Equals(torch.tensor(new float[] { 1.0f, 10.0f, 10.0f, 1.0f, 1.0f })));
+
+            tensor = ones(5);
+            // accumulate value is true, should add value to given indexes
+            tensor.index_put_(values, indices, true);
+            Assert.True(tensor.Equals(torch.tensor(new float[] { 1.0f, 11.0f, 11.0f, 1.0f, 1.0f })));
+
+            // accumulate value is false, explicitly set, should replace value at given indexes
+            tensor.index_put_(values, indices, false);
+            Assert.True(tensor.Equals(torch.tensor(new float[] { 1.0f, 10.0f, 10.0f, 1.0f, 1.0f })));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.index_put_))]
+        public void IndexPutMultipleValuesMultipleIndexes()
+        {
+            using var _ = NewDisposeScope();
+
+            var tensor = ones(5, 2);
+            var indices = new TensorIndex[]
+            {
+                TensorIndex.Tensor(new long[] { 1, 2, 0, 3 }), // for first tensor dimension (row)
+                TensorIndex.Tensor(new long[] { 0, 1, 0, 0 })  // for second tensor dimension (column)
+            };
+            var values = torch.tensor(new float[] { 3.0f, 4.0f, 5.0f, 10f });
+
+            // default accumulate value is false, should only replace values at given indices with 3, 4, 5, 10 
+            // Indexes to be replaced: (1, 0) -> 3.0,  (2, 1) -> 4.0, (0, 0) -> 5.0, (3, 0) -> 10.0
+            tensor.index_put_(values, indices);
+            Assert.True(tensor.Equals(torch.tensor(new float[,] { { 5.0f, 1.0f }, { 3.0f, 1.0f }, { 1.0f, 4.0f }, { 10.0f, 1.0f }, { 1.0f, 1.0f } })));
+
+            tensor = ones(5, 2);
+            // accumulate value is true, should perform addition at given indices, 1 + 3 = 4, 1 + 4 = 5, 1 + 5 = 6, 1 + 10 = 11
+            // Indexes to be replaced: (1, 0) -> 4.0,  (2, 1) -> 5.0, (0, 0) -> 6.0, (3, 0) -> 11.0
+            tensor.index_put_(values, indices, true);
+            Assert.True(tensor.Equals(torch.tensor(new float[,] { { 6.0f, 1.0f }, { 4.0f, 1.0f }, { 1.0f, 5.0f }, { 11.0f, 1.0f }, { 1.0f, 1.0f } })));
+
+            // accumulate value is false, explicitly set, should only replace values at given indices with 3, 4, 5, 10
+            // Indexes to be replaced: (1, 0) -> 3.0,  (2, 1) -> 4.0, (0, 0) -> 5.0, (3, 0) -> 10.0
+            tensor.index_put_(values, indices, false);
+            Assert.True(tensor.Equals(torch.tensor(new float[,] { { 5.0f, 1.0f }, { 3.0f, 1.0f }, { 1.0f, 4.0f }, { 10.0f, 1.0f }, { 1.0f, 1.0f } })));
+        }
+
+        [Fact]
         [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void ScalarToTensor()
         {
@@ -3257,7 +3333,7 @@ namespace TorchSharp
         [TestOf(nameof(Tensor))]
         public void ScalarToTensorDoesNotLeakMemory()
         {
-            AssertTensorDoesNotLeak(()=>{
+            AssertTensorDoesNotLeak(() => {
                 Tensor tensor = 1;
                 return tensor;
             });
@@ -3273,20 +3349,20 @@ namespace TorchSharp
         [TestOf(nameof(Tensor))]
         public void ScalarArrayToTensorDoesNotLeakMemory()
         {
-            AssertTensorDoesNotLeak(() => (new byte[]{1}).ToTensor(new long[]{1}));
-            AssertTensorDoesNotLeak(() => (new sbyte[]{-1}).ToTensor(new long[]{1}));
-            AssertTensorDoesNotLeak(() => (new short[]{-1}).ToTensor(new long[]{1}));
-            AssertTensorDoesNotLeak(() => (new long[]{-1}).ToTensor(new long[]{1}));
-            AssertTensorDoesNotLeak(() => (new float[]{-1}).ToTensor(new long[]{1}));
-            AssertTensorDoesNotLeak(() => (new double[]{-1}).ToTensor(new long[]{1}));
+            AssertTensorDoesNotLeak(() => (new byte[] { 1 }).ToTensor(new long[] { 1 }));
+            AssertTensorDoesNotLeak(() => (new sbyte[] { -1 }).ToTensor(new long[] { 1 }));
+            AssertTensorDoesNotLeak(() => (new short[] { -1 }).ToTensor(new long[] { 1 }));
+            AssertTensorDoesNotLeak(() => (new long[] { -1 }).ToTensor(new long[] { 1 }));
+            AssertTensorDoesNotLeak(() => (new float[] { -1 }).ToTensor(new long[] { 1 }));
+            AssertTensorDoesNotLeak(() => (new double[] { -1 }).ToTensor(new long[] { 1 }));
         }
 
         [Fact]
         [TestOf(nameof(Tensor))]
         public void ComplexNumberOfDoubleDoesNotLeakMemory()
         {
-            AssertTensorDoesNotLeak(() => ( torch.tensor((double)-1, (double)-2)));
-            AssertTensorDoesNotLeak(() => ( torch.tensor(((double)-1, (double)-2))));
+            AssertTensorDoesNotLeak(() => (torch.tensor((double)-1, (double)-2)));
+            AssertTensorDoesNotLeak(() => (torch.tensor(((double)-1, (double)-2))));
         }
 
         [Fact]
@@ -4106,7 +4182,7 @@ namespace TorchSharp
                 Assert.True(input.IsInvalid);
                 Assert.False(cast.IsInvalid);
                 // make sure we can access the values
-                Assert.Equal(1, cast[0].ToInt32()); 
+                Assert.Equal(1, cast[0].ToInt32());
             }
             if (torch.cuda.is_available()) {
                 {
@@ -8517,28 +8593,27 @@ namespace TorchSharp
         {
             var dt = torch.get_default_dtype();
 
-            var t = torch.zeros(5,5);
+            var t = torch.zeros(5, 5);
             Assert.Equal(torch.float32, t.dtype);
 
             try {
-                torch.set_default_dtype(torch.float64);              
-                
-                t = torch.zeros(5,5);
+                torch.set_default_dtype(torch.float64);
+
+                t = torch.zeros(5, 5);
                 Assert.Equal(torch.float64, t.dtype);
 
-                t = torch.ones(5,5);
+                t = torch.ones(5, 5);
                 Assert.Equal(torch.float64, t.dtype);
 
-                t = torch.rand(5,5);
+                t = torch.rand(5, 5);
                 Assert.Equal(torch.float64, t.dtype);
 
-                t = torch.randn(5,5);
+                t = torch.randn(5, 5);
                 Assert.Equal(torch.float64, t.dtype);
 
                 t = torch.logspace(5, 15, 20);
                 Assert.Equal(torch.float64, t.dtype);
-            }
-            finally {
+            } finally {
                 torch.set_default_dtype(dt);
             }
         }
@@ -8548,28 +8623,27 @@ namespace TorchSharp
         {
             var dt = torch.get_default_device();
 
-            var t = torch.zeros(5,5);
+            var t = torch.zeros(5, 5);
             Assert.Equal(DeviceType.CPU, t.device_type);
 
             try {
-                torch.set_default_device(torch.META);              
-                
-                t = torch.zeros(5,5);
+                torch.set_default_device(torch.META);
+
+                t = torch.zeros(5, 5);
                 Assert.Equal(DeviceType.META, t.device_type);
 
-                t = torch.ones(5,5);
+                t = torch.ones(5, 5);
                 Assert.Equal(DeviceType.META, t.device_type);
 
-                t = torch.rand(5,5);
+                t = torch.rand(5, 5);
                 Assert.Equal(DeviceType.META, t.device_type);
 
-                t = torch.randn(5,5);
+                t = torch.randn(5, 5);
                 Assert.Equal(DeviceType.META, t.device_type);
 
                 t = torch.logspace(5, 15, 20);
                 Assert.Equal(DeviceType.META, t.device_type);
-            }
-            finally {
+            } finally {
                 torch.set_default_device(dt);
             }
         }
