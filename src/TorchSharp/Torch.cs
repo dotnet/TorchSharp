@@ -54,16 +54,16 @@ namespace TorchSharp
         static bool nativeBackendCudaLoaded = false;
 
         public static string __version__ => libtorchPackageVersion;
-        private static string NormalizeNuGetVersion(string versionString)
+        public static string NormalizeNuGetVersion(string versionString)
         {
             if (string.IsNullOrWhiteSpace(versionString))
-                throw new ArgumentException($"Invalid NuGet version: {versionString}");
+                throw new ArgumentException($"Invalid NuGet version: {versionString}. Version string is null, empty or only contains whitespaces");
 
             string[] parts = versionString.Split('-', '+');
             string[] versionParts = parts[0].Split('.');
 
             if (versionParts.Length < 2 || versionParts.Length > 4 || !versionParts.All(v => int.TryParse(v, out _)))
-                throw new ArgumentException($"Invalid NuGet version: {versionString}");
+                throw new ArgumentException($"Invalid NuGet version: {versionString}. Please check: https://learn.microsoft.com/en-us/nuget/concepts/package-versioning");
 
             string normalizedVersion = versionParts[0] + "." + versionParts[1];
             if (versionParts.Length > 2) normalizedVersion += "." + versionParts[2];

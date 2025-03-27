@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Cryptography;
+using Tensorboard;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -448,6 +450,17 @@ namespace TorchSharp
             Assert.True(torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction);
             torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = false;
             Assert.False(torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction);
+        }
+
+        [Fact]
+        public void CheckVersionStrings()
+        {
+            Assert.Equal("2.5.1", torch.NormalizeNuGetVersion("2.5.1.0"));
+            Assert.Equal("0.105.0", torch.NormalizeNuGetVersion("0.105.0.0"));
+            Assert.Equal("0.1.0-alpha", torch.NormalizeNuGetVersion("0.1.0-alpha"));
+            Assert.Equal("0.1.0", torch.NormalizeNuGetVersion("0.1.0"));
+            Assert.Throws<ArgumentException>(() => NormalizeNuGetVersion(""));
+            Assert.Throws<ArgumentException>(() => NormalizeNuGetVersion("1.2.3.4.5"));
         }
 
         // Because some of the tests mess with global state, and are run in parallel, we need to
