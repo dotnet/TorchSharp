@@ -708,7 +708,7 @@ namespace TorchSharp
                 /// * false (default, incompatible to Python's torchvision v0.17 or later for historical reasons): will not apply antialiasing on any mode.
                 /// </param>
                 /// <returns></returns>
-                public static Tensor resize(Tensor input, int height, int width, InterpolationMode interpolation = InterpolationMode.Nearest, int ? maxSize = null, bool antialias = false)
+                public static Tensor resize(Tensor input, int height, int width, InterpolationMode interpolation = InterpolationMode.Nearest, int? maxSize = null, bool antialias = false)
                 {
                     var hoffset = input.Dimensions - 2;
                     var iHeight = input.shape[hoffset];
@@ -744,6 +744,19 @@ namespace TorchSharp
                     using var img1 = torch.nn.functional.interpolate(img0, new long[] { h, w }, mode: interpolation, align_corners: null, antialias: antialias);
 
                     return SqueezeOut(img1, needCast, needSqueeze, dtype);
+                }
+
+                /// <summary>
+                /// Resize the input image to the given size.
+                /// </summary>
+                /// <param name="input">An image tensor.</param>
+                /// <param name="height">The height of the resized image. Must be > 0.</param>
+                /// <param name="width">The width of the resized image. Must be > 0.</param>
+                /// <param name="maxSize">The maximum allowed for the longer edge of the resized image.</param>
+                /// <returns></returns>
+                public static Tensor resize(Tensor input, int height, int width, int? maxSize = null)
+                {
+                    return resize(input, height, width, InterpolationMode.Nearest, maxSize, false);
                 }
 
                 /// <summary>

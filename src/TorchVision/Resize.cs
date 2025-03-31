@@ -75,6 +75,28 @@ namespace TorchSharp
             {
                 return new Resize(size, -1, interpolation, maxSize, antialias);
             }
+
+            /// <summary>
+            /// Resize the input image to the given size.
+            /// </summary>
+            /// <param name="height">Desired output height</param>
+            /// <param name="width">Desired output width</param>
+            /// <param name="maxSize">The maximum allowed for the longer edge of the resized image.</param>
+            /// <returns></returns>
+            static public ITransform Resize(int height, int width, int? maxSize = null)
+            {
+                return new Resize(height, width, InterpolationMode.Nearest, maxSize, false);
+            }
+
+            /// <summary>
+            /// Resize the input image to the given size.
+            /// </summary>
+            /// <param name="size">Desired output size</param>
+            /// <param name="maxSize">The maximum allowed for the longer edge of the resized image.</param>
+            static public ITransform Resize(int size, int? maxSize = null)
+            {
+                return new Resize(size, -1, InterpolationMode.Nearest, maxSize, false);
+            }
         }
     }
 }
