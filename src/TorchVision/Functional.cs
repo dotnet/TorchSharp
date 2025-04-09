@@ -706,6 +706,7 @@ namespace TorchSharp
                 /// Possible values are:
                 /// * true: will apply antialiasing for bilinear or bicubic modes. Other mode aren't affected. This is probably what you want to use.
                 /// * false (default, incompatible to Python's torchvision v0.17 or later for historical reasons): will not apply antialiasing on any mode.
+                /// antialias value will be automatically set to false silently in case interpolation is not InterpolationMode.Bilinear or InterpolationMode.Bicubic.
                 /// </param>
                 /// <returns></returns>
                 public static Tensor resize(Tensor input, int height, int width, InterpolationMode interpolation = InterpolationMode.Nearest, int? maxSize = null, bool antialias = false)
@@ -736,6 +737,11 @@ namespace TorchSharp
                         }
                     }
 
+                    // See https://github.com/pytorch/vision/blob/v0.21.0/torchvision/transforms/_functional_tensor.py#L455
+                    // "We manually set it to False to avoid an error downstream in interpolate()
+                    //  This behaviour is documented: the parameter is irrelevant for modes
+                    //  that are not bilinear or bicubic. We used to raise an error here, but
+                    //  now we don't ..."
                     if (antialias && interpolation != InterpolationMode.Bilinear && interpolation != InterpolationMode.Bicubic)
                         antialias = false;
 
