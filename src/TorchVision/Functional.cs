@@ -766,6 +766,18 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Resize the input image to the given size.
+                /// </summary>
+                /// <param name="input">An image tensor.</param>
+                /// <param name="height">The height of the resized image. Must be > 0.</param>
+                /// <param name="width">The width of the resized image. Must be > 0.</param>
+                /// <returns></returns>
+                public static Tensor resize(Tensor input, int height, int width)
+                {
+                    return resize(input, height, width, InterpolationMode.Nearest, null, false);
+                }
+
+                /// <summary>
                 /// Crop the given image and resize it to desired size.
                 /// </summary>
                 /// <param name="input">An image tensor.</param>
