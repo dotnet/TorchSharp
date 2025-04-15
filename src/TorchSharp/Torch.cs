@@ -188,17 +188,16 @@ namespace TorchSharp
 
                     if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
 
-                        var assembly = typeof(torch).Assembly;
-                        var version = assembly.GetName().Version;
-                        var torchSharpVersion = (version != null) ? version.ToString() : Path.GetFileName(torchsharpHome);
+                        var torchSharpVersion = NormalizeNuGetVersion(Path.GetFileName(torchsharpHome));
+                        var normalizedLibtorchPackageVersion = NormalizeNuGetVersion(libtorchPackageVersion);
                         if (useCudaBackend) {
                             var consolidatedDir = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
 
                             trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cudaRootPackage}-* binaries to {consolidatedDir}...");
 
-                            var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", NormalizeNuGetVersion(libtorchPackageVersion), consolidatedDir, trace);
+                            var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", normalizedLibtorchPackageVersion, consolidatedDir, trace);
                             if (cudaOk) {
-                                cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", NormalizeNuGetVersion(torchSharpVersion), consolidatedDir, trace);
+                                cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir, trace);
                                 if (cudaOk) {
                                     var consolidated = Path.Combine(consolidatedDir, target);
                                     ok = TryLoadNativeLibraryFromFile(consolidated, trace);
@@ -214,9 +213,9 @@ namespace TorchSharp
 
                             trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cpuRootPackage}-* binaries to {consolidatedDir}...");
 
-                            var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, NormalizeNuGetVersion(libtorchPackageVersion), consolidatedDir, trace);
+                            var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, normalizedLibtorchPackageVersion, consolidatedDir, trace);
                             if (cpuOk) {
-                                cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", NormalizeNuGetVersion(torchSharpVersion), consolidatedDir, trace);
+                                cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir, trace);
                                 if (cpuOk) {
                                     var consolidated = Path.Combine(consolidatedDir, target);
                                     ok = TryLoadNativeLibraryFromFile(consolidated, trace);
