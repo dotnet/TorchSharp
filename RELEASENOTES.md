@@ -8,6 +8,7 @@ __Bug Fixes__:
 #1426 Sequential.eval() does not put model into eval mode<br/>
 `torch.optim.lr_scheduler.LinearLR` `end_factor` default has been corrected, is now 1.0.<br/>
 Update package version of SixLabors.ImageSharp to avoid security vulnerability<br/>
+Updated dll dependencies loading to avoid using hardcoded version strings<br/>
 
 __API Changes__:
 
