@@ -63,7 +63,7 @@ namespace TorchSharp
                 throw new ArgumentException(nameof(tensors));
             }
             if (tensors.Length == 1) {
-                return tensors;
+                return new Tensor[] { tensors[0].alias() };
             }
 
             IntPtr[] ptrArray;

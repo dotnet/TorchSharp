@@ -6643,6 +6643,117 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void TestInterpolateBilinear2DNoAntialias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using Tensor input = torch.tensor(rawArray: new float[] {
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+                }, new long[] { 1, 1, 9, 9 }, float32, device: device);
+                using var res = torch.nn.functional.interpolate(input, new long[] { 6, 6 }, mode: InterpolationMode.Bilinear, antialias: false);
+                using Tensor expect = torch.tensor(rawArray: new float[] {
+                    0.7500f, 0.0000f, 0.7500f, 0.0000f, 0.7500f, 0.0000f,
+                    0.7500f, 0.0000f, 0.7500f, 0.0000f, 0.7500f, 0.0000f,
+                    0.2500f, 0.2500f, 0.2500f, 0.2500f, 0.2500f, 0.2500f,
+                    0.2500f, 0.2500f, 0.2500f, 0.2500f, 0.2500f, 0.2500f,
+                    0.0000f, 0.7500f, 0.0000f, 0.7500f, 0.0000f, 0.7500f,
+                    0.0000f, 0.7500f, 0.0000f, 0.7500f, 0.0000f, 0.7500f
+                }, new long[] { 1, 1, 6, 6 }, float32, device: device);
+                Assert.True(torch.allclose(res, expect, rtol: 0.0, atol: 1E-04));
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateBilinear2DAntialias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using Tensor input = torch.tensor(rawArray: new float[] {
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+                }, new long[] { 1, 1, 9, 9 }, float32, device: device);
+                using var res = torch.nn.functional.interpolate(input, new long[] { 6, 6 }, mode: InterpolationMode.Bilinear, antialias: true);
+                using Tensor expect = torch.tensor(rawArray: new float[] {
+                    0.6250f, 0.1111f, 0.5556f, 0.1111f, 0.5556f, 0.0000f,
+                    0.5972f, 0.1358f, 0.5309f, 0.1358f, 0.5309f, 0.0417f,
+                    0.4028f, 0.3086f, 0.3580f, 0.3086f, 0.3580f, 0.3333f,
+                    0.3333f, 0.3580f, 0.3086f, 0.3580f, 0.3086f, 0.4028f,
+                    0.0417f, 0.5309f, 0.1358f, 0.5309f, 0.1358f, 0.5972f,
+                    0.0000f, 0.5556f, 0.1111f, 0.5556f, 0.1111f, 0.6250f
+                }, new long[] { 1, 1, 6, 6 }, float32, device: device);
+                Assert.True(torch.allclose(res, expect, rtol: 0.0, atol: 1E-04));
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateBicubic2DNoAntialias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using Tensor input = torch.tensor(rawArray: new float[] {
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+                }, new long[] { 1, 1, 9, 9 }, float32, device: device);
+                using var res = torch.nn.functional.interpolate(input, new long[] { 6, 6 }, mode: InterpolationMode.Bicubic, antialias: true);
+                using Tensor expect = torch.tensor(rawArray: new float[] {
+                     0.6493f,  0.0467f,  0.6196f,  0.0471f,  0.6226f, -0.0440f,
+                     0.6356f,  0.0619f,  0.6042f,  0.0624f,  0.6069f, -0.0205f,
+                     0.4083f,  0.3155f,  0.3487f,  0.3180f,  0.3464f,  0.3712f,
+                     0.3712f,  0.3464f,  0.3180f,  0.3487f,  0.3155f,  0.4083f,
+                    -0.0205f,  0.6069f,  0.0624f,  0.6042f,  0.0619f,  0.6356f,
+                    -0.0440f,  0.6226f,  0.0471f,  0.6196f,  0.0467f,  0.6493f
+                }, new long[] { 1, 1, 6, 6 }, float32, device: device);
+                Assert.True(torch.allclose(res, expect, rtol: 0.0, atol: 1E-04));
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateBicubic2DAntialias()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using Tensor input = torch.tensor(rawArray: new float[] {
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+                }, new long[] { 1, 1, 9, 9 }, float32, device: device);
+                using var res = torch.nn.functional.interpolate(input, new long[] { 6, 6 }, mode: InterpolationMode.Bicubic, antialias: false);
+                using Tensor expect = torch.tensor(rawArray: new float[] {
+                     0.7734f, -0.1406f,  0.8789f, -0.1406f,  0.8789f, -0.0352f,
+                     0.8274f, -0.1831f,  0.9440f, -0.1831f,  0.9440f, -0.0665f,
+                     0.2077f,  0.3042f,  0.1966f,  0.3042f,  0.1966f,  0.2930f,
+                     0.2930f,  0.1966f,  0.3042f,  0.1966f,  0.3042f,  0.2077f,
+                    -0.0665f,  0.9440f, -0.1831f,  0.9440f, -0.1831f,  0.8274f,
+                    -0.0352f,  0.8789f, -0.1406f,  0.8789f, -0.1406f,  0.7734f
+                }, new long[] { 1, 1, 6, 6 }, float32, device: device);
+                Assert.True(torch.allclose(res, expect, rtol: 0.0, atol: 1E-04));
+            }
+        }
 
         [Fact]
         public void TestInterpolateArea()
@@ -6664,6 +6775,18 @@ namespace TorchSharp
                 using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolationMode.Trilinear)) {
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateNearestExact()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.NearestExact)) {
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
                 }
             }
         }
