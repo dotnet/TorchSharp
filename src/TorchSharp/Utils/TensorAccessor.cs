@@ -111,12 +111,8 @@ namespace TorchSharp.Utils
         /// <returns>An array object, which should be cast to the concrete array type.</returns>
         public Array ToNDArray()
         {
-            return ToNDArrayV2(_tensor.shape, _tensor.stride());
-        }
-
-        //This "replace" the original ToNDArray. I put 'V2' for test, is work very well i will replace this to 'ToNDArray'
-        private Array ToNDArrayV2(long[] shape, long[] strides)
-        {
+            long[] shape = _tensor.shape;
+            long[] strides = _tensor.stride();
             long ndim = _tensor.ndim;
             unsafe {
                 T* ptr = GetAndValidatePTR();
@@ -149,35 +145,6 @@ namespace TorchSharp.Utils
                 offset /= shape[d]; // Move to the next dimension
             }
             return ptrIndex;
-        }
-
-        private Array ToNDArray(long[] shape, long[] strides)
-        {
-            Array array = Array.CreateInstance(typeof(T), shape);
-            long[] indexes = new long[_tensor.ndim];
-            long[] off = new long[_tensor.ndim];
-
-            while (true) {
-                unsafe {
-                    T* ptr = (T*)_tensor_data_ptr;
-                    array.SetValue(ptr[off[array.Rank - 1]], indexes);
-                }
-
-                for (int i = array.Rank - 1; i >= 0; i--) {
-                    if (indexes[i] < shape[i] - 1) {
-                        indexes[i]++;
-                        off[i] += strides[i];
-                        for (int j = i; j < array.Rank - 1; j++)
-                            off[j + 1] = off[j];
-                        break;
-                    } else {
-                        if (i == 0) {
-                            return array;
-                        }
-                        indexes[i] = 0;
-                    }
-                }
-            }
         }
 
         /// <summary>
