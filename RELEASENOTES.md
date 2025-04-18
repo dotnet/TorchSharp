@@ -1056,5 +1056,3 @@ torch.distributions.*   (about half the namespace)
 __API Changes:__
 
 CustomModule removed, its APIs moved to Module.
-
-__Added Features:__
