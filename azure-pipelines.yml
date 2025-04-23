@@ -499,7 +499,6 @@ jobs:
       --input '**/*.nupkg' `
       --config '$(Pipeline.Workspace)\config\SignClient.json' `
       --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
       --secret '$(SignClientSecret)' `
       --name 'TorchSharp' `
       --description 'TorchSharp' `
