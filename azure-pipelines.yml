@@ -478,6 +478,11 @@ jobs:
     vmImage: 'windows-latest'
   steps:
 
+  - task: UseDotNet@2
+    displayName: 'Use .NET SDK 6.x'
+    inputs:
+      version: 6.x
+
   - task: DotNetCoreCLI@2
     inputs:
       command: custom
