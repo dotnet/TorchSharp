@@ -497,11 +497,11 @@ jobs:
       .\sign code azure-key-vault `
       "**/*.nupkg" `
       --base-directory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
-			--file-list '$(Pipeline.Workspace)\config\signedfiles.txt' `
+      --file-list '$(Pipeline.Workspace)\config\signedfiles.txt' `
       --publisher-name "TorchSharp" `
       --description "TorchSharp" `
       --description-url "https://github.com/dotnet/TorchSharp" `
-			--azure-key-vault-tenant-id "$(SignTenantId)" `
+      --azure-key-vault-tenant-id "$(SignTenantId)" `
       --azure-key-vault-client-id "$(SignClientId)" `
       --azure-key-vault-client-secret '$(SignClientSecret)' `
       --azure-key-vault-certificate "$(SignCertFriendlyName)" `
