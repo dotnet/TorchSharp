@@ -487,7 +487,7 @@ jobs:
     inputs:
       command: custom
       custom: tool
-      arguments: install --tool-path . --prerelease sign
+      arguments: install --tool-path . sign --version 0.9.0-beta.23127.3
     displayName: Install SignTool tool
 
   - download: current
