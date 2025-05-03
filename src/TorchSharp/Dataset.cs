@@ -27,7 +27,7 @@ namespace TorchSharp
                 /// <summary>
                 /// The base nterface for all Datasets.
                 /// </summary>
-                public abstract class Dataset<T> : IDisposable
+                public abstract class Dataset<T> : Modules.IDataset<T>, IDisposable
                 {
                     public void Dispose()
                     {
@@ -35,9 +35,7 @@ namespace TorchSharp
                         GC.SuppressFinalize(this);
                     }
 
-                    /// <summary>
-                    /// Size of dataset
-                    /// </summary>
+                    /// <inheritdoc />
                     public abstract long Count { get; }
 
                     /// <summary>
@@ -47,11 +45,35 @@ namespace TorchSharp
                     /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
                     public abstract T GetTensor(long index);
 
+                    /// <inheritdoc />
+                    public T this[long index] => GetTensor(index);
+
                     protected virtual void Dispose(bool disposing)
                     {
                     }
                 }
             }
+        }
+    }
+
+    namespace Modules
+    {
+        /// <summary>
+        /// The base interface for all Datasets.
+        /// </summary>
+        public interface IDataset<out T> : IDisposable
+        {
+            /// <summary>
+            /// Size of dataset
+            /// </summary>
+            long Count { get; }
+
+            /// <summary>
+            /// Get tensor according to index
+            /// </summary>
+            /// <param name="index">Index for tensor</param>
+            /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
+            T this[long index] { get; }
         }
     }
 }
