@@ -5307,7 +5307,43 @@ namespace TorchSharp
             Assert.Equal(query.shape, x.shape);
             Assert.Equal(value, x);
 
-            Assert.Throws<ArgumentException>(() => torch.nn.functional.scaled_dot_product_attention(query, key, value, attn_mask: mask, is_casual: true));
+            Assert.Throws<ArgumentException>(() => torch.nn.functional.scaled_dot_product_attention(query, key, value, attn_mask: mask, is_causal: true));
+        }
+        [Fact]
+        public void TestScaledDotProductWithScale()
+        {
+
+            var query = torch.rand(32, 8, 128, 64) * 0.25;
+            var key = torch.rand(32, 8, 128, 64) * 0.5;
+            var value = torch.rand(32, 8, 128, 64) * 0.125;
+            var customScale = 0.5;
+
+            var defaultOutput = torch.nn.functional.scaled_dot_product_attention(query, key, value);
+            var withCustomScale = torch.nn.functional.scaled_dot_product_attention(query, key, value, scale: customScale);
+
+            Assert.Equal(query.shape, withCustomScale.shape);
+            Assert.False(torch.allclose(defaultOutput, withCustomScale, rtol: 1e-5, atol: 1e-5));
+        }
+
+        [Fact]
+        public void TestScaledDotProductWithGQA()
+        {
+            var batchSize = 2;
+            var queryHeads = 8;
+            var kvHeads = 2;  // Key/value heads should be less than query heads for GQA
+            var seqLen = 16;
+            var headDim = 64;
+
+            var query = torch.ones(batchSize, queryHeads, seqLen, headDim) * 0.25;
+            var key = torch.ones(batchSize, kvHeads, seqLen, headDim) * 0.5;
+            var value = torch.ones(batchSize, kvHeads, seqLen, headDim) * 0.125;
+
+            Assert.Throws<InvalidOperationException>(() =>
+                torch.nn.functional.scaled_dot_product_attention(query, key, value, enable_gqa: false));
+
+            var output = torch.nn.functional.scaled_dot_product_attention(query, key, value, enable_gqa: true);
+
+            Assert.Equal(query.shape, output.shape);
         }
 
         [Fact]
