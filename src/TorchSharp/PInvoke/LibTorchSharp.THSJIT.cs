@@ -55,6 +55,9 @@ namespace TorchSharp.PInvoke
         internal static extern bool THSJIT_Module_is_training(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
+        internal static extern void THSJIT_Module_zero_grad(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.U1)] bool set_to_none);
+
+        [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_to_device(torch.nn.Module.HType module, long deviceType, long deviceIndex);
 
         [DllImport("LibTorchSharp")]
