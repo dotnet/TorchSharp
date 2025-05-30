@@ -68,6 +68,23 @@ int THSJIT_Module_is_training(JITModule module)
     return (*module)->is_training();
 }
 
+void THSJIT_Module_zero_grad(const JITModule module, bool set_to_none)
+{
+    // According to https://github.com/pytorch/pytorch/issues/27144,
+    // torch::jit::Module has no zero_grad().
+    // As a workaround, manually loop over the parameters and zero them out like optimizer does;
+    // https://github.com/pytorch/pytorch/blob/v2.5.1/torch/csrc/api/src/optim/optimizer.cpp#L123
+    for (auto& p : (*module)->parameters()) {
+        if (p.mutable_grad().defined()) {
+            p.mutable_grad().detach_();
+            if (set_to_none)
+                p.mutable_grad().reset();
+            else
+                p.mutable_grad().zero_();
+        }
+    }
+}
+
 void THSJIT_Module_train(JITModule module, bool on)
 {
     (*module)->train(on);
