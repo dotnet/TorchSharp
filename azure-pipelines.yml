@@ -478,18 +478,11 @@ jobs:
     vmImage: 'windows-latest'
   steps:
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk'
-    inputs:
-      packageType: sdk
-      version: 6.0.402
-      installationPath: $(Agent.ToolsDirectory)/dotnet
-
   - task: DotNetCoreCLI@2
     inputs:
       command: custom
       custom: tool
-      arguments: install --tool-path . sign --version 0.9.0-beta.23127.3
+      arguments: install --tool-path . --prerelease sign
     displayName: Install SignTool tool
 
   - download: current
@@ -500,20 +493,22 @@ jobs:
     displayName: Download TorchSharp Packages
     artifact: BuildTorchSharpPackages
 
-  - pwsh: |
-      .\sign code azure-key-vault `
-      "**/*.nupkg" `
-      --base-directory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
-      --file-list '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --publisher-name "TorchSharp" `
-      --description "TorchSharp" `
-      --description-url "https://github.com/dotnet/TorchSharp" `
-      --azure-key-vault-tenant-id "$(SignTenantId)" `
-      --azure-key-vault-client-id "$(SignClientId)" `
-      --azure-key-vault-client-secret '$(SignClientSecret)' `
-      --azure-key-vault-certificate "$(SignCertFriendlyName)" `
-      --azure-key-vault-url "$(SignVaultURL)"
+  - task: PowerShell@2
     displayName: Sign packages
+    inputs:
+      targetType: 'inline'
+      script: |
+        & .\sign code azure-key-vault '**/*.nupkg' `
+          --base-directory "$(Pipeline.Workspace)\BuildTorchSharpPackages" `
+          --file-list "$(Pipeline.Workspace)\config\signedfiles.txt" `
+          --azure-key-vault-url "$(SignVaultURL)" `
+          --publisher-name "TorchSharp" `
+          --description "TorchSharp" `
+          --description-url "https://github.com/dotnet/TorchSharp" `
+          --azure-key-vault-tenant-id "$(SignTenantId)" `
+          --azure-key-vault-client-id "$(SignClientId)" `
+          --azure-key-vault-client-secret "$(SignClientSecret)" `
+          --azure-key-vault-certificate "$(SignCertFriendlyName)"
 
   - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
     displayName: Publish Signed TorchSharp Packages
@@ -535,18 +530,12 @@ jobs:
   pool:
     vmImage: 'windows-latest'
   steps:
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk'
-    inputs:
-      packageType: sdk
-      version: 6.0.402
-      installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - task: DotNetCoreCLI@2
     inputs:
       command: custom
       custom: tool
-      arguments: install --tool-path . sign --version 0.9.0-beta.23127.3
+      arguments: install --tool-path . --prerelease sign
     displayName: Install SignTool tool
 
   - download: current
@@ -557,20 +546,22 @@ jobs:
     displayName: Download Windows CUDA Packages
     artifact: BuildWinCUDAPackages
 
-  - pwsh: |
-      .\sign code azure-key-vault `
-      "**/*.nupkg" `
-      --base-directory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
-      --file-list '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --publisher-name "TorchSharp" `
-      --description "TorchSharp" `
-      --description-url "https://github.com/dotnet/TorchSharp" `
-      --azure-key-vault-tenant-id "$(SignTenantId)" `
-      --azure-key-vault-client-id "$(SignClientId)" `
-      --azure-key-vault-client-secret '$(SignClientSecret)' `
-      --azure-key-vault-certificate "$(SignCertFriendlyName)" `
-      --azure-key-vault-url "$(SignVaultURL)"
+  - task: PowerShell@2
     displayName: Sign packages
+    inputs:
+      targetType: 'inline'
+      script: |
+        & .\sign code azure-key-vault '**/*.nupkg' `
+          --base-directory "$(Pipeline.Workspace)\BuildWinCUDAPackages" `
+          --file-list "$(Pipeline.Workspace)\config\signedfiles.txt" `
+          --azure-key-vault-url "$(SignVaultURL)" `
+          --publisher-name "TorchSharp" `
+          --description "TorchSharp" `
+          --description-url "https://github.com/dotnet/TorchSharp" `
+          --azure-key-vault-tenant-id "$(SignTenantId)"  `
+          --azure-key-vault-client-id "$(SignClientId)" `
+          --azure-key-vault-client-secret "$(SignClientSecret)" `
+          --azure-key-vault-certificate "$(SignCertFriendlyName)"
 
   - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
     displayName: Publish Signed Windows CUDA Packages
@@ -584,20 +575,22 @@ jobs:
     displayName: Download Linux CUDA Packages
     artifact: BuildLinuxCUDAPackages
 
-  - pwsh: |
-      .\sign code azure-key-vault `
-      "**/*.nupkg" `
-      --base-directory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
-      --file-list '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --publisher-name "TorchSharp" `
-      --description "TorchSharp" `
-      --description-url "https://github.com/dotnet/TorchSharp" `
-      --azure-key-vault-tenant-id "$(SignTenantId)" `
-      --azure-key-vault-client-id "$(SignClientId)" `
-      --azure-key-vault-client-secret '$(SignClientSecret)' `
-      --azure-key-vault-certificate "$(SignCertFriendlyName)" `
-      --azure-key-vault-url "$(SignVaultURL)"
-    displayName: Sign packages
+  - task: PowerShell@2
+    displayName: Sign packages with Sign CLI
+    inputs:
+      targetType: 'inline'
+      script: |
+        & .\sign code azure-key-vault '**/*.nupkg' `
+          --base-directory "$(Pipeline.Workspace)\BuildLinuxCUDAPackages" `
+          --file-list "$(Pipeline.Workspace)\config\signedfiles.txt" `
+          --azure-key-vault-url "$(SignVaultURL)" `
+          --publisher-name "TorchSharp" `
+          --description "TorchSharp" `
+          --description-url "https://github.com/dotnet/TorchSharp" `
+          --azure-key-vault-tenant-id "$(SignTenantId)" `
+          --azure-key-vault-client-id "$(SignClientId)" `
+          --azure-key-vault-client-secret "$(SignClientSecret)" `
+          --azure-key-vault-certificate "$(SignCertFriendlyName)"
 
   - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
     displayName: Publish Signed Linux CUDA Packages
