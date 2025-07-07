@@ -20,13 +20,13 @@ namespace TorchSharp
     {
 #if LIBTORCH_2_2_2_0
         const string libtorchPackageVersion = "2.2.2.0";
-#elif LIBTORCH_2_5_1_0
-        const string libtorchPackageVersion = "2.5.1.0";
+#elif LIBTORCH_2_7_1_0
+        const string libtorchPackageVersion = "2.7.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
-#if CUDA_12_1
-        const string cudaVersion = "12.1";
+#if CUDA_12_8
+        const string cudaVersion = "12.8";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif

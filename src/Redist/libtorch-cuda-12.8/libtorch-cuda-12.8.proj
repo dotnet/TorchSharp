@@ -51,7 +51,7 @@
     <File Include= "libtorch\lib\cudnn_ops64_9.dll" PackageSuffix="part4" />
     <File Include= "libtorch\lib\cufft64_11.dll" PackageSuffix="part4" />
     <File Include= "libtorch\lib\cufftw64_11.dll" PackageSuffix="part4" />
-    <File Include= "libtorch\lib\cupti64_2023.1.1.dll" PackageSuffix="part4" />
+    <File Include= "libtorch\lib\cupti64_2025.1.0.dll" PackageSuffix="part4" />
 
     <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
     <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
@@ -70,7 +70,7 @@
     <File Include= "libtorch\lib\zlibwapi.dll" PackageSuffix="part8" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part8" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part8" />
-    <File Include= "libtorch\lib\nvrtc-builtins64_121.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\nvrtc-builtins64_128.dll" PackageSuffix="part8" />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
@@ -86,9 +86,9 @@
     <File Include= "libtorch\lib\libc10_cuda.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libc10d_cuda_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcudart-9335f6a2.so.12" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudart-218eec4c.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudnn.so.9" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcublas-37d11411.so.12" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libcublas-f6c022dc.so.12" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libcudnn_engines_runtime_compiled.so.9" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libcudnn_graph.so.9" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
@@ -96,8 +96,10 @@
     <File Include= "libtorch\lib\libgomp-98b21ff3.so.1" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvToolsExt-847d78f2.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvToolsExt-c498fcba.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcufile-0c72d05c.so.0" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcufile_rdma-5257f22c.so.1" PackageSuffix="part1"  />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
@@ -115,12 +117,12 @@
     <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
     <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libcublasLt-f97bfc2c.so.12"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libcublasLt-f97bfc2c.so.12"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcudnn_cnn.so.9" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libcudnn_heuristic.so.9"  PackageSuffix="part6"  />
-    <File Include= "libtorch\lib\libnvrtc-b51b459d.so.12" PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libnvrtc-c8f577df.so.12" PackageSuffix="part6"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part6"  />
 
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
@@ -130,6 +132,8 @@
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part8" />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part8"  />
     <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part8" />
+    <File Include= "libtorch\lib\libcusparseLt-978bd952.so.0"  PackageSuffix="part8" />
+
 
 
   </ItemGroup>
