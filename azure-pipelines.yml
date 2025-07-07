@@ -829,7 +829,7 @@ jobs:
     continueOnError: true
 
   # push the Linux Cuda packages
-  - task: NuGetCommand@2
+  - task: NuGetCommand@2 
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
