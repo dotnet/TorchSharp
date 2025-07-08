@@ -348,7 +348,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
   variables:
@@ -403,7 +403,7 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Linux_Native_Build_For_Packages
   variables:
