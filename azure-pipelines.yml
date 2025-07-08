@@ -348,7 +348,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  condition: and(ne(variables['system.pullrequest.isfork'], false), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
   variables:
@@ -403,7 +403,7 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  condition: and(ne(variables['system.pullrequest.isfork'], false), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Linux_Native_Build_For_Packages
   variables:
@@ -704,7 +704,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Push_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', true), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], false))
+  condition: and(eq('${{ parameters.BuildLibTorchPackages }}', false), eq('${{ parameters.PushPackagesToFeed }}', true), ne(variables['system.pullrequest.isfork'], false))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - CodeSign_Extras
