@@ -44,6 +44,7 @@ resources:
 
 jobs:
 - template: /build/ci/job-template.yml
+  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
@@ -57,6 +58,7 @@ jobs:
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
+  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetCore
@@ -66,6 +68,7 @@ jobs:
       vmImage: 'windows-latest'
 
 - template: /build/ci/job-template.yml
+  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetFX
@@ -75,6 +78,7 @@ jobs:
       vmImage: 'windows-latest'
 
 - template: /build/ci/job-template.yml
+  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     prepScript: echo "no prep needed"
     name: MacOS_arm64
@@ -91,7 +95,7 @@ jobs:
 ################################################################################
 - job: Linux_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -136,7 +140,7 @@ jobs:
 ################################################################################
 - job: Windows_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -177,7 +181,7 @@ jobs:
   # ################################################################################
 - job: MacOS_arm64_Native_Build_For_Packages
   # ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -206,7 +210,7 @@ jobs:
 ################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
@@ -348,7 +352,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
   variables:
@@ -403,7 +407,7 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Linux_Native_Build_For_Packages
   variables:
@@ -469,7 +473,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Core
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
@@ -521,7 +525,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Extras
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - Build_libtorch_cuda_linux_Packages
