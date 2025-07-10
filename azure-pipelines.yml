@@ -382,7 +382,7 @@ jobs:
   - script: dotnet restore pkg/pack.proj /p:Configuration=Release
     displayName: Restore package projects
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true /p:TargetOS=windows pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -448,7 +448,7 @@ jobs:
   - script: dotnet restore pkg/pack.proj /p:Configuration=Release
     displayName: Restore package projects
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:ApiCompatGenerateSuppressionFile=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:ApiCompatGenerateSuppressionFile=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true /p:TargetOS=linux pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
