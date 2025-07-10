@@ -8,7 +8,7 @@ parameters:
 
 jobs:
   - job: ${{ parameters.name }}
-    # condition: ne(variables['build.sourcebranchname'], 'main')
+    condition: ne(variables['build.sourcebranchname'], 'main')
     variables:
       _prepScript: ${{ parameters.prepScript }}
       _testScript: ${{ parameters.testScript }}
