@@ -44,13 +44,13 @@ resources:
 
 jobs:
 - template: /build/ci/job-template.yml
-  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
     # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript: ${{ variables.LinuxPrepScript }}
+    condition: ne(variables['build.sourcebranchname'], 'main')
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
@@ -58,8 +58,8 @@ jobs:
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
-  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
+    condition: ne(variables['build.sourcebranchname'], 'main')
     prepScript: echo "no prep needed"
     name: Windows_x64_NetCore
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
@@ -68,20 +68,20 @@ jobs:
       vmImage: 'windows-latest'
 
 - template: /build/ci/job-template.yml
-  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetFX
+    condition: ne(variables['build.sourcebranchname'], 'main')
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame test\TorchSharpTest\TorchSharpTest.csproj -c
     pool:
       vmImage: 'windows-latest'
 
 - template: /build/ci/job-template.yml
-  condition: ne(variables['build.sourcebranchname'], 'main')
   parameters:
     prepScript: echo "no prep needed"
     name: MacOS_arm64
+    condition: ne(variables['build.sourcebranchname'], 'main')
     buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 -c
     testScript: echo "Azure Pipelines does not support arm64 yet, can't run tests"
     pool:
