@@ -15,14 +15,18 @@
     <PackProject Include="**\TorchSharp-cuda-windows.nupkgproj" />
     <PackProject Include="**\TorchVision.nupkgproj" />
   </ItemGroup>
-  <Target Name="Debug" BeforeTargets="Restore">
-    <Message Text="=== DEBUG INFO ===" Importance="high" />
-    <Message Text="CudaVersionDot: $(CudaVersionDot)" Importance="high" />
-    <Message Text="IncludeLibTorchCudaPackages: $(IncludeLibTorchCudaPackages)" Importance="high" />
-    <Message Text="TargetOS: $(TargetOS)" Importance="high" />
-    <Message Text="Current Directory: $(MSBuildProjectDirectory)" Importance="high" />
-    <Message Text="Found PackProjects: @(PackProject)" Importance="high" />
-    <Message Text="PackProject Count: @(PackProject->Count())" Importance="high" />
+  <Target Name="DebugFileSystem" BeforeTargets="Restore">
+    <ItemGroup>
+      <AllNupkgFiles Include="**\*.nupkgproj" />
+      <CudaFiles Include="**\*cuda*.nupkgproj" />
+      <LinuxFiles Include="**\*linux*.nupkgproj" />
+    </ItemGroup>
+    <Message Text="=== FILE SYSTEM DEBUG ===" Importance="high" />
+    <Message Text="All .nupkgproj files found: @(AllNupkgFiles, '%0A')" Importance="high" />
+    <Message Text="Files with 'cuda': @(CudaFiles, '%0A')" Importance="high" />
+    <Message Text="Files with 'linux': @(LinuxFiles, '%0A')" Importance="high" />
+    <Message Text="Looking for pattern: **\libtorch-cuda-12.8-linux-*.nupkgproj" Importance="high" />
+    <Message Text="=========================" Importance="high" />
   </Target>
   <Target Name="Restore">
     <Message Text="Restoring packaging projects..." Importance="high" />
