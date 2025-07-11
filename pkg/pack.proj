@@ -15,6 +15,15 @@
     <PackProject Include="**\TorchSharp-cuda-windows.nupkgproj" />
     <PackProject Include="**\TorchVision.nupkgproj" />
   </ItemGroup>
+  <Target Name="Debug" BeforeTargets="Restore">
+    <Message Text="=== DEBUG INFO ===" Importance="high" />
+    <Message Text="CudaVersionDot: $(CudaVersionDot)" Importance="high" />
+    <Message Text="IncludeLibTorchCudaPackages: $(IncludeLibTorchCudaPackages)" Importance="high" />
+    <Message Text="TargetOS: $(TargetOS)" Importance="high" />
+    <Message Text="Current Directory: $(MSBuildProjectDirectory)" Importance="high" />
+    <Message Text="Found PackProjects: @(PackProject)" Importance="high" />
+    <Message Text="PackProject Count: @(PackProject->Count())" Importance="high" />
+  </Target>
   <Target Name="Restore">
     <Message Text="Restoring packaging projects..." Importance="high" />
     <MSBuild Projects="%(PackProject.Identity)" Targets="Restore" />
