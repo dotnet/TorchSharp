@@ -213,7 +213,7 @@ jobs:
 ################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}') s)
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
