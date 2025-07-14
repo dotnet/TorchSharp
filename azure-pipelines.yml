@@ -19,9 +19,6 @@ parameters:
   - name: BuildLinuxNuggets
     type: boolean
     default: false
-  - name: BuildLibtorchCpu
-    type: boolean
-    default: true
 
   # Set which source branch to build libtorch-* packages.
   # The build-libtorch jobs are only run if the source branch is the same as this value.
@@ -216,7 +213,7 @@ jobs:
 ################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: eq('${{ parameters.BuildLibtorchCpu }}', true)
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}') s)
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
