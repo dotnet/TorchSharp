@@ -79,7 +79,7 @@
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="300000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\cusolver64_11.dll" PackageSuffix="part11" />
+    <File Include= "libtorch\lib\cusolver64_11.dll" PackageSuffix="part10" />
 
   </ItemGroup>
 
@@ -134,7 +134,8 @@
 
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="200000000" FileUnstitchSize="200000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment2" FileUnstitchIndex="2" FileUnstitchStart="400000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment2" FileUnstitchIndex="2" FileUnstitchStart="400000000" FileUnstitchSize="200000000" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment3" FileUnstitchIndex="3" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8" />
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part8" />
