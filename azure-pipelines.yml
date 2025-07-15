@@ -13,12 +13,6 @@ parameters:
   - name: PushPackagesToFeed
     type: boolean
     default: false
-  - name: BuildWindowsNuggets
-    type: boolean
-    default: true
-  - name: BuildLinuxNuggets
-    type: boolean
-    default: false
 
   # Set which source branch to build libtorch-* packages.
   # The build-libtorch jobs are only run if the source branch is the same as this value.
@@ -355,7 +349,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true), eq('${{ parameters.BuildWindowsNuggets }}', true))
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
   - Build_TorchSharp_And_libtorch_cpu_Packages
@@ -411,7 +405,7 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true), eq('${{ parameters.BuildLinuxNuggets }}', true))
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Build_libtorch_cuda_win_Packages

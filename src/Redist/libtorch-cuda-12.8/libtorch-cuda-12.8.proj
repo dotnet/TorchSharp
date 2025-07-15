@@ -39,8 +39,7 @@
     <File Include= "libtorch\lib\cudnn_engines_runtime_compiled64_9.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\nvrtc64_120_0.dll" PackageSuffix="part1" />
 
-    <File Include= "libtorch\lib\cudnn_adv64_9.dll"  PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
-    <File Include= "libtorch\lib\cudnn_adv64_9.dll"  PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\cudnn_adv64_9.dll"  PackageSuffix="part2"/>
 
     <File Include= "libtorch\lib\cudnn_engines_precompiled64_9.dll"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
     <File Include= "libtorch\lib\cudnn_engines_precompiled64_9.dll"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="-1" />
@@ -67,20 +66,18 @@
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part8" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part8" />
     <File Include= "libtorch\lib\nvrtc-builtins64_128.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\cudnn_heuristic64_9.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\nvJitLink_120_0.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\uv.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\cudnn_ops64_9.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\cudnn_cnn64_9.dll" PackageSuffix="part8" />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="350000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1300000000" FileUnstitchSize="-1" />
-
-    <File Include= "libtorch\lib\cudnn_heuristic64_9.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\nvJitLink_120_0.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\uv.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\cudnn_ops64_9.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\cudnn_cnn64_9.dll" PackageSuffix="part10" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\cusolver64_11.dll" PackageSuffix="part11" />
 
