@@ -358,7 +358,7 @@ jobs:
   condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true), eq('${{ parameters.BuildWindowsNuggets }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
-- - Build_TorchSharp_And_libtorch_cpu_Packages
+  - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
