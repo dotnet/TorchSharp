@@ -139,7 +139,7 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_128", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
                     }
