@@ -142,6 +142,11 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_128", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("fbgemm", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }
 
                     ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
