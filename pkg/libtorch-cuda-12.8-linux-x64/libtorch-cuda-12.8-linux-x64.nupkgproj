@@ -34,7 +34,7 @@
 		
      <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part8/libtorch-cuda-12.8-linux-x64-part8.nupkgproj" />
 		
-     <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part8/libtorch-cuda-12.8-linux-x64-part9.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part9/libtorch-cuda-12.8-linux-x64-part9.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
