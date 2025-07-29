@@ -110,8 +110,8 @@ For this reason, we do the following
 1. The head, referenceable packages that deliver a functioning runtime are any of:
 
        libtorch-cpu
-       libtorch-cuda-12.1-linux-x64
-       libtorch-cuda-12.1-win-x64
+       libtorch-cuda-12.8-linux-x64
+       libtorch-cuda-12.8-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
    Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together
@@ -120,7 +120,7 @@ For this reason, we do the following
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
-   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj). See more details later in this document.
+   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj). See more details later in this document.
 
 3. The `libtorch-*` packages are built in Azure DevOps CI
    [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in main
@@ -166,12 +166,12 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    To update the version, update this in [Dependencies.props](build/Dependencies.props):
 
-       <LibTorchVersion>2.2.0</LibTorchVersion>
+       <LibTorchVersion>2.7.1</LibTorchVersion>
 
     The libtorch version number is also referenced in source code, in the file 'src/TorchSharp/Torch.cs':
 
     ```C#
-    const string libtorchPackageVersion = "2.2.0.1";
+    const string libtorchPackageVersion = "2.7.1.0";
     ```
 
 3. Run these to test downloads and update SHA hashes for the various LibTorch downloads
@@ -183,9 +183,9 @@ On Windows:
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
 
-        dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
-        dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
-        dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-12.8\libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-12.8\libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-12.8\libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
 
 On Linux / Mac:
 
@@ -194,23 +194,23 @@ On Linux / Mac:
         dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
         dotnet build src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
 
-        dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
-        dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
-        dotnet build src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
 
 
-   Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
+   Each of these can take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
    If file names in the distribution have changed, or files have been removed, you will get errors saying that files cannot be found. That's okay and will be taken care of in the next step.
 
 4. At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
-   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj).
+   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj).
 
    This is the step in the upgrade process that takes the most effort and time. It requires extreme care.
 
    Check the contents of the unzip of the archive, e.g.
 
-       dir bin\obj\x64.Release\libtorch-cpu\libtorch-cxx11-abi-shared-with-deps-2.2.0cpu\libtorch\lib\*.so*
+       dir bin\obj\x64.Release\libtorch-cpu\libtorch-cxx11-abi-shared-with-deps-2.7.1cpu\libtorch\lib\*.so*
 
    You may also need to precisely refactor the binaries into multiple parts so each package ends up under ~300MB. Before release 2.2.0 of libtorch, this really only affected the CUDA packagages, but it is now also affecting the CPU packages on Linux and OSX. Windows CPU is still small enough to be contained in just one package. The NuGet gallery does not allow packages larger than 250MB, so if files are 300MB, after compression, they are likely to be smaller than 250MB. However, you have to look out: if the compression is poor, then packages may end up larger. Note that it is 250 million
    bytes that is the limit, **not** 250*1024*1024. In other words, it is 250 MB, not 250 MiB. Note that Windows Explorer will show file sizes in KiB, not thousands of bytes. Use 'dir' from a CMD window to get the exact size in bytes for each file. For example -- the file `libtorch_cpu.so` shows up as 511,872 KB in Windows Explorer, but 524,156,144 bytes in CMD. The 2.4% difference can be significant. Getting the partitioning right requires precision.
@@ -256,7 +256,7 @@ On Linux / Mac:
 5. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
-       git add src\Redist\libtorch-cuda-12.1\*.sha
+       git add src\Redist\libtorch-cuda-12.8\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 
@@ -290,10 +290,12 @@ On Linux / Mac:
        dotnet test -c Debug
        dotnet test -c Release
 
+	**Note**: The CI does not run tests for the CUDA packages on Linux or Windows, they have to be executed manually.
+
 10. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>2.0.1.1</LibTorchPackageVersion>
+       <LibTorchPackageVersion>2.7.1.0</LibTorchPackageVersion>
 
        dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true
        dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:TargetOS=linux /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true
