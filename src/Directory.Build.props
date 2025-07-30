@@ -14,8 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Condition="'$(UseStyleCopAnalyzer)' != 'false' and '$(MSBuildProjectExtension)' == '.csproj'"
-      Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
+    <PackageReference Condition="'$(UseStyleCopAnalyzer)' != 'false' and '$(MSBuildProjectExtension)' == '.csproj'" Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

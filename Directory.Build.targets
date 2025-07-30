@@ -3,7 +3,7 @@
   <!-- We copy over the LibTorch native binaries in order to run tests.  This can probably be automated better. -->
   <!-- These lists are duplicated in redist/... with file splitting added for package prep --> 
 
-  <ItemGroup  Condition="'$(TestUsesLibTorch)' == 'true' and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(TestUsesLibTorch)' == 'true' and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="LibTorchSharp" />
   </ItemGroup>
 
@@ -86,9 +86,7 @@
     <NativeAssemblyReference Include="gomp-98b21ff3" ExtraExtension=".1" />
   </ItemGroup>
 
-  <Target Name="CopyNativeAssemblies"
-          BeforeTargets="PrepareForRun"
-					Condition="'$(SkipTests)' != 'true'">
+  <Target Name="CopyNativeAssemblies" BeforeTargets="PrepareForRun" Condition="'$(SkipTests)' != 'true'">
 
     <PropertyGroup>
       <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
@@ -103,15 +101,8 @@
       </NativeAssemblyReference>
     </ItemGroup>
 
-    <Copy SourceFiles = "@(NativeAssemblyReference->'%(FullAssemblyPath)')"
-          DestinationFolder="$(OutputPath)"
-          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
-          Retries="$(CopyRetryCount)"
-          SkipUnchangedFiles="true"
-          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
-          UseHardlinksIfPossible="$(CreateHardLinksForPublishFilesIfPossible)"
-          UseSymboliclinksIfPossible="$(CreateSymbolicLinksForPublishFilesIfPossible)">
-      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+    <Copy SourceFiles="@(NativeAssemblyReference-&gt;'%(FullAssemblyPath)')" DestinationFolder="$(OutputPath)" OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)" Retries="$(CopyRetryCount)" SkipUnchangedFiles="true" RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" UseHardlinksIfPossible="$(CreateHardLinksForPublishFilesIfPossible)" UseSymboliclinksIfPossible="$(CreateSymbolicLinksForPublishFilesIfPossible)">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
     </Copy>
 
   </Target>

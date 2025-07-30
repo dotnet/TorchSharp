@@ -73,7 +73,7 @@
   <!-- Version properties -->
   <PropertyGroup>
 
-    <VersionPrefix >$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
+    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <!--
     <VersionSuffix>local-$(Configuration)-$([System.DateTime]::Now.ToString(yyyyMMdd))</VersionSuffix>
 
