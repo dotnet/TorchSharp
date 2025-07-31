@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part1/libtorch-cuda-12.8-win-x64-part1.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part2/libtorch-cuda-12.8-win-x64-part2.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part3-primary/libtorch-cuda-12.8-win-x64-part3-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part3-fragment1/libtorch-cuda-12.8-win-x64-part3-fragment1.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part4/libtorch-cuda-12.8-win-x64-part4.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part5-primary/libtorch-cuda-12.8-win-x64-part5-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part5-fragment1/libtorch-cuda-12.8-win-x64-part5-fragment1.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part5-fragment2/libtorch-cuda-12.8-win-x64-part5-fragment2.nupkgproj" />
+     
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part6/libtorch-cuda-12.8-win-x64-part6.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part7-primary/libtorch-cuda-12.8-win-x64-part7-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part7-fragment1/libtorch-cuda-12.8-win-x64-part7-fragment1.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part8/libtorch-cuda-12.8-win-x64-part8.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part9-primary/libtorch-cuda-12.8-win-x64-part9-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part9-fragment1/libtorch-cuda-12.8-win-x64-part9-fragment1.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part9-fragment2/libtorch-cuda-12.8-win-x64-part9-fragment2.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part9-fragment3/libtorch-cuda-12.8-win-x64-part9-fragment3.nupkgproj" />
+
+     <ProjectReference Include="../libtorch-cuda-12.8-win-x64-part10/libtorch-cuda-12.8-win-x64-part10.nupkgproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\common\CudaHeadPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\CudaHeadPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
+    <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="LICENSE-LIBTORCH.txt" />
+  </ItemGroup>
+</Project>
