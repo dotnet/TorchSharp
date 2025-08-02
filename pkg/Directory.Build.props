@@ -21,12 +21,14 @@
 
   <!-- libtorch aux parts -->
   <PropertyGroup Condition="'$(_IsAuxPackage)' == 'true'">
-    <Authors>(see main package)</Authors>
-    <PackageTags></PackageTags>
-    <Copyright>(see main package)</Copyright>
     <Owners>The .NET Foundation and Contributors</Owners>
+    <Authors>PyTorch contributors;TorchSharp contributors</Authors>
+    <PackageTags></PackageTags>
+    <Copyright>Copyright PyTorch contributors</Copyright>
+    <Owners>.NET Foundation and Contributors</Owners>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageDescription>(see main package)</PackageDescription>
+    <PackageProjectUrl>https://github.com/dotnet/TorchSharp</PackageProjectUrl>
+    <PackageDescription>This package contains fragmented components for the TorchSharp LibTorch redistribution.</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
