@@ -1,0 +1,289 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- see https://pytorch.org/get-started/locally/ for download links -->
+    <!-- For example Linux, LibTorch 1.9.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.9.0%2Bcpu.zip -->
+    <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
+    <LocalBaseName>$(LibTorchCudaLocalBase)</LocalBaseName>
+    <ArchiveBaseName>$(LibTorchCudaArchiveBase)</ArchiveBaseName>
+    <ArchiveExtension>.zip</ArchiveExtension>
+    <ArchiveUrl>https://download.pytorch.org/libtorch/cu$(CudaVersionNoDot)/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
+    <DownloadedArchiveFolder>$(MassiveDownloadRoot)$(MSBuildProjectName)\</DownloadedArchiveFolder>
+    <DownloadedArchiveFileName>$(ArchiveBaseName)$(ArchiveExtension)</DownloadedArchiveFileName>
+    <DownloadedArchive>$(DownloadedArchiveFolder)$(DownloadedArchiveFileName)</DownloadedArchive>
+    <ArchiveShaFile>$(IntermediateOutputPath)$(ArchiveBaseName)$(ArchiveExtension).sha</ArchiveShaFile>
+    <ExtractDirectory>$(IntermediateOutputPath)$(LocalBaseName)</ExtractDirectory>
+    <ExtractSemaphore>$(ExtractDirectory)\.extracted</ExtractSemaphore>
+    <LocalShaFile>$(MSBuildProjectDirectory)\$(ArchiveBaseName)$(ArchiveExtension).sha</LocalShaFile>
+    <LicenseUrl>https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE</LicenseUrl>
+    <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
+    <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
+    <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
+    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(TargetRuntimeID)</MainPackageFolder>
+    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.TargetOS.$(TargetOS).SkipTests.$(SkipTests).IncludeLibTorchCudaPackage.$(IncludeLibTorchCudaPackage)</CopyToPackageSemaphore>
+
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetOS)' == 'windows'">
+
+    <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\c10.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\c10_cuda.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cublas64_12.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cudart64_12.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cudnn64_9.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cudnn_graph64_9.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cudnn_engines_runtime_compiled64_9.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\nvrtc64_120_0.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\nvrtc64_120_0.alt.dll" PackageSuffix="part1" />
+
+    <File Include= "libtorch\lib\cudnn_adv64_9.dll"  PackageSuffix="part2"/>
+
+    <File Include= "libtorch\lib\cudnn_engines_precompiled64_9.dll"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\cudnn_engines_precompiled64_9.dll"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\cufft64_11.dll" PackageSuffix="part4" />
+    <File Include= "libtorch\lib\cufftw64_11.dll" PackageSuffix="part4" />
+    <File Include= "libtorch\lib\cupti64_2025.1.0.dll" PackageSuffix="part4" />
+
+    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part6" />
+
+    <File Include= "libtorch\lib\cusparse64_12.dll"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\cusparse64_12.dll"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\zlibwapi.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\nvrtc-builtins64_128.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\cudnn_heuristic64_9.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\nvJitLink_120_0.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\uv.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\cudnn_ops64_9.dll" PackageSuffix="part8" />
+    <File Include= "libtorch\lib\cudnn_cnn64_9.dll" PackageSuffix="part8" />
+
+    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="350000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\cusolver64_11.dll" PackageSuffix="part10" />
+
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetOS)' == 'linux'">
+    <File Include= "libtorch\lib\libaoti_custom_ops.so" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libbackend_with_compiler.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libc10.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libc10_cuda.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libc10d_cuda_test.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudart-218eec4c.so.12" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudnn.so.9" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcublas-f6c022dc.so.12" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libcudnn_engines_runtime_compiled.so.9" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libcudnn_graph.so.9" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudnn_ops.so.9" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libgomp-98b21ff3.so.1" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvToolsExt-c498fcba.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcufile-0c72d05c.so.0" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcufile_rdma-5257f22c.so.1" PackageSuffix="part1"  />
+
+    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
+    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
+    <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
+
+    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
+    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="350000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1300000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment5" FileUnstitchIndex="5" FileUnstitchStart="1600000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment6" FileUnstitchIndex="6" FileUnstitchStart="1900000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
+    <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\libcudnn_cnn.so.9" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libcudnn_heuristic.so.9"  PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libnvrtc-c8f577df.so.12" PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part6"  />
+
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="200000000" FileUnstitchSize="200000000" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment2" FileUnstitchIndex="2" FileUnstitchStart="400000000" FileUnstitchSize="200000000" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment3" FileUnstitchIndex="3" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8" />
+    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part8" />
+    <File Include= "libtorch\lib\libcusparseLt-978bd952.so.0"  PackageSuffix="part8" />
+
+    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9" />
+    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part9"  />
+
+  </ItemGroup>
+
+  <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
+    <MakeDir Directories="$(DownloadedArchiveFolder)" />
+    <MakeDir Directories="$(DownloadedLicenseFolder)" />
+    <DownloadFile  SourceUrl="$(ArchiveUrl)" DestinationFolder="$(DownloadedArchiveFolder)" DestinationFileName="$(DownloadedArchiveFileName)" Condition="!Exists('$(DownloadedArchive)')" />
+    <DownloadFile  SourceUrl="$(LicenseUrl)" DestinationFolder="$(DownloadedLicenseFolder)" DestinationFileName="$(DownloadedLicenseFileName)" Condition="!Exists('$(DownloadedLicense)')" />
+  </Target>
+
+  <!-- Validate and extract Archive for Libtorch -->
+  <Target Name="ValidateAndExtractArchives" DependsOnTargets="DownloadArchive" Inputs="$(DownloadedArchive)" Outputs="$(ExtractSemaphore)">
+    <Message Importance="High" Text="GetFileHash $(DownloadedArchive)" />
+    <GetFileHash  Files="$(DownloadedArchive)">  <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" /> </GetFileHash>
+    <WriteLinesToFile File="$(ArchiveShaFile)" Lines="$(DownloadedArchiveHash)" Overwrite="true" />
+
+    <!-- If specified we'll update the checked in SHAs with the downloaded ones. -->
+    <Copy Condition="'$(UpdateSHA)' == 'true'" SourceFiles="$(ArchiveShaFile)" DestinationFiles="$(LocalShaFile)" />
+
+    <Error Condition="!Exists('$(LocalShaFile)')" Text="SHA file '$(LocalShaFile)' does not exist.  Build with /p:UpdateSHA=true to save it." />
+
+    <!-- Read in the SHAs as metadata on the archive items -->
+    <ItemGroup>
+      <Archive>
+        <LocalSha>$([System.IO.File]::ReadAllText('$(LocalShaFile)'))</LocalSha>
+        <DownloadSha>$([System.IO.File]::ReadAllText('$(ArchiveShaFile)'))</DownloadSha>
+      </Archive>
+    </ItemGroup>
+
+    <!-- Validate that the downloaded SHAs match the expected checked in SHAs -->
+    <Error Condition="'%(Archive.LocalSha)' != '%(Archive.DownloadSha)'" Text="Downloaded file '$(DownloadedArchive)' has unexpected SHA.%0A  expected: %(Archive.LocalSha)%0A  actual: %(Archive.DownloadSha)%0ABuild with /p:UpdateSHA=true if you intentionally changed the URL and wish to update the SHAs, otherwise this could indicate an incomplete download or intercerpted URL and should be examined." />
+
+    <!-- The archives are valid, lets extract them, ensuring an empty directory -->
+    <RemoveDir Directories="$(ExtractDirectory)" />
+    <MakeDir Directories="$(ExtractDirectory)" />
+    <Message Importance="High" Text="Unzip $(DownloadedArchive) --> $(ExtractDirectory)" />
+    <Unzip Condition="'$(ArchiveExtension)' == '.zip'" SourceFiles="$(DownloadedArchive)" DestinationFolder="$(ExtractDirectory)" OverwriteReadOnlyFiles="true" />
+    <Exec Condition="'$(ArchiveExtension)' == '.tar.gz'"
+          WorkingDirectory="$(ExtractDirectory)"
+          Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('$(ExtractDirectory)', '$(DownloadedArchive)'))&quot;" />
+    <WriteLinesToFile File="$(ExtractSemaphore)" Lines="done" Overwrite="true" />
+
+    <!-- delete the archive files when running on CI -->
+    <Message Importance="High" Text="Deleting '$(DownloadedArchive)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
+    <Delete Files="$(DownloadedArchive)"  Condition="'$(TF_BUILD)' != ''" />
+
+  </Target>
+
+    <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
+  <UsingTask
+    TaskName="FileUnstitch"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <ParameterGroup>
+      <SourceFile ParameterType="System.String" Required="true" />
+      <DestinationFolder ParameterType="System.String" Required="true" />
+      <Start ParameterType="System.Int64" Required="true" />
+      <Size ParameterType="System.Int64" Required="true" />
+      <Index ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.IO.MemoryMappedFiles"/>
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+            {
+                string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
+                if (Size == -1)
+                    Size = Int32.MaxValue;
+                var fi = new FileInfo(SourceFile);
+                Console.WriteLine($"Opening source {SourceFile} for fragment {Index}...");
+                using (var mmf = MemoryMappedFile.CreateFromFile(SourceFile))
+                {
+                    long totSize = fi.Length;
+                    if (Start != 0)
+                        DestinationFolder = DestinationFolder.Replace("runtimes", "fragments");
+                    Directory.CreateDirectory(DestinationFolder);
+                    string outfile = Path.Combine(DestinationFolder, name);
+                    Size = Math.Max(Math.Min(Size, totSize - Start), 0);
+                    Console.WriteLine($"Reading fragment {Index} ({Start}..{Start + Size - 1}) from {SourceFile}...");
+                    var outBytes = new byte[Size];
+                    using (var accessor = mmf.CreateViewAccessor(Start, Size))
+                    {
+                        accessor.ReadArray<byte>(0, outBytes, 0, (int)Size);
+                    }
+                    Console.WriteLine($"Writing fragment to {outfile}...");
+                    File.WriteAllBytes(outfile, outBytes);
+                }
+            }
+            if (Start == 0)
+            {
+                using (var sha256Hash = System.Security.Cryptography.SHA256.Create())
+                {
+                    using (FileStream stream = File.OpenRead(SourceFile))
+                    {
+                        Console.WriteLine("Computing SHA...");
+                        byte[] bytes = sha256Hash.ComputeHash(stream);
+                        var builder = new System.Text.StringBuilder();
+                        for (int i = 0; i < bytes.Length; i++)
+                        {
+                            builder.Append(bytes[i].ToString("x2"));
+                        }
+                        var sha = builder.ToString();
+                        string shaFileName = Path.Combine(DestinationFolder, Path.GetFileName(SourceFile) + ".sha");
+                        File.WriteAllText(shaFileName, sha);
+                        Console.WriteLine($"Computed SHA {sha}...");
+                    }
+                }
+            }
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
+    <Message Importance="High" Text="@(File) -> $(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" />
+
+    <!-- Copy to MainPackageFolder to use in libtorch-cuda-* packages build -->
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == '' AND '$(IncludeLibTorchCudaPackages)' == 'true'" />
+    <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != '' AND '$(IncludeLibTorchCudaPackages)' == 'true'" />
+
+    <!-- Copy license to MainPackageFolder to use in libtorch-cuda-* packages build -->
+    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCudaPackages)' == 'true'" />
+
+    <!-- Copy to NativeCudaOutputPath to use in tests -->
+    <MakeDir Directories="$(NativeCudaOutputPath)"  Condition="'$(SkipCuda)' != 'true' AND '$(SkipTests)' != 'true' "  />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeCudaOutputPath)" SkipUnchangedFiles="true" Condition="'$(SkipCuda)' != 'true' AND '$(SkipTests)' != 'true' AND ('%(File.FileUnstitchStart)' == '' OR '%(File.FileUnstitchStart)' == '0') " />
+
+    <Message Importance="High" Text="Deleting '$(ExtractDirectory)\%(File.Identity)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
+    <Delete Files="$(ExtractDirectory)\%(File.Identity)"  Condition="'$(TF_BUILD)' != ''" />
+
+    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
+
+  </Target>
+
+  <!-- Define Build to do the work of downloading and copying assets -->
+  <Target Name="Build" DependsOnTargets="CopyFilesFromArchive"  />
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(IntermediateOutputPath)" />
+  </Target>
+</Project>

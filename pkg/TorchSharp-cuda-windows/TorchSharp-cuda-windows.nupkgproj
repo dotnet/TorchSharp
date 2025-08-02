@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TorchSharp\TorchSharp.nupkgproj" />
-    <ProjectReference Include="..\libtorch-cuda-12.1-win-x64\libtorch-cuda-12.1-win-x64.nupkgproj" />
+    <ProjectReference Include="..\libtorch-cuda-12.8-win-x64\libtorch-cuda-12.8-win-x64.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">

@@ -1,6 +1,10 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+# NuGet Version 0.105.2
+
+This release upgrades the libtorch backend to v2.7.1, using CUDA 12.8.
+
 # NuGet Version 0.105.1
 
 __Bug Fixes__:
