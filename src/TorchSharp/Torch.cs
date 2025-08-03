@@ -20,13 +20,13 @@ namespace TorchSharp
     {
 #if LIBTORCH_2_2_2_0
         const string libtorchPackageVersion = "2.2.2.0";
-#elif LIBTORCH_2_5_1_0
-        const string libtorchPackageVersion = "2.5.1.0";
+#elif LIBTORCH_2_7_1_0
+        const string libtorchPackageVersion = "2.7.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
-#if CUDA_12_1
-        const string cudaVersion = "12.1";
+#if CUDA_12_8
+        const string cudaVersion = "12.8";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
@@ -139,9 +139,14 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_128", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("fbgemm", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }
 
                     ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
