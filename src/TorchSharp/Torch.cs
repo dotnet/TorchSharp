@@ -129,7 +129,8 @@ namespace TorchSharp
 
                 if (useCudaBackend) {
                     var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                    if (isWindows && RuntimeInformation.OSArchitecture != Architecture.Arm64) {
+                    // CUDA is not supported on Windows ARM64. Only attempt to load CUDA components on Windows x64.
+                    if (isWindows && RuntimeInformation.OSArchitecture == Architecture.X64) {
                         trace.AppendLine($"    Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.
