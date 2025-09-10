@@ -14,6 +14,24 @@ using TorchSharp.PInvoke;
 #nullable enable
 namespace TorchSharp
 {
+    public static partial class TensorLeakDetector
+    {
+        /// <summary>
+        /// Allows implicit conversion to torch.Tensor.<br/>
+        /// FIXME: Declared true for default to be compatible to 0.105.1 or earlier.
+        /// </summary>
+        public static bool allowImplicitConversionOperator { get; set; } = true;
+        /// <summary>
+        /// Throws an exception if implicit conversion is not allowed.
+        /// </summary>
+        /// <exception cref="InvalidCastException"></exception>
+        public static void ThrowIfImplicitConversionNotAllowed()
+        {
+            if (!allowImplicitConversionOperator) {
+                throw new InvalidCastException("Unexpected implicit conversion to torch.Tensor.");
+            }
+        }
+    }
     public static partial class torch
     {
         /// <summary>
@@ -6321,6 +6339,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(byte value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6330,6 +6349,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(sbyte value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6339,6 +6359,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(short value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6348,6 +6369,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(int value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6357,6 +6379,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(long value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6366,6 +6389,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(float value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6375,6 +6399,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(double value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6384,6 +6409,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(bool value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6393,6 +6419,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor((float, float) value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6402,6 +6429,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(System.Numerics.Complex value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6411,6 +6439,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(byte[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6420,6 +6449,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(sbyte[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6429,6 +6459,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(short[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6438,6 +6469,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(int[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6447,6 +6479,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(long[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6456,6 +6489,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(float[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6465,6 +6499,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(double[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6474,6 +6509,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(bool[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6483,6 +6519,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor((float, float)[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6492,6 +6529,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(System.Numerics.Complex[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6502,6 +6540,7 @@ namespace TorchSharp
             public static implicit operator Tensor(Scalar scalar)
             {
                 _throw();
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return new Tensor(IntPtr.Zero);
             }
 
@@ -7246,6 +7285,7 @@ namespace TorchSharp
             public static implicit operator Tensor(TensorIndex value)
             {
                 _throw();
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return new Tensor(IntPtr.Zero);
             }
 
