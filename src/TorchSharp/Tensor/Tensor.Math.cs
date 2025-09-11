@@ -55,7 +55,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add(Tensor target)
             {
-                return add(target, 1);
+                // FIXME: Consider implement another THSTensor_add variant that takes no alpha?
+                //        at::Tensor::add has default c10::Scalar alpha = 1.
+                using Scalar one_scalar = 1.ToScalar();
+                return add(target, one_scalar);
             }
 
             /// <summary>
@@ -79,7 +82,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add(Scalar scalar)
             {
-                return add(scalar, 1);
+                // FIXME: Consider implement another THSTensor_add_scalar variant that takes no alpha?
+                //        at::Tensor::add has default c10::Scalar alpha = 1.
+                using Scalar one_scalar = 1.ToScalar();
+                return add(scalar, one_scalar);
             }
 
             /// <summary>
@@ -103,7 +109,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add_(Tensor target)
             {
-                return add_(target, 1);
+                // FIXME: Consider implement another THSTensor_add_ variant that takes no alpha?
+                //        at::Tensor::add_ has default c10::Scalar alpha = 1.
+                using Scalar one_scalar = 1.ToScalar();
+                return add_(target, one_scalar);
             }
 
             /// <summary>
@@ -126,7 +135,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add_(Scalar scalar)
             {
-                return add_(scalar, 1);
+                // FIXME: Consider implement another THSTensor_add_scalar_ variant that takes no alpha?
+                //        at::Tensor::add_ has default c10::Scalar alpha = 1.
+                using Scalar one_scalar = 1.ToScalar();
+                return add_(scalar, one_scalar);
             }
 
             /// <summary>
@@ -200,7 +212,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addcdiv(Tensor tensor1, Tensor tensor2)
             {
-                return addcdiv(tensor1, tensor2, 1);
+                // FIXME: Consider implement another THSTensor_addcdiv variant that takes no value?
+                //        at::Tensor::addcdiv has default c10::Scalar value = 1.
+                using Scalar one_scalar = 1.ToScalar();
+                return addcdiv(tensor1, tensor2, one_scalar);
             }
 
             /// <summary>
@@ -225,7 +240,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addcdiv_(Tensor tensor1, Tensor tensor2)
             {
-                return addcdiv_(tensor1, tensor2, 1);
+                // FIXME: Consider implement another THSTensor_addcdiv variant that takes no value?
+                //        at::Tensor::addcdiv has default c10::Scalar value = 1.
+                using Scalar one_scalar = 1.ToScalar();
+                return addcdiv_(tensor1, tensor2, one_scalar);
             }
 
             /// <summary>
