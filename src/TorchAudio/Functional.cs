@@ -197,6 +197,7 @@ namespace TorchSharp
 
                 // And initialize the previous iterate to 0
                 var tprev = torch.tensor(0.0, dtype: specgram.dtype, device: specgram.device);
+                using var eps_scalar = (1e-16).ToScalar();
                 for (int i = 0; i < n_iter; i++) {
                     // Invert with our current estimate of the phases
                     var inverse = torch.istft(
@@ -221,7 +222,7 @@ namespace TorchSharp
                     if (momentum > 0.0) {
                         angles = angles - tprev.mul_(momentum);
                     }
-                    angles = angles.div(angles.abs().add(1e-16));
+                    angles = angles.div(angles.abs().add(eps_scalar));
 
                     // Store the previous iterate
                     tprev = rebuilt;
