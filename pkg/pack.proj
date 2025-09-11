@@ -1,6 +1,6 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
-  <ItemGroup>
+  <ItemGroup Condition="$(CustomLibTorchFullPath)==''">
     <PackProject Include="**\libtorch-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
     <PackProject Include="**\libtorch-cpu-*.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-linux-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />

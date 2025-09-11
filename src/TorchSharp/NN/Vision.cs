@@ -1,5 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Linq;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -165,8 +167,17 @@ namespace TorchSharp
                 public static Tensor grid_sample(Tensor input, Tensor grid, GridSampleMode mode = GridSampleMode.Bilinear, GridSamplePaddingMode padding_mode = GridSamplePaddingMode.Zeros, bool? align_corners = null)
                 {
                     byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
+                    if (AutocastMode.IsAutocastEnabled()) {
+                        var sts = new[] { input.dtype, grid.dtype };
+                        if (sts.All(x => x == ScalarType.Float16))
+                            (input.handle, grid.handle) = AutocastMode.AutoCast(input.handle, grid.handle, ScalarType.Float16);
+                        if (sts.Any(x => x == ScalarType.Float32))
+                            (input.handle, grid.handle) = AutocastMode.AutoCast(input.handle, grid.handle, ScalarType.Float32);
+                    }
+
                     var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)padding_mode, ac);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    
                     return new Tensor(res);
                 }
 

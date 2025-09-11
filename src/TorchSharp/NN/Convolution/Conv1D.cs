@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -12,8 +13,14 @@ namespace TorchSharp
     {
         public sealed class Conv1d : Convolution
         {
-            internal Conv1d(long in_channels, long out_channels, long kernel_size, long stride, long? padding, Padding? padding_type, long dilation, long groups = 1, bool bias = true, PaddingModes padding_mode = PaddingModes.Zeros, torch.Device? device = null, ScalarType? dtype = null)
-                        : base(nameof(Conv1d), in_channels, out_channels, new[] { kernel_size }, new[] { stride }, padding.HasValue ? new[] { padding.Value } : null, padding_type, new[] { dilation }, false, new[] { 0L }, groups, bias, padding_mode, device, dtype) { }
+            internal long _dimension, _in_channel, _out_channel, _kernel,_stride, _padding,_dilation,_groups;
+            internal PaddingModes _paddingModes;
+            internal (long, long)? _kernels, _strides, _paddings, _dilations;
+            internal bool _bias;
+            protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
+            {
+                this.input_channels = input_channels;
+            }
 
             public override Tensor forward(Tensor input)
             {
@@ -54,7 +61,19 @@ namespace TorchSharp
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
             public static Conv1d Conv1d(long in_channels, long out_channels, long kernel_size, long stride = 1, long padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new Conv1d(in_channels, out_channels, kernel_size, stride, padding, null, dilation, groups, bias, padding_mode, device, dtype);
+                var res = THSNN_Conv1d_ctor(in_channels, out_channels, kernelSize, stride, padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Conv1d(res, boxedHandle, in_channels) {
+                    _in_channel = in_channels,
+                    _out_channel = out_channels,
+                    _kernel = kernelSize,
+                    _stride = stride,
+                    _padding = padding,
+                    _dilation = dilation,
+                    _paddingModes = padding_mode,
+                    _groups = groups,
+                    _bias = bias
+                }.MoveModule<Conv1d>(device, dtype);
             }
 
             /// <summary>
@@ -74,7 +93,19 @@ namespace TorchSharp
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
             public static Conv1d Conv1d(long in_channels, long out_channels, long kernel_size, Padding padding, long stride = 1, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new Conv1d(in_channels, out_channels, kernel_size, stride, null, padding, dilation, groups, bias, padding_mode, device, dtype);
+                var res = THSNN_Conv1d_ctor(in_channels, out_channels, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Conv1d(res, boxedHandle, in_channels) {
+                    _in_channel = in_channels,
+                    _out_channel = out_channels,
+                    _kernel = kernelSize,
+                    _stride = stride,
+                    _padding = (long)padding,
+                    _dilation = dilation,
+                    _paddingModes = padding_mode,
+                    _groups = groups,
+                    _bias = bias
+                }.MoveModule<Conv1d>(device, dtype);
             }
 
             public static partial class functional
@@ -109,6 +140,7 @@ namespace TorchSharp
                                     (IntPtr)pdilation, dilationArray.Length,
                                     groups);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            res = AutocastMode.AutoCast(res);
                             return new Tensor(res);
                         }
                     }

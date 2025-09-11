@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -12,9 +13,37 @@ namespace TorchSharp
     {
         public sealed class Conv2d : Convolution
         {
-            internal Conv2d(long in_channels, long out_channels, (long, long) kernel_size, (long, long) stride, (long, long)? padding, Padding? padding_type, (long, long) dilation, long groups = 1, bool bias = true, PaddingModes padding_mode = PaddingModes.Zeros, torch.Device? device = null, ScalarType? dtype = null)
-                        : base(nameof(Conv2d), in_channels, out_channels, new[] { kernel_size.Item1, kernel_size.Item2 }, new[] { stride.Item1, stride.Item2 }, padding.HasValue ? new[] { padding.Value.Item1, padding.Value.Item2 } : null, padding_type, new[] { dilation.Item1, dilation.Item2 }, false, new[] { 0L, 0L }, groups, bias, padding_mode, device, dtype) { }
+            
+            internal Conv2d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
 
+            internal Conv2d(IntPtr handle, IntPtr boxedHandle, long input_channels, long in_channels, long out_channels, long kernelSize, long padding, long stride = 1, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+                : base(handle, boxedHandle, input_channels)
+            {
+                _dimension = 2; //because is conv 2D; 2 dimension
+                _in_channel = in_channels;
+                _out_channel = out_channels;
+                _kernel = kernelSize;
+                _stride = stride;
+                _padding = padding;
+                _dilation = dilation;
+                _paddingModes = padding_mode;
+                _groups = groups;
+                _bias = bias;
+            }
+            internal Conv2d(IntPtr handle, IntPtr boxedHandle, long input_channels, long in_channels, long out_channels, (long, long) kernelSize, Padding padding, (long, long)? stride = null, (long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+                : base(handle, boxedHandle, input_channels)
+            {
+                _dimension = 2; //because is conv 2D; 2 dimension
+                _in_channel = in_channels;
+                _out_channel = out_channels;
+                _kernels = kernelSize;
+                _strides = stride;
+                _padding = (long)padding;
+                _dilations = dilation;
+                _paddingModes = padding_mode;
+                _groups = groups;
+                _bias = bias;
+            }
             public override Tensor forward(Tensor input)
             {
                 if (!ValidateShape(input, 2))
@@ -54,7 +83,21 @@ namespace TorchSharp
             /// <returns></returns>
             public static Conv2d Conv2d(long in_channels, long out_channels, long kernel_size, long stride = 1, long padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new Conv2d(in_channels, out_channels, (kernel_size, kernel_size), (stride, stride), (padding, padding), null, (dilation, dilation), groups, bias, padding_mode, device, dtype);
+                var res = THSNN_Conv2d_ctor(in_channels, out_channels, kernelSize, stride, padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+
+                return new Conv2d(res, boxedHandle, in_channels) {
+                    _in_channel = in_channels,
+                    _out_channel = out_channels,
+                    _kernel = kernelSize,
+                    _stride = stride,
+                    _padding = padding,
+                    _dilation = dilation,
+                    _paddingModes = padding_mode,
+                    _groups = groups,
+                    _bias = bias
+                }.MoveModule<Conv2d>(device, dtype);
+                //return conv2d.MoveModule<Conv2d>(device, dtype);
             }
 
             /// <summary>
@@ -78,7 +121,19 @@ namespace TorchSharp
                 padding ??= (0, 0);
                 dilation ??= (1, 1);
 
-                return new Conv2d(in_channels, out_channels, kernel_size, stride.Value, padding, null, dilation.Value, groups, bias, padding_mode, device, dtype);
+                var res = THSNN_Conv2d_ctor_1(in_channels, out_channels, kernelSize.Item1, kernelSize.Item2, stride.Value.Item1, stride.Value.Item2, padding.Value.Item1, padding.Value.Item2, dilation.Value.Item1, dilation.Value.Item2, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Conv2d(res, boxedHandle, in_channels) {
+                    _in_channel = in_channels,
+                    _out_channel = out_channels,
+                    _kernels = kernelSize,
+                    _strides = stride,
+                    _paddings = padding,
+                    _dilations = dilation,
+                    _paddingModes = padding_mode,
+                    _groups = groups,
+                    _bias = bias
+                }.MoveModule<Conv2d>(device, dtype);
             }
 
             /// <summary>
@@ -98,7 +153,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static Conv2d Conv2d(long in_channels, long out_channels, long kernel_size, Padding padding, long stride = 1, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new Conv2d(in_channels, out_channels, (kernel_size, kernel_size), (stride, stride), null, padding, (dilation, dilation), groups, bias, padding_mode, device, dtype);
+                var res = THSNN_Conv2d_ctor(in_channels, out_channels, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Conv2d(res, boxedHandle, in_channels, in_channels, out_channels, kernelSize, (long)padding, stride, dilation, padding_mode, groups, bias).MoveModule<Conv2d>(device, dtype);
             }
 
             /// <summary>
@@ -121,7 +178,10 @@ namespace TorchSharp
                 stride ??= (1, 1);
                 dilation ??= (1, 1);
 
-                return new Conv2d(in_channels, out_channels, kernel_size, stride.Value, null, padding, dilation.Value, groups, bias, padding_mode, device, dtype);
+                var res = THSNN_Conv2d_ctor_1(in_channels, out_channels, kernelSize.Item1, kernelSize.Item2, stride.Value.Item1, stride.Value.Item2, padding == Padding.Valid ? 0 : -1, 0, dilation.Value.Item1, dilation.Value.Item2, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                
+                return new Conv2d(res, boxedHandle, in_channels, in_channels, out_channels, kernelSize, padding,stride, dilation, padding_mode ,groups,bias).MoveModule<Conv2d>(device, dtype);
             }
 
             public static partial class functional
@@ -156,6 +216,7 @@ namespace TorchSharp
                                     (IntPtr)pdilation, dilation.Length,
                                     groups);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            res = AutocastMode.AutoCast(res);
                             return new Tensor(res);
                         }
                     }

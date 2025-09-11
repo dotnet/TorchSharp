@@ -12,6 +12,8 @@
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
+    <Configurations>Debug;Release;LibTorch2.3.1</Configurations>
+    <NoWarn>$(NoWarn);NU1903;NU1901-NU1904</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +28,8 @@
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="..\TorchSharpTest\TestAutocast.cs" Link="TestAutocast.cs" />
+    <Compile Include="..\TorchSharpTest\TestGradScaler.cs" Link="TestGradScaler.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestJacobian.cs" Link="TestJacobian.cs" />
     <Compile Include="..\TorchSharpTest\TestJIT.cs" Link="TestJIT.cs" />
@@ -144,6 +148,9 @@
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Tensors" Version="7.0.0-rtm.22518.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>

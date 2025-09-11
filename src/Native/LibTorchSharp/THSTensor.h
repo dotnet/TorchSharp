@@ -660,6 +660,7 @@ EXPORT_API(void) THSTensor_index_copy_(const Tensor tensor, const int64_t dim, c
 EXPORT_API(Tensor) THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
 EXPORT_API(void) THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
 
+
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
@@ -669,6 +670,14 @@ EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
     const Tensor* indexTensors,
     const int indicesLength);
 
+EXPORT_API(void) THSTensor_index_put_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value);
+
 EXPORT_API(void) THSTensor_index_put_scalar_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
@@ -677,14 +686,31 @@ EXPORT_API(void) THSTensor_index_put_scalar_(Tensor tensor,
     const int indicesLength,
     const Scalar value);
 
-EXPORT_API(void) THSTensor_index_put_(Tensor tensor,
+/*EXPORT_API(void) THSTensor_index_put_accumulate_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
     const int indicesLength,
     const Tensor value,
-    const bool accumulate = false);
+    bool accumulate);*/
+
+/*EXPORT_API(Tensor) THSTensor_index_put(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value);
+*/
+/*EXPORT_API(Tensor) THSTensor_index_put_accumulate(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value,
+    bool accumulate);*/
 
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index);
 
@@ -1151,6 +1177,8 @@ EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length);
 
+EXPORT_API(void) THSTensor_resize_(const Tensor tensor, const int64_t* shape, const int length);
+
 EXPORT_API(Tensor) THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength);
 
 EXPORT_API(Tensor) THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2);
@@ -1388,6 +1416,10 @@ EXPORT_API(Tensor) THSTensor_to_device(const Tensor tensor, const int device_typ
 EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type, const bool copy, const bool non_blocking);
 
 EXPORT_API(Tensor) THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool copy, const bool non_blocking);
+
+//EXPORT_API(Tensor) THSTensor_device_and_non_blocking(const Tensor tensor, const int device_type, const int device_index, const bool non_blocking);
+
+EXPORT_API(Tensor) THSTensor_to_type_and_device_and_non_blocking(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool non_blocking);
 
 EXPORT_API(void) THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted);
 
@@ -1784,7 +1816,6 @@ EXPORT_API(Tensor) THSTensor_fftshift(const Tensor tensor, const int64_t* dim, c
 
 EXPORT_API(Tensor) THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
 
-
 // Spectral Ops
 
 EXPORT_API(Tensor) THSTensor_bartlett_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
@@ -1795,3 +1826,6 @@ EXPORT_API(Tensor) THSTensor_kaiser_window(const int64_t len, bool periodic, dou
 
 EXPORT_API(Tensor) THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, int64_t onesided, bool return_complex);
 EXPORT_API(Tensor) THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool center, bool normalized, int64_t onesided, int64_t length, bool return_complex);
+
+EXPORT_API(Tensor) THSTensor_coalesce(const Tensor x);
+EXPORT_API(bool) THSTensor_is_coalesce(const Tensor x);

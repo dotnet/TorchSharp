@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using TorchSharp.Modules;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -141,6 +142,25 @@ namespace TorchSharp
                 long gradsLength = grad_outputs == null ? 0 : grads.Array.Length;
 
                 THSAutograd_grad(outsRef, outs.Array.Length, insRef, ins.Array.Length, gradsRef, gradsLength, retain_graph, create_graph, allow_unused, results.CreateArray);
+                CheckForErrors();
+                return results.Array.Select(x => new Tensor(x)).ToList();
+            }
+
+            public static IList<Tensor> grad(IList<Tensor> inputs, IEnumerable<Parameter> outputs, IList<Tensor> grad_outputs = null, bool retain_graph = false, bool create_graph = false, bool allow_unused = false)
+            {
+                using var outs = new PinnedArray<IntPtr>();
+                using var ins = new PinnedArray<IntPtr>();
+                using var grads = new PinnedArray<IntPtr>();
+                using var results = new PinnedArray<IntPtr>();
+
+                IntPtr insRef = outs.CreateArray(outputs.Select(p => p.Handle).ToArray());
+                IntPtr outsRef = ins.CreateArray(inputs.Select(p => p.Handle).ToArray());
+                IntPtr gradsRef = grad_outputs == null ? IntPtr.Zero : grads.CreateArray(grad_outputs.Select(p => p.Handle).ToArray());
+                long gradsLength = grad_outputs == null ? 0 : grads.Array.Length;
+
+                //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13#file-gradscaler_test-hpp-L318
+
+                THSAutograd_grad(outsRef, ins.Array.Length, insRef, outs.Array.Length, gradsRef, gradsLength, retain_graph, create_graph, allow_unused, results.CreateArray);
                 CheckForErrors();
                 return results.Array.Select(x => new Tensor(x)).ToList();
             }

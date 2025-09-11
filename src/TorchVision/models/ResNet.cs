@@ -581,7 +581,7 @@ namespace TorchSharp
 
             private readonly Module<Tensor, Tensor> avgpool;
             private readonly Module<Tensor, Tensor> flatten;
-            private readonly Module<Tensor, Tensor> fc;
+            public readonly Module<Tensor, Tensor> fc;
 
             private readonly Func<int, Module<Tensor, Tensor>> norm_layer;
 
@@ -803,7 +803,7 @@ namespace TorchSharp
                             break;
                         }
                     }
-
+                    
                     if (zero_init_residual) {
                         foreach (var (_, m) in named_modules()) {
 

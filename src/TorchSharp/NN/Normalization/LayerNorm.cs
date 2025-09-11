@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -18,8 +19,8 @@ namespace TorchSharp
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            const string WeightComponentName = nameof(weight);
-            const string BiasComponentName = nameof(bias);
+            internal long[] _normalized_shape;
+            internal double _eps;
 
             internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
@@ -30,9 +31,11 @@ namespace TorchSharp
                 if (elementwise_affine)
                 {
                     weight = Parameter(torch.empty(normalized_shape, dtype, device));
+                    //weight.handle = AutocastMode.AutoCast(weight.handle, ScalarType.Float32); //This is correct???
                     if (bias)
                     {
                         this.bias = Parameter(torch.empty(normalized_shape, dtype, device));
+                        //bias.handle = AutocastMode.AutoCast(bias.handle, ScalarType.Float32); //This is correct???
                     }
                 }
 

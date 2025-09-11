@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -440,6 +441,7 @@ namespace TorchSharp
                     throw new ArgumentException(nameof(tensors));
                 }
                 if (tensors.Count == 1) {
+                    tensors[0] = AutocastMode.AutoCast(tensors[0]);
                     return tensors[0].alias();
                 }
 
@@ -448,6 +450,7 @@ namespace TorchSharp
                     var res = THSLinalg_multi_dot(tensorsRef, parray.Array.Length);
                     if (res == IntPtr.Zero)
                         torch.CheckForErrors();
+                    res = AutocastMode.AutoCast(res);
                     return new Tensor(res);
                 }
             }

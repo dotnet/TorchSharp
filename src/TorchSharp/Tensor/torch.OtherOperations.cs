@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.Amp;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -167,6 +168,7 @@ namespace TorchSharp
             var res = THSTensor_cdist(x1.Handle, x2.Handle, p, (long)compute_mode);
             if (res == IntPtr.Zero)
                 CheckForErrors();
+            res = AutocastMode.AutoCast(res, ScalarType.Float32);
             return new Tensor(res);
         }
 
@@ -228,6 +230,8 @@ namespace TorchSharp
         /// input and other must have the same size, and the size of their dim dimension should be 3.
         /// </summary>
         public static Tensor cross(Tensor input, Scalar other, long dim = 0L) => input.cross(other, dim);
+
+        public static Tensor cross(Tensor input, Tensor other, long dim = 0L) => input.cross(other, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.cummax
         public static (Tensor values, Tensor indices) cummax(Tensor input, long dim) => input.cummax(dim);

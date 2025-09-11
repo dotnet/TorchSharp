@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
@@ -46,8 +48,41 @@ namespace TorchSharp.Utils
         {
             if (_tensor.ndim < 2)
                 return (T[])ToNDArray();
+            long Cnt = Count;
+            if (_tensor.is_contiguous()) {
+                if (Cnt == 0)
+                    throw new Exception("Invalid");
+                unsafe {
+                    return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(Cnt)).ToArray();
+                }
+            }
 
-            var result = new T[Count];
+            /*unsafe {
+                IntPtr arr = IntPtr.Zero;
+                if (typeof(T) == typeof(int)) {
+                    arr = NativeMethods.THSStorage_tensor_to_array_int(_tensor.handle);
+                    int[] tot = new int[Cnt];
+                    Marshal.Copy(arr, tot, 0, (int)Cnt);
+                }
+
+                if (typeof(T) == typeof(long)) {
+
+                }
+                
+                return tot as T[];
+                //var stride = _tensor.stride();
+                //var res = new T[Cnt];
+                //int idx = 0;
+                //T* ptr = (T*)_tensor_data_ptr;
+                //for (int ndim = 0; ndim < _tensor.shape.Length; ndim++) {
+                //    for (int xyz = 0; xyz < _tensor.shape[ndim]; xyz++) {
+                //        res[idx++] = ptr[xyz + stride[ndim]];
+                //    }
+                //}
+                //return res;
+            }*/
+
+            var result = new T[Cnt];
             CopyTo(result);
             return result;
         }
@@ -231,8 +266,35 @@ namespace TorchSharp.Utils
             if (index >= Count) throw new IndexOutOfRangeException();
         }
 
+        private void CopyContiguous(T[] array, int index=0, int count=0)
+        {
+             if (!_tensor.is_contiguous())
+                 throw new Exception("The tensor is not contiguous");
+             var Cnt = Count;
+             if (count > Cnt || count == 0)
+                 count = (int)Cnt;
+             if (array is byte[] ba)
+                 Marshal.Copy(_tensor_data_ptr, ba, index, count);
+             if (array is short[] sa)
+                 Marshal.Copy(_tensor_data_ptr, sa, index, count);
+             if(array is char[] ca)
+                 Marshal.Copy(_tensor_data_ptr, ca, index, count);
+             if (array is long[] la)
+                 Marshal.Copy(_tensor_data_ptr, la, index, count);
+             if (array is float[] fa)
+                 Marshal.Copy(_tensor_data_ptr, fa, index, count);
+             if (array is int[] ia)
+                 Marshal.Copy(_tensor_data_ptr, ia, index, count);
+             if (array is double[] da)
+                 Marshal.Copy(_tensor_data_ptr, da, index, count);
+        }
         public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
+            if (_tensor.is_contiguous()) {
+                CopyContiguous(array, arrayIndex, array.Length);
+                return;
+            }
+
             int idx = arrayIndex;
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
                 if (idx >= array.Length) break;
@@ -243,6 +305,11 @@ namespace TorchSharp.Utils
 
         public void CopyTo(Span<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
+            if (_tensor.is_contiguous()) {
+                ToArray().CopyTo(array);
+                return;
+            }
+
             int idx = arrayIndex;
             foreach (int offset in GetSubsequentIndices(tensorIndex)) {
                 if (idx >= array.Length) break;

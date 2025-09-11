@@ -4,6 +4,9 @@
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
     <LangVersion>9.0</LangVersion>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks);netstandard2.0</TargetFrameworks>
+	<!--<TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>-->
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
   </PropertyGroup>
 
@@ -17,7 +20,11 @@
 
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.4.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
+    <PackageReference Condition="'$(TargetFrameworks)' == ''" Include="SixLabors.ImageSharp" Version="3.1.7" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworks)' != ''">
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.11" />
   </ItemGroup>
 
   <ItemGroup>

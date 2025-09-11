@@ -5155,6 +5155,16 @@ namespace TorchSharp
                 Assert.Equal(x.device_type, z.device_type);
             }
         }
+
+        [Fact]
+        public void TestNormalization()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.randn(3, 6, 4, device: device);
+                var y = torch.nn.functional.normalize(x);
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         #region Embedding, Encoding, Transformer

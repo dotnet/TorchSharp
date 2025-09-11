@@ -322,10 +322,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
+        //internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy);
+        internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool copy, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
+        internal static extern IntPtr THSTensor_to_type_and_device_and_non_blocking(IntPtr handle, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_set_(IntPtr tensor, IntPtr source);
@@ -412,6 +415,16 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_index_put_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value, [MarshalAs(UnmanagedType.U1)] bool accumulate);
 
+        /*
+        //NOTE: The index_put and with accumulate need passing to c10::List<std::optional<torch::Tensor>>()
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_index_put_accumulate_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value, [MarshalAs(UnmanagedType.I1)] bool accumulate);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_index_put(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_index_put_accumulate(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value, [MarshalAs(UnmanagedType.I1)] bool accumulate);*/
+
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
 
@@ -489,6 +502,8 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_resize_(IntPtr tensor, IntPtr shape, int length);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
@@ -2188,6 +2203,11 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_histogram_out_t(IntPtr input, IntPtr bins, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histogram_out_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_coalesce(IntPtr input);
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSTensor_is_coalesce(IntPtr input);
     }
 #pragma warning restore CA2101
 }

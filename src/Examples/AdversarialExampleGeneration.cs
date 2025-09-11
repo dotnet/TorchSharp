@@ -34,6 +34,8 @@ namespace TorchSharp.Examples
     {
 #if NET472_OR_GREATER
         private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "mnist");
+#elif NETSTANDARD2_0
+        private readonly static string _dataLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "mnist");
 #else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "mnist");
 #endif // NET472_OR_GREATER

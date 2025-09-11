@@ -836,6 +836,21 @@ void THSTensor_index_put_(Tensor tensor,
     auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
     CATCH(tensor->index_put_(indices, *value););
 }
+/*void THSTensor_index_put_accumulate_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value,
+    bool accumulate)
+{
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
+    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH(tensor->index_put_({ indices }, *value, accumulate););
+}*/
 
 void THSTensor_index_put_(Tensor tensor,
     const int64_t* indexStarts,
@@ -876,6 +891,37 @@ void THSTensor_index_put_scalar_(Tensor tensor,
     auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
     CATCH(tensor->index_put_(indices, *value););
 }
+
+/*Tensor THSTensor_index_put(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value)
+{
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
+    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH_TENSOR(tensor->index_put(indices, *value););
+}*/
+
+/*Tensor THSTensor_index_put_accumulate(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value,
+    bool accumulate)
+{
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
+    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH_TENSOR(tensor->index_put({ indices }, *value, accumulate););
+}*/
 
 Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
 {
@@ -1260,6 +1306,11 @@ int64_t THSTensor_is_leaf(const Tensor tensor)
 Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length)
 {
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
+}
+
+void THSTensor_resize_(const Tensor tensor, const int64_t* shape, const int length)
+{
+    CATCH(tensor->resize_(at::ArrayRef<int64_t>(shape, length)););
 }
 
 Tensor THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2)
@@ -1892,6 +1943,21 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
     );
 }
 
+/*Tensor THSTensor_device_and_non_blocking(const Tensor tensor, const int device_type, const int device_index, const bool non_blocking)
+{
+    CATCH_RETURN_Tensor(
+        auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+    res = ResultTensor(tensor->to(device, non_blocking, at::ScalarType(scalar_type), false));
+    );
+}*/
+Tensor THSTensor_to_type_and_device_and_non_blocking(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index,const bool non_blocking)
+{
+    CATCH_RETURN_Tensor(
+        auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+        res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type),non_blocking, false));
+    );
+}
+
 Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal, const bool inplace)
 {
     CATCH_TENSOR(inplace ? tensor->triu_(diagonal) : tensor->triu(diagonal));
@@ -2276,5 +2342,18 @@ Tensor THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_
         return ResultTensor(tensor->unflatten(dim, c10::IntArrayRef(sizes, nLength - 1), nvec));
     );
 
+    return nullptr;
+}
+
+bool THSTensor_is_coalesce(Tensor tensor)
+{
+    return tensor->is_coalesced();
+}
+
+Tensor THSTensor_coalesce(Tensor tensor)
+{
+    CATCH(
+        return ResultTensor(tensor->coalesce());
+    );
     return nullptr;
 }
