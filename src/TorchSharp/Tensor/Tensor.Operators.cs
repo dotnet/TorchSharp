@@ -14,44 +14,44 @@ namespace TorchSharp
 
             public static Tensor operator +(Tensor left, int right)
             {
-                using Scalar scalar = right;
-                return left + scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left + right_scalar;
             }
             public static Tensor operator +(Tensor left, long right)
             {
-                using Scalar scalar = right;
-                return left + scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left + right_scalar;
             }
             public static Tensor operator +(Tensor left, float right)
             {
-                using Scalar scalar = right;
-                return left + scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left + right_scalar;
             }
             public static Tensor operator +(Tensor left, double right)
             {
-                using Scalar scalar = right;
-                return left + scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left + right_scalar;
             }
 
             public static Tensor operator +(int left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar + right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar + right;
             }
             public static Tensor operator +(long left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar + right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar + right;
             }
             public static Tensor operator +(float left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar + right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar + right;
             }
             public static Tensor operator +(double left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar + right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar + right;
             }
 
             public static Tensor operator *(Tensor left, Tensor right) => left.mul(right);
@@ -60,44 +60,44 @@ namespace TorchSharp
 
             public static Tensor operator *(Tensor left, int right)
             {
-                using Scalar scalar = right;
-                return left * scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left * right_scalar;
             }
             public static Tensor operator *(Tensor left, long right)
             {
-                using Scalar scalar = right;
-                return left * scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left * right_scalar;
             }
             public static Tensor operator *(Tensor left, float right)
             {
-                using Scalar scalar = right;
-                return left * scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left * right_scalar;
             }
             public static Tensor operator *(Tensor left, double right)
             {
-                using Scalar scalar = right;
-                return left * scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left * right_scalar;
             }
 
             public static Tensor operator *(int left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar * right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar * right;
             }
             public static Tensor operator *(long left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar * right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar * right;
             }
             public static Tensor operator *(float left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar * right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar * right;
             }
             public static Tensor operator *(double left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar * right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar * right;
             }
 
             public static Tensor operator -(Tensor left, Tensor right) => left.sub(right);
@@ -106,44 +106,44 @@ namespace TorchSharp
 
             public static Tensor operator -(Tensor left, int right)
             {
-                using Scalar scalar = right;
-                return left - scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left - right_scalar;
             }
             public static Tensor operator -(Tensor left, long right)
             {
-                using Scalar scalar = right;
-                return left - scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left - right_scalar;
             }
             public static Tensor operator -(Tensor left, float right)
             {
-                using Scalar scalar = right;
-                return left - scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left - right_scalar;
             }
             public static Tensor operator -(Tensor left, double right)
             {
-                using Scalar scalar = right;
-                return left - scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left - right_scalar;
             }
 
             public static Tensor operator -(int left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar - right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar - right;
             }
             public static Tensor operator -(long left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar - right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar - right;
             }
             public static Tensor operator -(float left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar - right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar - right;
             }
             public static Tensor operator -(double left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar - right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar - right;
             }
 
             public static Tensor operator /(Tensor left, Tensor right) => left.div(right);
@@ -152,44 +152,44 @@ namespace TorchSharp
 
             public static Tensor operator /(Tensor left, int right)
             {
-                using Scalar scalar = right;
-                return left / scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left / right_scalar;
             }
             public static Tensor operator /(Tensor left, long right)
             {
-                using Scalar scalar = right;
-                return left / scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left / right_scalar;
             }
             public static Tensor operator /(Tensor left, float right)
             {
-                using Scalar scalar = right;
-                return left / scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left / right_scalar;
             }
             public static Tensor operator /(Tensor left, double right)
             {
-                using Scalar scalar = right;
-                return left / scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left / right_scalar;
             }
 
             public static Tensor operator /(int left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar / right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar / right;
             }
             public static Tensor operator /(long left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar / right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar / right;
             }
             public static Tensor operator /(float left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar / right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar / right;
             }
             public static Tensor operator /(double left, Tensor right)
             {
-                using Scalar scalar = left;
-                return scalar / right;
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar / right;
             }
 
             public static Tensor operator %(Tensor left, Tensor right) => left.remainder(right);
@@ -197,23 +197,23 @@ namespace TorchSharp
 
             public static Tensor operator %(Tensor left, int right)
             {
-                using Scalar scalar = right;
-                return left % scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left % right_scalar;
             }
             public static Tensor operator %(Tensor left, long right)
             {
-                using Scalar scalar = right;
-                return left % scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left % right_scalar;
             }
             public static Tensor operator %(Tensor left, float right)
             {
-                using Scalar scalar = right;
-                return left % scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left % right_scalar;
             }
             public static Tensor operator %(Tensor left, double right)
             {
-                using Scalar scalar = right;
-                return left % scalar;
+                using Scalar right_scalar = right.ToScalar();
+                return left % right_scalar;
             }
 
             public static Tensor operator &(Tensor left, Tensor right) => left.bitwise_and(right);
