@@ -442,7 +442,7 @@ namespace TorchSharp
                 }
                 if (tensors.Count == 1) {
                     tensors[0] = AutocastMode.AutoCast(tensors[0]);
-                    return tensors[0];
+                    return tensors[0].alias();
                 }
 
                 using (var parray = new PinnedArray<IntPtr>()) {

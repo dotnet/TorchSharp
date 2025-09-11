@@ -9,10 +9,11 @@ parameters:
   # push them to the artifacts feed of the Azure CI project
   - name: BuildLibTorchPackages
     type: boolean
-    default: false
+    default: true
   - name: PushPackagesToFeed
     type: boolean
     default: false
+
   # Set which source branch to build libtorch-* packages.
   # The build-libtorch jobs are only run if the source branch is the same as this value.
   # The default is 'main' branch.
@@ -117,7 +118,7 @@ jobs:
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native CUDA binaries
 
@@ -157,7 +158,7 @@ jobs:
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native CUDA binaries
 
@@ -348,9 +349,10 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Windows_Native_Build_For_Packages
+  - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -382,7 +384,7 @@ jobs:
   - script: dotnet restore pkg/pack.proj /p:Configuration=Release
     displayName: Restore package projects
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true /p:TargetOS=windows pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -403,9 +405,10 @@ jobs:
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'), eq('${{ parameters.BuildLibTorchPackages }}', true))
   dependsOn:
   - Linux_Native_Build_For_Packages
+  - Build_libtorch_cuda_win_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -448,7 +451,7 @@ jobs:
   - script: dotnet restore pkg/pack.proj /p:Configuration=Release
     displayName: Restore package projects
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:ApiCompatGenerateSuppressionFile=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true pkg/pack.proj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:ApiCompatGenerateSuppressionFile=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true /p:TargetOS=linux pkg/pack.proj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -482,7 +485,7 @@ jobs:
     inputs:
       command: custom
       custom: tool
-      arguments: install --tool-path . SignClient
+      arguments: install --tool-path . --prerelease sign
     displayName: Install SignTool tool
 
   - download: current
@@ -493,18 +496,22 @@ jobs:
     displayName: Download TorchSharp Packages
     artifact: BuildTorchSharpPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+  - task: PowerShell@2
     displayName: Sign packages
+    inputs:
+      targetType: 'inline'
+      script: |
+        & .\sign code azure-key-vault '**/*.nupkg' `
+          --base-directory "$(Pipeline.Workspace)\BuildTorchSharpPackages" `
+          --file-list "$(Pipeline.Workspace)\config\signedfiles.txt" `
+          --azure-key-vault-url "$(SignVaultURL)" `
+          --publisher-name "TorchSharp" `
+          --description "TorchSharp" `
+          --description-url "https://github.com/dotnet/TorchSharp" `
+          --azure-key-vault-tenant-id "$(SignTenantId)" `
+          --azure-key-vault-client-id "$(SignClientId)" `
+          --azure-key-vault-client-secret "$(SignClientSecret)" `
+          --azure-key-vault-certificate "$(SignCertFriendlyName)"
 
   - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
     displayName: Publish Signed TorchSharp Packages
@@ -531,7 +538,7 @@ jobs:
     inputs:
       command: custom
       custom: tool
-      arguments: install --tool-path . SignClient
+      arguments: install --tool-path . --prerelease sign
     displayName: Install SignTool tool
 
   - download: current
@@ -542,18 +549,22 @@ jobs:
     displayName: Download Windows CUDA Packages
     artifact: BuildWinCUDAPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+  - task: PowerShell@2
     displayName: Sign packages
+    inputs:
+      targetType: 'inline'
+      script: |
+        & .\sign code azure-key-vault '**/*.nupkg' `
+          --base-directory "$(Pipeline.Workspace)\BuildWinCUDAPackages" `
+          --file-list "$(Pipeline.Workspace)\config\signedfiles.txt" `
+          --azure-key-vault-url "$(SignVaultURL)" `
+          --publisher-name "TorchSharp" `
+          --description "TorchSharp" `
+          --description-url "https://github.com/dotnet/TorchSharp" `
+          --azure-key-vault-tenant-id "$(SignTenantId)"  `
+          --azure-key-vault-client-id "$(SignClientId)" `
+          --azure-key-vault-client-secret "$(SignClientSecret)" `
+          --azure-key-vault-certificate "$(SignCertFriendlyName)"
 
   - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
     displayName: Publish Signed Windows CUDA Packages
@@ -567,18 +578,22 @@ jobs:
     displayName: Download Linux CUDA Packages
     artifact: BuildLinuxCUDAPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
-    displayName: Sign packages
+  - task: PowerShell@2
+    displayName: Sign packages with Sign CLI
+    inputs:
+      targetType: 'inline'
+      script: |
+        & .\sign code azure-key-vault '**/*.nupkg' `
+          --base-directory "$(Pipeline.Workspace)\BuildLinuxCUDAPackages" `
+          --file-list "$(Pipeline.Workspace)\config\signedfiles.txt" `
+          --azure-key-vault-url "$(SignVaultURL)" `
+          --publisher-name "TorchSharp" `
+          --description "TorchSharp" `
+          --description-url "https://github.com/dotnet/TorchSharp" `
+          --azure-key-vault-tenant-id "$(SignTenantId)" `
+          --azure-key-vault-client-id "$(SignClientId)" `
+          --azure-key-vault-client-secret "$(SignClientSecret)" `
+          --azure-key-vault-certificate "$(SignCertFriendlyName)"
 
   - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
     displayName: Publish Signed Linux CUDA Packages

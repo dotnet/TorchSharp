@@ -16,6 +16,34 @@ namespace TorchSharp
     public class TestTraining
     {
 
+        // <summary>
+        /// Check if sequential module goes from training to eval mode
+        // </summary>
+        [Fact]
+        public void TestTrainingEvalModes()
+        {
+            var sequential = Sequential(
+                ("lin1", Linear(100, 10)),
+                ("lin2", Linear(10, 5))
+            );
+            sequential.eval();
+            // The entire sequential module and its layers should be in evaluation mode, not in training
+            var firstLayer = (torch.nn.Module)sequential[0];
+            Assert.False(firstLayer.training);
+
+            var secondLayer = (torch.nn.Module)sequential[1];
+            Assert.False(secondLayer.training);
+
+            Assert.False(sequential.training);
+
+            sequential.train();
+            // The entire sequential module and its layers should be in training mode, not in evaluation
+            Assert.True(firstLayer.training);
+            Assert.True(secondLayer.training);
+            Assert.True(sequential.training);
+        }
+
+
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using gradient descent.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
@@ -1626,7 +1654,7 @@ namespace TorchSharp
             var scheduler2 = torch.optim.lr_scheduler.StepLR(optimizer, 2);
             var scheduler3 = torch.optim.lr_scheduler.MultiStepLR(optimizer, new[] { 2, 4 });
             var scheduler4 = torch.optim.lr_scheduler.ExponentialLR(optimizer);
-            var scheduler5 = torch.optim.lr_scheduler.PolynomialLR(optimizer, power: 2);
+            var scheduler5 = torch.optim.lr_scheduler.PolynomialLR(optimizer, power: 2.0);
             var scheduler6 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 5, 0.1);
             var scheduler7 = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75);
             var scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, new[] { scheduler0, scheduler1, scheduler2, scheduler3, scheduler4, scheduler5, scheduler6, scheduler7}, new[] { 5, 5, 5, 5, 5, 5, 5 });

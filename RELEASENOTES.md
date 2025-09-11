@@ -1,6 +1,25 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+# NuGet Version 0.105.2
+
+This release upgrades the libtorch backend to v2.7.1, using CUDA 12.8.
+
+# NuGet Version 0.105.1
+
+__Bug Fixes__:
+
+#1426 Sequential.eval() does not put model into eval mode<br/>
+`torch.optim.lr_scheduler.LinearLR` `end_factor` default has been corrected, is now 1.0.<br/>
+Update package version of SixLabors.ImageSharp to avoid security vulnerability<br/>
+Updated dll dependencies loading to avoid using hardcoded version strings<br/>
+
+__API Changes__:
+
+#1374 Add accumulate to index_put_<br/>
+`torch.optim.lr_scheduler.PolynomialLR` `power` type has been corrected, is now double.<br/>
+Returning an input tensor has been corrected, is now `alias()`.<br/>
+Add `torchvision.transforms.Resize` `interpolation` and `antialias`.<br />
 
 # NuGet Version 0.105.0
 

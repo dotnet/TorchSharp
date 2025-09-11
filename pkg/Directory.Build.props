@@ -21,13 +21,15 @@
 
   <!-- libtorch aux parts -->
   <PropertyGroup Condition="'$(_IsAuxPackage)' == 'true'">
-    <Authors>(see main package)</Authors>
-    <PackageTags></PackageTags>
-    <Copyright>(see main package)</Copyright>
-    <Owners>The .NET Foundation and Contributors</Owners>
+    <Owners>.NET Foundation and Contributors</Owners>
+    <Authors>PyTorch contributors;TorchSharp contributors</Authors>
+    <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageDescription>(see main package)</PackageDescription>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/dotnet/TorchSharp</PackageProjectUrl>
+    <Copyright>Copyright PyTorch contributors</Copyright>
+    <TargetFramework Condition="'$(SkipSettingTargetFrameworkInGlobalProps)' != 'true'">netstandard2.0</TargetFramework>
+    <PackageDescription>This package contains fragmented components for the TorchSharp LibTorch redistribution.</PackageDescription>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <!-- TorchSharp, TorchSharp=cpu, TorchSharp-cuda-linux, TorchSharp-cuda=windows -->

@@ -109,6 +109,8 @@ void ApplyInterpolateMode(T& opts, const int8_t mode)
         opts = opts.mode(torch::kTrilinear);
     if (mode == 5)
         opts = opts.mode(torch::kArea);
+    if (mode == 6)
+        opts = opts.mode(torch::kNearestExact);
 }
 
 template<typename T>
@@ -176,13 +178,14 @@ Tensor THSNN_affine_grid(const Tensor theta, const int64_t* size, const int size
 }
 
 
-EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, NNAnyModule* outAsAnyModule)
+EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, const bool antialias, NNAnyModule* outAsAnyModule)
 {
     auto opts = torch::nn::functional::InterpolateFuncOptions().recompute_scale_factor(recompute_scale_factor);
     // align_corners -- 0=None, 1=true, 2=false
     if (align_corners != 0)
         opts.align_corners(align_corners == 1);
     ApplyInterpolateMode(opts, mode);
+    opts.antialias(antialias);
 
     if (size_len > 0) {
         std::vector<int64_t> sizes;

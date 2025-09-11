@@ -873,7 +873,7 @@ namespace TorchSharp
 
                 double learning_rate = 0.1;
                 var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
-                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 1);
+                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 1.0);
 
                 optimizer.zero_grad();
                 optimizer.step();
@@ -907,7 +907,7 @@ namespace TorchSharp
 
                 double learning_rate = 0.1;
                 var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
-                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 2);
+                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 2.0);
 
                 optimizer.zero_grad();
                 optimizer.step();

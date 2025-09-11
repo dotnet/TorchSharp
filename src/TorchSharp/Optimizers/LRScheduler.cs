@@ -325,7 +325,7 @@ namespace TorchSharp
                         /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
                         /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
                         /// <returns>A scheduler</returns>
-                        public PolynomialLR(Optimizer optimizer, int total_iters = 5, int power = 1, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        public PolynomialLR(Optimizer optimizer, int total_iters = 5, double power = 1.0, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
                         {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
                             _power = power;
@@ -359,7 +359,7 @@ namespace TorchSharp
                         }
 
                         private double _total_iters;
-                        private int _power;
+                        private double _power;
                     }
 
                     /// <summary>
@@ -1306,7 +1306,7 @@ namespace TorchSharp
                 /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
                 /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
                 /// <returns>A scheduler</returns>
-                public static LRScheduler PolynomialLR(Optimizer optimizer, int total_iters = 5, int power = 1, int last_epoch = -1, bool verbose = false)
+                public static LRScheduler PolynomialLR(Optimizer optimizer, int total_iters = 5, double power = 1, int last_epoch = -1, bool verbose = false)
                 {
                     return new impl.PolynomialLR(optimizer, total_iters, power, last_epoch, verbose);
                 }
@@ -1398,7 +1398,7 @@ namespace TorchSharp
                 /// </param>
                 /// <param name="verbose">If true, prints a message to stdout for each update. Default: false.</param>
                 /// <returns>A scheduler</returns>
-                public static LRScheduler LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 5, int total_iters = 5, int last_epoch = -1, bool verbose = false)
+                public static LRScheduler LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 1.0, int total_iters = 5, int last_epoch = -1, bool verbose = false)
                 {
                     return new impl.LinearLR(optimizer, start_factor, end_factor, total_iters, last_epoch, verbose);
                 }
