@@ -529,6 +529,8 @@ namespace TorchSharp
                 if (lowpass_filter_width <= 0) {
                     throw new ArgumentOutOfRangeException();
                 }
+                using var min_scalar = (-lowpass_filter_width).ToScalar();
+                using var max_scalar = lowpass_filter_width.ToScalar();
 
                 var kernels_list = new List<torch.Tensor>();
                 double base_freq = Math.Min(orig_freq, new_freq);
@@ -536,11 +538,14 @@ namespace TorchSharp
 
                 var width = (int)Math.Ceiling(((double)lowpass_filter_width) * orig_freq / base_freq);
                 var idx_dtype = dtype ?? torch.float64;
-                var idx = torch.arange(-width, width + orig_freq, device: device, dtype: idx_dtype);
+                using var start_scalar = (-width).ToScalar();
+                using var stop_scalar = (width + orig_freq).ToScalar();
+                var idx = torch.arange(start_scalar, stop_scalar, device: device, dtype: idx_dtype);
 
+                using var zero_scalar = 0.ToScalar();
                 for (int i = 0; i < new_freq; i++) {
                     var t = (-i / new_freq + idx / orig_freq) * base_freq;
-                    t = t.clamp_(-lowpass_filter_width, lowpass_filter_width);
+                    t = t.clamp_(min_scalar, max_scalar);
 
                     torch.Tensor window;
                     if (resampling_method == ResamplingMethod.sinc_interpolation) {
@@ -555,13 +560,14 @@ namespace TorchSharp
                     }
                     t *= Math.PI;
                     // Tensor.to(Tensor) of TorchSharp desn't change dtype.
-                    var kernel = torch.where(t == 0, torch.tensor(1.0).to(t).type_as(t), torch.sin(t) / t);
+                    var kernel = torch.where(t == zero_scalar, torch.tensor(1.0).to(t).type_as(t), torch.sin(t) / t);
                     kernel.mul_(window);
                     kernels_list.Add(kernel);
                 }
 
                 var scale = ((double)base_freq) / orig_freq;
-                var kernels = torch.stack(kernels_list.ToArray()).view(new_freq, 1, -1).mul_(scale);
+                using var scale_scalar = scale.ToScalar();
+                var kernels = torch.stack(kernels_list.ToArray()).view(new_freq, 1, -1).mul_(scale_scalar);
                 if (dtype == null) {
                     kernels = kernels.to(torch.float32);
                 }
