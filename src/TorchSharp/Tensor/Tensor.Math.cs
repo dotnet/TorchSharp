@@ -1561,12 +1561,6 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Computes the element-wise square
-            /// </summary>
-            /// <returns></returns>
-            public Tensor square() => pow(2);
-
-            /// <summary>
             /// Computes the element-wise square root
             /// </summary>
             /// <returns></returns>
@@ -1584,6 +1578,28 @@ namespace TorchSharp
             public Tensor sqrt_()
             {
                 THSTensor_sqrt_(Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            /// <summary>
+            /// Computes the element-wise square
+            /// </summary>
+            /// <returns></returns>
+            public Tensor square()
+            {
+                var res = THSTensor_square(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the element-wise square, in place
+            /// </summary>
+            /// <returns></returns>
+            public Tensor square_()
+            {
+                THSTensor_square_(Handle);
                 CheckForErrors();
                 return this;
             }

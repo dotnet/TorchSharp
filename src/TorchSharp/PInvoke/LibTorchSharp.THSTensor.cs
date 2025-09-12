@@ -1918,6 +1918,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_sqrt(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_square(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_float_power(IntPtr tensor, IntPtr trg);
 
         [DllImport("LibTorchSharp")]
@@ -1997,6 +2000,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_sqrt_(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_square_(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_sign(IntPtr tensor);
