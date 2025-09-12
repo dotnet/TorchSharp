@@ -344,7 +344,9 @@ namespace TorchSharp
                         }
 
                         var eps = 1e-3;
-                        using var result = image.mul(output_max + 1.0 - eps);
+                        var factor = output_max + 1.0 - eps;
+                        using var factor_scalar = factor.ToScalar();
+                        using var result = image.mul(factor_scalar);
                         return result.to_type(dtype);
 
                     } else {
@@ -359,7 +361,8 @@ namespace TorchSharp
 
                         if (input_max > output_max) {
                             var factor = (input_max + 1) / (output_max + 1);
-                            using var t0 = torch.div(image, factor);
+                            using var factor_scalar = factor.ToScalar();
+                            using var t0 = torch.div(image, factor_scalar);
                             return t0.to_type(dtype);
                         } else {
                             var factor = (output_max + 1) / (input_max + 1);
