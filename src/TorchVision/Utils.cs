@@ -217,7 +217,11 @@ namespace TorchSharp
                 using var _ = torch.NewDisposeScope();
                 var grid = make_grid(tensor, nrow, padding, normalize, value_range, scale_each, pad_value);
                 // Add 0.5 after unnormalizing to [0, 255] to round to nearest integer
-                var narr = grid.mul(255).add_(0.5).clamp_(0, 255).to(uint8, CPU);
+                // FIXME: Why not torch.Tensor.round_?
+                using var uint8_min_scalar = 0.ToScalar(); // FIXME: No torch.min_int_value?
+                using var uint8_max_scalar = torch.max_int_value(uint8).ToScalar();
+                using var eps_scalar = 0.5.ToScalar();
+                var narr = grid.mul(uint8_max_scalar).add_(eps_scalar).clamp_(uint8_min_scalar, uint8_max_scalar).to(uint8, CPU);
                 (imager ?? DefaultImager).EncodeImage(narr, format, filestream);
             }
         }
