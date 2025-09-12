@@ -930,7 +930,7 @@ namespace TorchSharp
                     using var x = torch.linspace(-ksize_half, ksize_half, size);
                     using var t0 = x / sigma;
                     using var t1 = -t0;
-                    using var t2 = t1.pow(2);
+                    using var t2 = t1.square();
 
                     using var pdf = t2 * 0.5f;
                     using var sum = pdf.sum();

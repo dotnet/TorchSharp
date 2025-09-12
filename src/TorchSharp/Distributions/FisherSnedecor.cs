@@ -32,7 +32,7 @@ namespace TorchSharp
                     using var _ = torch.NewDisposeScope();
                     var df2 = this.df2.clone();
                     df2[df2 <= 4] = torch.tensor(float.NaN);
-                    return (2 * df2.pow(2) * (this.df1 + df2 - 2) / (this.df1 * (df2 - 2).pow(2) * (df2 - 4))).MoveToOuterDisposeScope();
+                    return (2 * df2.square() * (this.df1 + df2 - 2) / (this.df1 * (df2 - 2).square() * (df2 - 4))).MoveToOuterDisposeScope();
                 }
             }
 

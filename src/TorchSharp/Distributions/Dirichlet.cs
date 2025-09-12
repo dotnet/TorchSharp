@@ -40,7 +40,7 @@ namespace TorchSharp
                 get {
                     using var _ = NewDisposeScope();
                     var con0 = concentration.sum(-1, true);
-                    return (concentration * (con0 - concentration) / (con0.pow(2) * (con0 + 1))).MoveToOuterDisposeScope();
+                    return (concentration * (con0 - concentration) / (con0.square() * (con0 + 1))).MoveToOuterDisposeScope();
                 }
             }
 

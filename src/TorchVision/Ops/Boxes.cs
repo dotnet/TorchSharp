@@ -192,14 +192,14 @@ namespace TorchSharp
                 var lti = torch.min(boxes1[colon, None, (null, 2)], boxes2[colon, (null, 2)]);
                 var rbi = torch.max(boxes1[colon, None, (2, null)], boxes2[colon, (2, null)]);
                 var whi = _upcast(rbi - lti).clamp(min: 0);  // [N,M,2];
-                var diagonal_distance_squared = whi[colon, colon, 0].pow(2) + whi[colon, colon, 1].pow(2) + eps;
+                var diagonal_distance_squared = whi[colon, colon, 0].square() + whi[colon, colon, 1].square() + eps;
                 // centers of boxes
                 var x_p = (boxes1[colon, 0] + boxes1[colon, 2]) / 2;
                 var y_p = (boxes1[colon, 1] + boxes1[colon, 3]) / 2;
                 var x_g = (boxes2[colon, 0] + boxes2[colon, 2]) / 2;
                 var y_g = (boxes2[colon, 1] + boxes2[colon, 3]) / 2;
                 // The distance between boxes' centers squared.
-                var centers_distance_squared = _upcast((x_p[colon, None] - x_g[None, colon])).pow(2) + _upcast((y_p[colon, None] - y_g[None, colon])).pow(2);
+                var centers_distance_squared = _upcast((x_p[colon, None] - x_g[None, colon])).square() + _upcast((y_p[colon, None] - y_g[None, colon])).square();
                 // The distance IoU is the IoU penalized by a normalized
                 // distance between boxes' centers squared.
                 return iou - (centers_distance_squared / diagonal_distance_squared);

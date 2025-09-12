@@ -36,7 +36,7 @@ namespace TorchSharp
                 get {
                     using var _ = torch.NewDisposeScope();
                     var a = alpha.clamp(min: 2);
-                    return (scale.pow(2) * a / ((a - 1).pow(2) * (a - 2))).MoveToOuterDisposeScope();
+                    return (scale.square() * a / ((a - 1).square() * (a - 2))).MoveToOuterDisposeScope();
                 }
             }
 

@@ -24,7 +24,7 @@ namespace TorchSharp
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => WrappedTensorDisposeScope(() => concentration / rate.pow(2));
+            public override Tensor variance => WrappedTensorDisposeScope(() => concentration / rate.square());
 
             /// <summary>
             /// Constructor
