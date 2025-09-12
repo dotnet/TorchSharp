@@ -73,14 +73,15 @@ namespace TorchSharp
                     spec_f = spec_f.reshape(spec_shape);
 
                     if (normalized) {
-                        spec_f /= window.pow(2.0).sum().sqrt();
+                        spec_f /= window.square().sum().sqrt();
                     }
 
                     if (power.HasValue) {
                         if (power.Value == 1.0) {
                             spec_f = spec_f.abs();
                         } else {
-                            spec_f = spec_f.abs().pow(power.Value);
+                            using var power_scalar = power.Value.ToScalar();
+                            spec_f = spec_f.abs().pow(power_scalar); // FIXME: Call torch.Tensor.square if power.Value == 2.0?
                         }
                     }
 
