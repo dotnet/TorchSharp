@@ -206,7 +206,7 @@ Scalar THSTorch_int32_to_scalar(int value)
 
 Scalar THSTorch_int64_to_scalar(long value)
 {
-    return new torch::Scalar(int64_t(value));
+    return new torch::Scalar(static_cast<int64_t>(value));
 }
 
 Scalar THSTorch_float32_to_scalar(float value)
@@ -221,12 +221,12 @@ Scalar THSTorch_float64_to_scalar(double value)
 
 Scalar THSTorch_float16_to_scalar(float value)
 {
-    return new torch::Scalar((c10::Half)value);
+    return new torch::Scalar(static_cast<c10::Half>(value));
 }
 
 Scalar THSTorch_bfloat16_to_scalar(float value)
 {
-    return new torch::Scalar((c10::BFloat16)value);
+    return new torch::Scalar(static_cast<c10::BFloat16>(value));
 }
 
 Scalar THSTorch_bool_to_scalar(bool value)
@@ -282,6 +282,12 @@ double THSTorch_scalar_to_float64(Scalar value)
 void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
 {
     *res = value->toHalf().x;
+}
+
+
+void THSTorch_scalar_to_bfloat16(Scalar value, c10::BFloat16* res)
+{
+    *res = value->toBFloat16();
 }
 
 void THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length))

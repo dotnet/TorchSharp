@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "TorchSharp.sln",
+    "projects": [
+      "bin\\obj\\x64.Debug\\Native\\LibTorchSharp\\LibTorchSharp.vcxproj",
+      "pkg\\FileRestitcher\\FileRestitcher.Tests\\FileRestitcher.Tests.csproj",
+      "pkg\\FileRestitcher\\FileRestitcher\\FileRestitcher.csproj",
+      "src\\TorchAudio\\TorchAudio.csproj",
+      "src\\TorchSharp\\TorchSharp.csproj",
+      "src\\TorchVision\\TorchVision.csproj"
+    ]
+  }
+}

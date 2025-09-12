@@ -408,15 +408,15 @@ namespace TorchSharp
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.BFloat16:
-                    if(dotnetType != typeof(Half))
+                    if(dotnetType != typeof(BFloat16))
                         throw new ArgumentException($"No support for {dtype.ToString()} in TorchSharp");
                     break;
                 case ScalarType.Float16:
-#if NET6_0_OR_GREATER
+//#if NET6_0_OR_GREATER
                     if (dotnetType != typeof(Half))
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
-#endif
+//#endif
                 case ScalarType.Float32:
                     if (dotnetType != typeof(float))
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
@@ -6769,6 +6769,10 @@ namespace TorchSharp
                     if (top) sb.Append("long ");
                     appendChar = "L";
                     break;
+                case ScalarType.BFloat16:
+                    if (top) sb.Append("bfloat16 ");
+                    appendChar = "bf";
+                    break;
                 case ScalarType.Float32:
                     if (top) sb.Append("float ");
                     appendChar = "f";
@@ -6776,6 +6780,7 @@ namespace TorchSharp
                 case ScalarType.Float64:
                     if (top) sb.Append("double ");
                     break;
+                
                 case ScalarType.ComplexFloat32:
                     if (top) sb.Append("complex32 ");
                     break;
@@ -7057,7 +7062,10 @@ namespace TorchSharp
                     builder.Append(value.ToBoolean().ToString(cultureInfo));
                     break;
                 case ScalarType.Float16:
-                    builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));
+                    builder.Append(value.ToHalf().ToString(fltFormat, cultureInfo));
+                    break;
+                case ScalarType.BFloat16:
+                    builder.Append(value.ToBFloat16().ToFloat().ToString(fltFormat, cultureInfo));
                     break;
                 case ScalarType.Float32:
                     builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));
