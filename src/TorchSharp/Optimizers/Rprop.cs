@@ -138,9 +138,17 @@ namespace TorchSharp
                     var maximize = options.maximize.Value;
                     var etaminus = options.etaminus.Value;
                     var etaplus = options.etaplus.Value;
-                    var min_step = options.min_step.Value;
-                    var max_step = options.max_step.Value;
-                    var lr = options.LearningRate.Value;
+                    using var etaminus_scalar = etaminus.ToScalar();
+                    using var etaplus_scalar = etaplus.ToScalar();
+                    using var etaminus_tensor = torch.tensor(etaminus);
+                    using var etaplus_tensor = torch.tensor(etaplus);
+                    using var min_step_scalar = options.min_step.Value.ToScalar();
+                    using var max_step_scalar = options.max_step.Value.ToScalar();
+                    var lr = options.LearningRate.Value; // FIXME: Unused?
+                    using var zero_scalar = 0.ToScalar();
+                    using var one_scalar = 1.ToScalar();
+                    using var negative_one_scalar = (-1).ToScalar();
+                    using var one_tensor = torch.tensor(1);
 
                     foreach (var param in group.Parameters) {
 
@@ -156,18 +164,18 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        var sign = grad.mul(state.prev).sign();
-                        sign[sign.gt(0)] = (Tensor)etaplus;
-                        sign[sign.lt(0)] = (Tensor)etaminus;
-                        sign[sign.eq(0)] = (Tensor)1;
+                        var sign = grad.mul(state.prev).sign(); // FIXME: Use torch.Tensor.sign_?
+                        sign[sign.gt(zero_scalar)] = etaplus_tensor;
+                        sign[sign.lt(zero_scalar)] = etaminus_tensor;
+                        sign[sign.eq(zero_scalar)] = one_tensor;
 
-                        state.step_size.mul_(sign).clamp_(min_step, max_step);
+                        state.step_size.mul_(sign).clamp_(min_step_scalar, max_step_scalar);
 
                         grad = grad.clone();
 
-                        grad.index_put_(0, sign.eq(etaminus));
+                        grad.index_put_(zero_scalar, sign.eq(etaminus_scalar));
 
-                        param.addcmul_(grad.sign(), state.step_size, -1);
+                        param.addcmul_(grad.sign(), state.step_size, negative_one_scalar);
 
                         state.prev.copy_(grad);
                     }
