@@ -180,20 +180,20 @@ namespace TorchSharp
                     throw new ArgumentOutOfRangeException($"momentum must be in range [0, 1). Found: {momentum}");
                 }
                 momentum = momentum / (1 + momentum);
+                var need_momentum = momentum > 0.0;
+                using var momentum_scalar = (need_momentum) ? momentum.ToScalar() : null;
 
                 // pack batch
                 var shape = specgram.size();
                 specgram = specgram.reshape(new long[] { -1, shape[shape.Length - 2], shape[shape.Length - 1] });
 
-                specgram = specgram.pow(1 / power);
+                using var exponent_scalar = (1 / power).ToScalar();
+                specgram = specgram.pow(exponent_scalar); // FIXME: Use inplace ops? Skip if power == 1?
 
                 // initialize the phase
-                Tensor angles;
-                if (rand_init) {
-                    angles = torch.rand(specgram.size(), dtype: _get_complex_dtype(specgram.dtype), device: specgram.device);
-                } else {
-                    angles = torch.full(specgram.size(), 1, dtype: _get_complex_dtype(specgram.dtype), device: specgram.device);
-                }
+                var angles = (rand_init)
+                    ? torch.rand(specgram.size(), dtype: _get_complex_dtype(specgram.dtype), device: specgram.device)
+                    : torch.ones(specgram.size(), dtype: _get_complex_dtype(specgram.dtype), device: specgram.device);
 
                 // And initialize the previous iterate to 0
                 var tprev = torch.tensor(0.0, dtype: specgram.dtype, device: specgram.device);
@@ -219,8 +219,8 @@ namespace TorchSharp
 
                     // Update our phase estimates
                     angles = rebuilt;
-                    if (momentum > 0.0) {
-                        angles = angles - tprev.mul_(momentum);
+                    if (need_momentum) {
+                        angles = angles - tprev.mul_(momentum_scalar!); // FIXME: Use inplace ops?
                     }
                     angles = angles.div(angles.abs().add(eps_scalar));
 
