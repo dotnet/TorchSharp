@@ -87,8 +87,11 @@ namespace TorchSharp
                     tensor = tensor.clone();  // avoid modifying tensor in-place
                     void norm_ip(Tensor img, double low, double high)
                     {
-                        img.clamp_(min: low, max: high);
-                        img.sub_(low).div_(Math.Max(high - low, 1e-5));
+                        using var low_scalar = low.ToScalar();
+                        using var high_scalar = high.ToScalar();
+                        using var denom_scalar = Math.Max(high - low, 1e-5).ToScalar();
+                        img.clamp_(min: low_scalar, max: high_scalar);
+                        img.sub_(low_scalar).div_(denom_scalar);
                     }
 
                     void norm_range(Tensor t, (double low, double high)? range)
@@ -129,7 +132,8 @@ namespace TorchSharp
                 var height = tensor.size(2) + padding;
                 var num_channels = tensor.size(1);
 
-                var grid = tensor.new_full(new[] { num_channels, height * ymaps + padding, width * xmaps + padding }, pad_value);
+                using var pad_value_scalar = pad_value.ToScalar();
+                var grid = tensor.new_full(new[] { num_channels, height * ymaps + padding, width * xmaps + padding }, pad_value_scalar);
                 var k = 0L;
                 for (long y = 0; y < ymaps; ++y)
                 {
