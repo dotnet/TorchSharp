@@ -113,7 +113,7 @@ namespace TorchSharp
                 using (var d = torch.NewDisposeScope()) {
 
                     if (normalized) {
-                        spectrogram = spectrogram * window.pow(2.0).sum().sqrt();
+                        spectrogram = spectrogram * window.square().sum().sqrt();
                     }
 
                     // pack batch
