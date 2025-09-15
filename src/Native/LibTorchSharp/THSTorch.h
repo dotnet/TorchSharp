@@ -8,6 +8,7 @@
 //#include <ATen/impl.h>
 // API.
 
+EXPORT_API(const char*) THSTorch_libtorch_version();
 // Sets manually the seed.
 EXPORT_API(void)      THSTorch_manual_seed(const int64_t seed);
 EXPORT_API(void) THSCuda_manual_seed(const int64_t seed);

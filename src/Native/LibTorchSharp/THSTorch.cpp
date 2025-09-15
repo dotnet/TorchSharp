@@ -4,6 +4,11 @@
 #include "torch/torch.h"
 #include "torch/cuda.h"
 
+const char* THSTorch_libtorch_version()
+{
+    return TORCH_VERSION;
+}
+
 void THSTorch_manual_seed(const int64_t seed)
 {
     torch::manual_seed(seed);

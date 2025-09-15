@@ -234,7 +234,8 @@ namespace TorchSharp
         public static Scalar ToScalar(this Half value)
         {
             torch.InitializeDeviceType(DeviceType.CPU);
-            return new Scalar(THSTorch_float16_to_scalar(value));
+            
+            return new Scalar(THSTorch_float16_to_scalar((float)value));
         }
         /// <summary>
         /// Explcitly construct a Scalar
@@ -285,7 +286,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_bool_to_scalar(value));
         }
 
-#if NET6_0_OR_GREATER
+/*#if NET6_0_OR_GREATER
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -305,7 +306,7 @@ namespace TorchSharp
         {
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_bfloat16_to_scalar(value));
-        }
+        }*/
         public static BFloat16 ToBFloat16(this float value)
         {
             return new BFloat16(value);

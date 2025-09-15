@@ -198,6 +198,7 @@ namespace TorchSharp
                         (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float16);
                     if (sts.Any(x => x == ScalarType.Float32))
                         (handle, tensor1.handle, tensor2.handle) = AutocastMode.AutoCast(handle, tensor1.handle, tensor2.handle, ScalarType.Float32);
+                    //TODO: Should check Bfloat16?
                 }
                 var res = THSTensor_addcdiv(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
                 if (res == IntPtr.Zero)
