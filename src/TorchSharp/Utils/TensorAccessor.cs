@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -43,6 +44,11 @@ namespace TorchSharp.Utils
 
         public bool IsReadOnly => false;
 
+        /// <summary>
+        /// Be carefully using this because the max array that NET is allowed to handle is 2Gb 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public T[] ToArray()
         {
             if (_tensor.ndim < 2)
@@ -78,6 +84,50 @@ namespace TorchSharp.Utils
             var res = new T[count];
             SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? from_index + (Cnt - count) : Cnt, from_index);
             return res;
+        }
+        private long numel(long[] dims)
+        {
+            if (dims.Length == 0)
+                return 0;
+            long res = 1;
+            foreach (var d in dims)
+                res *= d;
+            return res;
+        }
+
+        /// <summary>
+        /// This is ref of raw data ptr tensor is very fast
+        /// Be carefully the max length of Span is 2^(32-1)
+        /// Can call this method if shape dimensions is greather or equal than 2
+        /// </summary>
+        /// <param name="batch_idx"></param>
+        /// <returns></returns>
+        public Span<T> ToSpan(int batch_idx)
+        {
+            unsafe {
+                var sh = _tensor.shape;
+                if (sh.Length <= 1)
+                    return null;
+                void* p = _tensor.GetRawData();
+                sh = sh.Skip(1).ToArray();
+
+                long len = numel(sh);
+                int ilen = Convert.ToInt32(len);
+                if(batch_idx > 0)
+                    p = Unsafe.Add<int>(p, batch_idx*ilen); //offset pointer
+                return new Span<T>(p, ilen);
+            }
+        }
+
+        /// <summary>
+        /// Be carefully using this because the max array that NET is allowed to handle is 2Gb 
+        /// </summary>
+        /// <returns></returns>
+        public Span<T> ToSpan()
+        {
+            unsafe {
+                return new Span<T>(_tensor.GetRawData(), Convert.ToInt32(_tensor.numel()));
+            }
         }
 
         private unsafe T* GetAndValidatePTR()
