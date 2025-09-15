@@ -7316,14 +7316,14 @@ namespace TorchSharp
 
             static public TensorIndex Slice((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
-#if !NETSTANDARD2_0_OR_GREATER
+//#if !NETSTANDARD2_0_OR_GREATER
             static public TensorIndex Slice(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
-#endif // NETSTANDARD2_0_OR_GREATER
+//#endif // NETSTANDARD2_0_OR_GREATER
             static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
 
             static public TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
@@ -7356,7 +7356,7 @@ namespace TorchSharp
 
             public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
-#if !NETSTANDARD2_0_OR_GREATER
+//#if !NETSTANDARD2_0_OR_GREATER
             public static implicit operator TensorIndex(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
@@ -7369,7 +7369,7 @@ namespace TorchSharp
                 long idx = !index.IsFromEnd ? index.Value : -1 * index.Value;
                 return TensorIndex.Single(idx);
             }
-#endif // NETSTANDARD2_0_OR_GREATER
+//#endif // NETSTANDARD2_0_OR_GREATER
 
         }
 
@@ -7404,9 +7404,8 @@ namespace TorchSharp
             { typeof(short), ScalarType.Int16 },
             { typeof(int), ScalarType.Int32 },
             { typeof(long), ScalarType.Int64 },
-#if NET6_0_OR_GREATER
             { typeof(Half), ScalarType.Float16 },
-#endif
+            { typeof(BFloat16), ScalarType.BFloat16},
             { typeof(float), ScalarType.Float32 },
             { typeof(double), ScalarType.Float64 },
             { typeof((float, float)), ScalarType.ComplexFloat32 },
