@@ -226,6 +226,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_data(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
+        internal static extern unsafe void* THSTensor_raw_data(IntPtr handle);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_real(IntPtr handle);
 
         [DllImport("LibTorchSharp")]

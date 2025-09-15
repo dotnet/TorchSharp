@@ -67,6 +67,50 @@ namespace TorchSharp
                 return (obj is Tensor) && this.Equals((obj as Tensor)!);
             }
 
+            public Span<T> GetRawData<T>()
+            {
+                unsafe {
+                    //Work very well but the problem is that Numel converted from long to int so the max size is 2^(32-1)
+                    //If i have more than 2^(32-1) i should "offset" the void* of raw_data with multiple Span<T>
+                    //i mean for example if you have 3 billions of elements the first 2^(32-1) is the first Span<T> and the remaining is another Span<T>
+                    //so i have in total 2 Span<T>
+                    //another situation instead of all that, if have a batch i can "offset" per batch -> 2x3x640x640 mean 2 Span<T> of 3x640x640 but i can "index" by a batch (warning i didn't researched or tested this idea)
+                    //if you want use like a batch see GetRawData() example code
+                    return new Span<T>(NativeMethods.THSTensor_raw_data(handle), Convert.ToInt32(numel()));
+                }
+            }
+
+
+            /*long numel(long[] dims)
+            {
+                if (dims.Length == 0)
+                    return 0;
+                long res = 1;
+                foreach (var d in dims)
+                    res *= d;
+                return res;
+            }
+            var t = torch.arange(0, 2 * 4 * 3).reshape(2,4,3).to(torch.ScalarType.Int32);
+            void* p = t.GetRawData();
+            var sh = t.shape.Skip(1).ToArray();
+            long len = numel(sh);
+            var f = new Span<int>(p, Convert.ToInt32(len)).ToArray();
+            printarray(f); //make some function to print this array this print from 0 to 11
+            p= Unsafe.Add<int>(p, Convert.ToInt32(len)); //offset pointer
+            var s = new Span<int>(p, Convert.ToInt32(len)).ToArray();
+            printarrarray(s); //Will print from 12 to 23
+            */
+            /// <summary>
+            /// Should be used by a advanced user
+            /// </summary>
+            /// <returns></returns>
+            public unsafe void* GetRawData()
+            {
+                unsafe {
+                    return NativeMethods.THSTensor_raw_data(handle);
+                }
+            }
+
             /// <summary>
             /// TODO
             /// </summary>
