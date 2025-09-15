@@ -77,4 +77,28 @@ size_t THSCuda_get_global_total_memory(int device)
 #endif  
 }
 
+const char* THSCuda_get_cuda_version()
+{
+#ifdef CUDA_TOOLKIT_FOUND
+    int runtimeVersion;
+    cudaError_t err = cudaRuntimeGetVersion(&runtimeVersion);
+
+    if (err != cudaSuccess) {
+        std::cerr << "Error getting CUDA runtime version: " << cudaGetErrorString(err) << std::endl;
+        return nullptr;
+    }
+
+    int major = runtimeVersion / 1000;
+    int minor = (runtimeVersion % 1000) / 10;
+    int patch = runtimeVersion % 10;
+
+    std::string cudaVersionString = std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch);
+    //std::cout << "CUDA Runtime Version: " << cudaVersionString << std::endl;
+    return cudaVersionString.c_str();
+#else
+    return nullptr;
+#endif
+}
+
+
 //TODO: implement more function

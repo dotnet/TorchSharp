@@ -626,6 +626,10 @@ namespace TorchSharp
             {
                 return THSCuda_get_global_total_memory(device);
             }
+            public static string? get_cuda_version()
+            {
+                return Marshal.PtrToStringAnsi(THSCuda_get_cuda_version());
+            }
             /*public static cudaDeviceProp get_device_prop(int device)
             {
 #if CUDA_TOOLKIT_FOUND
