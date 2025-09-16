@@ -517,21 +517,25 @@ namespace TorchSharp
 
                     public override bool bijective => true;
 
-                    protected internal override Tensor _sign() => 1;
+                    protected internal override Tensor _sign() => torch.tensor(1);
 
                     protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => -nn.functional.softplus(-x) - nn.functional.softplus(x);
 
                     protected internal override Tensor _call(Tensor x)
                     {
                         var finfo = torch.finfo(x.dtype);
-                        return torch.WrappedTensorDisposeScope(() => torch.clamp(torch.sigmoid(x), min: finfo.tiny, max: 1 - finfo.eps));
+                        using var tiny_scalar = finfo.tiny.ToScalar();
+                        using var eps_bar_scalar = (1 - finfo.eps).ToScalar();
+                        return torch.WrappedTensorDisposeScope(() => torch.sigmoid(x).clamp(min: tiny_scalar, max: eps_bar_scalar));
                     }
 
                     protected internal override Tensor _inverse(Tensor y)
                     {
                         using var _ = torch.NewDisposeScope();
                         var finfo = torch.finfo(y.dtype);
-                        y = y.clamp(min: finfo.tiny, max: 1 - finfo.eps);
+                        using var tiny_scalar = finfo.tiny.ToScalar();
+                        using var eps_bar_scalar = (1 - finfo.eps).ToScalar();
+                        y = y.clamp(min: tiny_scalar, max: eps_bar_scalar);
                         return (y.log() - (-y).log1p()).MoveToOuterDisposeScope();
                     }
                 }
