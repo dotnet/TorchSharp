@@ -316,7 +316,8 @@ namespace TorchSharp
 
                     this.step = 0;
                     this.prev = torch.zeros_like(_parameter).DetachFromDisposeScope();
-                    this.step_size = _parameter.new_empty(_parameter.shape).fill_((options as Options).LearningRate).DetachFromDisposeScope();
+                    using var lr_scalar = ((double)(options as Options).LearningRate!).ToScalar();
+                    this.step_size = _parameter.new_empty(_parameter.shape).fill_(lr_scalar).DetachFromDisposeScope();
                 }
             }
 
