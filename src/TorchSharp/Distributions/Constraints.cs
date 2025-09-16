@@ -435,9 +435,9 @@ namespace TorchSharp
 
                     public override Tensor check(Tensor value)
                     {
-                        var tol = torch.finfo(value.dtype).eps * value.size(-1) * 10;  // 10 is an adjustable fudge factor
+                        using var tol_scalar = (torch.finfo(value.dtype).eps * value.size(-1) * 10).ToScalar();  // 10 is an adjustable fudge factor
                         var row_norm = torch.linalg.norm(value.detach(), dims: new[] { -1L });
-                        var unit_row_norm = (row_norm - 1.0).abs().le(tol).all(dim: -1);
+                        var unit_row_norm = (row_norm - 1.0).abs().le(tol_scalar).all(dim: -1);
                         return lc.check(value) & unit_row_norm;
                     }
 
