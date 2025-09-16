@@ -999,10 +999,12 @@ namespace TorchSharp
                 variance = variance.view(target.shape[0], -1);
                 if (variance.shape[1] != input.shape[1] && variance.shape[1] != 1) throw new ArgumentException("variance has the wrong shape");
 
-                if ((variance < 0).any().cpu().item<bool>()) throw new ArgumentException("variance has negative entry/entries");
+                using var zero_scalar = 0.ToScalar();
+                if ((variance < zero_scalar).any().cpu().item<bool>()) throw new ArgumentException("variance has negative entry/entries");
 
                 using (var _ = torch.no_grad())
-                    variance = variance.clamp_min(eps);
+                using (var eps_scalar = eps.ToScalar())
+                    variance = variance.clamp_min(eps_scalar);
 
                 var loss = 0.5 * (variance.log() + (input - target).square() / variance).view(input.shape[0], -1).sum(dim: stackalloc long[] { 1 });
 
