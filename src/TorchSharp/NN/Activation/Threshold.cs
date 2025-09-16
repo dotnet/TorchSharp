@@ -61,7 +61,9 @@ namespace TorchSharp
                 /// <param name="inplace">Do the operation in-place</param>
                 public static Tensor threshold(Tensor x, double threshold, double value, bool inplace = false)
                 {
-                    return inplace ? x.threshold_(threshold, value).alias() : x.threshold(threshold, value);
+                    using var threshold_scalar = threshold.ToScalar();
+                    using var value_scalar = value.ToScalar();
+                    return inplace ? x.threshold_(threshold_scalar, value_scalar).alias() : x.threshold(threshold_scalar, value_scalar);
                 }
 
                 /// <summary>
