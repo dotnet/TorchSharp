@@ -147,9 +147,11 @@ namespace TorchSharp.Modules
                 mask = mask.expand(this.n_mels, mask.size(0), mask.size(1));
                 mask = mask.permute(1, 0, 2);
 
-                mel_specgram = mel_specgram.masked_fill(mask, 0.0);
-                mel_specgram_postnet = mel_specgram_postnet.masked_fill(mask, 0.0);
-                gate_outputs = gate_outputs.masked_fill(mask[TensorIndex.Colon, 0, TensorIndex.Colon], 1e3);
+                using var zero_scalar = 0.0.ToScalar();
+                mel_specgram = mel_specgram.masked_fill(mask, zero_scalar);
+                mel_specgram_postnet = mel_specgram_postnet.masked_fill(mask, zero_scalar);
+                using var eps_scalar = 1e3.ToScalar();
+                gate_outputs = gate_outputs.masked_fill(mask[TensorIndex.Colon, 0, TensorIndex.Colon], eps_scalar);
             }
 
             return (mel_specgram, mel_specgram_postnet, gate_outputs, alignments);
