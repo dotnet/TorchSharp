@@ -19,7 +19,10 @@ namespace TorchSharp
             /// </summary>
             public override Tensor mean => WrappedTensorDisposeScope(() => concentration / rate);
 
-            public override Tensor mode => WrappedTensorDisposeScope(() => ((concentration - 1) / rate).clamp_(min: 0));
+            public override Tensor mode => WrappedTensorDisposeScope(() => {
+                using var zero_scalar = 0.ToScalar();
+                return ((concentration - 1) / rate).clamp_(min: zero_scalar);
+            });
 
             /// <summary>
             /// The variance of the distribution
