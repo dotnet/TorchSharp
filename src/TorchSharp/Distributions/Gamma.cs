@@ -65,7 +65,8 @@ namespace TorchSharp
                 using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var value = torch._standard_gamma(concentration.expand(shape), generator: generator) / rate.expand(shape);
-                return value.detach().clamp_(min: torch.finfo(value.dtype).tiny).MoveToOuterDisposeScope();
+                using var tiny_scalar = torch.finfo(value.dtype).tiny.ToScalar();
+                return value.detach().clamp_(min: tiny_scalar).MoveToOuterDisposeScope();
             }
 
             /// <summary>
