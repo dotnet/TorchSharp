@@ -110,9 +110,12 @@ namespace TorchSharp
                         img = img.alias();
                     }
 
-                    using var t0 = img.pow(gamma);
+                    using var gamma_scalar = gamma.ToScalar();
+                    using var t0 = img.pow(gamma_scalar);
                     using var t1 = gain * t0;
-                    using var t2 = t1.clamp(0, 1);
+                    using var zero_scalar = 0.ToScalar();
+                    using var one_scalar = 1.ToScalar();
+                    using var t2 = t1.clamp(zero_scalar, one_scalar);
 
                     return convert_image_dtype(t2, dtype);
                 }
