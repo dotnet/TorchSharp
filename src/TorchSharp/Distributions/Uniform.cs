@@ -83,7 +83,9 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return torch.WrappedTensorDisposeScope(() => ((value - low) / (high - low)).clamp_(0, 1));
+                using var zero_scalar = 0.ToScalar();
+                using var one_scalar = 1.ToScalar();
+                return torch.WrappedTensorDisposeScope(() => ((value - low) / (high - low)).clamp_(zero_scalar, one_scalar));
             }
 
             /// <summary>
