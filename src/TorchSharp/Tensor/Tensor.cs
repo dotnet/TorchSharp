@@ -3595,7 +3595,7 @@ namespace TorchSharp
 
             public Tensor ge(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_ge(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3605,7 +3605,7 @@ namespace TorchSharp
 
             public Tensor ge_(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_ge_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3613,7 +3613,7 @@ namespace TorchSharp
 
             public Tensor ge(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_ge_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3621,7 +3621,7 @@ namespace TorchSharp
 
             public Tensor ge_(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_ge_scalar_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3629,7 +3629,7 @@ namespace TorchSharp
 
             public Tensor gt(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_gt(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3639,7 +3639,7 @@ namespace TorchSharp
 
             public Tensor gt_(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_gt_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3647,7 +3647,7 @@ namespace TorchSharp
 
             public Tensor gt(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_gt_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3655,7 +3655,7 @@ namespace TorchSharp
 
             public Tensor gt_(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_gt_scalar_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
