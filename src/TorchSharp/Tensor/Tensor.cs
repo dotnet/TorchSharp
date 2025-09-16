@@ -2867,7 +2867,7 @@ namespace TorchSharp
 
             public Tensor elu(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
 
-            public Tensor elu_(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
+            public Tensor elu_(double alpha = 1) =>  elu_(alpha, 1.0, 1.0);
 
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
