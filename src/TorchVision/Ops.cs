@@ -53,6 +53,9 @@ namespace TorchSharp
                     var areas = (x2 - x1) * (y2 - y1);
                     var (_, order) = scores.sort(0, descending: true);
 
+                    using var zero_scalar = 0.ToScalar();
+                    using var one_scalar = 1.ToScalar();
+                    using var iou_threshold_scalar = iou_threshold.ToScalar();
                     var keep = new List<long>();
                     while (order.numel() > 0) {
                         long i;
@@ -65,16 +68,17 @@ namespace TorchSharp
                             keep.Add(i);
                         }
 
-                        var indices = torch.arange(1, order.shape[0], dtype: ScalarType.Int64);
+                        using var stop_scalar = order.shape[0].ToScalar();
+                        var indices = torch.arange(one_scalar, stop_scalar, dtype: ScalarType.Int64);
                         order = order[indices];
                         var xx1 = x1[order].clamp(min: x1[i]);
                         var yy1 = y1[order].clamp(min: y1[i]);
                         var xx2 = x2[order].clamp(max: x2[i]);
                         var yy2 = y2[order].clamp(max: y2[i]);
-                        var inter = (xx2 - xx1).clamp(min: 0) * (yy2 - yy1).clamp(min: 0);
+                        var inter = (xx2 - xx1).clamp(min: zero_scalar) * (yy2 - yy1).clamp(min: zero_scalar);
 
                         var iou = inter / (areas[i] + areas[order] - inter);
-                        var idx = (iou <= iou_threshold).nonzero().squeeze();
+                        var idx = (iou <= iou_threshold_scalar).nonzero().squeeze();
                         if (idx.numel() == 0) {
                             break;
                         }
