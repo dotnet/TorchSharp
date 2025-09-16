@@ -180,7 +180,8 @@ namespace TorchSharp
                 var lt = torch.max(boxes1[colon, None, (null, 2)], boxes2[colon, (null, 2)]);  // [N,M,2];
                 var rb = torch.min(boxes1[colon, None, (2, null)], boxes2[colon, (2, null)]);  // [N,M,2];
 
-                var wh = _upcast(rb - lt).clamp(min: 0); // [N,M,2];
+                using var zero_scalar = 0.ToScalar();
+                var wh = _upcast(rb - lt).clamp(min: zero_scalar); // [N,M,2];
                 var inter = wh[colon, colon, 0] * wh[colon, colon, 1]; // [N,M];
 
                 union = area1[colon, None] + area2 - inter;
