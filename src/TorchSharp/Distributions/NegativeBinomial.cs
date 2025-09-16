@@ -104,7 +104,8 @@ namespace TorchSharp
                 using var _ = NewDisposeScope();
                 var log_unnormalized_prob = (total_count * (-_logits).log_sigmoid() + value * logits.log_sigmoid());
                 var log_normalization = (-torch.lgamma(total_count + value) + torch.lgamma(1.0 + value) + torch.lgamma(total_count));
-                log_normalization = log_normalization.masked_fill(total_count + value == 0, 0);
+                using var zero_scalar = 0.ToScalar();
+                log_normalization = log_normalization.masked_fill(total_count + value == zero_scalar, zero_scalar);
 
                 return (log_unnormalized_prob - log_normalization).MoveToOuterDisposeScope();
             }
