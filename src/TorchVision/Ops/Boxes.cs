@@ -193,7 +193,8 @@ namespace TorchSharp
                 iou = box_iou(boxes1, boxes2);
                 var lti = torch.min(boxes1[colon, None, (null, 2)], boxes2[colon, (null, 2)]);
                 var rbi = torch.max(boxes1[colon, None, (2, null)], boxes2[colon, (2, null)]);
-                var whi = _upcast(rbi - lti).clamp(min: 0);  // [N,M,2];
+                using var zero_scalar = 0.ToScalar();
+                var whi = _upcast(rbi - lti).clamp(min: zero_scalar);  // [N,M,2];
                 var diagonal_distance_squared = whi[colon, colon, 0].square() + whi[colon, colon, 1].square() + eps;
                 // centers of boxes
                 var x_p = (boxes1[colon, 0] + boxes1[colon, 2]) / 2;
