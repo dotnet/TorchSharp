@@ -2838,9 +2838,17 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor celu() => this.celu(1.0);
+            public Tensor celu()
+            {
+                using var one_scalar = 1.0.ToScalar();
+                return this.celu(one_scalar);
+            }
 
-            public Tensor celu_() => this.celu_(1.0);
+            public Tensor celu_()
+            {
+                using var one_scalar = 1.0.ToScalar();
+                return this.celu_(one_scalar);
+            }
 
             public Tensor celu(Scalar alpha)
             {
