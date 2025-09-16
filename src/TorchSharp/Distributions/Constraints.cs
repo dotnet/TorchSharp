@@ -137,8 +137,10 @@ namespace TorchSharp
 
                     public override Tensor check(Tensor value)
                     {
-                        var is_boolean = (value == 0) | (value == 1);
-                        var is_normalized = value.sum(-1).eq(1);
+                        using var zero_scalar = 0.ToScalar();
+                        using var one_scalar = 1.ToScalar();
+                        var is_boolean = (value == zero_scalar) | (value == one_scalar);
+                        var is_normalized = value.sum(-1).eq(one_scalar);
                         return is_boolean.all(-1) & is_normalized;
                     }
                 }
