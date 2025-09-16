@@ -65,7 +65,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor hardtanh(Tensor x, double min_val = -1.0, double max_val = 1.0, bool inplace = false)
                 {
-                    return inplace ? x.hardtanh_(min_val, max_val).alias() : x.hardtanh(min_val, max_val);
+                    using var min_val_scalar = min_val.ToScalar();
+                    using var max_val_scalar = max_val.ToScalar();
+                    return inplace ? x.hardtanh_(min_val_scalar, max_val_scalar).alias() : x.hardtanh(min_val_scalar, max_val_scalar);
                 }
 
                 /// <summary>
