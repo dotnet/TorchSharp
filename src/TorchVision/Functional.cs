@@ -279,8 +279,10 @@ namespace TorchSharp
                     var t3 = t2.nonzero_as_list();
                     var eq_idxs = t3[0];
 
-                    using var t4 = minimum.index_put_(0, eq_idxs);
-                    using var t5 = maximum.index_put_(bound, eq_idxs);
+                    using var zero_scalar = 0.ToScalar();
+                    using var t4 = minimum.index_put_(zero_scalar, eq_idxs);
+                    using var bound_scalar = bound.ToScalar();
+                    using var t5 = maximum.index_put_(bound_scalar, eq_idxs);
 
                     using var t6 = (maximum - minimum);
                     using var t7 = torch.tensor(bound, float32);
@@ -289,7 +291,7 @@ namespace TorchSharp
 
                     using var t8 = (input - minimum);
                     using var t9 = t8 * scale;
-                    using var t10 = t9.clamp(0, bound);
+                    using var t10 = t9.clamp(zero_scalar, bound_scalar);
 
                     return t10.to(input.dtype);
                 }
