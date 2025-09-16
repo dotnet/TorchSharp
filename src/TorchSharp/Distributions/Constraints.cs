@@ -505,7 +505,8 @@ namespace TorchSharp
                         var sym_check = base.check(value);
                         if (!sym_check.all().item<bool>())
                             return sym_check;
-                        return torch.linalg.cholesky_ex(value).info.eq(0);
+                        using var zero_scalar = 0.ToScalar();
+                        return torch.linalg.cholesky_ex(value).info.eq(zero_scalar);
                     }
                 }
 
