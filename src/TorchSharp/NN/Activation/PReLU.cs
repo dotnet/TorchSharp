@@ -20,9 +20,9 @@ namespace TorchSharp
             { 
                 this.init = init;
                 this.num_parameters = num_parameters;
- 
-                var w = torch.empty(num_parameters, device:device, dtype:dtype);
-                w.fill_(init);
+
+                using var init_scalar = init.ToScalar();
+                var w = torch.full(num_parameters, init_scalar, device: device, dtype: dtype);
 
                 this.weight = new Parameter(w);
             }
