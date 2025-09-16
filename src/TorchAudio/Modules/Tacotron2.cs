@@ -336,7 +336,8 @@ namespace TorchSharp.Modules
             {
                 var alignment = this._get_alignment_energies(attention_hidden_state, processed_memory, attention_weights_cat);
 
-                alignment = alignment.masked_fill(mask, this.score_mask_value);
+                using var score_mask_value_scalar = this.score_mask_value.ToScalar();
+                alignment = alignment.masked_fill(mask, score_mask_value_scalar);
 
                 var attention_weights = F.softmax(alignment, dim: 1);
                 var attention_context = torch.bmm(attention_weights.unsqueeze(1), memory);
