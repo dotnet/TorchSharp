@@ -2865,9 +2865,19 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor elu(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
+            public Tensor elu(double alpha = 1)
+            {
+                using var alpha_scalar = alpha.ToScalar();
+                using var one_scalar = 1.0.ToScalar();
+                return this.elu(alpha_scalar, one_scalar, one_scalar);
+            }
 
-            public Tensor elu_(double alpha = 1) =>  elu_(alpha, 1.0, 1.0);
+            public Tensor elu_(double alpha = 1)
+            {
+                using var alpha_scalar = alpha.ToScalar();
+                using var one_scalar = 1.0.ToScalar();
+                return this.elu_(alpha_scalar, one_scalar, one_scalar);
+            }
 
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
