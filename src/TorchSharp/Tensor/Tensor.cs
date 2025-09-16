@@ -6265,95 +6265,41 @@ namespace TorchSharp
 
             // Operators overloading
 
-            public static Tensor operator ==(Tensor left, Tensor right)
-            {
-                return left.eq(right);
-            }
+            public static Tensor operator ==(Tensor left, Tensor right) => left.eq(right);
 
-            public static Tensor operator ==(Tensor left, Scalar right)
-            {
-                return left.eq(right);
-            }
+            public static Tensor operator ==(Tensor left, Scalar right) => left.eq(right);
 
-            public static Tensor operator ==(Scalar left, Tensor right)
-            {
-                return right.eq(left);
-            }
+            public static Tensor operator ==(Scalar left, Tensor right) => right.eq(left);
 
-            public static Tensor operator !=(Tensor left, Tensor right)
-            {
-                return left.ne(right);
-            }
+            public static Tensor operator !=(Tensor left, Tensor right) => left.ne(right);
 
-            public static Tensor operator !=(Tensor left, Scalar right)
-            {
-                return left.ne(right);
-            }
+            public static Tensor operator !=(Tensor left, Scalar right) => left.ne(right);
 
-            public static Tensor operator !=(Scalar left, Tensor right)
-            {
-                return right.ne(left);
-            }
+            public static Tensor operator !=(Scalar left, Tensor right) => right.ne(left);
 
-            public static Tensor operator <(Tensor left, Tensor right)
-            {
-                return left.lt(right);
-            }
+            public static Tensor operator <(Tensor left, Tensor right) => left.lt(right);
 
-            public static Tensor operator <(Tensor left, Scalar right)
-            {
-                return left.lt(right);
-            }
+            public static Tensor operator <(Tensor left, Scalar right) => left.lt(right);
 
-            public static Tensor operator <(Scalar left, Tensor right)
-            {
-                return right.gt(left);
-            }
+            public static Tensor operator <(Scalar left, Tensor right) => right.gt(left);
 
-            public static Tensor operator <=(Tensor left, Tensor right)
-            {
-                return left.le(right);
-            }
+            public static Tensor operator <=(Tensor left, Tensor right) => left.le(right);
 
-            public static Tensor operator <=(Tensor left, Scalar right)
-            {
-                return left.le(right);
-            }
+            public static Tensor operator <=(Tensor left, Scalar right) => left.le(right);
 
-            public static Tensor operator <=(Scalar left, Tensor right)
-            {
-                return right.ge(left);
-            }
+            public static Tensor operator <=(Scalar left, Tensor right) => right.ge(left);
 
-            public static Tensor operator >(Tensor left, Tensor right)
-            {
-                return left.gt(right);
-            }
+            public static Tensor operator >(Tensor left, Tensor right) => left.gt(right);
 
-            public static Tensor operator >(Tensor left, Scalar right)
-            {
-                return left.gt(right);
-            }
+            public static Tensor operator >(Tensor left, Scalar right) => left.gt(right);
 
-            public static Tensor operator >(Scalar left, Tensor right)
-            {
-                return right.lt(left);
-            }
+            public static Tensor operator >(Scalar left, Tensor right) => right.lt(left);
 
-            public static Tensor operator >=(Tensor left, Tensor right)
-            {
-                return left.ge(right);
-            }
+            public static Tensor operator >=(Tensor left, Tensor right) => left.ge(right);
 
-            public static Tensor operator >=(Tensor left, Scalar right)
-            {
-                return left.ge(right);
-            }
+            public static Tensor operator >=(Tensor left, Scalar right) => left.ge(right);
 
-            public static Tensor operator >=(Scalar left, Tensor right)
-            {
-                return right.le(left);
-            }
+            public static Tensor operator >=(Scalar left, Tensor right) => right.le(left);
 
             /// <summary>
             /// Useful when assigning a .NET numeric value to an index of a Tensor.
