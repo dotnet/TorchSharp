@@ -906,7 +906,9 @@ namespace TorchSharp
                     using var t0 = img1 * ratio;
                     using var t2 = img2 * (1.0 - ratio);
                     using var t3 = (t0 + t2);
-                    using var t4 = t3.clamp(0, bound);
+                    using var zero_scalar = 0.ToScalar();
+                    using var bound_scalar = bound.ToScalar();
+                    using var t4 = t3.clamp(zero_scalar, bound_scalar);
                     return t4.to(img1.dtype);
                 }
 
