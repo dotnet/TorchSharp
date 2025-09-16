@@ -80,11 +80,11 @@ namespace TorchSharp
                 var X1 = gamma1.rsample(sample_shape).view(shape);
                 var X2 = gamma2.rsample(sample_shape).view(shape);
 
-                var tiny = torch.finfo(X2.dtype).tiny;
-                X2.clamp_(min: tiny);
+                using var tiny_scalar = torch.finfo(X2.dtype).tiny.ToScalar();
+                X2.clamp_(min: tiny_scalar);
                 var Y = X1 / X2;
                 
-                return Y.clamp_(min: tiny).MoveToOuterDisposeScope();
+                return Y.clamp_(min: tiny_scalar).MoveToOuterDisposeScope();
             }
 
             /// <summary>
