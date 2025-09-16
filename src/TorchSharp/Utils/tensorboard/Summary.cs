@@ -177,7 +177,9 @@ namespace TorchSharp
                         tensor = utils.convert_to_HWC(tensor, dataformats);
                         int scale_factor = calc_scale_factor(tensor);
                         tensor = tensor.to_type(ScalarType.Float32);
-                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Byte);
+                        using var min_byte_scalar = 0.ToScalar(); // FIXME: No torch.min_int_value?
+                        using var max_byte_scalar = torch.max_int_value(ScalarType.Byte).ToScalar();
+                        tensor = (tensor * scale_factor).clip(min_byte_scalar, max_byte_scalar).to_type(ScalarType.Byte);
                         Tensorboard.Summary.Types.Image image = make_image(tensor, rescale);
                         var summary = new Tensorboard.Summary();
                         summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = tag, Image = image });
