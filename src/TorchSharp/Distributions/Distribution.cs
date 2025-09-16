@@ -188,7 +188,11 @@ namespace TorchSharp
                     return probs.clamp(eps_scalar, eps_bar_scalar);
                 }
 
-                protected Tensor ClampByZero(Tensor x) => (x.clamp_min(0) + x - x.clamp_max(0)) / 2;
+                protected Tensor ClampByZero(Tensor x)
+                {
+                    using var zero_scalar = 0.ToScalar();
+                    return (x.clamp_min(zero_scalar) + x - x.clamp_max(zero_scalar)) / 2;
+                }
 
                 protected torch.Generator generator;
                 bool disposedValue;
