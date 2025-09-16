@@ -36,7 +36,8 @@ namespace TorchSharp
             public override Tensor variance {
                 get {
                     using var _ = torch.NewDisposeScope();
-                    var a = alpha.clamp(min: 2);
+                    using var two_scalar = 2.ToScalar();
+                    var a = alpha.clamp(min: two_scalar);
                     return (scale.square() * a / ((a - 1).square() * (a - 2))).MoveToOuterDisposeScope();
                 }
             }
