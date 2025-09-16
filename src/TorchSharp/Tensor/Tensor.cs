@@ -3538,7 +3538,7 @@ namespace TorchSharp
 
             public Tensor eq(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_eq(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3548,7 +3548,7 @@ namespace TorchSharp
 
             public Tensor eq_(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_eq_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3556,7 +3556,7 @@ namespace TorchSharp
 
             public Tensor eq(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_eq_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3564,7 +3564,7 @@ namespace TorchSharp
 
             public Tensor eq_(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_eq_scalar_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
