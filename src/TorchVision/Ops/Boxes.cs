@@ -91,7 +91,8 @@ namespace TorchSharp
                 var lti = torch.min(boxes1[colon, None, (null, 2)], boxes2[colon, (null, 2)]);
                 var rbi = torch.max(boxes1[colon, None, (2, null)], boxes2[colon, (2, null)]);
 
-                var whi = _upcast(rbi - lti).clamp(min: 0);  // [N,M,2]
+                using var zero_scalar = 0.ToScalar();
+                var whi = _upcast(rbi - lti).clamp(min: zero_scalar);  // [N,M,2]
                 var areai = whi[colon, colon, 0] * whi[colon, colon, 1];
 
                 return (iou - (areai - union) / areai).MoveToOuterDisposeScope();
