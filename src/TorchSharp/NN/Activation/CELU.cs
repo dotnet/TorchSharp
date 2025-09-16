@@ -56,7 +56,8 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor celu(Tensor x, double alpha, bool inplace = false)
                 {
-                    return inplace ? x.celu_(alpha).alias() : x.celu(alpha);
+                    using var alpha_scalar = alpha.ToScalar();
+                    return inplace ? x.celu_(alpha_scalar).alias() : x.celu(alpha_scalar);
                 }
             }
         }
