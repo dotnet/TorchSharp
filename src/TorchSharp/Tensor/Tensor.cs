@@ -670,6 +670,31 @@ namespace TorchSharp
                 return this;
             }
 
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(byte value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(sbyte value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(short value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(int value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(long value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(Half value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+#endif
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(float value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(double value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(bool value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_((float, float) value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(System.Numerics.Complex value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+
             /// <summary>
             /// Gets the type of the tensor elements.
             /// </summary>
