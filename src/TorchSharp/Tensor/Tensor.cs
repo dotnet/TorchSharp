@@ -1884,6 +1884,31 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, byte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, sbyte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, short alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, int alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, long alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, Half alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+#endif
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, float alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, double alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, bool alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); } // FIXME: Well defined?
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, (float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+
             /// <summary>
             /// Accumulate, in place, the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
             ///
@@ -1903,6 +1928,31 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, byte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, sbyte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, short alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, int alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, long alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, Half alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+#endif
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, float alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, double alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, bool alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); } // FIXME: Well defined?
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, (float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
 
             /// <summary>
             /// Copies the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
