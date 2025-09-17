@@ -7297,7 +7297,8 @@ namespace TorchSharp
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
 
                 if (dim == 0) {
-                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                    using (var scalar = t.ToScalar())
+                        PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                     return sb.ToString(); ;
                 }
 
@@ -7309,25 +7310,30 @@ namespace TorchSharp
                 else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                     } else {
                         for (var i = 0; i < leadingCols; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
                         sb.Append("... ");
 
                         for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                     }
                 } else {
                     var newline = string.Join("", Enumerable.Repeat(newLine, (int)dim - 1).ToList());
@@ -7385,7 +7391,8 @@ namespace TorchSharp
                     sb.Append(", value = ");
 
                     if (t.Dimensions == 0) {
-                        PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t.ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                         return sb.ToString(); ;
                     }
                 }
@@ -7459,16 +7466,19 @@ namespace TorchSharp
                 else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                         sb.Append(appendChar);
                     } else {
                         for (var i = 0; i < leadingCols; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
                         }
@@ -7476,12 +7486,14 @@ namespace TorchSharp
                         sb.Append("... ");
 
                         for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                         sb.Append(appendChar);
                     }
                 } else {
@@ -7540,7 +7552,8 @@ namespace TorchSharp
                 if (Dimensions == 0) {
 
                     builder.Append(", value = ");
-                    PrintValue(builder, dtype, this.ToScalar(), fltFormat, actualCulturInfo);
+                    using (var scalar = this.ToScalar())
+                        PrintValue(builder, dtype, scalar, fltFormat, actualCulturInfo);
 
                 } else if (Dimensions == 1) {
 
@@ -7671,7 +7684,8 @@ namespace TorchSharp
                 for (int i = 0; i < t.shape[0]; i++) {
 
                     var builder = new StringBuilder();
-                    PrintValue(builder, type, t[i].ToScalar(), fltFormat, cultureInfo);
+                    using (var scalar = t[i].ToScalar())
+                        PrintValue(builder, type, scalar, fltFormat, cultureInfo);
 
                     var str = builder.ToString();
 
