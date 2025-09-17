@@ -6271,6 +6271,21 @@ namespace TorchSharp
 
             public static Tensor operator ==(Scalar left, Tensor right) => right.eq(left);
 
+            public static Tensor operator ==(Tensor left, byte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
             public static Tensor operator ==(Tensor left, int right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6281,6 +6296,13 @@ namespace TorchSharp
                 using Scalar right_scalar = right.ToScalar();
                 return left == right_scalar;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator ==(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+#endif
             public static Tensor operator ==(Tensor left, float right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6290,6 +6312,36 @@ namespace TorchSharp
             {
                 using Scalar right_scalar = right.ToScalar();
                 return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, bool right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, (float, float) right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, System.Numerics.Complex right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
             }
             public static Tensor operator ==(int left, Tensor right)
             {
@@ -6301,12 +6353,34 @@ namespace TorchSharp
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar == right;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator ==(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+#endif
             public static Tensor operator ==(float left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar == right;
             }
             public static Tensor operator ==(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(bool left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==((float, float) left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(System.Numerics.Complex left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar == right;
@@ -6318,6 +6392,21 @@ namespace TorchSharp
 
             public static Tensor operator !=(Scalar left, Tensor right) => right.ne(left);
 
+            public static Tensor operator !=(Tensor left, byte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
             public static Tensor operator !=(Tensor left, int right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6328,6 +6417,13 @@ namespace TorchSharp
                 using Scalar right_scalar = right.ToScalar();
                 return left != right_scalar;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator !=(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+#endif
             public static Tensor operator !=(Tensor left, float right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6337,6 +6433,36 @@ namespace TorchSharp
             {
                 using Scalar right_scalar = right.ToScalar();
                 return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, bool right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, (float, float) right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, System.Numerics.Complex right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
             }
             public static Tensor operator !=(int left, Tensor right)
             {
@@ -6348,12 +6474,34 @@ namespace TorchSharp
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar != right;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator !=(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+#endif
             public static Tensor operator !=(float left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar != right;
             }
             public static Tensor operator !=(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(bool left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=((float, float) left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(System.Numerics.Complex left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar != right;
@@ -6365,6 +6513,21 @@ namespace TorchSharp
 
             public static Tensor operator <(Scalar left, Tensor right) => right.gt(left);
 
+            public static Tensor operator <(Tensor left, byte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
             public static Tensor operator <(Tensor left, int right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6375,6 +6538,13 @@ namespace TorchSharp
                 using Scalar right_scalar = right.ToScalar();
                 return left < right_scalar;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+#endif
             public static Tensor operator <(Tensor left, float right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6384,6 +6554,36 @@ namespace TorchSharp
             {
                 using Scalar right_scalar = right.ToScalar();
                 return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
             }
             public static Tensor operator <(int left, Tensor right)
             {
@@ -6395,12 +6595,34 @@ namespace TorchSharp
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar < right;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+#endif
             public static Tensor operator <(float left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar < right;
             }
             public static Tensor operator <(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar < right;
@@ -6412,6 +6634,21 @@ namespace TorchSharp
 
             public static Tensor operator <=(Scalar left, Tensor right) => right.ge(left);
 
+            public static Tensor operator <=(Tensor left, byte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
             public static Tensor operator <=(Tensor left, int right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6422,6 +6659,13 @@ namespace TorchSharp
                 using Scalar right_scalar = right.ToScalar();
                 return left <= right_scalar;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <=(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+#endif
             public static Tensor operator <=(Tensor left, float right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6431,6 +6675,36 @@ namespace TorchSharp
             {
                 using Scalar right_scalar = right.ToScalar();
                 return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
             }
             public static Tensor operator <=(int left, Tensor right)
             {
@@ -6442,12 +6716,34 @@ namespace TorchSharp
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar <= right;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <=(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+#endif
             public static Tensor operator <=(float left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar <= right;
             }
             public static Tensor operator <=(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar <= right;
@@ -6459,6 +6755,21 @@ namespace TorchSharp
 
             public static Tensor operator >(Scalar left, Tensor right) => right.lt(left);
 
+            public static Tensor operator >(Tensor left, byte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
             public static Tensor operator >(Tensor left, int right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6469,6 +6780,13 @@ namespace TorchSharp
                 using Scalar right_scalar = right.ToScalar();
                 return left > right_scalar;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+#endif
             public static Tensor operator >(Tensor left, float right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6478,6 +6796,36 @@ namespace TorchSharp
             {
                 using Scalar right_scalar = right.ToScalar();
                 return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
             }
             public static Tensor operator >(int left, Tensor right)
             {
@@ -6489,12 +6837,34 @@ namespace TorchSharp
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar > right;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+#endif
             public static Tensor operator >(float left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar > right;
             }
             public static Tensor operator >(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar > right;
@@ -6506,6 +6876,21 @@ namespace TorchSharp
 
             public static Tensor operator >=(Scalar left, Tensor right) => right.le(left);
 
+            public static Tensor operator >=(Tensor left, byte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
             public static Tensor operator >=(Tensor left, int right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6516,6 +6901,13 @@ namespace TorchSharp
                 using Scalar right_scalar = right.ToScalar();
                 return left >= right_scalar;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >=(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+#endif
             public static Tensor operator >=(Tensor left, float right)
             {
                 using Scalar right_scalar = right.ToScalar();
@@ -6525,6 +6917,36 @@ namespace TorchSharp
             {
                 using Scalar right_scalar = right.ToScalar();
                 return left >= right_scalar;
+            }
+            public static Tensor operator >=(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
             }
             public static Tensor operator >=(int left, Tensor right)
             {
@@ -6536,12 +6958,34 @@ namespace TorchSharp
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar >= right;
             }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >=(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+#endif
             public static Tensor operator >=(float left, Tensor right)
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar >= right;
             }
             public static Tensor operator >=(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
             {
                 using Scalar left_scalar = left.ToScalar();
                 return left_scalar >= right;
