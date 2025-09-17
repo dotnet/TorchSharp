@@ -1708,6 +1708,31 @@ namespace TorchSharp
                 }
             }
 
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(byte value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(sbyte value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(short value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(int value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(long value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(Half value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#endif
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(float value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(double value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(bool value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_((float, float) value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(System.Numerics.Complex value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
@@ -1715,6 +1740,31 @@ namespace TorchSharp
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
+
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(byte value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(sbyte value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(short value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(int value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(long value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(Half value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#endif
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(float value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(double value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(bool value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_((float, float) value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(System.Numerics.Complex value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
 
             /// <summary>
             /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.
