@@ -2013,6 +2013,31 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, byte value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, sbyte value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, short value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, int value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, long value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, Half value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+#endif
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, float value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, double value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, bool value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, (float, float) value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, System.Numerics.Complex value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+
             /// <summary>
             /// Fills, in place, the elements of the input tensor with value value by selecting the indices in the order given in index.
             ///
@@ -2031,6 +2056,31 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, byte value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, sbyte value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, short value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, int value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, long value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, Half value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+#endif
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, float value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, double value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, bool value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, (float, float) value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, System.Numerics.Complex value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
 
             /// <summary>
             /// Returns a tensor with the same data and number of elements as the input tensor but with the specified shape.
