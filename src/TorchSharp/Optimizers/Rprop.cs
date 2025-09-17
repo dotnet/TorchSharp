@@ -136,19 +136,14 @@ namespace TorchSharp
 
                     var options = group.Options as Options;
                     var maximize = options.maximize.Value;
-                    var etaminus = options.etaminus.Value;
-                    var etaplus = options.etaplus.Value;
-                    using var etaminus_scalar = etaminus.ToScalar();
-                    using var etaplus_scalar = etaplus.ToScalar();
-                    using var etaminus_tensor = torch.tensor(etaminus);
-                    using var etaplus_tensor = torch.tensor(etaplus);
+                    using var etaminus_scalar = options.etaminus.Value.ToScalar();
+                    using var etaplus_scalar = options.etaplus.Value.ToScalar();
                     using var min_step_scalar = options.min_step.Value.ToScalar();
                     using var max_step_scalar = options.max_step.Value.ToScalar();
                     var lr = options.LearningRate.Value; // FIXME: Unused?
                     using var zero_scalar = 0.ToScalar();
                     using var one_scalar = 1.ToScalar();
                     using var negative_one_scalar = (-1).ToScalar();
-                    using var one_tensor = torch.tensor(1);
 
                     foreach (var param in group.Parameters) {
 
@@ -165,9 +160,9 @@ namespace TorchSharp
                         state.step += 1;
 
                         var sign = grad.mul(state.prev).sign(); // FIXME: Use torch.Tensor.sign_?
-                        sign[sign.gt(zero_scalar)] = etaplus_tensor;
-                        sign[sign.lt(zero_scalar)] = etaminus_tensor;
-                        sign[sign.eq(zero_scalar)] = one_tensor;
+                        sign.masked_fill_(sign.gt(zero_scalar), etaplus_scalar);
+                        sign.masked_fill_(sign.lt(zero_scalar), etaminus_scalar);
+                        sign.masked_fill_(sign.eq(zero_scalar), one_scalar);
 
                         state.step_size.mul_(sign).clamp_(min_step_scalar, max_step_scalar);
 
@@ -316,8 +311,7 @@ namespace TorchSharp
 
                     this.step = 0;
                     this.prev = torch.zeros_like(_parameter).DetachFromDisposeScope();
-                    using var lr_scalar = ((double)(options as Options).LearningRate!).ToScalar();
-                    this.step_size = _parameter.new_empty(_parameter.shape).fill_(lr_scalar).DetachFromDisposeScope();
+                    this.step_size = _parameter.new_empty(_parameter.shape).fill_((double)(options as Options).LearningRate!).DetachFromDisposeScope();
                 }
             }
 
