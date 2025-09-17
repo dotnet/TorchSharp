@@ -597,82 +597,126 @@ namespace TorchSharp
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static (float Real, float Imaginary) ToComplexFloat32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+        public static (float Real, float Imaginary) ToComplexFloat32(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToComplexFloat32();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static System.Numerics.Complex ToComplexFloat64(this Tensor value) => value.ToScalar().ToComplexFloat64();
+        public static System.Numerics.Complex ToComplexFloat64(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToComplexFloat64();
+        }
 
 #if NET6_0_OR_GREATER
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static Half ToHalf(this Tensor value) => value.ToScalar().ToHalf();
+        public static Half ToHalf(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToHalf();
+        }
 #endif
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static float ToSingle(this Tensor value) => value.ToScalar().ToSingle();
+        public static float ToSingle(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToSingle();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static double ToDouble(this Tensor value) => value.ToScalar().ToDouble();
+        public static double ToDouble(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToDouble();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static sbyte ToSByte(this Tensor value) => value.ToScalar().ToSByte();
+        public static sbyte ToSByte(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToSByte();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static byte ToByte(this Tensor value) => value.ToScalar().ToByte();
+        public static byte ToByte(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToByte();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static short ToInt16(this Tensor value) => value.ToScalar().ToInt16();
+        public static short ToInt16(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToInt16();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static int ToInt32(this Tensor value) => value.ToScalar().ToInt32();
+        public static int ToInt32(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToInt32();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static long ToInt64(this Tensor value) => value.ToScalar().ToInt64();
+        public static long ToInt64(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToInt64();
+        }
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static bool ToBoolean(this Tensor value) => value.ToScalar().ToBoolean();
+        public static bool ToBoolean(this Tensor value)
+        {
+            using var scalar = value.ToScalar();
+            return scalar.ToBoolean();
+        }
 
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static (float Real, float Imaginary) ToComplex32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+        public static (float Real, float Imaginary) ToComplex32(this Tensor value) => ToComplexFloat32(value);
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static System.Numerics.Complex ToComplex64(this Tensor value) => value.ToScalar().ToComplexFloat64();
+        public static System.Numerics.Complex ToComplex64(this Tensor value) => ToComplexFloat64(value);
 
         /// <summary>
         /// Multiply the dimensions of a tensor shape to provide a complete size.
