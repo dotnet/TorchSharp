@@ -2969,21 +2969,29 @@ namespace TorchSharp
             public Tensor softmax(long dim, ScalarType? dtype = null) =>
                 torch.special.softmax(this, dim, dtype);
 
-
-            public Tensor softplus(double beta = 1, double threshold = 20)
-            {
-                using var beta_scalar = beta.ToScalar();
-                using var threshold_scalar = threshold.ToScalar();
-                return softplus1(beta_scalar, threshold_scalar);
-            }
-
-            private Tensor softplus1(Scalar beta, Scalar threshold)
+            public Tensor softplus(Scalar beta, Scalar threshold) // FIXME: No default beta and threshold?
             {
                 var res = NativeMethods.THSTensor_softplus(Handle, beta.Handle, threshold.Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
             }
+
+            // FIXME: Consider in cases of beta and threshold are not same typed?
+            public Tensor softplus(byte beta = 1, byte threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(sbyte beta = 1, sbyte threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(short beta = 1, short threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(int beta = 1, int threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(long beta = 1, long threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+#if NET6_0_OR_GREATER
+            public Tensor softplus(Half beta, Half threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: No default beta and threshold?
+#endif
+            public Tensor softplus(float beta = 1, float threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); }
+            public Tensor softplus(double beta = 1, double threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); }
+            public Tensor softplus(bool beta, bool threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined? No default beta and threshold?
+            public Tensor softplus((float, float) beta, (float, float) threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined? No default beta and threshold?
+            public Tensor softplus(System.Numerics.Complex beta, System.Numerics.Complex threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined? No default beta and threshold?
+            public Tensor softplus() => softplus(1.0, 20.0);
 
             public Tensor ravel()
             {
