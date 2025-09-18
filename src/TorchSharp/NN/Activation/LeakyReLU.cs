@@ -56,8 +56,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor leaky_relu(Tensor input, double negative_slope = 0.01, bool inplace = false)
                 {
-                    using var negative_slope_scalar = negative_slope.ToScalar();
-                    return inplace ? input.leaky_relu_(negative_slope_scalar).alias() : input.leaky_relu(negative_slope_scalar);
+                    return inplace ? input.leaky_relu_(negative_slope).alias() : input.leaky_relu(negative_slope);
                 }
             }
         }
