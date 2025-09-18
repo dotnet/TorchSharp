@@ -3096,20 +3096,6 @@ namespace TorchSharp
             public Tensor celu_(System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
             public Tensor celu_() => celu_(1.0);
 
-            public Tensor elu(double alpha = 1)
-            {
-                using var alpha_scalar = alpha.ToScalar();
-                using var one_scalar = 1.0.ToScalar();
-                return this.elu(alpha_scalar, one_scalar, one_scalar);
-            }
-
-            public Tensor elu_(double alpha = 1)
-            {
-                using var alpha_scalar = alpha.ToScalar();
-                using var one_scalar = 1.0.ToScalar();
-                return this.elu_(alpha_scalar, one_scalar, one_scalar);
-            }
-
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 var res = NativeMethods.THSTensor_elu(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
@@ -3118,12 +3104,44 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            // FIXME: Consider in cases of alpha, scale and input_scale are not same typed?
+            public Tensor elu(byte alpha = 1, byte scale = 1, byte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(sbyte alpha = 1, sbyte scale = 1, sbyte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(short alpha = 1, short scale = 1, short input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(int alpha = 1, int scale = 1, int input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(long alpha = 1, long scale = 1, long input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor elu(Half alpha, Half scale, Half input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: No default alpha, scale and input_scale?
+#endif
+            public Tensor elu(float alpha = 1, float scale = 1, float input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(double alpha = 1, double scale = 1, double input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(bool alpha, bool scale, bool input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu((float, float) alpha, (float, float) scale, (float, float) input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu(System.Numerics.Complex alpha, System.Numerics.Complex scale, System.Numerics.Complex input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu() => elu(1.0, 1.0, 1.0);
+
             public Tensor elu_(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 NativeMethods.THSTensor_elu_(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            // FIXME: Consider in cases of alpha, scale and input_scale are not same typed?
+            public Tensor elu_(byte alpha = 1, byte scale = 1, byte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(sbyte alpha = 1, sbyte scale = 1, sbyte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(short alpha = 1, short scale = 1, short input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(int alpha = 1, int scale = 1, int input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(long alpha = 1, long scale = 1, long input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor elu_(Half alpha, Half scale, Half input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: No default alpha, scale and input_scale?
+#endif
+            public Tensor elu_(float alpha = 1, float scale = 1, float input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(double alpha = 1, double scale = 1, double input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(bool alpha, bool scale, bool input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu_((float, float) alpha, (float, float) scale, (float, float) input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu_(System.Numerics.Complex alpha, System.Numerics.Complex scale, System.Numerics.Complex input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu_() => elu_(1.0, 1.0, 1.0);
 
             public Tensor gelu()
             {
