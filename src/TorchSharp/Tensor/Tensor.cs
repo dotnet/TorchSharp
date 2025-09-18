@@ -2404,12 +2404,42 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            // FIXME: Consider in cases of threshold and value are not same typed?
+            public Tensor threshold(byte threshold, byte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(sbyte threshold, sbyte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(short threshold, short value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(int threshold, int value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(long threshold, long value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor threshold(Half threshold, Half value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+#endif
+            public Tensor threshold(float threshold, float value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(double threshold, double value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(bool threshold, bool value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold((float, float) threshold, (float, float) value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold(System.Numerics.Complex threshold, System.Numerics.Complex value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); } // FIXME: Well defined?
+
             public Tensor threshold_(Scalar threshold, Scalar value)
             {
                 NativeMethods.THSTensor_threshold_(Handle, threshold.Handle, value.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            // FIXME: Consider in cases of threshold and value are not same typed?
+            public Tensor threshold_(byte threshold, byte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(sbyte threshold, sbyte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(short threshold, short value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(int threshold, int value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(long threshold, long value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor threshold_(Half threshold, Half value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+#endif
+            public Tensor threshold_(float threshold, float value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(double threshold, double value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(bool threshold, bool value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold_((float, float) threshold, (float, float) value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold_(System.Numerics.Complex threshold, System.Numerics.Complex value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); } // FIXME: Well defined?
 
             /// <summary>
             /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
