@@ -3377,12 +3377,40 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor leaky_relu(byte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu(sbyte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(short negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(int negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(long negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor leaky_relu(Half negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+#endif
+            public Tensor leaky_relu(float negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(double negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(bool negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu((float, float) negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu(System.Numerics.Complex negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+
             public Tensor leaky_relu_(Scalar negative_slope)
             {
                 NativeMethods.THSTensor_leaky_relu_(Handle, negative_slope.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            public Tensor leaky_relu_(byte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu_(sbyte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(short negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(int negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(long negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor leaky_relu_(Half negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+#endif
+            public Tensor leaky_relu_(float negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(double negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(bool negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu_((float, float) negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu_(System.Numerics.Complex negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
 
             public Tensor selu()
             {
