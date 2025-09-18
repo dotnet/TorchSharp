@@ -3204,12 +3204,40 @@ namespace TorchSharp
                 return this;
             }
 
+            public Tensor hardtanh(byte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(sbyte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(short min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(int min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(long min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor hardtanh(Half min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+#endif
+            public Tensor hardtanh(float min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(double min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(bool min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh((float, float) min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh(System.Numerics.Complex min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); } // FIXME: Well defined?
+
             public Tensor hardtanh_(Scalar min, Scalar max)
             {
                 NativeMethods.THSTensor_hardtanh_(Handle, min.Handle, max.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            public Tensor hardtanh_(byte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(sbyte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(short min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(int min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(long min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor hardtanh_(Half min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+#endif
+            public Tensor hardtanh_(float min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(double min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(bool min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh_((float, float) min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh_(System.Numerics.Complex min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); } // FIXME: Well defined?
 
             public Tensor heaviside(Tensor other)
             {
