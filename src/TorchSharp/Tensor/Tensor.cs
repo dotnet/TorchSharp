@@ -3051,18 +3051,6 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor celu()
-            {
-                using var one_scalar = 1.0.ToScalar();
-                return this.celu(one_scalar);
-            }
-
-            public Tensor celu_()
-            {
-                using var one_scalar = 1.0.ToScalar();
-                return this.celu_(one_scalar);
-            }
-
             public Tensor celu(Scalar alpha)
             {
                 var res = NativeMethods.THSTensor_celu(Handle, alpha.Handle);
@@ -3071,12 +3059,42 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor celu(byte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(sbyte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(short alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(int alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(long alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor celu(Half alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: No default alpha?
+#endif
+            public Tensor celu(float alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(double alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(bool alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu((float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu(System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu() => celu(1.0);
+
             public Tensor celu_(Scalar alpha)
             {
                 NativeMethods.THSTensor_celu_(Handle, alpha.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            public Tensor celu_(byte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(sbyte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(short alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(int alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(long alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor celu_(Half alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: No default alpha?
+#endif
+            public Tensor celu_(float alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(double alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(bool alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu_((float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu_(System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu_() => celu_(1.0);
 
             public Tensor elu(double alpha = 1)
             {
