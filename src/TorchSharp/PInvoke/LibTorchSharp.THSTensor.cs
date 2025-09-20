@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using TorchSharp.Modules;
 
 namespace TorchSharp.PInvoke

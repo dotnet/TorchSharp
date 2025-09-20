@@ -122,6 +122,7 @@ Generator THSGenerator_new(uint64_t seed, int64_t device, int64_t index)
 {
     // TODO: Support creation of GPU RNGs. 'device' and 'index' are in the
     //       function signature in preparation thereof.
+    //auto dl = std::make_shared<c10::GeneratorImpl>(c10::Device(c10::DeviceType::CUDA, device), c10::DispatchKeySet()).get();
     return new at::Generator(at::detail::createCPUGenerator(seed));
 }
 

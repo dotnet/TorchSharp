@@ -111,6 +111,11 @@ namespace TorchSharp
                 }
             }
 
+            internal IntPtr GetDataPtr()
+            {
+                return NativeMethods.THSStorage_data_ptr(handle);
+            }
+
             /// <summary>
             /// TODO
             /// </summary>
