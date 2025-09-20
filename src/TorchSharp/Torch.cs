@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorchSharp.Amp;
 using TorchSharp.Modules;
 using TorchSharp.PInvoke;
 using TorchSharp.Utils;
@@ -672,6 +673,13 @@ namespace TorchSharp
         {
             if(ptr == IntPtr.Zero)
                 CheckForErrors();
+            return new Tensor(ptr);
+        }
+        public static Tensor ReturnCheckForErrorsAutocast(IntPtr ptr, ScalarType? st = null)
+        {
+            if (ptr == IntPtr.Zero)
+                CheckForErrors();
+            ptr = st == null ? AutocastMode.AutoCast(ptr) : AutocastMode.AutoCast(ptr, st.Value);
             return new Tensor(ptr);
         }
         public static partial class backends

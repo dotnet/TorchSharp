@@ -31,10 +31,8 @@ namespace TorchSharp
                         res = THSLinalg_tensordot(Handle, b.Handle,(IntPtr)pdims1, dims1.Length,(IntPtr)pdims2, dims2.Length);
                     }
                 }
-                if (res == IntPtr.Zero) {
-                    CheckForErrors();
-                }
-                return new Tensor(res);
+
+                return ReturnCheckForErrors(res);
             }
 
             // https://pytorch.org/docs/stable/generated/torch.tensordot
@@ -75,9 +73,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cholesky(bool upper = false)
             {
-                var res = THSTensor_cholesky(Handle, upper);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_cholesky(Handle, upper));
             }
 
             /// <summary>
@@ -87,9 +83,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cholesky_inverse(bool upper = false)
             {
-                var res = THSTensor_cholesky_inverse(Handle, upper);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_cholesky_inverse(Handle, upper));
             }
 
             /// <summary>
@@ -100,9 +94,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cholesky_solve(Tensor input2, bool upper = false)
             {
-                var res = THSTensor_cholesky_solve(Handle, input2.Handle, upper);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_cholesky_solve(Handle, input2.Handle, upper));
             }
 
             /// <summary>
@@ -115,9 +107,7 @@ namespace TorchSharp
             /// </remarks>
             public Tensor cross(Scalar other, long dim)
             {
-                var res = THSTensor_cross(Handle, other.Handle, dim);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_cross(Handle, other.Handle, dim));
             }
             public Tensor cross(Tensor other, long dim)
             {
@@ -128,9 +118,8 @@ namespace TorchSharp
                     if (sts.Any(x => x == ScalarType.Float32))
                         (handle, other.handle) = AutocastMode.AutoCast(handle, other.handle, ScalarType.Float32);
                 }
-                var res = THSTensor_cross(Handle, other.Handle, dim);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+
+                return ReturnCheckForErrors(THSTensor_cross(Handle, other.Handle, dim));
             }
             /// <summary>
             /// Computes the determinant of a square matrix.
@@ -150,9 +139,7 @@ namespace TorchSharp
                 var len = shape.Length;
                 if (shape[len - 1] != shape[len - 2]) throw new ArgumentException("The input tensor is not square");
 
-                var res = THSTensor_logdet(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_logdet(Handle));
             }
 
 
@@ -190,10 +177,7 @@ namespace TorchSharp
             /// </remarks>
             public Tensor matmul(Tensor target)
             {
-                var res = THSTensor_matmul(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = AutocastMode.AutoCast(res);
-                return new Tensor(res);
+                return ReturnCheckForErrorsAutocast(THSTensor_matmul(Handle, target.Handle));
             }
 
             /// <summary>
@@ -203,10 +187,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor mm(Tensor target)
             {
-                var res = THSTensor_mm(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = AutocastMode.AutoCast(res);
-                return new Tensor(res);
+                return ReturnCheckForErrorsAutocast(THSTensor_mm(Handle, target.Handle));
             }
 
             /// <summary>
@@ -216,10 +197,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor mv(Tensor target)
             {
-                var res = THSTensor_mv(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                res = AutocastMode.AutoCast(res);
-                return new Tensor(res);
+                return ReturnCheckForErrorsAutocast(THSTensor_mv(Handle, target.Handle));
             }
 
             /// <summary>
@@ -227,9 +205,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor matrix_exp()
             {
-                var res = THSTensor_matrix_exp(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_matrix_exp(Handle));
             }
 
             /// <summary>
@@ -240,9 +216,7 @@ namespace TorchSharp
             /// <remarks>Input tensor must be of shape (*, m, m) where * is zero or more batch dimensions.</remarks>
             public Tensor matrix_power(int n)
             {
-                var res = THSLinalg_matrix_power(Handle, n);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSLinalg_matrix_power(Handle, n));
             }
 
             /// <summary>
@@ -256,9 +230,7 @@ namespace TorchSharp
             public Tensor vdot(Tensor target)
             {
                 if (shape.Length != 1 || target.shape.Length != 1 || shape[0] != target.shape[0]) throw new InvalidOperationException("vdot arguments must have the same shape.");
-                var res = THSTensor_vdot(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_vdot(Handle, target.Handle));
             }
 
             /// <summary>
@@ -275,9 +247,7 @@ namespace TorchSharp
                     if (sts.Any(x => x == ScalarType.Float32))
                         (handle, target.handle) = AutocastMode.AutoCast(handle, target.handle, ScalarType.Float32);
                 }
-                var res = THSTensor_dot(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_dot(Handle, target.Handle));
             }
 
             /// <summary>
@@ -289,10 +259,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor pinverse(double rcond = 1e-15, bool hermitian = false)
             {
-                var res = THSLinalg_pinverse(Handle, rcond, hermitian);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSLinalg_pinverse(Handle, rcond, hermitian));
             }
 
             /// <summary>
@@ -305,10 +272,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor ormqr(Tensor tau, Tensor other, bool left = true, bool transpose = false)
             {
-                var res = THSTensor_ormqr(Handle, tau.handle, other.Handle, left, transpose);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_ormqr(Handle, tau.handle, other.Handle, left, transpose));
             }
         }
     }
