@@ -675,6 +675,12 @@ namespace TorchSharp
                 CheckForErrors();
             return new Tensor(ptr);
         }
+        public static (Tensor,Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1)
+        {
+            if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero)
+                CheckForErrors();
+            return (new Tensor(ptr), new Tensor(ptr1));
+        }
         public static Tensor ReturnCheckForErrorsAutocast(IntPtr ptr, ScalarType? st = null)
         {
             if (ptr == IntPtr.Zero)

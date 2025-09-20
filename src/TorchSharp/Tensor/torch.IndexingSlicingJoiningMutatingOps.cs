@@ -46,9 +46,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_cat(tensorsRef, parray.Array.Length, dim);
-            if (res == IntPtr.Zero) CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_cat(tensorsRef, parray.Array.Length, dim));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.concat
@@ -117,9 +115,7 @@ namespace TorchSharp
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-                var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_dstack(tensorsRef, parray.Array.Length));
             }
         }
 
@@ -133,9 +129,7 @@ namespace TorchSharp
         {
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-            var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_dstack(tensorsRef, parray.Array.Length));
         }
         
         // https://pytorch.org/docs/stable/generated/torch.gather
@@ -196,9 +190,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_hstack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_hstack(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.hstack
@@ -223,9 +215,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_hstack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_hstack(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.index_add
@@ -476,9 +466,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_stack(tensorsRef, parray.Array.Length, dim);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_stack(tensorsRef, parray.Array.Length, dim));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.swapaxes
@@ -564,9 +552,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_vstack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_vstack(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.where

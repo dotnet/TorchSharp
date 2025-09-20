@@ -9,7 +9,7 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if NET6_0_OR_GREATER
+//#if NET6_0_OR_GREATER
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
@@ -122,6 +122,6 @@ namespace TorchSharp
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Float16, dtype, device, requires_grad, names: names);
         }
-#endif
+//#endif
     }
 }

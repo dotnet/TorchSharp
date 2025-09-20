@@ -47,9 +47,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_block_diag(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_block_diag(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.broadcast_tensors
@@ -130,9 +128,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_cartesian_prod(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_cartesian_prod(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
@@ -164,11 +160,7 @@ namespace TorchSharp
             if (p < 0)
                 throw new ArgumentException($"p must be non-negative");
 
-            var res = THSTensor_cdist(x1.Handle, x2.Handle, p, (long)compute_mode);
-            if (res == IntPtr.Zero)
-                CheckForErrors();
-            res = AutocastMode.AutoCast(res, ScalarType.Float32);
-            return new Tensor(res);
+            return ReturnCheckForErrorsAutocast(THSTensor_cdist(x1.Handle, x2.Handle, p, (long)compute_mode), ScalarType.Float32);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.clone
@@ -189,10 +181,7 @@ namespace TorchSharp
             if (r < 0)
                 throw new ArgumentException($"r must be non-negative");
 
-            var res = THSTensor_combinations(input.Handle, r, with_replacement);
-            if (res == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_combinations(input.Handle, r, with_replacement));
         }
 
 
@@ -355,9 +344,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_einsum(equation, tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_einsum(equation, tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.flatten
@@ -694,10 +681,7 @@ namespace TorchSharp
                 device = torch.CPU;
             }
 
-            var res = NativeMethods.THSTensor_tril_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
-            if (res == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(NativeMethods.THSTensor_tril_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.triu
@@ -720,10 +704,7 @@ namespace TorchSharp
                 device = torch.CPU;
             }
 
-            var res = NativeMethods.THSTensor_triu_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
-            if (res == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(NativeMethods.THSTensor_triu_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.vander

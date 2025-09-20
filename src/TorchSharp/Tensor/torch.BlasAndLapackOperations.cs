@@ -219,10 +219,12 @@ namespace TorchSharp
         /// <returns></returns>
         public static (Tensor Solution, Tensor QR) lstsq(Tensor B, Tensor A)
         {
-            var solution = THSTorch_lstsq(B.Handle, A.Handle, out var qr);
+            //TODO: Test if this worked
+            return ReturnCheckForErrors(THSTorch_lstsq(B.Handle, A.Handle, out var qr), qr);
+            /*var solution = THSTorch_lstsq(B.Handle, A.Handle, out var qr);
             if (solution == IntPtr.Zero || qr == IntPtr.Zero)
                 CheckForErrors();
-            return (new Tensor(solution), new Tensor(qr));
+            return (new Tensor(solution), new Tensor(qr));*/
         }
 
         // https://pytorch.org/docs/stable/generated/torch.lu
@@ -253,10 +255,7 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor lu_solve(Tensor b, Tensor LU_data, Tensor LU_pivots)
         {
-            var solution = THSTensor_lu_solve(b.Handle, LU_data.Handle, LU_pivots.Handle);
-            if (solution == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(solution);
+            return ReturnCheckForErrors(THSTensor_lu_solve(b.Handle, LU_data.Handle, LU_pivots.Handle));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.lu_unpack
