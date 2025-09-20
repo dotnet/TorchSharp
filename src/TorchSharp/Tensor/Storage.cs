@@ -45,6 +45,10 @@ namespace TorchSharp
                     return new Storage<T>(tensor.@long());
                 case Type _ when type == typeof(float):
                     return new Storage<T>(tensor.@float());
+                case Type _ when type == typeof(Half):
+                    return new Storage<T>(tensor.to_type(ScalarType.Float16));
+                case Type _ when type == typeof(BFloat16):
+                    return new Storage<T>(tensor.to_type(ScalarType.BFloat16));
                 case Type _ when type == typeof(double):
                     return new Storage<T>(tensor.@double());
                 case Type _ when type == typeof((float,float)):
@@ -58,6 +62,7 @@ namespace TorchSharp
 
             protected static Tensor CreateTypedTensor<T>(ScalarType dtype, IList<T> rawArray)
             {
+                //TODO: ADD Half and BFloat16
                 switch (dtype) {
                 case ScalarType.Int8:
                     return torch.tensor(rawArray as IList<byte>);

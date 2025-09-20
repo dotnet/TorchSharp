@@ -14,9 +14,9 @@ namespace TorchSharp.Amp
         public torch.Device device;
         private torch.Tensor _scale, _growth_tracker;
         private float InitScale, InitGrowthTracker;
-        public float _growth_factor { set; get; }
-        public float _backoff_factor { set; get; }
-        private int _growth_interval { set; get; }
+        public float _growth_factor;
+        public float _backoff_factor;
+        private int _growth_interval;
         private UnorderedMap<int, UnorderedMap<string, object>> _per_optimizer_states = new UnorderedMap<int, UnorderedMap<string, object>>();
         bool disposedValue;
 

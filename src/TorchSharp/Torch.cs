@@ -662,6 +662,18 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Refactor all Tensors with this method for example the LinearAlgebra.cs of cholesky we can just put return <see cref="ReturnCheckForErrors"/>;
+        /// public static Tensor cholesky(Tensor input) => ReturnCheckForErrors(THSLinalg_cholesky(input.Handle));
+        /// </summary>
+        /// <param name="ptr"></param>
+        /// <returns></returns>
+        public static Tensor ReturnCheckForErrors(IntPtr ptr)
+        {
+            if(ptr == IntPtr.Zero)
+                CheckForErrors();
+            return new Tensor(ptr);
+        }
         public static partial class backends
         {
             public static partial class cuda
