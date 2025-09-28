@@ -337,10 +337,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arccosh()
             {
-                var res = THSTensor_arccosh(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_arccosh(Handle));
             }
 
             /// <summary>

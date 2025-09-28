@@ -664,7 +664,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Refactor all Tensors with this method for example the LinearAlgebra.cs of cholesky we can just put return <see cref="ReturnCheckForErrors"/>;
+        /// Refactor all Tensors with this method for example the LinearAlgebra.cs of cholesky we can just put return <see cref="ReturnCheckForErrors(IntPtr)"/>;
         /// public static Tensor cholesky(Tensor input) => ReturnCheckForErrors(THSLinalg_cholesky(input.Handle));
         /// </summary>
         /// <param name="ptr"></param>
@@ -686,6 +686,12 @@ namespace TorchSharp
             if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero || ptr2 == IntPtr.Zero)
                 CheckForErrors();
             return (new Tensor(ptr), new Tensor(ptr1), new Tensor(ptr2));
+        }
+        public static (Tensor, Tensor, Tensor, Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1, IntPtr ptr2, IntPtr ptr3)
+        {
+            if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero || ptr2 == IntPtr.Zero || ptr3 == IntPtr.Zero)
+                CheckForErrors();
+            return (new Tensor(ptr), new Tensor(ptr1), new Tensor(ptr2), new Tensor(ptr3));
         }
         public static Tensor ReturnCheckForErrorsAutocast(IntPtr ptr, ScalarType? st = null)
         {

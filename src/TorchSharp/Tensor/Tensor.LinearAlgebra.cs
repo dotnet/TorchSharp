@@ -157,9 +157,8 @@ namespace TorchSharp
             public (Tensor a, Tensor tau) geqrf()
             {
                 var res = THSTensor_geqrf(Handle, out var tau);
-                if (res == IntPtr.Zero || tau == IntPtr.Zero)
-                    torch.CheckForErrors();
-                return (new Tensor(res), new Tensor(tau));
+                return ReturnCheckForErrors(res, tau);
+                
             }
 
             /// <summary>

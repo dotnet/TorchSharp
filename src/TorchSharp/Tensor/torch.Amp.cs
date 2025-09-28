@@ -29,9 +29,7 @@ namespace TorchSharp
         public static (torch.Tensor, torch.Tensor) amp_update_scale(Tensor self, Tensor growth_tracker, Tensor found_inf, double scale_growth_factor, double scale_backoff_factor, long growth_interval)
         {
             var res = THSAMP_amp_update_scale(self.Handle, growth_tracker.Handle, found_inf.Handle, scale_growth_factor, scale_backoff_factor, growth_interval, out var res1);
-            if(res == IntPtr.Zero || res1 == IntPtr.Zero)
-                torch.CheckForErrors();
-            return (new Tensor(res), new Tensor(res1));
+            return ReturnCheckForErrors(res, res1);
         }
     }
 }

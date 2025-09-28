@@ -190,9 +190,7 @@ namespace TorchSharp
             Generator? generator = null)
         {
             var genHandle = generator?.Handle ?? IntPtr.Zero;
-            var res = NativeMethods.THSTensor_randperm_out(genHandle, n, @out.Handle);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_randperm_out(genHandle, n, @out.Handle));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.randperm
@@ -221,8 +219,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm(genHandle, n, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
     }
 }
