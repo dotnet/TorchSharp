@@ -22,9 +22,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pOutSize = output_size) {
-                        var res = THSNN_MaxUnpool1d_forward(handle, tensor.Handle, indices.Handle, (IntPtr)pOutSize);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+                        return ReturnCheckForErrors(THSNN_MaxUnpool1d_forward(handle, tensor.Handle, indices.Handle, (IntPtr)pOutSize));
                     }
                 }
             }

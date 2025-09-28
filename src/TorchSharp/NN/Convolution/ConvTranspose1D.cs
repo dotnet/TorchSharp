@@ -18,9 +18,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 if (ValidateShape(input, 1)) {
-                    var res = THSNN_ConvTranspose1d_forward(handle, input.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_ConvTranspose1d_forward(handle, input.Handle));
                 }
                 throw new ArgumentException($"Expected 2D (unbatched) or 3D (batched) input with {input_channels} channels to ConvTranspose1d.");
             }
@@ -117,9 +115,7 @@ namespace TorchSharp
                                     (IntPtr)poutputPadding, outputPaddings.Length,
                                     (IntPtr)pdilation, dilations.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            res = AutocastMode.AutoCast(res);
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }

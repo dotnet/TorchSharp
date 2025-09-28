@@ -47,9 +47,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 if (ValidateShape(input, 2)) {
-                    var res = THSNN_Conv2d_forward(handle, input.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_Conv2d_forward(handle, input.Handle));
                 }
                 throw new ArgumentException($"Expected 3D (unbatched) or 4D (batched) input with {input_channels} channels to Conv2d.");
             }

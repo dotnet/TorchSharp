@@ -22,9 +22,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                var res = THSNN_dropout3d(input.Handle, p, this.training, inplace);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_dropout3d(input.Handle, p, this.training, inplace));
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -62,9 +60,7 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor dropout3d(Tensor input, double p = 0.5, bool training = true, bool inplace = false)
                 {
-                    var res = THSNN_dropout3d(input.Handle, p, training, inplace);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_dropout3d(input.Handle, p, training, inplace));
                 }
             }
         }

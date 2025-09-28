@@ -22,9 +22,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions != 4) throw new ArgumentException($"Invalid number of dimensions for BatchNorm argument: {tensor.Dimensions}");
-                var res = THSNN_BatchNorm2d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_BatchNorm2d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
             public Parameter? bias {

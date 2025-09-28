@@ -23,9 +23,7 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_ConstantPad1d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_ConstantPad1d_forward(handle, tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither

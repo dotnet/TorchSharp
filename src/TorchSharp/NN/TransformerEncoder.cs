@@ -32,8 +32,7 @@ namespace TorchSharp
                     src.Handle,
                     src_mask?.Handle ?? IntPtr.Zero,
                     src_key_padding_mask?.Handle ?? IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(res);
             }
 
             /// <summary>

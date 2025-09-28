@@ -20,9 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_LPPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_LPPool2d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither

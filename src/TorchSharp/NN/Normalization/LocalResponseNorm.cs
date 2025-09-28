@@ -21,9 +21,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {tensor.Dimensions}");
-                var res = THSNN_LocalResponseNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_LocalResponseNorm_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
         }
     }

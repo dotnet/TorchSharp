@@ -23,9 +23,7 @@ namespace TorchSharp
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         training,
                         momentum, eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -39,9 +37,8 @@ namespace TorchSharp
                         weight is not null ? weight.Handle : IntPtr.Zero,
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
+                    
                 }
 
                 /// <summary>
@@ -57,9 +54,7 @@ namespace TorchSharp
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         use_input_stats,
                         momentum, eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -79,9 +74,8 @@ namespace TorchSharp
                                 eps);
                         }
                     }
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -89,18 +83,12 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor local_response_norm(Tensor input, long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
                 {
-                    var res = THSNN_local_response_norm(input.Handle, size, alpha, beta, k);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_local_response_norm(input.Handle, size, alpha, beta, k));
                 }
 
                 public static Tensor normalize(Tensor input, float p=2.0f, long dim=1, float eps= 1e-12f, Tensor output = null)
                 {
-                    var res = THSNN_normalize(input.Handle, p, dim, eps, out _);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_normalize(input.Handle, p, dim, eps, out _));
                 }
             }
         }

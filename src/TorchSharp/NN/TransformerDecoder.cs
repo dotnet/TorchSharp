@@ -32,8 +32,7 @@ namespace TorchSharp
                     memory_mask?.Handle ?? IntPtr.Zero,
                     tgt_key_padding_mask?.Handle ?? IntPtr.Zero,
                     memory_key_padding_mask?.Handle ?? IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(res);
             }
             public new Tensor call(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
             {

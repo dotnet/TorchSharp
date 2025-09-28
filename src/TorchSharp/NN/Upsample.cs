@@ -79,8 +79,7 @@ namespace TorchSharp
                                     THSTensor_upsample_nearest1d(input.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(res);
                             }
                         }
                     }
@@ -101,8 +100,7 @@ namespace TorchSharp
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pinputSizes, inputSizes.Length,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(res);
                             }
                         }
                     }
@@ -126,8 +124,7 @@ namespace TorchSharp
                                     THSTensor_upsample_nearest2d(input.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(res);
                             }
                         }
                     }
@@ -145,8 +142,7 @@ namespace TorchSharp
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pinputSizes, inputSizes.Length,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(res);
                             }
                         }
                     }
@@ -164,8 +160,7 @@ namespace TorchSharp
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pinputSizes, inputSizes.Length,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(res);
                             }
                         }
                     }
@@ -189,8 +184,7 @@ namespace TorchSharp
                                     THSTensor_upsample_nearest3d(input.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(res);
                             }
                         }
                     }
@@ -221,9 +215,7 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Upsample_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_Upsample_forward(handle, tensor.Handle));
             }
 
             public UpsampleMode mode { get; private set; }

@@ -19,9 +19,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                var res = THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle));
             }
 
             public Parameter? bias {

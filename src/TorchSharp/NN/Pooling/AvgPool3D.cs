@@ -20,9 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_AvgPool3d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_AvgPool3d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -130,15 +128,13 @@ namespace TorchSharp
                     paddings = (paddings == null) ? new long[] { 0 } : paddings;
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
-                            var res =
-                                THSTensor_avg_pool3d(input.Handle,
+                            var res = THSTensor_avg_pool3d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,
                                     count_include_pad);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(res);
                         }
                     }
                 }
@@ -155,16 +151,14 @@ namespace TorchSharp
                     paddings = (paddings == null) ? new long[] { 0 } : paddings;
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
-                            var res =
-                                THSTensor_avg_pool3d_backward(input.Handle, originalInput.Handle,
+                            var res = THSTensor_avg_pool3d_backward(input.Handle, originalInput.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,
                                     count_include_pad,
                                     divisorOverride);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(res);
                         }
                     }
                 }

@@ -36,9 +36,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor tensor)
             {
                 //tensor.handle = Amp.AMPManager.GetInstance().AutoCast(tensor.handle); //WARNING should be here???? Research
-                var res = THSNN_Linear_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_Linear_forward(handle, tensor.Handle));
             }
 
             public Parameter? bias {
@@ -103,10 +101,7 @@ namespace TorchSharp
                 public static Tensor linear(Tensor input, Tensor weights, Tensor? bias = null)
                 {
                     IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
-                    var res = THSNN_functional_linear(input.Handle, weights.Handle, bPtr);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    res = AutocastMode.AutoCast(res);
-                    return new Tensor(res);
+                    return ReturnCheckForErrorsAutocast(THSNN_functional_linear(input.Handle, weights.Handle, bPtr));
                 }
             }
         }

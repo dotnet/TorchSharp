@@ -20,9 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_AdaptiveAvgPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_AdaptiveAvgPool2d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -92,9 +90,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* poutputSize = output_size) {
-                            var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length));
                         }
                     }
                 }
@@ -109,9 +105,7 @@ namespace TorchSharp
                 {
                     long* poutputSize = stackalloc long[2] { output_size.Item1, output_size.Item2 };
 
-                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2));
                 }
 
                 /// <summary>
@@ -124,9 +118,7 @@ namespace TorchSharp
                 {
                     long* poutputSize = stackalloc long[2] { output_size, output_size };
 
-                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2));
                 }
             }
         }

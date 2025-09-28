@@ -20,9 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_AdaptiveAvgPool3d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_AdaptiveAvgPool3d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -92,10 +90,8 @@ namespace TorchSharp
                 public static unsafe Tensor adaptive_avg_pool3d(Tensor input, long[] output_size)
                 {
                     fixed (long* poutputSize = output_size) {
-                        var res =
-                            THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, output_size.Length);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+
+                        return ReturnCheckForErrors(THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, output_size.Length));
                     }
                 }
 
@@ -108,9 +104,7 @@ namespace TorchSharp
                 public static unsafe Tensor adaptive_avg_pool3d(Tensor input, (long, long, long) output_size)
                 {
                     long* poutputSize = stackalloc long[3] { output_size.Item1, output_size.Item2, output_size.Item3 };
-                    var res = THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3));
                 }
 
                 /// <summary>
@@ -123,16 +117,12 @@ namespace TorchSharp
                 {
                     var os = new long[] { output_size, output_size, output_size };
                     long* poutputSize = stackalloc long[3] { output_size, output_size, output_size };
-                    var res = THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3));
                 }
 
                 public static Tensor adaptive_avg_pool3d_backward(Tensor gradInput, Tensor gradOutput, Tensor originalInput)
                 {
-                    var res = THSTensor_adaptive_avg_pool3d_backward_out(gradInput.Handle, gradOutput.Handle, originalInput.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool3d_backward_out(gradInput.Handle, gradOutput.Handle, originalInput.Handle));
                 }
             }
         }

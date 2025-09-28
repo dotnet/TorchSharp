@@ -18,9 +18,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Sigmoid_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_Sigmoid_forward(handle, tensor.Handle));
             }
 
             public override string GetName()

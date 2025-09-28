@@ -62,9 +62,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = pad) {
-                            var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value));
                         }
                     }
                 }
@@ -81,9 +79,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = pad) {
-                            var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value));
                         }
                     }
                 }
@@ -101,9 +97,7 @@ namespace TorchSharp
                     unsafe {
                         var correctedPad = stackalloc long[] { pad.Item1, pad.Item2 };
 
-                        var res = THSNN_pad(input.Handle, (IntPtr)correctedPad, 2, (byte)mode, value);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+                        return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)correctedPad, 2, (byte)mode, value));
                     }
                 }
 
@@ -119,9 +113,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         var correctedPad = stackalloc long[] { pad.Item1, pad.Item2, pad.Item3, pad.Item4 };
-                        var res = THSNN_pad(input.Handle, (IntPtr)correctedPad, 4, (byte)mode, value);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+                        return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)correctedPad, 4, (byte)mode, value));
                     }
                 }
 
@@ -141,9 +133,7 @@ namespace TorchSharp
                         var correctedPad = stackalloc long[length];
                         for (var i = 0; i < length; i++) correctedPad[i] = pad;
 
-                        var res = THSNN_pad(input.Handle, (IntPtr)correctedPad, length, (byte)mode, value);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+                        return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)correctedPad, length, (byte)mode, value));
                     }
                 }
 
@@ -174,10 +164,7 @@ namespace TorchSharp
                             (input.handle, grid.handle) = AutocastMode.AutoCast(input.handle, grid.handle, ScalarType.Float32);
                     }
 
-                    var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)padding_mode, ac);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)padding_mode, ac));
                 }
 
                 /// <summary>
@@ -192,9 +179,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = size) {
-                            var res = THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners));
                         }
                     }
                 }
@@ -223,9 +208,7 @@ namespace TorchSharp
                         fixed (long* psize = size) {
                             fixed (double* pSF = scale_factor) {
                                 byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
-                                var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor);
-                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new Tensor(res);
+                                return ReturnCheckForErrors(THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor));
                             }
                         }
                     }

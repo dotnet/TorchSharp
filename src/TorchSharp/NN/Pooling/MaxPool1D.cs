@@ -21,16 +21,14 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_MaxPool1d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_MaxPool1d_forward(handle, tensor.Handle));
             }
 
             public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {
                 var res = THSNN_MaxPool1d_forward_with_indices(handle, tensor.Handle, out var indices);
-                if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new Tensor(res), new Tensor(indices));
+                return ReturnCheckForErrors(res, indices);
+                
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -94,15 +92,13 @@ namespace TorchSharp
                     var dilations = new long[] { dilation ?? 1 };
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
-                            var res =
-                                THSTensor_max_pool1d(input.Handle,
+                            var res = THSTensor_max_pool1d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     (IntPtr)pdilation, dilations.Length,
                                     ceil_mode);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(res);
                         }
                     }
                 }

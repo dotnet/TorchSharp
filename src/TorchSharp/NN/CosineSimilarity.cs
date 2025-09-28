@@ -21,10 +21,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                res= AutocastMode.AutoCast(res, ScalarType.Float32);
-                return new Tensor(res);
+                return ReturnCheckForErrorsAutocast(THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle), ScalarType.Float32);
             }
         }
     }

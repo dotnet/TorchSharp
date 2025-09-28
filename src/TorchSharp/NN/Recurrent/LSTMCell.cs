@@ -25,8 +25,7 @@ namespace TorchSharp
             public override (Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0)
             {
                 var hN = THSNN_LSTMCell_forward(handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr cN);
-                if (hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new Tensor(hN), new Tensor(cN));
+                return ReturnCheckForErrors(hN, cN);
             }
 
             public new (Tensor, Tensor) call(Tensor input, (Tensor, Tensor)? h0_c0 = null) => base.call(input, h0_c0);

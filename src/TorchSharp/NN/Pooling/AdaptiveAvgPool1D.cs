@@ -20,9 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_AdaptiveAvgPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_AdaptiveAvgPool1d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -65,10 +63,7 @@ namespace TorchSharp
                     var outputSizes = new long[] { output_size };
                     unsafe {
                         fixed (long* poutputSize = outputSizes) {
-                            var res =
-                                THSTensor_adaptive_avg_pool1d(input.Handle, (IntPtr)poutputSize, outputSizes.Length);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSTensor_adaptive_avg_pool1d(input.Handle, (IntPtr)poutputSize, outputSizes.Length));
                         }
                     }
                 }

@@ -24,10 +24,9 @@ namespace TorchSharp
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
-                var res = THSNN_GroupNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                res= AutocastMode.AutoCast(res, ScalarType.Float32);
-                return new Tensor(res);
+
+                return ReturnCheckForErrorsAutocast(THSNN_GroupNorm_forward(handle.DangerousGetHandle(), tensor.Handle), ScalarType.Float32);
+                
             }
 
             public Parameter? bias {

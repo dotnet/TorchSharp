@@ -25,9 +25,7 @@ namespace TorchSharp
                     // Not sure why this is the case, but there's an exception in the native runtime
                     // unless there's both a batch dimension and a channel dimension.
                     throw new ArgumentException("FractionalMaxPool3d: input tensor must have 5 dimensions: [N, C, D, H, W]");
-                var res = THSNN_FractionalMaxPool3d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_FractionalMaxPool3d_forward(handle, tensor.Handle));
             }
 
             public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
@@ -37,8 +35,7 @@ namespace TorchSharp
                     // unless there's both a batch dimension and a channel dimension.
                     throw new ArgumentException("FractionalMaxPool3d: input tensor must have 5 dimensions: [N, C, D, H, W]");
                 var res = THSNN_FractionalMaxPool3d_forward_with_indices(handle, tensor.Handle, out var indices);
-                if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new Tensor(res), new Tensor(indices));
+                return ReturnCheckForErrors(res, indices);
             }
 
             // Rather than spending cycles only to discover that this module has neither

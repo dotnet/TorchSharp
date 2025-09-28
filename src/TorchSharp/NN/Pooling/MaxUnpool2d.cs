@@ -22,9 +22,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pOutSize = output_size) {
-                        var res = THSNN_MaxUnpool2d_forward(handle, tensor.Handle, indices.Handle, (IntPtr)pOutSize, output_size == null ? 0 : output_size.Length);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+                        return ReturnCheckForErrors(THSNN_MaxUnpool2d_forward(handle, tensor.Handle, indices.Handle, (IntPtr)pOutSize, output_size == null ? 0 : output_size.Length));
                     }
                 }
             }
@@ -105,10 +103,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* poutputSize = outputSize) {
-                            var res = THSTensor_maxunpool2d(input.Handle, indices.Handle,
-                                (IntPtr)poutputSize, outputSize.Length);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSTensor_maxunpool2d(input.Handle, indices.Handle, (IntPtr)poutputSize, outputSize.Length));
                         }
                     }
                 }

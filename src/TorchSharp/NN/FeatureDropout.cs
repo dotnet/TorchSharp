@@ -20,9 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_FeatureAlphaDropout_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_FeatureAlphaDropout_forward(handle, tensor.Handle));
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -61,9 +59,7 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor feature_alpha_dropout(Tensor input, double p = 0.5, bool training = false, bool inplace = false)
                 {
-                    var res = THSNN_feature_alpha_dropout(input.Handle, p, training, inplace);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_feature_alpha_dropout(input.Handle, p, training, inplace));
                 }
             }
         }
