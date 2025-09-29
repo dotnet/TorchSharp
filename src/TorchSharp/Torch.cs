@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -656,9 +657,7 @@ namespace TorchSharp
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
-
-            if (error != IntPtr.Zero)
-            {
+            if (error != IntPtr.Zero) {
                 throw new ExternalException(Marshal.PtrToStringAnsi(error));
             }
         }
@@ -669,30 +668,64 @@ namespace TorchSharp
         /// </summary>
         /// <param name="ptr"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Tensor ReturnCheckForErrors(IntPtr ptr)
         {
             if(ptr == IntPtr.Zero)
                 CheckForErrors();
             return new Tensor(ptr);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Tensor? ReturnNullCheckForErrors(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero) {
+                CheckForErrors();
+                return null;
+            }
+
+            return new Tensor(ptr);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parameter? ReturnNullParameterCheckForErrors(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero)
+                CheckForErrors();
+            return (ptr == IntPtr.Zero) ? null : new Parameter(ptr);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Tensor ReturnCheckForErrorsAndRename(IntPtr ptr, string[]? names)
+        {
+            if (ptr == IntPtr.Zero)
+                CheckForErrors();
+            var result = new Tensor(ptr);
+            if (names != null && names.Length > 0) {
+                result.rename_(names);
+            }
+
+            return result;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (Tensor,Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1)
         {
             if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero)
                 CheckForErrors();
             return (new Tensor(ptr), new Tensor(ptr1));
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (Tensor, Tensor, Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1, IntPtr ptr2)
         {
             if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero || ptr2 == IntPtr.Zero)
                 CheckForErrors();
             return (new Tensor(ptr), new Tensor(ptr1), new Tensor(ptr2));
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static (Tensor, Tensor, Tensor, Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1, IntPtr ptr2, IntPtr ptr3)
         {
             if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero || ptr2 == IntPtr.Zero || ptr3 == IntPtr.Zero)
                 CheckForErrors();
             return (new Tensor(ptr), new Tensor(ptr1), new Tensor(ptr2), new Tensor(ptr3));
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Tensor ReturnCheckForErrorsAutocast(IntPtr ptr, ScalarType? st = null)
         {
             if (ptr == IntPtr.Zero)

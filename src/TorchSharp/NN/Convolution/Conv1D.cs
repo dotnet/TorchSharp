@@ -64,9 +64,7 @@ namespace TorchSharp
 
             public Parameter? bias {
                 get {
-                    var res = THSNN_Conv1d_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
+                    return ReturnNullParameterCheckForErrors(THSNN_Conv1d_bias(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -78,9 +76,7 @@ namespace TorchSharp
             }
             public Parameter? weight {
                 get {
-                    var res = THSNN_Conv1d_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                    return ReturnNullParameterCheckForErrors(THSNN_Conv1d_weight(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -186,8 +182,7 @@ namespace TorchSharp
                     var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = paddingArray, pdilation = dilationArray) {
-                            var res =
-                                THSTensor_conv1d(input.Handle, weight.Handle, biasHandle,
+                            var res = THSTensor_conv1d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddingArray.Length,
                                     (IntPtr)pdilation, dilationArray.Length,

@@ -31,9 +31,7 @@ namespace TorchSharp
 
             public Parameter? bias {
                 get {
-                    var res = THSNN_GroupNorm_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                    return ReturnNullParameterCheckForErrors(THSNN_GroupNorm_bias(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.

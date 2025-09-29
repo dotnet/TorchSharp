@@ -51,8 +51,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         /// <summary>
@@ -91,15 +91,7 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye(rows, columns, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            var result = new Tensor(handle);
-
-            if (names != null && names.Length > 0) {
-
-                result.rename_(names);
-            }
-
-            return result;
+            return ReturnCheckForErrorsAndRename(handle, names);
         }
 
         /// <summary>
@@ -175,15 +167,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
                     }
-
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var tensor = new Tensor(handle);
-
-                    if (names != null && names.Length > 0) {
-                        tensor.rename_(names);
-                    }
-
-                    return tensor;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -234,21 +218,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
                     }
-
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var tensor = new Tensor(handle);
-
-                    if (names != null && names.Length > 0) {
-                        tensor.rename_(names);
-                    }
-
-                    /*if (!is_autocast_cache_enabled())
-                        return tensor;
-                    if (is_autocast_gpu_enabled())
-                        tensor = tensor.to(get_autocast_gpu_dtype());
-                    if (is_autocast_cpu_enabled())
-                        tensor = tensor.to(get_autocast_cpu_dtype());*/
-                    return tensor;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -456,12 +426,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse(indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var tensor = new Tensor(handle);
-                    if (names != null && names.Length > 0) {
-                        tensor.rename_(names);
-                    }
-                    return tensor;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -489,10 +454,7 @@ namespace TorchSharp
         /// </summary>
         public static Tensor complex(Tensor real, Tensor imag)
         {
-            var res = THSTensor_complex(real.Handle, imag.Handle);
-            if (res == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_complex(real.Handle, imag.Handle));
         }
 
         /// <summary>
@@ -500,10 +462,7 @@ namespace TorchSharp
         /// </summary>
         public static Tensor polar(Tensor abs, Tensor angle)
         {
-            var res = THSTensor_polar(abs.Handle, angle.Handle);
-            if (res == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_polar(abs.Handle, angle.Handle));
         }
 
         public static Tensor from_file(string filename, bool? shared = null, long? size = 0, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
@@ -514,9 +473,7 @@ namespace TorchSharp
                 dtype = get_default_dtype();
             }
 
-            var handle = THSTensor_from_file(StringEncoder.GetNullTerminatedUTF8ByteArray(filename), (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+            return ReturnCheckForErrors(THSTensor_from_file(StringEncoder.GetNullTerminatedUTF8ByteArray(filename), (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad));
         }
 
         /// <summary>
@@ -536,8 +493,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_linspace(start, end, steps, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         /// <summary>
@@ -557,8 +514,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_logspace(start, end, steps, @base, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         #region Loading a tensor from a stream

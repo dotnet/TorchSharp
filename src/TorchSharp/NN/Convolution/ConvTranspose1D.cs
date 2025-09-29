@@ -25,9 +25,7 @@ namespace TorchSharp
 
             public Parameter? bias {
                 get {
-                    var res = THSNN_ConvTranspose1d_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
+                    return ReturnNullParameterCheckForErrors(THSNN_ConvTranspose1d_bias(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -39,9 +37,7 @@ namespace TorchSharp
             }
             public Parameter? weight {
                 get {
-                    var res = THSNN_ConvTranspose1d_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                    return ReturnNullParameterCheckForErrors(THSNN_ConvTranspose1d_weight(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.

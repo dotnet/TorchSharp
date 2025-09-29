@@ -52,12 +52,12 @@ namespace TorchSharp
                             GC.WaitForPendingFinalizers();
                             handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                         }
-                        if (handle == IntPtr.Zero) { CheckForErrors(); }
-                        result = new Tensor(handle);
+
+                        return ReturnCheckForErrors(handle);
                     }
                 }
             }
-
+                        
             if (names != null && names.Length > 0) {
 
                 result.rename_(names);
@@ -269,15 +269,7 @@ namespace TorchSharp
 
                     THSTensor_dispose(handle);
                     THSTensor_dispose(cmplx);
-
-                    var result = new Tensor(res);
-
-                    if (names != null && names.Length > 0) {
-
-                        result.rename_(names);
-                    }
-
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -330,12 +322,7 @@ namespace TorchSharp
 
                     THSTensor_dispose(handle);
                     THSTensor_dispose(cmplx);
-
-                    var result = new Tensor(res);
-                    if (names != null && names.Length > 0) {
-                        result.rename_(names);
-                    }
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -364,12 +351,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var result = new Tensor(handle);
-                    if (names != null && names.Length > 0) {
-                        result.rename_(names);
-                    }
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -492,12 +474,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var result = new Tensor(handle);
-                    if (names != null && names.Length > 0) {
-                        result.rename_(names);
-                    }
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }

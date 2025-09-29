@@ -28,9 +28,7 @@ namespace TorchSharp
 
             public Parameter? bias {
                 get {
-                    var res = THSNN_InstanceNorm2d_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                    return ReturnNullParameterCheckForErrors(THSNN_InstanceNorm2d_bias(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -43,9 +41,7 @@ namespace TorchSharp
 
             public Parameter? weight {
                 get {
-                    var res = THSNN_InstanceNorm2d_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                    return ReturnNullParameterCheckForErrors(THSNN_InstanceNorm2d_weight(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -58,9 +54,7 @@ namespace TorchSharp
 
             public Tensor? running_mean {
                 get {
-                    var res = THSNN_InstanceNorm2d_get_mean(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return ReturnNullCheckForErrors(THSNN_InstanceNorm2d_get_mean(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -73,9 +67,7 @@ namespace TorchSharp
 
             public Tensor? running_var {
                 get {
-                    var res = THSNN_InstanceNorm2d_get_var(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return ReturnNullCheckForErrors(THSNN_InstanceNorm2d_get_var(handle));
                 }
                 set {
                     // Please ignore, for now, that the litorch call thinks you *can* set it to null.
@@ -88,9 +80,7 @@ namespace TorchSharp
 
             public Tensor? num_batches_tracked {
                 get {
-                    var res = THSNN_InstanceNorm2d_get_batches(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return ReturnNullCheckForErrors(THSNN_InstanceNorm2d_get_batches(handle));
                 }
             }
 

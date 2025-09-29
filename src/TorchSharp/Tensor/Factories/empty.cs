@@ -112,15 +112,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var result = new Tensor(handle);
-
-                    if (names != null && names.Length > 0) {
-
-                        result.rename_(names);
-                    }
-
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }
@@ -144,15 +136,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var result = new Tensor(handle);
-
-                    if (names != null && names.Length > 0) {
-
-                        result.rename_(names);
-                    }
-
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }

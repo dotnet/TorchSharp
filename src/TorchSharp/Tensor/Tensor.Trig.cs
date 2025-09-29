@@ -95,10 +95,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor atan()
             {
-                var res = THSTensor_atan(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_atan(Handle));
             }
 
             /// <summary>
