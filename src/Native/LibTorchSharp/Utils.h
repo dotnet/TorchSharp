@@ -4,6 +4,7 @@
 #include <string>
 
 #include "torch/torch.h"
+#include "torch/csrc/inductor/aoti_package/model_package_loader.h"
 
 extern thread_local char *torch_last_err;
 
@@ -23,6 +24,10 @@ typedef std::shared_ptr<torch::jit::Method>* JITMethod;
 typedef std::shared_ptr<torch::jit::Function> * JITFunction;
 typedef std::shared_ptr<c10::Type> * JITType;
 typedef std::shared_ptr<c10::TensorType>* JITTensorType;
+
+// torch.export ExportedProgram module via AOTInductor
+// Note: Uses torch::inductor::AOTIModelPackageLoader for inference-only execution
+typedef torch::inductor::AOTIModelPackageLoader* ExportedProgramModule;
 
 struct TensorArray {
     Tensor *array;
