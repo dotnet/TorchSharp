@@ -56,9 +56,9 @@ EXPORT_API(int) THSTorch_promote_types(const int type1, const int type2);
 
 EXPORT_API(Scalar) THSTorch_int8_to_scalar(int8_t value);
 EXPORT_API(Scalar) THSTorch_uint8_to_scalar(uint8_t value);
-EXPORT_API(Scalar) THSTorch_int16_to_scalar(short value);
-EXPORT_API(Scalar) THSTorch_int32_to_scalar(int value);
-EXPORT_API(Scalar) THSTorch_int64_to_scalar(long value);
+EXPORT_API(Scalar) THSTorch_int16_to_scalar(int16_t value);
+EXPORT_API(Scalar) THSTorch_int32_to_scalar(int32_t value);
+EXPORT_API(Scalar) THSTorch_int64_to_scalar(int64_t value);
 EXPORT_API(Scalar) THSTorch_float32_to_scalar(float value);
 EXPORT_API(Scalar) THSTorch_float64_to_scalar(double value);
 EXPORT_API(Scalar) THSTorch_bool_to_scalar(bool value);
