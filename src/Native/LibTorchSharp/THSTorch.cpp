@@ -289,20 +289,18 @@ void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
     *res = value->toHalf().x;
 }
 
-void THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length))
+void THSTorch_scalar_to_complex32(Scalar value, float* real, float* imaginary)
 {
     auto result = value->toComplexFloat();
-    auto space = allocator(2);
-    space[0] = result.real();
-    space[1] = result.imag();
+    *real = result.real();
+    *imaginary = result.imag();
 }
 
-void THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length))
+void THSTorch_scalar_to_complex64(Scalar value, double* real, double* imaginary)
 {
     auto result = value->toComplexDouble();
-    auto space = allocator(2);
-    space[0] = result.real();
-    space[1] = result.imag();
+    *real = result.real();
+    *imaginary = result.imag();
 }
 
 bool THSTorch_scalar_to_bool(Scalar value)
