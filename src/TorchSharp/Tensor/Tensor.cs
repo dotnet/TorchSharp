@@ -4300,11 +4300,11 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor var(long[] dimensions, bool keepdim = false, ScalarType? type = null)
+            public Tensor var(long[] dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
             {
                 unsafe {
                     fixed (long* pdims = dimensions) {
-                        var res = NativeMethods.THSTensor_var_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
+                        var res = NativeMethods.THSTensor_var_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepdim);
                         if (res == IntPtr.Zero) { CheckForErrors(); }
                         return new Tensor(res);
                     }

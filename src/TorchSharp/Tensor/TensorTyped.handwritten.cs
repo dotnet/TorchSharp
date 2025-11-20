@@ -28,7 +28,7 @@ namespace TorchSharp
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
-                var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat32);
+                var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat32, false, false);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
 
@@ -61,7 +61,7 @@ namespace TorchSharp
             ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
-            public static Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
+            public static Tensor randint(long low, long high, long[] size, torch.Device device = null, bool requires_grad = false, Generator generator = null)
             {
                 device = torch.InitializeDevice(device);
 
@@ -70,6 +70,8 @@ namespace TorchSharp
                 sz.Add(2);
                 var size2 = sz.ToArray();
 
+                var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
                 unsafe {
                     fixed (long* psizes = size2) {
                         //
@@ -77,11 +79,11 @@ namespace TorchSharp
                         // but we can get around that by adding another dimension, creating a float tensor, and then
                         // converting it to a complex tensor in the end.
                         //
-                        var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
+                        var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                         if (handle == IntPtr.Zero) {
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
-                            handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
+                            handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                         }
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -127,7 +129,7 @@ namespace TorchSharp
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
-                var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat64);
+                var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat64, false, false);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
 
@@ -160,7 +162,7 @@ namespace TorchSharp
             ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
-            public static Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
+            public static Tensor randint(long low, long high, long[] size, torch.Device device = null, bool requires_grad = false, Generator generator = null)
             {
                 device = torch.InitializeDevice(device);
 
@@ -169,6 +171,8 @@ namespace TorchSharp
                 sz.Add(2);
                 var size2 = sz.ToArray();
 
+                var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
                 unsafe {
                     fixed (long* psizes = size2) {
                         //
@@ -176,11 +180,11 @@ namespace TorchSharp
                         // but we can get around that by adding another dimension, creating a float tensor, and then
                         // converting it to a complex tensor in the end.
                         //
-                        var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
+                        var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                         if (handle == IntPtr.Zero) {
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
-                            handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
+                            handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                         }
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
