@@ -130,11 +130,11 @@ void THSJIT_Module_modules(const JITModule module, JITModule* (*allocator)(size_
 }
 
 void THSJIT_Module_named_modules(const JITModule module,
-    JITModule* (*allocator)(size_t length),
+    JITModule* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length))
 {
     auto modules = (*module)->named_modules();
-    JITModule* result = allocator(modules.size());
+    JITModule* result = allocator1(modules.size());
     const char** names = allocator2(modules.size());
     int i = 0;
     for (const auto& child : modules) {
@@ -146,11 +146,11 @@ void THSJIT_Module_named_modules(const JITModule module,
 }
 
 void THSJIT_Module_named_children(const JITModule module,
-    JITModule* (*allocator)(size_t length),
+    JITModule* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length))
 {
     auto modules = (*module)->named_children();
-    JITModule* result = allocator(modules.size());
+    JITModule* result = allocator1(modules.size());
     const char** names = allocator2(modules.size());
     int i = 0;
     for (const auto& child : modules) {
@@ -172,11 +172,11 @@ void THSJIT_Module_parameters(const JITModule module, Tensor* (*allocator)(size_
 }
 
 void THSJIT_Module_named_parameters(const JITModule module,
-    Tensor* (*allocator)(size_t length),
+    Tensor* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length))
 {
     auto parameters = (*module)->named_parameters();
-    Tensor* result = allocator(parameters.size());
+    Tensor* result = allocator1(parameters.size());
     const char** names = allocator2(parameters.size());
     int i = 0;
     for (const auto& child : parameters) {
@@ -187,11 +187,11 @@ void THSJIT_Module_named_parameters(const JITModule module,
 }
 
 void THSJIT_Module_named_buffers(const JITModule module,
-    Tensor* (*allocator)(size_t length),
+    Tensor* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length))
 {
     auto parameters = (*module)->named_buffers();
-    Tensor* result = allocator(parameters.size());
+    Tensor* result = allocator1(parameters.size());
     const char** names = allocator2(parameters.size());
     int i = 0;
     for (const auto& child : parameters) {
@@ -202,11 +202,11 @@ void THSJIT_Module_named_buffers(const JITModule module,
 }
 
 void THSJIT_Module_named_attributes(const JITModule module, bool recurse,
-    Tensor* (*allocator)(size_t length),
+    Tensor* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length))
 {
     auto attributes = (*module)->named_attributes(recurse);
-    Tensor* result = allocator(attributes.size());
+    Tensor* result = allocator1(attributes.size());
     const char** names = allocator2(attributes.size());
     int i = 0;
     for (const auto& child : attributes) {
