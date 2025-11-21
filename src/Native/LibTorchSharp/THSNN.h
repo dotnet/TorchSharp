@@ -15,7 +15,7 @@ EXPORT_API(void)        THSNN_Module_get_named_parameters(const NNModule module,
 EXPORT_API(void)        THSNN_Module_get_named_buffers(const NNModule module, Tensor* (*allocator1)(size_t length), const char** (*allocator2)(size_t length));
 EXPORT_API(void)        THSNN_Module_get_named_children(const NNModule module, NNModule* (*allocator1)(size_t length), const char** (*allocator2)(size_t length));
 EXPORT_API(void)        THSNN_Module_get_named_modules(const NNModule module, NNModule* (*allocator1)(size_t length), const char** (*allocator2)(size_t length));
-EXPORT_API(void)        THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length), bool recurse);
+EXPORT_API(void)        THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator)(size_t length), bool recurse);
 EXPORT_API(int)         THSNN_Module_is_training(NNModule module);
 EXPORT_API(void)        THSNN_Module_train(NNModule module, bool on);
 EXPORT_API(long)        THSNN_Module_children_size(const NNModule module);
