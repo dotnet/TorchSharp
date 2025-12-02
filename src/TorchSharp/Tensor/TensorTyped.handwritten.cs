@@ -58,7 +58,7 @@ namespace TorchSharp
             }
 
             /// <summary>
-            ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+            ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, high).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
             public static Tensor randint(long low, long high, long[] size, torch.Device device = null, bool requires_grad = false, Generator generator = null)
@@ -159,7 +159,7 @@ namespace TorchSharp
             }
 
             /// <summary>
-            ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+            ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, high).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
             public static Tensor randint(long low, long high, long[] size, torch.Device device = null, bool requires_grad = false, Generator generator = null)
