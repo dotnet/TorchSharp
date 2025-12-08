@@ -527,9 +527,6 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_t(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_H(IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_mT(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]

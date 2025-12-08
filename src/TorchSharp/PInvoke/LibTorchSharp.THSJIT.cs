@@ -39,9 +39,6 @@ namespace TorchSharp.PInvoke
         internal static extern void THSJIT_Module_named_children(torch.nn.Module.HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
         [DllImport("LibTorchSharp")]
-        internal static extern long THSJIT_getNumModules(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
         internal static extern int THSJIT_Module_num_inputs(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
@@ -68,9 +65,6 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSJIT_Module_getInputType(torch.nn.Module.HType module, int index);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSJIT_getOutputType(torch.jit.Type.HType module, int index);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_forward(torch.nn.Module.HType module, IntPtr tensors, int length, AllocateIndexedNativeTensorOrScalarArray allocator, out sbyte typeCode, int idx);
