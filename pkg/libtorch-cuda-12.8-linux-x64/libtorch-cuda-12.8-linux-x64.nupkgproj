@@ -32,7 +32,8 @@
      <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part7-fragment2/libtorch-cuda-12.8-linux-x64-part7-fragment2.nupkgproj" />
 		 <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part7-fragment3/libtorch-cuda-12.8-linux-x64-part7-fragment3.nupkgproj" />
 		
-     <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part8/libtorch-cuda-12.8-linux-x64-part8.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part8-primary/libtorch-cuda-12.8-linux-x64-part8-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part8-fragment1/libtorch-cuda-12.8-linux-x64-part8-fragment1.nupkgproj" />
 		
      <ProjectReference Include="../libtorch-cuda-12.8-linux-x64-part9/libtorch-cuda-12.8-linux-x64-part9.nupkgproj" />
   </ItemGroup>
