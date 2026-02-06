@@ -133,15 +133,16 @@
     <File Include= "libtorch\lib\libnvrtc-2bb82d1a.so.12" PackageSuffix="part6"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part6"  />
     <File Include= "libtorch\lib\libnvshmem_host-bb1c1ad4.so.3"  PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libcusparseLt-0bb86669.so.0"  PackageSuffix="part6" />
 
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="200000000" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment2" FileUnstitchIndex="2" FileUnstitchStart="400000000" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment3" FileUnstitchIndex="3" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8" />
-    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part8" />
-    <File Include= "libtorch\lib\libcusparseLt-0bb86669.so.0"  PackageSuffix="part8" />
+    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9" />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part9"  />
@@ -158,7 +159,9 @@
   <!-- Validate and extract Archive for Libtorch -->
   <Target Name="ValidateAndExtractArchives" DependsOnTargets="DownloadArchive" Inputs="$(DownloadedArchive)" Outputs="$(ExtractSemaphore)">
     <Message Importance="High" Text="GetFileHash $(DownloadedArchive)" />
-    <GetFileHash  Files="$(DownloadedArchive)">  <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" /> </GetFileHash>
+    <GetFileHash  Files="$(DownloadedArchive)">
+      <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" />
+    </GetFileHash>
     <WriteLinesToFile File="$(ArchiveShaFile)" Lines="$(DownloadedArchiveHash)" Overwrite="true" />
 
     <!-- If specified we'll update the checked in SHAs with the downloaded ones. -->
@@ -193,7 +196,7 @@
 
   </Target>
 
-    <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
+  <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
   <UsingTask
     TaskName="FileUnstitch"
     TaskFactory="RoslynCodeTaskFactory"
@@ -210,7 +213,7 @@
       <Using Namespace="System.IO"/>
       <Using Namespace="System.IO.MemoryMappedFiles"/>
       <Code Type="Fragment" Language="cs">
-<![CDATA[
+        <![CDATA[
             {
                 string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
                 if (Size == -1)
