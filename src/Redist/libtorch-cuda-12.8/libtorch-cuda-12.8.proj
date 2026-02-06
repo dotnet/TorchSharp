@@ -105,6 +105,7 @@
     <File Include= "libtorch\lib\libcufile_rdma-5257f22c.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcupti-fccdc5fc.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvperf_host-609f5406.so"  PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
@@ -144,8 +145,8 @@
     <File Include= "libtorch\lib\libcusparseLt-0bb86669.so.0"  PackageSuffix="part8-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
     <File Include= "libtorch\lib\libcusparseLt-0bb86669.so.0"  PackageSuffix="part8-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="-1" />
     
-    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9" />
-    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part9"  />
+    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="150000000" />
+    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="150000000" FileUnstitchSize="-1" />
 
   </ItemGroup>
 
