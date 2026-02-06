@@ -53,13 +53,13 @@ void THSBackend_cudnn_set_allow_tf32(const bool flag)
 bool THSBackend_cuda_get_allow_fp16_reduced_precision_reduction()
 {
     auto result = false;
-    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS() == at::CuBLASReductionOption::AllowReducedPrecisionWithSplitK;);
     return result;
 }
 
 void THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(const bool flag)
 {
-    CATCH(at::globalContext().setAllowFP16ReductionCuBLAS(flag););
+    CATCH(at::globalContext().setAllowFP16ReductionCuBLAS(flag, true););
 }
 
 bool THSBackend_cuda_get_enable_flash_sdp()
