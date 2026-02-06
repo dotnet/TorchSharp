@@ -27,7 +27,12 @@ variables:
     ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D
     sudo apt-get -y update
-    sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 wget
+    sudo apt-get -y install clang git libunwind8 curl libomp-dev libomp5 wget gpg
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | sudo tee /etc/apt/sources.list.d/kitware.list
+    sudo apt-get -y update
+    sudo apt-get -y install cmake
+    cmake --version
     wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb
     sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update
