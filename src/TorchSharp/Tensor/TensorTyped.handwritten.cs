@@ -70,7 +70,7 @@ namespace TorchSharp
                 sz.Add(2);
                 var size2 = sz.ToArray();
 
-                var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+                var genHandle = generator?.Handle ?? IntPtr.Zero;
 
                 unsafe {
                     fixed (long* psizes = size2) {
@@ -171,7 +171,7 @@ namespace TorchSharp
                 sz.Add(2);
                 var size2 = sz.ToArray();
 
-                var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+                var genHandle = generator?.Handle ?? IntPtr.Zero;
 
                 unsafe {
                     fixed (long* psizes = size2) {
