@@ -279,6 +279,11 @@ double THSTorch_scalar_to_float64(Scalar value)
     return value->toDouble();
 }
 
+void THSTorch_scalar_to_bfloat16(Scalar value, unsigned short* res)
+{
+    *res = value->toBFloat16().x;
+}
+
 void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
 {
     *res = value->toHalf().x;
