@@ -194,19 +194,19 @@ Scalar THSTorch_uint8_to_scalar(uint8_t value)
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_int16_to_scalar(short value)
+Scalar THSTorch_int16_to_scalar(int16_t value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_int32_to_scalar(int value)
+Scalar THSTorch_int32_to_scalar(int32_t value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_int64_to_scalar(long value)
+Scalar THSTorch_int64_to_scalar(int64_t value)
 {
-    return new torch::Scalar(int64_t(value));
+    return new torch::Scalar(value);
 }
 
 Scalar THSTorch_float32_to_scalar(float value)
