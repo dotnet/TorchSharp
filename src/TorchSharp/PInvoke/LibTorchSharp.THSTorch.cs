@@ -89,10 +89,10 @@ namespace TorchSharp.PInvoke
         internal static extern long THSTorch_scalar_to_int64(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSTorch_scalar_to_complex32(IntPtr handle, AllocatePinnedArray allocator);
+        internal static extern void THSTorch_scalar_to_complex32(IntPtr handle, out float real, out float imaginary);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSTorch_scalar_to_complex64(IntPtr handle, AllocatePinnedArray allocator);
+        internal static extern void THSTorch_scalar_to_complex64(IntPtr handle, out double real, out double imaginary);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_get_and_reset_last_err();
