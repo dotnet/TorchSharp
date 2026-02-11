@@ -599,7 +599,7 @@ int8_t THSJIT_TensorType_dtype(const JITTensorType type)
     }
 }
 
-void THSJIT_TensorType_sizes(const JITTensorType type, int64_t* (*allocator)(int64_t length))
+void THSJIT_TensorType_sizes(const JITTensorType type, int64_t* (*allocator)(size_t length))
 {
     //CATCH(
     auto& t = *type;

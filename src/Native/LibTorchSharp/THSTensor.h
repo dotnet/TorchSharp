@@ -806,8 +806,6 @@ EXPORT_API(Tensor) THSTensor_lt_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(void) THSTensor_lt_scalar_(const Tensor left, const Scalar right);
 
-EXPORT_API(Tensor) THSTensor_logical_not(const Tensor tensor);
-
 EXPORT_API(Tensor) THSTensor_lu(const Tensor tensor, bool pivot, bool get_infos, Tensor* infos, Tensor* pivots);
 
 EXPORT_API(Tensor) THSTensor_lu_solve(const Tensor tensor, const Tensor LU_data, const Tensor LU_pivots);
@@ -1377,9 +1375,6 @@ EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_dx(const Tensor y, const doubl
 
 EXPORT_API(Tensor) THSTensor_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
 EXPORT_API(Tensor) THSTensor_trapezoid_dx(const Tensor y, const double dx, int64_t dim);
-
-EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
-EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_dx(const Tensor y, const double dx, int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 
