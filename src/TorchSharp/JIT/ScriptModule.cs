@@ -238,13 +238,6 @@ namespace TorchSharp
                     return GetType(type);
                 }
 
-                public Type GetOutputType(int index)
-                {
-                    var type = new Type(THSJIT_getOutputType(handle, index), Type.TypeKind.AnyType);
-
-                    return GetType(type);
-                }
-
                 private Type GetType(Type type)
                 {
                     switch (type.Kind) {
