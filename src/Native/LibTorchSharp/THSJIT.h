@@ -57,7 +57,7 @@ EXPORT_API(int8_t) THSJIT_Type_kind(JITType handle);
 EXPORT_API(void*) THSJIT_Type_cast(const JITType type);
 
 EXPORT_API(int8_t) THSJIT_TensorType_dtype(const JITTensorType type);
-EXPORT_API(void) THSJIT_TensorType_sizes(const JITTensorType type, int64_t* (*allocator)(int64_t length));
+EXPORT_API(void) THSJIT_TensorType_sizes(const JITTensorType type, int64_t* (*allocator)(size_t length));
 
 EXPORT_API(void) THSJIT_Type_dispose(const JITType type);
 EXPORT_API(void) THSJIT_TensorType_dispose(const JITTensorType type);
