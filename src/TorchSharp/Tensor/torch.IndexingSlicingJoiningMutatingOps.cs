@@ -149,8 +149,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence depthwise (along third axis).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(params Tensor[] tensors)
             => dstack(tensors.ToHandleArray());
@@ -159,8 +159,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence depthwise (along third axis).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(IList<Tensor> tensors)
             => dstack(tensors.ToHandleArray());
@@ -169,8 +169,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence depthwise (along third axis).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(ReadOnlySpan<Tensor> tensors)
             => dstack(tensors.ToHandleArray());
@@ -179,8 +179,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence depthwise (along third axis).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A sequence of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(IEnumerable<Tensor> tensors)
             => dstack(tensors.ToHandleArray());
@@ -247,8 +247,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(IList<Tensor> tensors)
             => hstack(tensors.ToHandleArray());
 
@@ -256,8 +256,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(params Tensor[] tensors)
             => hstack(tensors.ToHandleArray());
 
@@ -265,8 +265,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A sequence of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(IEnumerable<Tensor> tensors)
             => hstack(tensors.ToHandleArray());
 
@@ -274,8 +274,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(ReadOnlySpan<Tensor> tensors)
             => hstack(tensors.ToHandleArray());
 
@@ -618,8 +618,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
         public static Tensor vstack(IList<Tensor> tensors)
             => vstack(tensors.ToHandleArray());
 
@@ -627,8 +627,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
         public static Tensor vstack(Tensor[] tensors)
             => vstack(tensors.ToHandleArray());
 
@@ -636,8 +636,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
         public static Tensor vstack(ReadOnlySpan<Tensor> tensors)
             => vstack(tensors.ToHandleArray());
 

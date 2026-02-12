@@ -29,7 +29,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
         /// <param name="axis">The dimension over which the tensors are concatenated</param>
-        /// <returns></returns>
+        /// <returns>A tensor resulting from concatenating the input tensors along <paramref name="axis"/>.</returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor concatenate(IList<Tensor> tensors, long axis = 0) => torch.cat(tensors, axis);
 
@@ -38,7 +38,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
         /// <param name="axis">The dimension over which the tensors are concatenated</param>
-        /// <returns></returns>
+        /// <returns>A tensor resulting from concatenating the input tensors along <paramref name="axis"/>.</returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor concatenate(Tensor[] tensors, long axis = 0) => torch.cat(tensors, axis);
 
@@ -47,7 +47,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
         /// <param name="axis">The dimension over which the tensors are concatenated</param>
-        /// <returns></returns>
+        /// <returns>A tensor resulting from concatenating the input tensors along <paramref name="axis"/>.</returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor concatenate(ReadOnlySpan<Tensor> tensors, long axis = 0) => torch.cat(tensors, axis);
 
@@ -71,23 +71,23 @@ namespace TorchSharp
         /// Creates a new tensor by horizontally stacking the input tensors.
         /// </summary>
         /// <param name="tensors">A list of input tensors.</param>
-        /// <returns></returns>
+        /// <returns>A tensor formed by horizontally stacking the inputs. Zero- or one-dimensional tensors are first reshaped into (numel, 1) columns.</returns>
         /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
         public static Tensor column_stack(IList<Tensor> tensors) => column_stack(tensors.ToHandleArray());
 
         /// <summary>
         /// Creates a new tensor by horizontally stacking the input tensors.
         /// </summary>
-        /// <param name="tensors">A list of input tensors.</param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor formed by horizontally stacking the inputs. Zero- or one-dimensional tensors are first reshaped into (numel, 1) columns.</returns>
         /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
         public static Tensor column_stack(params Tensor[] tensors) => column_stack(tensors.ToHandleArray());
 
         /// <summary>
         /// Creates a new tensor by horizontally stacking the input tensors.
         /// </summary>
-        /// <param name="tensors">A list of input tensors.</param>
-        /// <returns></returns>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor formed by horizontally stacking the inputs. Zero- or one-dimensional tensors are first reshaped into (numel, 1) columns.</returns>
         /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
         public static Tensor column_stack(ReadOnlySpan<Tensor> tensors) => column_stack(tensors.ToHandleArray());
 
@@ -104,22 +104,22 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor formed by stacking the inputs row-wise (vertically).</returns>
         public static Tensor row_stack(IList<Tensor> tensors) => row_stack(tensors.ToHandleArray());
 
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor formed by stacking the inputs row-wise (vertically).</returns>
         public static Tensor row_stack(params Tensor[] tensors) => row_stack(tensors.ToHandleArray());
 
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor formed by stacking the inputs row-wise (vertically).</returns>
         public static Tensor row_stack(ReadOnlySpan<Tensor> tensors) => row_stack(tensors.ToHandleArray());
 
         static Tensor row_stack(IntPtr[] tensors)

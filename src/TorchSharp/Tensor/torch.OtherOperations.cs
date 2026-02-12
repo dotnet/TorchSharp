@@ -124,21 +124,24 @@ namespace TorchSharp
         /// <summary>
         /// Do cartesian product of the given sequence of tensors.
         /// </summary>
-        /// <param name="tensors"></param>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the Cartesian product of the input <paramref name="tensors"/>.</returns>
         public static Tensor cartesian_prod(IList<Tensor> tensors) => cartesian_prod(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
         /// <summary>
         /// Do cartesian product of the given sequence of tensors.
         /// </summary>
-        /// <param name="tensors"></param>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the Cartesian product of the input <paramref name="tensors"/>.</returns>
         public static Tensor cartesian_prod(params Tensor[] tensors) => cartesian_prod(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
         /// <summary>
         /// Do cartesian product of the given sequence of tensors.
         /// </summary>
-        /// <param name="tensors"></param>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the Cartesian product of the input <paramref name="tensors"/>.</returns>
         public static Tensor cartesian_prod(ReadOnlySpan<Tensor> tensors) => cartesian_prod(tensors.ToHandleArray());
 
         static Tensor cartesian_prod(IntPtr[] tensors)
