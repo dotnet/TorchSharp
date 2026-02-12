@@ -148,14 +148,10 @@ namespace TorchSharp
                     THSJIT_Module_zero_grad(handle, set_to_none);
                     CheckForErrors();
 
-                    foreach (var (_, p) in named_parameters()) {
-                        using var grad = p.grad;
-                        if (grad is not null) {
-                            if (set_to_none) {
-                                p.grad = null;
-                            } else {
-                                grad.zero_();
-                            }
+                    if (set_to_none) {
+                        foreach (var p in parameters()) {
+                            using var grad = p.grad;
+                            if (grad is not null) p.grad = null;
                         }
                     }
                 }
