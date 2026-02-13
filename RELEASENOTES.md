@@ -16,6 +16,7 @@ __Bug Fixes__:
 
 __API Changes__:
 
+#1521 Add CUDA memory management APIs: `torch.cuda.empty_cache()`, `torch.cuda.memory_allocated()`, `torch.cuda.max_memory_allocated()`, `torch.cuda.reset_peak_memory_stats()`, `torch.cuda.memory_reserved()`, `torch.cuda.max_memory_reserved()`, `torch.cuda.mem_get_info()`, `torch.cuda.set_device()`, `torch.cuda.current_device()`.<br/>
 #1503 Add ReadOnlySpan overloads to many methods.<br/>
 #1478 Fix `torch.jit.ScriptModule.zero_grad`.<br/>
 #1495 Make `torchvision.io.read_image` and `torchvision.io.read_image_async` allow subsequent opening of the file for reading.<br/>

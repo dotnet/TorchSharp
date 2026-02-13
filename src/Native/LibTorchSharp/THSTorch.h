@@ -28,6 +28,16 @@ EXPORT_API(int) THSTorchCuda_cudnn_is_available();
 EXPORT_API(int) THSTorchCuda_device_count();
 EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device);
 
+EXPORT_API(void) THSTorchCuda_empty_cache();
+EXPORT_API(size_t) THSTorchCuda_memory_allocated(const int64_t device);
+EXPORT_API(size_t) THSTorchCuda_max_memory_allocated(const int64_t device);
+EXPORT_API(void) THSTorchCuda_reset_peak_memory_stats(const int64_t device);
+EXPORT_API(size_t) THSTorchCuda_memory_reserved(const int64_t device);
+EXPORT_API(size_t) THSTorchCuda_max_memory_reserved(const int64_t device);
+EXPORT_API(void) THSTorchCuda_mem_get_info(const int64_t device, size_t* free, size_t* total);
+EXPORT_API(void) THSTorchCuda_set_device(const int64_t device);
+EXPORT_API(int64_t) THSTorchCuda_current_device();
+
 EXPORT_API(bool)  THSBackend_cublas_get_allow_tf32();
 EXPORT_API(void)  THSBackend_cublas_set_allow_tf32(const bool flag);
 EXPORT_API(bool)  THSBackend_cudnn_get_allow_tf32();

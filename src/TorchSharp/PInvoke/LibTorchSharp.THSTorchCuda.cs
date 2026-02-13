@@ -19,5 +19,32 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorchCuda_synchronize(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorchCuda_empty_cache();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern ulong THSTorchCuda_memory_allocated(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern ulong THSTorchCuda_max_memory_allocated(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorchCuda_reset_peak_memory_stats(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern ulong THSTorchCuda_memory_reserved(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern ulong THSTorchCuda_max_memory_reserved(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorchCuda_mem_get_info(long device_index, out ulong free, out ulong total);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorchCuda_set_device(long device_index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern long THSTorchCuda_current_device();
     }
 }
