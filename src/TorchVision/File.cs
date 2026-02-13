@@ -33,7 +33,7 @@ namespace TorchSharp
             {
                 byte[] data;
 
-                using (FileStream stream = File.Open(filename, FileMode.Open)) {
+                using (FileStream stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                     data = new byte[stream.Length];
                     await stream.ReadAsync(data, 0, data.Length);
                 }

@@ -55,7 +55,7 @@ namespace TorchSharp
                     /// <returns>The padded tensor</returns>
                     public static torch.Tensor pad_sequence(IEnumerable<torch.Tensor> sequences, bool batch_first = false, double padding_value = 0.0)
                     {
-                        var sequences_arg = sequences.Select(p => p.Handle).ToArray();
+                        var sequences_arg = sequences.ToHandleArray();
                         var res = THSNN_pad_sequence(sequences_arg, sequences_arg.Length, batch_first, padding_value);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new torch.Tensor(res);
@@ -69,7 +69,7 @@ namespace TorchSharp
                     /// <returns>The packed batch of variable length sequences</returns>
                     public static PackedSequence pack_sequence(IEnumerable<torch.Tensor> sequences, bool enforce_sorted = true)
                     {
-                        var sequences_arg = sequences.Select(p => p.Handle).ToArray();
+                        var sequences_arg = sequences.ToHandleArray();
                         var res = THSNN_pack_sequence(sequences_arg, sequences_arg.Length, enforce_sorted);
                         if (res.IsInvalid) { torch.CheckForErrors(); }
                         return new PackedSequence(res);

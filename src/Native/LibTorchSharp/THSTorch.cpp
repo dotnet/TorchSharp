@@ -53,13 +53,13 @@ void THSBackend_cudnn_set_allow_tf32(const bool flag)
 bool THSBackend_cuda_get_allow_fp16_reduced_precision_reduction()
 {
     auto result = false;
-    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS() == at::CuBLASReductionOption::AllowReducedPrecisionWithSplitK;);
     return result;
 }
 
 void THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(const bool flag)
 {
-    CATCH(at::globalContext().setAllowFP16ReductionCuBLAS(flag););
+    CATCH(at::globalContext().setAllowFP16ReductionCuBLAS(flag, true););
 }
 
 bool THSBackend_cuda_get_enable_flash_sdp()
@@ -194,19 +194,19 @@ Scalar THSTorch_uint8_to_scalar(uint8_t value)
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_int16_to_scalar(short value)
+Scalar THSTorch_int16_to_scalar(int16_t value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_int32_to_scalar(int value)
+Scalar THSTorch_int32_to_scalar(int32_t value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_int64_to_scalar(long value)
+Scalar THSTorch_int64_to_scalar(int64_t value)
 {
-    return new torch::Scalar(int64_t(value));
+    return new torch::Scalar(value);
 }
 
 Scalar THSTorch_float32_to_scalar(float value)
@@ -279,25 +279,28 @@ double THSTorch_scalar_to_float64(Scalar value)
     return value->toDouble();
 }
 
+void THSTorch_scalar_to_bfloat16(Scalar value, unsigned short* res)
+{
+    *res = value->toBFloat16().x;
+}
+
 void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
 {
     *res = value->toHalf().x;
 }
 
-void THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length))
+void THSTorch_scalar_to_complex32(Scalar value, float* real, float* imaginary)
 {
     auto result = value->toComplexFloat();
-    auto space = allocator(2);
-    space[0] = result.real();
-    space[1] = result.imag();
+    *real = result.real();
+    *imaginary = result.imag();
 }
 
-void THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length))
+void THSTorch_scalar_to_complex64(Scalar value, double* real, double* imaginary)
 {
     auto result = value->toComplexDouble();
-    auto space = allocator(2);
-    space[0] = result.real();
-    space[1] = result.imag();
+    *real = result.real();
+    *imaginary = result.imag();
 }
 
 bool THSTorch_scalar_to_bool(Scalar value)

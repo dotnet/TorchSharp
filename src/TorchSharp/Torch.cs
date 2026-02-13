@@ -19,9 +19,11 @@ namespace TorchSharp
     public static partial class torch
     {
 #if LIBTORCH_2_2_2_0
-        const string libtorchPackageVersion = "2.2.2.0";
+    const string libtorchPackageVersion = "2.2.2.0";
+#elif LIBTORCH_2_10_0_0
+    const string libtorchPackageVersion = "2.10.0.0";
 #elif LIBTORCH_2_7_1_0
-        const string libtorchPackageVersion = "2.7.1.0";
+    const string libtorchPackageVersion = "2.7.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -144,7 +146,6 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("fbgemm", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }
@@ -393,7 +394,7 @@ namespace TorchSharp
                 public static double clip_grad_norm_(IEnumerable<Modules.Parameter> tensors, double max_norm, double norm_type = 2.0)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                         var value = THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
                         CheckForErrors();
                         return value;
@@ -409,7 +410,7 @@ namespace TorchSharp
                 public static void clip_grad_value_(IEnumerable<Modules.Parameter> tensors, double clip_value)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                         THSTensor_clip_grad_value_(tensorsRef, parray.Array.Length, clip_value);
                         CheckForErrors();
                     }
@@ -423,7 +424,7 @@ namespace TorchSharp
                 public static Tensor parameters_to_vector(IEnumerable<Modules.Parameter> tensors)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
                         var res = THSTensor_parameters_to_vector(tensorsRef, parray.Array.Length);
                         if (res == IntPtr.Zero)
@@ -441,7 +442,7 @@ namespace TorchSharp
                 public static void vector_to_parameters(Tensor vec, IEnumerable<Modules.Parameter> tensors)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
                         THSTensor_vector_to_parameters(vec.Handle, tensorsRef, parray.Array.Length);
                         CheckForErrors();

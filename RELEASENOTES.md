@@ -1,6 +1,31 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+
+# NuGet Version 0.106.0
+
+This release upgrades the libtorch backend to v2.10.0, using CUDA 12.8.
+
+__Bug Fixes__:
+
+#1511 Fix `THSNN_interpolate`.<br/>
+#1512 Fix `THSJIT_TensorType_sizes` signature.<br/>
+#1504 Fix ABI for `THSTorch_int64_to_scalar`.<br/>
+#1508 Remove invalid P/Invoke methods.<br/>
+#1518 Remove duplicate declarations in `THSTensor.h`.<br/>
+
+__API Changes__:
+
+#1503 Add ReadOnlySpan overloads to many methods.<br/>
+#1478 Fix `torch.jit.ScriptModule.zero_grad`.<br/>
+#1495 Make `torchvision.io.read_image` and `torchvision.io.read_image_async` allow subsequent opening of the file for reading.<br/>
+#1505 Add `THSTorch_scalar_to_bfloat16`.<br/>
+#1507 Improve Scalar to Complex performance.<br/>
+
+__Build/Infrastructure__:
+
+#1510 Support VS 2026 in `build.cmd`.<br/>
+
 # NuGet Version 0.105.2
 
 This release upgrades the libtorch backend to v2.7.1, using CUDA 12.8.
