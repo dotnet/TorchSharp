@@ -377,6 +377,12 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_to_dense(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_to_sparse(IntPtr handle);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_to_sparse_with_dims(IntPtr handle, long sparse_dim);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_clone(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
