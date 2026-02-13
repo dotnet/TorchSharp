@@ -369,6 +369,23 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Indicates whether a given element type is quantized.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns></returns>
+        internal static bool IsQuantized(this ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.QInt8:
+            case ScalarType.QUInt8:
+            case ScalarType.QInt32:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Save the tensor in a .NET-specific format.
         /// </summary>
         /// <param name="tensor">The tensor to save</param>
