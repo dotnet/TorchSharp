@@ -444,7 +444,7 @@ namespace TorchSharp
                 }
 
                 using (var parray = new PinnedArray<IntPtr>()) {
-                    IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                    IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                     var res = THSLinalg_multi_dot(tensorsRef, parray.Array.Length);
                     if (res == IntPtr.Zero)
                         torch.CheckForErrors();

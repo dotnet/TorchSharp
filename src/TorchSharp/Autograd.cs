@@ -135,9 +135,9 @@ namespace TorchSharp
                 using var grads = new PinnedArray<IntPtr>();
                 using var results = new PinnedArray<IntPtr>();
 
-                IntPtr outsRef = outs.CreateArray(outputs.Select(p => p.Handle).ToArray());
-                IntPtr insRef = ins.CreateArray(inputs.Select(p => p.Handle).ToArray());
-                IntPtr gradsRef = grad_outputs == null ? IntPtr.Zero : grads.CreateArray(grad_outputs.Select(p => p.Handle).ToArray());
+                IntPtr outsRef = outs.CreateArray(outputs.ToHandleArray());
+                IntPtr insRef = ins.CreateArray(inputs.ToHandleArray());
+                IntPtr gradsRef = grad_outputs == null ? IntPtr.Zero : grads.CreateArray(grad_outputs.ToHandleArray());
                 long gradsLength = grad_outputs == null ? 0 : grads.Array.Length;
 
                 THSAutograd_grad(outsRef, outs.Array.Length, insRef, ins.Array.Length, gradsRef, gradsLength, retain_graph, create_graph, allow_unused, results.CreateArray);
@@ -178,9 +178,9 @@ namespace TorchSharp
                 using var ts = new PinnedArray<IntPtr>();
                 using var gts = new PinnedArray<IntPtr>();
                 using var ins = new PinnedArray<IntPtr>();
-                IntPtr tensRef = ts.CreateArray(tensors.Select(p => p.Handle).ToArray());
-                IntPtr gradsRef = grad_tensors == null ? IntPtr.Zero : gts.CreateArray(grad_tensors.Select(p => p.Handle).ToArray());
-                IntPtr insRef = inputs == null ? IntPtr.Zero : ins.CreateArray(inputs.Select(p => p.Handle).ToArray());
+                IntPtr tensRef = ts.CreateArray(tensors.ToHandleArray());
+                IntPtr gradsRef = grad_tensors == null ? IntPtr.Zero : gts.CreateArray(grad_tensors.ToHandleArray());
+                IntPtr insRef = inputs == null ? IntPtr.Zero : ins.CreateArray(inputs.ToHandleArray());
                 long insLength = inputs == null ? 0 : ins.Array.Length;
                 long gradsLength = grad_tensors == null ? 0 : gts.Array.Length;
 
