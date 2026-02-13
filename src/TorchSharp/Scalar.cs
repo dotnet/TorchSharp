@@ -373,15 +373,10 @@ namespace TorchSharp
         /// <param name="value">The input value.</param>
         public static (float Real, float Imaginary) ToComplexFloat32(this Scalar value)
         {
-            float[] floatArray;
+            THSTorch_scalar_to_complex32(value.Handle, out float real, out float imaginary);
+            torch.CheckForErrors();
 
-            using (var pa = new PinnedArray<float>()) {
-                THSTorch_scalar_to_complex32(value.Handle, pa.CreateArray);
-                torch.CheckForErrors();
-                floatArray = pa.Array;
-            }
-
-            return (floatArray[0], floatArray[1]);
+            return (real, imaginary);
         }
 
         /// <summary>
@@ -390,15 +385,10 @@ namespace TorchSharp
         /// <param name="value">The input value.</param>
         public static System.Numerics.Complex ToComplexFloat64(this Scalar value)
         {
-            double[] floatArray;
+            THSTorch_scalar_to_complex64(value.Handle, out double real, out double imaginary);
+            torch.CheckForErrors();
 
-            using (var pa = new PinnedArray<double>()) {
-                THSTorch_scalar_to_complex64(value.Handle, pa.CreateArray);
-                torch.CheckForErrors();
-                floatArray = pa.Array;
-            }
-
-            return new System.Numerics.Complex(floatArray[0], floatArray[1]);
+            return new System.Numerics.Complex(real, imaginary);
         }
     }
 }

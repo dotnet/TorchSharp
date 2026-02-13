@@ -136,7 +136,7 @@ namespace TorchSharp
             /// </returns>
             public static Tensor read_image(string filename, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
             {
-                using (FileStream stream = File.Open(filename, FileMode.Open))
+                using (FileStream stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
                     return (imager ?? DefaultImager).DecodeImage(stream, mode);
             }
 
@@ -167,7 +167,7 @@ namespace TorchSharp
             public static async Task<Tensor> read_image_async(string filename, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
             {
 
-                using (FileStream stream = File.Open(filename, FileMode.Open))
+                using (FileStream stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
                     return await (imager ?? DefaultImager).DecodeImageAsync(stream, mode);
             }
 

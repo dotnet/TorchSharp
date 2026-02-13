@@ -25,7 +25,7 @@ If you send us a PR, whether for documentation, examples, or library code, we re
 * **DO** refer to any relevant issues, and include [keywords](https://help.github.com/articles/closing-issues-via-commit-messages/) that automatically close issues when the PR is merged.
 * **DO** tag any users that should know about and/or review the change.
 * **DO** ensure each commit successfully builds.  The entire PR must pass all tests in the Continuous Integration (CI) system before it'll be merged.
-* **DO** add a brief description to the RELEASENOTES.md file at the top under the heading of the upcoming release.
+* **DO** label your PR so it appears in the correct release-note category (see the PR template for the label table). Release notes are generated automatically — you do not need to edit `RELEASENOTES.md`.
 * **DO** address PR feedback in an additional commit(s) rather than amending the existing commits, and only rebase/squash them when necessary.  This makes it easier for reviewers to track changes.
 * **DO** assume that ["Squash and Merge"](https://github.com/blog/2141-squash-your-commits) will be used to merge your commit unless you request otherwise in the PR.
 * **DO NOT** fix merge conflicts using a merge commit. Prefer `git rebase`.

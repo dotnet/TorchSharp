@@ -3783,7 +3783,7 @@ namespace TorchSharp
         public void IndexNull()
         {
             using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
-            var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
+            var t1 = i.index(new TensorIndex[] { TensorIndex.Null, TensorIndex.Single(0) });
             Assert.Equal(0, t1[0, 0].ToInt32());
             Assert.Equal(1, t1[0, 1].ToInt32());
             Assert.Equal(2, t1[0, 2].ToInt32());

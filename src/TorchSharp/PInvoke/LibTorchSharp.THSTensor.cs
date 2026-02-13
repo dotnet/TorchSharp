@@ -527,9 +527,6 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_t(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_H(IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_mT(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
@@ -1039,9 +1036,6 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, [MarshalAs(UnmanagedType.U1)] bool keepdim, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_var_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, [MarshalAs(UnmanagedType.U1)] bool keepdim, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_median(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
@@ -1354,16 +1348,10 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_istft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, [MarshalAs(UnmanagedType.U1)] bool center, [MarshalAs(UnmanagedType.U1)] bool normalized, long onesided, long length, [MarshalAs(UnmanagedType.U1)] bool return_complex);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_randint(IntPtr generator, long low, long high, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
