@@ -2543,6 +2543,16 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Convert each element from degrees to radians, in-place.
+            /// </summary>
+            public Tensor deg2rad_()
+            {
+                NativeMethods.THSTensor_deg2rad_(Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            /// <summary>
             /// Convert each element from radians to degrees.
             /// </summary>
             public Tensor rad2deg()
@@ -2551,6 +2561,16 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Convert each element from radians to degrees, in-place.
+            /// </summary>
+            public Tensor rad2deg_()
+            {
+                NativeMethods.THSTensor_rad2deg_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2565,6 +2585,18 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Copies the signs of other to input, in-place.
+            /// </summary>
+            /// <param name="other">contains value(s) whose signbit(s) are applied to the magnitudes in input.</param>
+            /// <returns>this tensor</returns>
+            public Tensor copysign_(Tensor other)
+            {
+                NativeMethods.THSTensor_copysign_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2928,6 +2960,17 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Heaviside step function for each element in input, in-place.
+            /// </summary>
+            /// <param name="other">The values to use where input is zero.</param>
+            public Tensor heaviside_(Tensor other)
+            {
+                NativeMethods.THSTensor_heaviside_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -6031,6 +6074,23 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Replaces NaN, positive infinity, and negative infinity values in input, in-place.
+            /// </summary>
+            public Tensor nan_to_num_(double nan = 0d, double? posinf = null, double? neginf = null)
+            {
+                var _nan = new double[] { nan };
+                var _posinf = posinf.HasValue ? new double[] { posinf.Value } : null;
+                var _neginf = neginf.HasValue ? new double[] { neginf.Value } : null;
+                unsafe {
+                    fixed (double* pnan = _nan, pposinf = _posinf, pneginf = _neginf) {
+                        NativeMethods.THSTensor_nan_to_num_(Handle, (IntPtr)pnan, (IntPtr)pposinf, (IntPtr)pneginf);
+                        CheckForErrors();
+                        return this;
+                    }
+                }
+            }
+
+            /// <summary>
             /// Return the next floating-point value after input towards other, elementwise.
             /// </summary>
             public Tensor nextafter(Tensor other)
@@ -6038,6 +6098,16 @@ namespace TorchSharp
                 var res = NativeMethods.THSTensor_nextafter(Handle, other.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Return the next floating-point value after input towards other, elementwise, in-place.
+            /// </summary>
+            public Tensor nextafter_(Tensor other)
+            {
+                NativeMethods.THSTensor_nextafter_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
