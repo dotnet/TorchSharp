@@ -45,6 +45,7 @@ __API Changes__:
 `torch.optim.lr_scheduler.PolynomialLR` `power` type has been corrected, is now double.<br/>
 Returning an input tensor has been corrected, is now `alias()`.<br/>
 Add `torchvision.transforms.Resize` `interpolation` and `antialias`.<br />
+#1396 Fast TensorAccessor<br/>
 
 # NuGet Version 0.105.0
 
