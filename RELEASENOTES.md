@@ -27,6 +27,15 @@ __API Changes__:
 Returning an input tensor has been corrected, is now `alias()`.<br/>
 Add `torchvision.transforms.Resize` `interpolation` and `antialias`.<br />
 
+
+# Next Version
+
+- Add support for torch.utils.data.ConcatDataset.
+- A new interface `IDataset<out T>` has been added, and now `Dataset<T>` implements it.
+- More overloads of DataLoader() has been added, to accept `IDataset`.
+- Type of `DataLoaders<T>.dataset` has been changed to `IDataset<T>`.
+- Type of `DataLoaders<T>.collate_fn` has been changed to `Func<IReadOnlyList<T>, Device, S>`.
+
 # NuGet Version 0.105.0
 
 Move to libtorch 2.5.1. As with the 2.4.0 release, MacOS / Intel is no longer supported by libtorch, so TorchSharp doesn, either.
@@ -55,7 +64,7 @@ __Issues fixed__:
 
 __API Changes__:
 
- #1382: Add support for torch.nn.functional.normalize<br/>
+#1382: Add support for torch.nn.functional.normalize<br/>
 
 # NuGet Version 0.103.1
 
