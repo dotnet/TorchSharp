@@ -6,6 +6,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __API Changes__:
 
 Fix `torch.jit.ScriptModule.zero_grad`.<br/>
+Add ReadOnlySpan overloads to many methods.<br/>
 
 # NuGet Version 0.105.2
 
