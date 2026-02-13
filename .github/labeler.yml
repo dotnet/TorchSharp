@@ -1,0 +1,36 @@
+# Auto-label PRs based on file paths changed
+# Used by .github/workflows/labeler.yml
+
+# Bug fixes in native code
+bug:
+  - changed-files:
+      - any-glob-to-any-file: 'src/Native/**'
+
+# API changes in managed code
+api-change:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/TorchSharp/**'
+          - 'src/TorchVision/**'
+          - 'src/TorchAudio/**'
+
+# Documentation only
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'docfx/**'
+
+# CI / build changes
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
+          - 'azure-pipelines.yml'
+          - 'build/**'
+          - 'Directory.Build.*'
+
+# Test changes
+test:
+  - changed-files:
+      - any-glob-to-any-file: 'test/**'
