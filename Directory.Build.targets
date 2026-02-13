@@ -9,9 +9,7 @@
 
   <!-- Windows CPU libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
-    <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="fbgemm" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
     <NativeAssemblyReference Include="torch" />
@@ -22,7 +20,6 @@
 
   <!-- Windows CUDA 12.1 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
-    <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
     <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="c10_cuda" Variant="cuda\" />
     <NativeAssemblyReference Include="caffe2_nvrtc" Variant="cuda\" />
@@ -39,12 +36,12 @@
     <NativeAssemblyReference Include="cudnn_ops64_9" Variant="cuda\" />
     <NativeAssemblyReference Include="cufft64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cufftw64_11" Variant="cuda\" />
-    <NativeAssemblyReference Include="cupti64_2025.1.0" Variant="cuda\" />
+    <NativeAssemblyReference Include="cupti64_2025.1.1" Variant="cuda\" />
     <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolver64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolverMg64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusparse64_12" Variant="cuda\" />
-    <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvperf_host" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
     <NativeAssemblyReference Include="nvJitLink_120_0" Variant="cuda\" />

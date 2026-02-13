@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
   </ItemGroup>
 
@@ -13,4 +13,3 @@
     <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="LICENSE-LIBTORCH.txt" />
   </ItemGroup>
 </Project>
-

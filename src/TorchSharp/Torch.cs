@@ -19,9 +19,11 @@ namespace TorchSharp
     public static partial class torch
     {
 #if LIBTORCH_2_2_2_0
-        const string libtorchPackageVersion = "2.2.2.0";
+    const string libtorchPackageVersion = "2.2.2.0";
+#elif LIBTORCH_2_10_0_0
+    const string libtorchPackageVersion = "2.10.0.0";
 #elif LIBTORCH_2_7_1_0
-        const string libtorchPackageVersion = "2.7.1.0";
+    const string libtorchPackageVersion = "2.7.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -144,7 +146,6 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("fbgemm", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }

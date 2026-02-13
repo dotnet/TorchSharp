@@ -28,7 +28,6 @@
 
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
 
-    <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\c10.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\c10_cuda.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackageSuffix="part1" />
@@ -47,7 +46,7 @@
 
     <File Include= "libtorch\lib\cufft64_11.dll" PackageSuffix="part4" />
     <File Include= "libtorch\lib\cufftw64_11.dll" PackageSuffix="part4" />
-    <File Include= "libtorch\lib\cupti64_2025.1.0.dll" PackageSuffix="part4" />
+    <File Include= "libtorch\lib\cupti64_2025.1.1.dll" PackageSuffix="part4" />
 
     <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
     <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
@@ -55,7 +54,7 @@
 
     <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part6" />
-    <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\nvperf_host.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part6" />
@@ -77,8 +76,7 @@
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="350000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\cusolver64_11.dll" PackageSuffix="part10" />
 
@@ -91,9 +89,9 @@
     <File Include= "libtorch\lib\libc10_cuda.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libc10d_cuda_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcudart-218eec4c.so.12" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudart-c3a75b33.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudnn.so.9" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcublas-f6c022dc.so.12" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libcublas-031ce6c2.so.12" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libcudnn_engines_runtime_compiled.so.9" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libcudnn_graph.so.9" PackageSuffix="part1" />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
@@ -103,8 +101,11 @@
     <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvToolsExt-c498fcba.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcufile-0c72d05c.so.0" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcufile-2b2a5a42.so.0" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcufile_rdma-5257f22c.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcupti-fccdc5fc.so.12" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvperf_host-609f5406.so"  PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
@@ -124,26 +125,28 @@
     <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
     <File Include= "libtorch\lib\libcudnn_engines_precompiled.so.9"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libcublasLt-4ef47ce6.so.12"  PackageSuffix="part5-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libcublasLt-10b5e663.so.12"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libcublasLt-10b5e663.so.12"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libcublasLt-10b5e663.so.12"  PackageSuffix="part5-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcudnn_cnn.so.9" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libcudnn_heuristic.so.9"  PackageSuffix="part6"  />
-    <File Include= "libtorch\lib\libnvrtc-c8f577df.so.12" PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libnvrtc-2bb82d1a.so.12" PackageSuffix="part6"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part6"  />
+    <File Include= "libtorch\lib\libnvshmem_host-bb1c1ad4.so.3"  PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part6" />
 
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment1" FileUnstitchIndex="1" FileUnstitchStart="200000000" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment2" FileUnstitchIndex="2" FileUnstitchStart="400000000" FileUnstitchSize="200000000" />
     <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part7-fragment3" FileUnstitchIndex="3" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part8" />
-    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part8" />
-    <File Include= "libtorch\lib\libcusparseLt-978bd952.so.0"  PackageSuffix="part8" />
-
-    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9" />
-    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part9"  />
+    <File Include= "libtorch\lib\libcusparseLt-0bb86669.so.0"  PackageSuffix="part8-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libcusparseLt-0bb86669.so.0"  PackageSuffix="part8-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="-1" />
+    
+    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="150000000" />
+    <File Include= "libtorch\lib\libcudnn_adv.so.9"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="150000000" FileUnstitchSize="-1" />
 
   </ItemGroup>
 
@@ -157,7 +160,9 @@
   <!-- Validate and extract Archive for Libtorch -->
   <Target Name="ValidateAndExtractArchives" DependsOnTargets="DownloadArchive" Inputs="$(DownloadedArchive)" Outputs="$(ExtractSemaphore)">
     <Message Importance="High" Text="GetFileHash $(DownloadedArchive)" />
-    <GetFileHash  Files="$(DownloadedArchive)">  <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" /> </GetFileHash>
+    <GetFileHash  Files="$(DownloadedArchive)">
+      <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" />
+    </GetFileHash>
     <WriteLinesToFile File="$(ArchiveShaFile)" Lines="$(DownloadedArchiveHash)" Overwrite="true" />
 
     <!-- If specified we'll update the checked in SHAs with the downloaded ones. -->
@@ -192,7 +197,7 @@
 
   </Target>
 
-    <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
+  <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
   <UsingTask
     TaskName="FileUnstitch"
     TaskFactory="RoslynCodeTaskFactory"
@@ -209,14 +214,14 @@
       <Using Namespace="System.IO"/>
       <Using Namespace="System.IO.MemoryMappedFiles"/>
       <Code Type="Fragment" Language="cs">
-<![CDATA[
+        <![CDATA[
             {
                 string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
                 if (Size == -1)
                     Size = Int32.MaxValue;
                 var fi = new FileInfo(SourceFile);
                 Console.WriteLine($"Opening source {SourceFile} for fragment {Index}...");
-                using (var mmf = MemoryMappedFile.CreateFromFile(SourceFile))
+                using (var mmf = MemoryMappedFile.CreateFromFile(SourceFile, FileMode.Open, null, 0, MemoryMappedFileAccess.Read))
                 {
                     long totSize = fi.Length;
                     if (Start != 0)
@@ -226,7 +231,7 @@
                     Size = Math.Max(Math.Min(Size, totSize - Start), 0);
                     Console.WriteLine($"Reading fragment {Index} ({Start}..{Start + Size - 1}) from {SourceFile}...");
                     var outBytes = new byte[Size];
-                    using (var accessor = mmf.CreateViewAccessor(Start, Size))
+                    using (var accessor = mmf.CreateViewAccessor(Start, Size, MemoryMappedFileAccess.Read))
                     {
                         accessor.ReadArray<byte>(0, outBytes, 0, (int)Size);
                     }
