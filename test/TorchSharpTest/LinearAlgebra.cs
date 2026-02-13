@@ -49,7 +49,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
                 Assert.Equal(new long[] { 2, 3 }, pivots.shape);
 
-                var x = lu_solve(b, A_LU, pivots);
+                var x = linalg.lu_solve(A_LU, pivots, b);
                 Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
 
                 var y = norm(bmm(A, x) - b);
@@ -67,7 +67,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 2, 3 }, pivots.shape);
                 Assert.Equal(new long[] { 2 }, infos.shape);
 
-                var x = lu_solve(b, A_LU, pivots);
+                var x = linalg.lu_solve(A_LU, pivots, b);
                 Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
 
                 var y = norm(bmm(A, x) - b);
