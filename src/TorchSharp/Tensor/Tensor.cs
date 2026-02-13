@@ -6886,6 +6886,14 @@ namespace TorchSharp
                 case ScalarType.Float64:
                     if (top) sb.Append("double ");
                     break;
+                case ScalarType.BFloat16:
+                    if (top) sb.Append("bfloat16 ");
+                    appendChar = "f";
+                    break;
+                case ScalarType.Float16:
+                    if (top) sb.Append("float16 ");
+                    appendChar = "f";
+                    break;
                 case ScalarType.ComplexFloat32:
                     if (top) sb.Append("complex32 ");
                     break;
@@ -7166,6 +7174,7 @@ namespace TorchSharp
                 case ScalarType.Bool:
                     builder.Append(value.ToBoolean().ToString(cultureInfo));
                     break;
+                case ScalarType.BFloat16:
                 case ScalarType.Float16:
                     builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));
                     break;
