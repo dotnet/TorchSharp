@@ -4,9 +4,9 @@
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets.
     We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
-    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net8.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net8.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <IsPackable>false</IsPackable>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
