@@ -93,13 +93,13 @@ inline Tensor ResultTensor(const at::Tensor & res)
 const char * make_sharable_string(const std::string str);
 
 // Method concerting arrays of tensor pointers into arrays of tensors.
-template<class T>
-std::vector<T> toTensors(torch::Tensor ** tensorPtrs, const int length)
+template<class T, typename IntType>
+std::vector<T> toTensors(torch::Tensor ** tensorPtrs, const IntType length)
 {
     std::vector<T> tensors;
 
     if (tensorPtrs != nullptr) {
-        for (int i = 0; i < length; i++)
+        for (IntType i = 0; i < length; i++)
         {
             tensors.push_back(*tensorPtrs[i]);
         }

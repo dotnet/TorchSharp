@@ -354,7 +354,7 @@ Tensor THSTensor_dot(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->dot(*right));
 }
 
-Tensor THSTensor_einsum(const char* equation, const Tensor* tensors, const int length)
+Tensor THSTensor_einsum(const char* equation, const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::einsum(equation, toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
@@ -609,7 +609,7 @@ void THSTensor_le_scalar_(const Tensor left, const Scalar right)
     CATCH(left->le_(*right);)
 }
 
-Tensor THSTensor_logcumsumexp(const Tensor tensor, const long dimension)
+Tensor THSTensor_logcumsumexp(const Tensor tensor, const int64_t dimension)
 {
     CATCH_TENSOR(torch::logcumsumexp(*tensor, dimension));
 }
@@ -624,7 +624,7 @@ Tensor THSTensor_logaddexp2(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(torch::logaddexp2(*tensor, *other));
 }
 
-Tensor THSTensor_logsumexp(const Tensor tensor, const long dim, const bool keepdim)
+Tensor THSTensor_logsumexp(const Tensor tensor, const int64_t dim, const bool keepdim)
 {
     CATCH_TENSOR(torch::logsumexp(*tensor, dim, keepdim));
 }
