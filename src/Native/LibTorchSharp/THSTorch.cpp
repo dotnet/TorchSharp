@@ -154,6 +154,23 @@ void THSTorchCuda_synchronize(const int64_t device_index)
 
 #if defined(USE_CUDA)
 
+// Helper to safely resolve CUDA device index, defaulting to device 0 when
+// no device context has been established yet (c10::cuda::current_device()
+// can throw "Invalid device argument" in that case).
+static c10::DeviceIndex resolve_cuda_device_index(int64_t device_index)
+{
+    if (device_index >= 0)
+        return static_cast<c10::DeviceIndex>(device_index);
+    c10::DeviceIndex current = -1;
+    auto err = c10::cuda::GetDevice(&current);
+    if (err != cudaSuccess || current < 0) {
+        // No CUDA device context has been established yet; default to device 0.
+        cudaGetLastError(); // clear any error
+        return static_cast<c10::DeviceIndex>(0);
+    }
+    return current;
+}
+
 void THSTorchCuda_empty_cache()
 {
     CATCH(c10::cuda::CUDACachingAllocator::emptyCache();)
@@ -163,7 +180,7 @@ size_t THSTorchCuda_memory_allocated(const int64_t device_index)
 {
     size_t res = 0;
     CATCH(
-        auto device = device_index < 0 ? c10::cuda::current_device() : static_cast<c10::DeviceIndex>(device_index);
+        auto device = resolve_cuda_device_index(device_index);
         res = c10::cuda::CUDACachingAllocator::currentMemoryAllocated(device);
     )
     return res;
@@ -173,7 +190,7 @@ size_t THSTorchCuda_max_memory_allocated(const int64_t device_index)
 {
     size_t res = 0;
     CATCH(
-        auto device = device_index < 0 ? c10::cuda::current_device() : static_cast<c10::DeviceIndex>(device_index);
+        auto device = resolve_cuda_device_index(device_index);
         res = c10::cuda::CUDACachingAllocator::maxMemoryAllocated(device);
     )
     return res;
@@ -182,7 +199,7 @@ size_t THSTorchCuda_max_memory_allocated(const int64_t device_index)
 void THSTorchCuda_reset_peak_memory_stats(const int64_t device_index)
 {
     CATCH(
-        auto device = device_index < 0 ? c10::cuda::current_device() : static_cast<c10::DeviceIndex>(device_index);
+        auto device = resolve_cuda_device_index(device_index);
         c10::cuda::CUDACachingAllocator::resetPeakStats(device);
     )
 }
@@ -191,7 +208,7 @@ size_t THSTorchCuda_memory_reserved(const int64_t device_index)
 {
     size_t res = 0;
     CATCH(
-        auto device = device_index < 0 ? c10::cuda::current_device() : static_cast<c10::DeviceIndex>(device_index);
+        auto device = resolve_cuda_device_index(device_index);
         res = c10::cuda::CUDACachingAllocator::currentMemoryReserved(device);
     )
     return res;
@@ -201,7 +218,7 @@ size_t THSTorchCuda_max_memory_reserved(const int64_t device_index)
 {
     size_t res = 0;
     CATCH(
-        auto device = device_index < 0 ? c10::cuda::current_device() : static_cast<c10::DeviceIndex>(device_index);
+        auto device = resolve_cuda_device_index(device_index);
         res = c10::cuda::CUDACachingAllocator::maxMemoryReserved(device);
     )
     return res;
@@ -210,7 +227,7 @@ size_t THSTorchCuda_max_memory_reserved(const int64_t device_index)
 void THSTorchCuda_mem_get_info(const int64_t device_index, size_t* free, size_t* total)
 {
     CATCH(
-        auto device = device_index < 0 ? c10::cuda::current_device() : static_cast<c10::DeviceIndex>(device_index);
+        auto device = resolve_cuda_device_index(device_index);
         c10::cuda::CUDAGuard guard(device);
         C10_CUDA_CHECK(cudaMemGetInfo(free, total));
     )
