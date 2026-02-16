@@ -3012,6 +3012,16 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the zeroth order modified Bessel function of the first kind for each element of input, in-place.
+            /// </summary>
+            public Tensor i0_()
+            {
+                NativeMethods.THSTensor_i0_(Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            /// <summary>
             /// Returns a new tensor with boolean elements representing if each element of input is “close” to the corresponding element of other.
             /// </summary>
             /// <param name="other">Second tensor to compare</param>
