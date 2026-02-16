@@ -8,7 +8,7 @@
 
 Tensor THSTensor_adaptive_avg_pool1d(
     const Tensor tensor,
-    const int64_t* outputSize, const int outputSizeLength)
+    const int64_t* outputSize, const int32_t outputSizeLength)
 {
     CATCH_TENSOR(torch::adaptive_avg_pool1d(
         *tensor,
@@ -17,7 +17,7 @@ Tensor THSTensor_adaptive_avg_pool1d(
 
 Tensor THSTensor_adaptive_avg_pool2d(
     const Tensor tensor,
-    const int64_t* outputSize, const int outputSizeLength)
+    const int64_t* outputSize, const int32_t outputSizeLength)
 {
     CATCH_TENSOR(torch::adaptive_avg_pool2d(
         *tensor,
@@ -26,7 +26,7 @@ Tensor THSTensor_adaptive_avg_pool2d(
 
 Tensor THSTensor_adaptive_avg_pool3d(
     const Tensor tensor,
-    const int64_t* outputSize, const int outputSizeLength)
+    const int64_t* outputSize, const int32_t outputSizeLength)
 {
     CATCH_TENSOR(torch::adaptive_avg_pool3d(
         *tensor,
@@ -44,7 +44,7 @@ Tensor THSTensor_adaptive_avg_pool3d_backward_out(
         *tensor));
 }
 
-Tensor THSTensor_adaptive_max_pool1d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength, Tensor *indices)
+Tensor THSTensor_adaptive_max_pool1d(const Tensor tensor, const int64_t* outputSize, const int32_t outputSizeLength, Tensor *indices)
 {
     Tensor output = nullptr;
     *indices = nullptr;
@@ -56,7 +56,7 @@ Tensor THSTensor_adaptive_max_pool1d(const Tensor tensor, const int64_t* outputS
     return output;
 }
 
-Tensor THSTensor_adaptive_max_pool2d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength, Tensor* indices)
+Tensor THSTensor_adaptive_max_pool2d(const Tensor tensor, const int64_t* outputSize, const int32_t outputSizeLength, Tensor* indices)
 {
     Tensor output = nullptr;
     *indices = nullptr;
@@ -68,7 +68,7 @@ Tensor THSTensor_adaptive_max_pool2d(const Tensor tensor, const int64_t* outputS
     return output;
 }
 
-Tensor THSTensor_adaptive_max_pool3d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength, Tensor* indices)
+Tensor THSTensor_adaptive_max_pool3d(const Tensor tensor, const int64_t* outputSize, const int32_t outputSizeLength, Tensor* indices)
 {
     Tensor output = nullptr;
     *indices = nullptr;
@@ -80,7 +80,7 @@ Tensor THSTensor_adaptive_max_pool3d(const Tensor tensor, const int64_t* outputS
     return output;
 }
 
-Tensor THSTensor_fractional_max_pool2d(const Tensor tensor, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* outputSize, const int outputSizeLength, const double* outputRatio, const int outputRatioLength, Tensor* indices)
+Tensor THSTensor_fractional_max_pool2d(const Tensor tensor, const int64_t* kernelSize, const int32_t kernelSizeLength, const int64_t* outputSize, const int32_t outputSizeLength, const double* outputRatio, const int32_t outputRatioLength, Tensor* indices)
 {
     Tensor output = nullptr;
     *indices = nullptr;
@@ -98,7 +98,7 @@ Tensor THSTensor_fractional_max_pool2d(const Tensor tensor, const int64_t* kerne
     return output;
 }
 
-Tensor THSTensor_fractional_max_pool3d(const Tensor tensor, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* outputSize, const int outputSizeLength, const double* outputRatio, const int outputRatioLength, Tensor* indices)
+Tensor THSTensor_fractional_max_pool3d(const Tensor tensor, const int64_t* kernelSize, const int32_t kernelSizeLength, const int64_t* outputSize, const int32_t outputSizeLength, const double* outputRatio, const int32_t outputRatioLength, Tensor* indices)
 {
     Tensor output = nullptr;
     *indices = nullptr;
@@ -120,9 +120,9 @@ Tensor THSTensor_lp_pool1d(
     const Tensor tensor,
     const double norm_type,
     const int64_t* kernelSize,
-    const int kernelSizeLength,
+    const int32_t kernelSizeLength,
     const int64_t* stride,
-    const int strideLength,
+    const int32_t strideLength,
     const bool ceil_mode)
 {
     auto opts = torch::nn::functional::LPPool1dFuncOptions(norm_type, at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode);
@@ -136,9 +136,9 @@ Tensor THSTensor_lp_pool2d(
     const Tensor tensor,
     const double norm_type,
     const int64_t* kernelSize,
-    const int kernelSizeLength,
+    const int32_t kernelSizeLength,
     const int64_t* stride,
-    const int strideLength,
+    const int32_t strideLength,
     const bool ceil_mode)
 {
     auto opts = torch::nn::functional::LPPool2dFuncOptions(norm_type, at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode);
@@ -150,9 +150,9 @@ Tensor THSTensor_lp_pool2d(
 
 Tensor THSTensor_avg_pool1d(
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
     bool ceil_mode,
     bool count_include_pad)
 {
@@ -167,9 +167,9 @@ Tensor THSTensor_avg_pool1d(
 
 Tensor THSTensor_avg_pool2d(
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
     bool ceil_mode,
     bool count_include_pad,
     const int64_t divisor_override)
@@ -187,9 +187,9 @@ Tensor THSTensor_avg_pool2d(
 Tensor THSTensor_avg_pool2d_backward(
     const Tensor grad_output,
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
     bool ceil_mode,
     bool count_include_pad,
     const int64_t divisor_override)
@@ -207,9 +207,9 @@ Tensor THSTensor_avg_pool2d_backward(
 
 Tensor THSTensor_avg_pool3d(
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
     bool ceil_mode,
     bool count_include_pad,
     const int64_t divisor_override)
@@ -227,9 +227,9 @@ Tensor THSTensor_avg_pool3d(
 Tensor THSTensor_avg_pool3d_backward(
     const Tensor grad_output,
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
     bool ceil_mode,
     bool count_include_pad,
     const int64_t divisor_override)
@@ -246,10 +246,10 @@ Tensor THSTensor_avg_pool3d_backward(
 }
 Tensor THSTensor_conv_transpose1d(
     const Tensor input, const Tensor weight, const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* outputPadding, const int outputPaddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* outputPadding, const int32_t outputPaddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv_transpose1d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -262,10 +262,10 @@ Tensor THSTensor_conv_transpose1d(
 
 Tensor THSTensor_conv_transpose2d(
     const Tensor input, const Tensor weight, const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* outputPadding, const int outputPaddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* outputPadding, const int32_t outputPaddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv_transpose2d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -278,10 +278,10 @@ Tensor THSTensor_conv_transpose2d(
 
 Tensor THSTensor_conv_transpose3d(
     const Tensor input, const Tensor weight, const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* outputPadding, const int outputPaddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* outputPadding, const int32_t outputPaddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv_transpose3d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -296,9 +296,9 @@ Tensor THSTensor_conv1d(
     const Tensor input,
     const Tensor weight,
     const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv1d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -312,9 +312,9 @@ Tensor THSTensor_conv2d(
     const Tensor input,
     const Tensor weight,
     const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv2d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -328,9 +328,9 @@ Tensor THSTensor_conv3d(
     const Tensor input,
     const Tensor weight,
     const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv3d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -340,7 +340,7 @@ Tensor THSTensor_conv3d(
         groups));
 }
 
-static c10::string_view get_padding_str(int padding) {
+static c10::string_view get_padding_str(int32_t padding) {
     if (padding == 0)
         return "valid";
     else if (padding == 1)
@@ -353,9 +353,9 @@ Tensor THSTensor_conv1d_padding(
     const Tensor input,
     const Tensor weight,
     const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int padding,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int32_t padding,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv1d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -370,9 +370,9 @@ Tensor THSTensor_conv2d_padding(
     const Tensor input,
     const Tensor weight,
     const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int padding,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int32_t padding,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv2d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -386,9 +386,9 @@ Tensor THSTensor_conv3d_padding(
     const Tensor input,
     const Tensor weight,
     const Tensor bias,
-    const int64_t* stride, const int strideLength,
-    const int padding,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int32_t padding,
+    const int64_t* dilation, const int32_t dilationLength,
     int64_t groups)
 {
     CATCH_TENSOR(torch::conv3d(*input, *weight, (bias ? *bias : at::Tensor()),
@@ -400,10 +400,10 @@ Tensor THSTensor_conv3d_padding(
 
 Tensor THSTensor_max_pool1d(
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     bool ceil_mode)
 {
     CATCH_TENSOR(torch::max_pool1d(
@@ -418,10 +418,10 @@ Tensor THSTensor_max_pool1d(
 void THSTensor_max_pool1d_with_indices(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     bool ceil_mode)
 {
     CATCH(
@@ -441,10 +441,10 @@ void THSTensor_max_pool1d_with_indices(
 
 Tensor THSTensor_max_pool2d(
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     bool ceil_mode)
 {
     CATCH_TENSOR(torch::max_pool2d(
@@ -459,10 +459,10 @@ Tensor THSTensor_max_pool2d(
 void THSTensor_max_pool2d_with_indices(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     bool ceil_mode)
 {
     CATCH(
@@ -481,10 +481,10 @@ void THSTensor_max_pool2d_with_indices(
 
 Tensor THSTensor_max_pool3d(
     const Tensor tensor,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     bool ceil_mode)
 {
     CATCH_TENSOR(torch::max_pool3d(
@@ -499,10 +499,10 @@ Tensor THSTensor_max_pool3d(
 void THSTensor_max_pool3d_with_indices(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* stride, const int32_t strideLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* dilation, const int32_t dilationLength,
     bool ceil_mode)
 {
     CATCH(
@@ -522,10 +522,10 @@ void THSTensor_max_pool3d_with_indices(
 Tensor THSTensor_max_unpool1d(
     const Tensor tensor,
     const Tensor indices,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* stride, const int strideLength)
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* stride, const int32_t strideLength)
 {
 
     auto opts = torch::nn::functional::MaxUnpool1dFuncOptions(at::IntArrayRef(kernelSize, kernelSizeLength));
@@ -535,7 +535,7 @@ Tensor THSTensor_max_unpool1d(
         opts = opts.padding(at::IntArrayRef(padding, paddingLength));
     if (paddingLength > 0)
         opts = opts.stride(at::IntArrayRef(stride, strideLength));
-        
+
     CATCH_TENSOR(torch::nn::functional::max_unpool1d(*tensor, *indices, opts));
 }
 
@@ -543,30 +543,30 @@ Tensor THSTensor_max_unpool1d(
 Tensor THSTensor_max_unpool2d(
     const Tensor tensor,
     const Tensor indices,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* stride, const int strideLength)
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* stride, const int32_t strideLength)
 {
 
     auto opts = torch::nn::functional::MaxUnpool2dFuncOptions(at::IntArrayRef(kernelSize, kernelSizeLength));
-    if (outputSizeLength > 0) 
+    if (outputSizeLength > 0)
         opts = opts.output_size(std::vector<int64_t>(outputSize, outputSize + outputSizeLength));
     if (paddingLength > 0)
         opts = opts.padding(at::IntArrayRef(padding, paddingLength));
     if (paddingLength > 0)
         opts = opts.stride(at::IntArrayRef(stride, strideLength));
-        
+
     CATCH_TENSOR(torch::nn::functional::max_unpool2d(*tensor, *indices, opts));
 }
 
 Tensor THSTensor_max_unpool3d(
     const Tensor tensor,
     const Tensor indices,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* stride, const int strideLength)
+    const int64_t* kernelSize, const int32_t kernelSizeLength,
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const int64_t* padding, const int32_t paddingLength,
+    const int64_t* stride, const int32_t strideLength)
 {
     auto opts = torch::nn::functional::MaxUnpool3dFuncOptions(at::IntArrayRef(kernelSize, kernelSizeLength));
     if (outputSizeLength > 0)
@@ -592,8 +592,8 @@ void THSTensor_unsqueeze_(Tensor tensor, int64_t dim)
 
 Tensor THSTensor_upsample_nearest1d(
     const Tensor tensor,
-    const int64_t* outputSize, const int outputSizeLength,
-    const double* scaleFactors, const int scaleFactorsLength)
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const double* scaleFactors, const int32_t scaleFactorsLength)
 {
     CATCH_TENSOR(torch::upsample_nearest1d(
         *tensor,
@@ -604,9 +604,9 @@ Tensor THSTensor_upsample_nearest1d(
 
 Tensor THSTensor_upsample_nearest1d_backward(
     const Tensor grad_output,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* inputSize, const int inputSizeLength,
-    const double* scaleFactors, const int scaleFactorsLength)
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const int64_t* inputSize, const int32_t inputSizeLength,
+    const double* scaleFactors, const int32_t scaleFactorsLength)
 {
     // TODO: Update to v2.0 format
     //CATCH_TENSOR(torch::upsample_nearest1d_backward(
@@ -620,8 +620,8 @@ Tensor THSTensor_upsample_nearest1d_backward(
 
 Tensor THSTensor_upsample_nearest2d(
     const Tensor tensor,
-    const int64_t* outputSize, const int outputSizeLength,
-    const double* scaleFactors, const int scaleFactorsLength)
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const double* scaleFactors, const int32_t scaleFactorsLength)
 {
     CATCH_TENSOR(torch::upsample_nearest2d(
         *tensor,
@@ -632,9 +632,9 @@ Tensor THSTensor_upsample_nearest2d(
 
 Tensor THSTensor_upsample_nearest2d_backward(
     const Tensor grad_output,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* inputSize, const int inputSizeLength,
-    const double* scaleFactors, const int scaleFactorsLength)
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const int64_t* inputSize, const int32_t inputSizeLength,
+    const double* scaleFactors, const int32_t scaleFactorsLength)
 {
     // TODO: Update to v2.0 format
     //CATCH_TENSOR(torch::upsample_nearest2d_backward(
@@ -648,8 +648,8 @@ Tensor THSTensor_upsample_nearest2d_backward(
 
 Tensor THSTensor_upsample_nearest3d(
     const Tensor tensor,
-    const int64_t* outputSize, const int outputSizeLength,
-    const double* scaleFactors, const int scaleFactorsLength)
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const double* scaleFactors, const int32_t scaleFactorsLength)
 {
     CATCH_TENSOR(torch::upsample_nearest3d(
         *tensor,
@@ -660,9 +660,9 @@ Tensor THSTensor_upsample_nearest3d(
 
 Tensor THSTensor_upsample_nearest3d_backward(
     const Tensor grad_output,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* inputSize, const int inputSizeLength,
-    const double* scaleFactors, const int scaleFactorsLength)
+    const int64_t* outputSize, const int32_t outputSizeLength,
+    const int64_t* inputSize, const int32_t inputSizeLength,
+    const double* scaleFactors, const int32_t scaleFactorsLength)
 {
     // TODO: Update to v2.0 format
     //CATCH_TENSOR(torch::upsample_nearest3d_backward(

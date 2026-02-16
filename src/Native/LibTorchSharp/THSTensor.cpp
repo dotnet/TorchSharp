@@ -24,22 +24,22 @@ Tensor THSTensor_all_along_dimension(const Tensor tensor, const int64_t dim, boo
     CATCH_TENSOR(tensor->all(dim, keepdim));
 }
 
-Tensor THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim)
+Tensor THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int32_t length, bool keepdim)
 {
     CATCH_TENSOR(tensor->amax(c10::IntArrayRef(dimensions, length), keepdim));
 }
 
-Tensor THSTensor_amax_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out)
+Tensor THSTensor_amax_out(const Tensor tensor, const int64_t* dimensions, int32_t length, bool keepdim, const Tensor out)
 {
     CATCH_TENSOR(torch::amax_out(*out, *tensor, c10::IntArrayRef(dimensions, length), keepdim));
 }
 
-Tensor THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim)
+Tensor THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int32_t length, bool keepdim)
 {
     CATCH_TENSOR(tensor->amin(c10::IntArrayRef(dimensions, length), keepdim));
 }
 
-Tensor THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out)
+Tensor THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int32_t length, bool keepdim, const Tensor out)
 {
     CATCH_TENSOR(torch::amin_out(*out, *tensor, c10::IntArrayRef(dimensions, length), keepdim));
 }
@@ -129,12 +129,12 @@ Tensor THSTensor_bincount(const Tensor tensor, const Tensor weights, const int64
     CATCH_TENSOR(tensor->bincount((weights ? *weights : at::Tensor()), minlength));
 }
 
-Tensor THSTensor_block_diag(const Tensor* tensors, const int length)
+Tensor THSTensor_block_diag(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::block_diag(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-void THSTensor_broadcast_tensors(const Tensor* tensors, const int length, Tensor* (*allocator)(size_t length))
+void THSTensor_broadcast_tensors(const Tensor* tensors, const int32_t length, Tensor* (*allocator)(size_t length))
 {
     CATCH(
         auto res = torch::broadcast_tensors(toTensors<at::Tensor>((torch::Tensor**)tensors, length));
@@ -145,7 +145,7 @@ void THSTensor_broadcast_tensors(const Tensor* tensors, const int length, Tensor
     );
 }
 
-Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int shape_len)
+Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int32_t shape_len)
 {
     CATCH_TENSOR(tensor->broadcast_to(at::ArrayRef<int64_t>(shape, shape_len)));
 }
@@ -160,22 +160,22 @@ Tensor THSTensor_channel_shuffle(const Tensor tensor, const int64_t groups)
     CATCH_TENSOR(torch::channel_shuffle(*tensor, groups));
 }
 
-Tensor THSTensor_parameters_to_vector(const Tensor* tensors, const int length)
+Tensor THSTensor_parameters_to_vector(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::nn::utils::parameters_to_vector(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-void THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int length)
+void THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int32_t length)
 {
     CATCH(torch::nn::utils::vector_to_parameters(*vec, toTensors<at::Tensor>((torch::Tensor**)tensors, length)););
 }
 
-Tensor THSTensor_cartesian_prod(const Tensor* tensors, const int length)
+Tensor THSTensor_cartesian_prod(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::cartesian_prod(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)
+double THSTensor_clip_grad_norm_(const Tensor* tensors, const int32_t length, const double max_norm, const double norm_type)
 {
     double res = 0.0;
     CATCH(
@@ -184,7 +184,7 @@ double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const 
     return res;
 }
 
-void THSTensor_clip_grad_value_(const Tensor* tensors, const int length, const double value)
+void THSTensor_clip_grad_value_(const Tensor* tensors, const int32_t length, const double value)
 {
     std::vector<at::Tensor> vec;
     CATCH(
@@ -195,7 +195,7 @@ void THSTensor_clip_grad_value_(const Tensor* tensors, const int length, const d
     );
 }
 
-Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
+Tensor THSTensor_cat(const Tensor* tensors, const int32_t length, const int64_t dim)
 {
     CATCH_TENSOR(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
 }
@@ -289,7 +289,7 @@ Tensor THSTensor_clone(const Tensor tensor)
     CATCH_TENSOR(tensor->clone());
 }
 
-Tensor THSTensor_combinations(const Tensor tensor, const int r, const bool with_replacement)
+Tensor THSTensor_combinations(const Tensor tensor, const int32_t r, const bool with_replacement)
 {
     CATCH_TENSOR(torch::combinations(*tensor, r, with_replacement));
 }
@@ -426,16 +426,16 @@ void THSTensor_detach_(const Tensor tensor)
     CATCH(tensor->detach_();)
 }
 
-int THSTensor_device_index(const Tensor tensor)
+int32_t THSTensor_device_index(const Tensor tensor)
 {
     auto device = tensor->device();
-    return device.index();
+    return (int32_t)device.index();
 }
 
-int THSTensor_device_type(const Tensor tensor)
+int32_t THSTensor_device_type(const Tensor tensor)
 {
     auto device = tensor->device();
-    return (int)device.type();
+    return (int32_t)device.type();
 }
 
 Tensor THSTensor_diag_embed(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2)
@@ -490,12 +490,12 @@ void THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scale,
     CATCH(torch::elu_(*tensor, *alpha, *scale, *input_scale););
 }
 
-Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit)
+Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int32_t length, bool implicit)
 {
     CATCH_TENSOR(tensor->expand(at::ArrayRef<int64_t>(sizes, length), implicit));
 }
 
-Tensor THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int length)
+Tensor THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int32_t length)
 {
     CATCH_TENSOR(tensor->repeat(at::ArrayRef<int64_t>(sizes, length)));
 }
@@ -514,17 +514,17 @@ Tensor THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repe
     CATCH_TENSOR(tensor->repeat_interleave(repeats, _dim, _output_size));
 }
 
-int THSTensor_result_type(const Tensor left, const Tensor right)
+int32_t THSTensor_result_type(const Tensor left, const Tensor right)
 {
-    CATCH_RETURN_RES(int, -1, res = (int)torch::result_type(*left, *right));
+    CATCH_RETURN_RES(int32_t, -1, res = (int32_t)torch::result_type(*left, *right));
 }
 
-Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
+Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int32_t src_len, const int64_t* dst, const int32_t dst_len)
 {
     CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));
 }
 
-Tensor THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len)
+Tensor THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int32_t dim_len)
 {
     CATCH_TENSOR(tensor->count_nonzero(at::ArrayRef<int64_t>(dim, dim_len)));
 }
@@ -535,7 +535,7 @@ Tensor THSTensor_nonzero(const Tensor tensor)
 }
 
 
-Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
+Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int32_t length)
 {
     CATCH_TENSOR(tensor->flip(at::ArrayRef<int64_t>(sizes, length)));
 }
@@ -743,14 +743,14 @@ void completeTensorIndices(const int64_t* indexStarts,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
     at::indexing::TensorIndex* indicesArray,
-    const int indicesLength)
+    const int32_t indicesLength)
 {
     // The indexStart encodes the kind of slice being performed for each dimension
     // range INT64_MIN..INT64_MIN+5 is for various singleton cases
     // range INT64_MIN+6 is for slice with absent start
     // range INT64_MIN+7 ... INT64_MIN/4 is for start of slice centered around INT64_MIN/2
     // range INT64_MIN/4+1 ... INT64_MAX is for single (normally a positive integer)
-    for (int i = 0; i < indicesLength; i++)
+    for (int32_t i = 0; i < indicesLength; i++)
     {
         auto n = indexStarts[i];
         if (n == INT64_MIN) // TensorIndex 'Null'
@@ -812,7 +812,7 @@ Tensor THSTensor_index(Tensor tensor,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
-    const int indicesLength)
+    const int32_t indicesLength)
 {
     at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
     memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
@@ -827,7 +827,7 @@ void THSTensor_index_put_(Tensor tensor,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
-    const int indicesLength,
+    const int32_t indicesLength,
     const Tensor value)
 {
     at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
@@ -842,7 +842,7 @@ void THSTensor_index_put_(Tensor tensor,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
-    const int indicesLength,
+    const int32_t indicesLength,
     const Tensor value,
     const bool accumulate)
 {
@@ -852,7 +852,7 @@ void THSTensor_index_put_(Tensor tensor,
     auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
     if (accumulate) {
         c10::List<std::optional<at::Tensor>> indicesList = c10::List<std::optional<at::Tensor>>();
-        for (int i = 0; i < indicesLength; i++) {
+        for (int32_t i = 0; i < indicesLength; i++) {
             indicesList.push_back(c10::optional<at::Tensor>(*indexTensors[i]));
         }
         CATCH(tensor->index_put_(indicesList, *value, accumulate););
@@ -867,7 +867,7 @@ void THSTensor_index_put_scalar_(Tensor tensor,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
-    const int indicesLength,
+    const int32_t indicesLength,
     const Scalar value)
 {
     at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
@@ -1036,7 +1036,7 @@ Tensor THSTensor_var(const Tensor tensor)
     CATCH_TENSOR(tensor->var());
 }
 
-Tensor THSTensor_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, bool has_type, const int8_t dtype)
+Tensor THSTensor_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int32_t length, bool keepdim, bool has_type, const int8_t dtype)
 {
     CATCH_TENSOR(
         has_type
@@ -1044,7 +1044,7 @@ Tensor THSTensor_mean_along_dimensions(const Tensor tensor, const int64_t* dimen
         : tensor->mean(at::ArrayRef<int64_t>(dimensions, length), keepdim))
 }
 
-Tensor THSTensor_var_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)
+Tensor THSTensor_var_along_dimensions(const Tensor tensor, const int64_t* dimensions, int32_t length, bool unbiased, bool keepdim)
 {
     tensor->var();
     CATCH_TENSOR(tensor->var(at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim))
@@ -1111,7 +1111,7 @@ Tensor THSTensor_nansum(const Tensor input)
     CATCH_TENSOR(torch::nansum(*input));
 }
 
-Tensor THSTensor_nanmean(const Tensor input, const int64_t* dims, const int dims_len, bool keepdim, int8_t scalar_type)
+Tensor THSTensor_nanmean(const Tensor input, const int64_t* dims, const int32_t dims_len, bool keepdim, int8_t scalar_type)
 {
     CATCH_TENSOR(torch::nanmean(*input, at::ArrayRef<int64_t>(dims, dims_len), keepdim, at::ScalarType(scalar_type)));
 }
@@ -1171,7 +1171,7 @@ Tensor THSTensor_mT(const Tensor tensor)
 }
 
 
-Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length)
+Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int32_t length)
 {
     CATCH_TENSOR(tensor->permute(at::ArrayRef<int64_t>(sizes, length)));
 }
@@ -1257,7 +1257,7 @@ int64_t THSTensor_is_leaf(const Tensor tensor)
     CATCH_RETURN(int64_t, 0, tensor->is_leaf(););
 }
 
-Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length)
+Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int32_t length)
 {
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
 }
@@ -1267,7 +1267,7 @@ Tensor THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1,
     CATCH_TENSOR(tensor->rot90(k, { dim1, dim2 }));
 }
 
-Tensor THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength)
+Tensor THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int32_t shLength, const int64_t* dims, const int32_t dimLength)
 {
     CATCH_TENSOR(
         dims != nullptr
@@ -1432,9 +1432,9 @@ Tensor THSTensor_sparse(
     Tensor indices,
     Tensor values,
     const int64_t* sizes,
-    const int length,
+    const int32_t length,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -1494,7 +1494,7 @@ void THSTensor_split_with_sizes(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* sizes,
-    const int length,
+    const int32_t length,
     const int64_t dim)
 {
     CATCH(
@@ -1525,7 +1525,7 @@ void THSTensor_tensor_split_with_sizes(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* sizes,
-    const int length,
+    const int32_t length,
     const int64_t dim)
 {
     CATCH(
@@ -1570,7 +1570,7 @@ void THSTensor_vsplit_with_sizes(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* sizes,
-    const int length)
+    const int32_t length)
 {
     CATCH(
         auto res = tensor->vsplit(at::ArrayRef<int64_t>(sizes, length));
@@ -1599,7 +1599,7 @@ void THSTensor_hsplit_with_sizes(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* sizes,
-    const int length)
+    const int32_t length)
 {
     CATCH(
         auto res = tensor->hsplit(at::ArrayRef<int64_t>(sizes, length));
@@ -1628,7 +1628,7 @@ void THSTensor_dsplit_with_sizes(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* sizes,
-    const int length)
+    const int32_t length)
 {
     CATCH(
         auto res = tensor->dsplit(at::ArrayRef<int64_t>(sizes, length));
@@ -1701,37 +1701,37 @@ void THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
     CATCH(tensor->set_requires_grad(requires_grad););
 }
 
-Tensor THSTensor_stack(const Tensor* tensors, const int length, const int64_t dim)
+Tensor THSTensor_stack(const Tensor* tensors, const int32_t length, const int64_t dim)
 {
     CATCH_TENSOR(torch::stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
 }
 
-Tensor THSTensor_hstack(const Tensor* tensors, const int length)
+Tensor THSTensor_hstack(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::hstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-Tensor THSTensor_vstack(const Tensor* tensors, const int length)
+Tensor THSTensor_vstack(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::vstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-Tensor THSTensor_dstack(const Tensor* tensors, const int length)
+Tensor THSTensor_dstack(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::dstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-Tensor THSTensor_column_stack(const Tensor* tensors, const int length)
+Tensor THSTensor_column_stack(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::column_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
+Tensor THSTensor_row_stack(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-void THSTensor_meshgrid(const Tensor* tensors, const int length, const char* indexing, Tensor* (*allocator)(size_t length))
+void THSTensor_meshgrid(const Tensor* tensors, const int32_t length, const char* indexing, Tensor* (*allocator)(size_t length))
 {
     std::string str = indexing;
     CATCH(
@@ -1748,7 +1748,7 @@ Tensor THSTensor_std(const Tensor tensor, const bool unbiased)
     CATCH_TENSOR(tensor->std(unbiased));
 }
 
-Tensor THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)
+Tensor THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int32_t length, bool unbiased, bool keepdim)
 {
     CATCH_TENSOR(tensor->std(at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim));
 }
@@ -1775,7 +1775,7 @@ Tensor THSTensor_var_mean(const Tensor tensor, bool unbiased, Tensor* mean)
     return ResultTensor(std::get<0>(res));
 }
 
-Tensor THSTensor_std_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* mean)
+Tensor THSTensor_std_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int32_t length, bool unbiased, bool keepdim, Tensor* mean)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
@@ -1788,7 +1788,7 @@ Tensor THSTensor_std_mean_along_dimensions(const Tensor tensor, const int64_t* d
 // Wrapper for <code>std::tuple&lt;Tensor, Tensor&gt; var_mean(const Tensor&amp; self, IntArrayRef dim, bool unbiased, bool keepdim)</code>.
 // See also: <a href="https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/ReduceOps.cpp>ReduceOps.cpp</a>
 // </summary>
-Tensor THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* mean)
+Tensor THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int32_t length, bool unbiased, bool keepdim, Tensor* mean)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
@@ -1802,7 +1802,7 @@ Tensor THSTensor_sum(const Tensor tensor, bool has_type, const int8_t dtype)
     CATCH_TENSOR(has_type ? tensor->sum((c10::ScalarType)dtype) : tensor->sum())
 }
 
-Tensor THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, bool has_type, const int8_t dtype)
+Tensor THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t* dimensions, int32_t length, bool keepdim, bool has_type, const int8_t dtype)
 {
     CATCH_TENSOR(
         has_type ?
@@ -1840,13 +1840,13 @@ Tensor THSTensor_take_along_dim(const Tensor tensor, const Tensor indices, const
     CATCH_TENSOR(tensor->take_along_dim(*indices, dim));
 }
 
-Tensor THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length)
+Tensor THSTensor_tile(const Tensor tensor, const int64_t* rep, const int32_t rep_length)
 {
     CATCH_TENSOR(tensor->tile(at::ArrayRef<int64_t>(rep, rep_length)));
 }
 
 
-void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted)
+void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int32_t k, const int64_t dim, const bool largest, const bool sorted)
 {
     CATCH(
         auto topk = tensor->topk(k, dim, largest, sorted);
@@ -1871,7 +1871,7 @@ void THSTensor_set_(Tensor tensor, const Tensor source)
     CATCH(tensor->set_(*source););
 }
 
-Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index, const bool copy, const bool non_blocking)
+Tensor THSTensor_to_device(const Tensor tensor, const int32_t device_type, const int32_t device_index, const bool copy, const bool non_blocking)
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
@@ -1884,7 +1884,7 @@ Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type, const bool cop
     CATCH_TENSOR(tensor->to(at::ScalarType(scalar_type), non_blocking, copy));
 }
 
-Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool copy, const bool non_blocking)
+Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int32_t device_type, const int32_t device_index, const bool copy, const bool non_blocking)
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
@@ -1902,7 +1902,7 @@ Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal, const bool in
     CATCH_TENSOR(inplace ? tensor->tril_(diagonal) : tensor->tril(diagonal));
 }
 
-Tensor THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)
+Tensor THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int32_t device_type, const int32_t device_index)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -1910,7 +1910,7 @@ Tensor THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_
     CATCH_TENSOR(torch::tril_indices(row, col, offset, options));
 }
 
-Tensor THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)
+Tensor THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int32_t device_type, const int32_t device_index)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -1940,7 +1940,7 @@ void THSTensor_threshold_(const Tensor tensor, const Scalar threshold, const Sca
 }
 
 
-Tensor THSTensor_view(const Tensor tensor, const int64_t* shape, const int length)
+Tensor THSTensor_view(const Tensor tensor, const int64_t* shape, const int32_t length)
 {
     CATCH_TENSOR(tensor->view(at::ArrayRef<int64_t>(shape, length)));
 }
@@ -1981,7 +1981,7 @@ Tensor THSTensor_flatten(const Tensor tensor, const int64_t start, const int64_t
     CATCH_TENSOR(tensor->flatten(start, end));
 }
 
-Tensor THSTensor_unflatten(const Tensor tensor, const int64_t dimension, const int64_t* shape, const int length)
+Tensor THSTensor_unflatten(const Tensor tensor, const int64_t dimension, const int64_t* shape, const int32_t length)
 {
     CATCH_TENSOR(tensor->unflatten(dimension, at::ArrayRef<int64_t>(shape, length)));
 }
@@ -2080,7 +2080,7 @@ void THSTensor_where_list(
 }
 
 Tensor THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter)
-{    
+{
     CATCH_TENSOR(
         sorter == nullptr
         ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
@@ -2106,7 +2106,7 @@ Tensor THSTensor_histogram_t(const Tensor input, const Tensor bins, const Tensor
     return ResultTensor(std::get<0>(res));
 }
 
-Tensor THSTensor_histogram_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* r_bin_edges)
+Tensor THSTensor_histogram_i(const Tensor input, const int64_t bins, const double* range, const int32_t length, const Tensor weight, const bool density, Tensor* r_bin_edges)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
@@ -2129,7 +2129,7 @@ Tensor THSTensor_histogram_out_t(const Tensor input, const Tensor bins, const Te
     return ResultTensor(std::get<0>(res));
 }
 
-Tensor THSTensor_histogram_out_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges)
+Tensor THSTensor_histogram_out_i(const Tensor input, const int64_t bins, const double* range, const int32_t length, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
@@ -2168,7 +2168,7 @@ Tensor THSTensor_rename(Tensor tensor, const char** names, int64_t nLength)
     CATCH(
         if (names != nullptr && nLength > 0) {
             std::vector<at::Dimname> nvec;
-            for (int i = 0; i < nLength; ++i) {
+            for (int64_t i = 0; i < nLength; ++i) {
                 if (names[i] != nullptr && strcmp(names[i], "*") != 0) {
                     nvec.push_back(at::Dimname::fromSymbol(at::Symbol::dimname(names[i])));
                 }
@@ -2192,7 +2192,7 @@ void THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength)
     CATCH(
         if (names != nullptr && nLength > 0) {
             std::vector<at::Dimname> nvec;
-            for (int i = 0; i < nLength; ++i) {
+            for (int64_t i = 0; i < nLength; ++i) {
                 if (names[i] != nullptr && strcmp(names[i], "*") != 0) {
                     nvec.push_back(at::Dimname::fromSymbol(at::Symbol::dimname(names[i])));
                 }
@@ -2213,7 +2213,7 @@ Tensor THSTensor_refine_names(Tensor tensor, const char** names, int64_t nLength
 {
     CATCH(
         std::vector<at::Dimname> nvec;
-        for (int i = 0; i < nLength; ++i) {
+        for (int64_t i = 0; i < nLength; ++i) {
             if (names[i] != nullptr && strcmp(names[i], "*") != 0) {
                 nvec.push_back(at::Dimname::fromSymbol(at::Symbol::dimname(names[i])));
             }
@@ -2233,7 +2233,7 @@ Tensor THSTensor_align_to(Tensor tensor, const char** names, int64_t nLength)
     CATCH(
         std::vector<at::Dimname> nvec;
         int64_t ellipsis = -1;
-        for (int i = 0; i < nLength; ++i) {
+        for (int64_t i = 0; i < nLength; ++i) {
             if (strcmp(names[i], "...") != 0) {
                 nvec.push_back(at::Dimname::fromSymbol(at::Symbol::dimname(names[i])));
             }
@@ -2252,7 +2252,7 @@ Tensor THSTensor_flatten_names(Tensor tensor, const char** names, int64_t nLengt
 {
     CATCH(
         std::vector<at::Dimname> nvec;
-        for (int i = 0; i < nLength - 1; ++i)
+        for (int64_t i = 0; i < nLength - 1; ++i)
             nvec.push_back(at::Dimname::fromSymbol(at::Symbol::dimname(names[i])));
 
         at::Dimname out_dim = at::Dimname::fromSymbol(at::Symbol::dimname(names[nLength - 1]));
@@ -2270,7 +2270,7 @@ Tensor THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_
 
         at::Dimname dim = at::Dimname::fromSymbol(at::Symbol::dimname(names[0]));
 
-        for (int i = 1; i < nLength; ++i)
+        for (int64_t i = 1; i < nLength; ++i)
             nvec.push_back(at::Dimname::fromSymbol(at::Symbol::dimname(names[i])));
 
         return ResultTensor(tensor->unflatten(dim, c10::IntArrayRef(sizes, nLength - 1), nvec));

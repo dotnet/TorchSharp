@@ -92,9 +92,9 @@ void THSInit_trunc_normal_(Tensor tensor, double mean, double std, double a, dou
 Tensor THSTensor_rand(
     const Generator gen,
     const int64_t* sizes,
-    const int length,
+    const int32_t length,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     Tensor tensor;
@@ -109,7 +109,7 @@ Tensor THSTensor_rand(
     return tensor;
 }
 
-Tensor THSTensor_rand_out(const Generator gen, const int64_t* sizes, const int length, const Tensor out)
+Tensor THSTensor_rand_out(const Generator gen, const int64_t* sizes, const int32_t length, const Tensor out)
 {
     CATCH_TENSOR(gen == nullptr ? torch::rand_out(*out, at::ArrayRef<int64_t>(sizes, length)) : torch::rand_out(*out, at::ArrayRef<int64_t>(sizes, length), *gen));
 }
@@ -117,7 +117,7 @@ Tensor THSTensor_rand_out(const Generator gen, const int64_t* sizes, const int l
 Tensor THSTensor_rand_like(
     const Tensor input,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -133,9 +133,9 @@ Tensor THSTensor_randint(
     const int64_t low,
     const int64_t high,
     const int64_t* sizes,
-    const int length,
+    const int32_t length,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     try {
@@ -161,7 +161,7 @@ Tensor THSTensor_randint(
     return nullptr;
 }
 
-Tensor THSTensor_randint_out(const Generator gen, const int64_t low, const int64_t high, const int64_t* sizes, const int length, const Tensor out)
+Tensor THSTensor_randint_out(const Generator gen, const int64_t low, const int64_t high, const int64_t* sizes, const int32_t length, const Tensor out)
 {
     CATCH_TENSOR(gen == nullptr ? torch::randint_out(*out, low, high, at::ArrayRef<int64_t>(sizes, length)) : torch::randint_out(*out, low, high, at::ArrayRef<int64_t>(sizes, length), *gen));
 }
@@ -171,7 +171,7 @@ Tensor THSTensor_randint_like(
     const int64_t low,
     const int64_t high,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -311,9 +311,9 @@ double THSTensor_randn_float(const Generator gen)
 Tensor THSTensor_randn(
     const Generator gen,
     const int64_t* sizes,
-    const int length,
+    const int32_t length,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -324,7 +324,7 @@ Tensor THSTensor_randn(
     CATCH_TENSOR(gen == nullptr ? torch::randn(at::ArrayRef<int64_t>(sizes, length), options) : torch::randn(at::ArrayRef<int64_t>(sizes, length), *gen, options));
 }
 
-Tensor THSTensor_randn_out(const Generator gen, const int64_t* sizes, const int length, const Tensor out)
+Tensor THSTensor_randn_out(const Generator gen, const int64_t* sizes, const int32_t length, const Tensor out)
 {
     CATCH_TENSOR(gen == nullptr ? torch::randn_out(*out, at::ArrayRef<int64_t>(sizes, length)) : torch::randn_out(*out, at::ArrayRef<int64_t>(sizes, length), *gen));
 }
@@ -332,7 +332,7 @@ Tensor THSTensor_randn_out(const Generator gen, const int64_t* sizes, const int 
 Tensor THSTensor_randn_like(
     const Tensor input,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -354,7 +354,7 @@ Tensor THSTensor_randperm(
     const Generator gen,
     const int64_t n,
     const int8_t scalar_type,
-    const int device_type, const int device_index,
+    const int32_t device_type, const int32_t device_index,
     const bool requires_grad)
 {
     Tensor tensor;
