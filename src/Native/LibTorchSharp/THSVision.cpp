@@ -272,7 +272,7 @@ void THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_lengt
     }
 }
 
-Tensor THSVision_PerspectiveGrid(const float* c, const int64_t c_length, const int64_t ow, const int64_t oh, const int8_t scalar_type, const int device_type, const int device_index)
+Tensor THSVision_PerspectiveGrid(const float* c, const int64_t c_length, const int64_t ow, const int64_t oh, const int8_t scalar_type, const int32_t device_type, const int32_t device_index)
 {
     try {
         torch_last_err = 0;
@@ -346,8 +346,8 @@ void THSVision_RGB_BRGA(const uint8_t* inputBytes, uint8_t* outBytes, int64_t in
     bool isgrey = inputChannelCount == 1;
     bool inputHasAlpha = inputChannelCount == 4;
 
-    const int inputRed = 0, inputGreen = imageSize, inputBlue = imageSize * 2, inputAlpha = imageSize * 3;
-    const int outputBlue = 0, outputGreen = 1, outputRed = 2, outputAlpha = 3;
+    const int64_t inputRed = 0, inputGreen = imageSize, inputBlue = imageSize * 2, inputAlpha = imageSize * 3;
+    const int64_t outputBlue = 0, outputGreen = 1, outputRed = 2, outputAlpha = 3;
 
     for (int64_t i = 0, j = 0; i < imageSize; i += 1, j += 4) {
         auto redPixel = inputBytes[inputRed + i];

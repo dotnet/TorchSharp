@@ -150,10 +150,10 @@ void ApplyGridPadMode(T& opts, const int64_t padding)
         opts = opts.padding_mode(torch::kBorder);
 }
 
-Tensor THSNN_pad(const Tensor input, const int64_t* pad, const int pad_length, const int8_t mode, const double value)
+Tensor THSNN_pad(const Tensor input, const int64_t* pad, const int32_t pad_length, const int8_t mode, const double value)
 {
     std::vector<int64_t> padding;
-    for (int i = 0; i < pad_length; ++i) {
+    for (int32_t i = 0; i < pad_length; ++i) {
         padding.push_back(pad[i]);
     }
     auto opts = torch::nn::functional::PadFuncOptions(padding).value(value);
@@ -172,13 +172,13 @@ Tensor THSNN_grid_sample(const Tensor input, const Tensor grid, const int8_t mod
     CATCH_TENSOR(torch::nn::functional::grid_sample(*input, *grid, opts));
 }
 
-Tensor THSNN_affine_grid(const Tensor theta, const int64_t* size, const int size_len, const bool align_corners)
+Tensor THSNN_affine_grid(const Tensor theta, const int64_t* size, const int32_t size_len, const bool align_corners)
 {
     CATCH_TENSOR(torch::nn::functional::affine_grid(*theta, at::ArrayRef<int64_t>(size, size_len), align_corners));
 }
 
 
-EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, const bool antialias)
+EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int32_t size_len, const double* scale_factor, const int32_t scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, const bool antialias)
 {
     auto opts = torch::nn::functional::InterpolateFuncOptions().recompute_scale_factor(recompute_scale_factor);
     // align_corners -- 0=None, 1=true, 2=false
@@ -189,14 +189,14 @@ EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, co
 
     if (size_len > 0) {
         std::vector<int64_t> sizes;
-        for (int i = 0; i < size_len; ++i) {
+        for (int32_t i = 0; i < size_len; ++i) {
             sizes.push_back(size[i]);
         }
         opts.size(sizes);
     }
     if (scale_factor_len > 0) {
         std::vector<double> scales;
-        for (int i = 0; i < scale_factor_len; ++i) {
+        for (int32_t i = 0; i < scale_factor_len; ++i) {
             scales.push_back(scale_factor[i]);
         }
         opts.scale_factor(scales);
@@ -909,10 +909,10 @@ void THSNN_LSTMCell_set_weight_hh(const NNModule module, const Tensor weight)
 }
 
 
-NNModule THSNN_Sequential_ctor( /* NNAnyModule *submodules, const int length */ )
+NNModule THSNN_Sequential_ctor( /* NNAnyModule *submodules, const int32_t length */ )
 {
     //std::vector<torch::nn::NamedAnyModule> modules;
-    //for (int i = 0; i < length; i++)
+    //for (int32_t i = 0; i < length; i++)
     //{
     //	modules.push_back(*(*submodules[i])->as<torch::nn::NamedAnyModule>());
     //}
@@ -1021,7 +1021,7 @@ void THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double
             total_length == -1 ? torch::nullopt : c10::optional<int64_t>(total_length)));
 }
 
-Tensor THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value)
+Tensor THSNN_pad_sequence(const Tensor* sequences, const int32_t sequences_len, bool batch_first, double padding_value)
 {
     CATCH_TENSOR(
         torch::nn::utils::rnn::pad_sequence(
@@ -1029,7 +1029,7 @@ Tensor THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool
             batch_first, padding_value));
 }
 
-PackedSequence THSNN_pack_sequence(const Tensor* sequences, int sequences_len, bool enforce_sorted)
+PackedSequence THSNN_pack_sequence(const Tensor* sequences, int32_t sequences_len, bool enforce_sorted)
 {
     CATCH_RETURN(
         torch::nn::utils::rnn::PackedSequence*,
