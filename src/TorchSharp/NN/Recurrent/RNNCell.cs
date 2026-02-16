@@ -110,7 +110,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static RNNCell RNNCell(long inputSize, long hiddenSize, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
+                var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, (byte)(bias ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new RNNCell(res, boxedHandle).MoveModule<RNNCell>(device, dtype);
             }

@@ -356,11 +356,11 @@ namespace TorchSharp
                     dtype = get_default_dtype();
                 }
 
-                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
@@ -382,11 +382,11 @@ namespace TorchSharp
                     dtype = get_default_dtype();
                 }
 
-                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);

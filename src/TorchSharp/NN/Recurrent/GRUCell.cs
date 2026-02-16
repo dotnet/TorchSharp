@@ -104,7 +104,7 @@ namespace TorchSharp
             /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
             public static GRUCell GRUCell(long inputSize, long hiddenSize, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_GRUCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
+                var res = THSNN_GRUCell_ctor(inputSize, hiddenSize, (byte)(bias ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new GRUCell(res, boxedHandle).MoveModule<GRUCell>(device, dtype);
             }

@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -644,7 +644,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cumsum(long dim, ScalarType? type = null)
             {
-                var res = THSTensor_cumsum(Handle, dim, type.HasValue, (sbyte)type.GetValueOrDefault());
+                var res = THSTensor_cumsum(Handle, dim, (byte)(type.HasValue ? 1 : 0), (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -658,7 +658,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cumprod(long dim, ScalarType? type = null)
             {
-                var res = THSTensor_cumprod(Handle, dim, type.HasValue, (sbyte)type.GetValueOrDefault());
+                var res = THSTensor_cumprod(Handle, dim, (byte)(type.HasValue ? 1 : 0), (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -1086,7 +1086,7 @@ namespace TorchSharp
             /// <remarks>The computation is numerically stabilized.</remarks>
             public Tensor logsumexp(long dim, bool keepdim = false)
             {
-                var res = THSTensor_logsumexp(Handle, dim, keepdim);
+                var res = THSTensor_logsumexp(Handle, dim, (byte)(keepdim ? 1 : 0));
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
