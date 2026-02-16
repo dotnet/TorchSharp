@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -109,11 +109,11 @@ namespace TorchSharp
                 /// <param name="p">Dropout probability</param>
                 /// <param name="is_casual">If true, assumes causal attention masking and errors if both attn_mask and is_causal are set.</param>
                 /// <returns></returns>
-                public static Tensor scaled_dot_product_attention(Tensor query, Tensor key, Tensor value, Tensor? attn_mask = null, double p = 0.0, [MarshalAs(UnmanagedType.U1)] bool is_casual = false)
+                public static Tensor scaled_dot_product_attention(Tensor query, Tensor key, Tensor value, Tensor? attn_mask = null, double p = 0.0, bool is_casual = false)
                 {
                     if (p < 0) throw new ArgumentException("Dropout probability must be greater than or equal to zero.");
                     if (is_casual && attn_mask is not null) throw new ArgumentException("Casual attention masking cannot pass a mask.");
-                    var res = THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, is_casual);
+                    var res = THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, (byte)(is_casual ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }

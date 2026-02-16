@@ -36,7 +36,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor L, Tensor info) cholesky_ex(Tensor input, bool check_errors = false)
             {
-                var res = THSLinalg_cholesky_ex(input.Handle, check_errors, out var pInfo);
+                var res = THSLinalg_cholesky_ex(input.Handle, (byte)(check_errors ? 1 : 0), out var pInfo);
                 if (res == IntPtr.Zero || pInfo == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(pInfo));
@@ -239,7 +239,7 @@ namespace TorchSharp
             /// <remarks>Throws a RuntimeError if the matrix is not invertible.</remarks>
             public static (Tensor L, Tensor info) inv_ex(Tensor input, bool check_errors = false)
             {
-                var res = THSLinalg_cholesky_ex(input.Handle, check_errors, out var pInfo);
+                var res = THSLinalg_cholesky_ex(input.Handle, (byte)(check_errors ? 1 : 0), out var pInfo);
                 if (res == IntPtr.Zero || pInfo == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(pInfo));
@@ -267,7 +267,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor P, Tensor L, Tensor U) lu(Tensor input, bool pivot = true)
             {
-                var solution = THSLinalg_lu(input.Handle, pivot, out var pL, out var pU);
+                var solution = THSLinalg_lu(input.Handle, (byte)(pivot ? 1 : 0), out var pL, out var pU);
                 if (solution == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(solution), new Tensor(pL), new Tensor(pU));
@@ -281,7 +281,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor LU, Tensor? Pivots) lu_factor(Tensor input, bool pivot = true)
             {
-                var solution = THSLinalg_lu_factor(input.Handle, pivot, out var pivots);
+                var solution = THSLinalg_lu_factor(input.Handle, (byte)(pivot ? 1 : 0), out var pivots);
                 if (solution == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots));
@@ -295,7 +295,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor LU, Tensor? Pivots) ldl_factor(Tensor input, bool hermitian = true)
             {
-                var solution = THSLinalg_ldl_factor(input.Handle, hermitian, out var pivots);
+                var solution = THSLinalg_ldl_factor(input.Handle, (byte)(hermitian ? 1 : 0), out var pivots);
                 if (solution == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots));
@@ -310,7 +310,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor LU, Tensor? Pivots, Tensor? Info) ldl_factor_ex(Tensor input, bool hermitian = true, bool check_errors = false)
             {
-                var solution = THSLinalg_ldl_factor_ex(input.Handle, hermitian, check_errors, out var pivots, out var info);
+                var solution = THSLinalg_ldl_factor_ex(input.Handle, (byte)(hermitian ? 1 : 0), (byte)(check_errors ? 1 : 0), out var pivots, out var info);
                 if (solution == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots), info == IntPtr.Zero ? null : new Tensor(info));
@@ -326,7 +326,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor ldl_solve(Tensor LD, Tensor pivots, Tensor B, bool hermitian = false)
             {
-                var res = THSLinalg_ldl_solve(LD.Handle, pivots.Handle, B.Handle, hermitian);
+                var res = THSLinalg_ldl_solve(LD.Handle, pivots.Handle, B.Handle, (byte)(hermitian ? 1 : 0));
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -365,7 +365,7 @@ namespace TorchSharp
                 if (dims == null) dims = new long[] { -2, -1 };
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_matrix_norm_fronuc(input.Handle, ord == "fro" ? (byte)0 : (byte)1, (IntPtr)pdims, dims.Length, keepdim);
+                        var res = THSLinalg_matrix_norm_fronuc(input.Handle, ord == "fro" ? (byte)0 : (byte)1, (IntPtr)pdims, dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -386,7 +386,7 @@ namespace TorchSharp
                 if (dims == null) dims = new long[] { -2, -1 };
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_matrix_norm(input.Handle, ord.ToScalar().Handle, (IntPtr)pdims, dims.Length, keepdim);
+                        var res = THSLinalg_matrix_norm(input.Handle, ord.ToScalar().Handle, (IntPtr)pdims, dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -405,7 +405,7 @@ namespace TorchSharp
             public static Tensor matrix_rank(Tensor input, double? atol = null, double? rtol = null, bool hermitian = false)
             {
                 unsafe {
-                    var res = THSLinalg_matrix_rank(input.Handle, atol ?? double.NegativeInfinity, atol.HasValue, rtol ?? double.NegativeInfinity, rtol.HasValue, hermitian);
+                    var res = THSLinalg_matrix_rank(input.Handle, atol ?? double.NegativeInfinity, (byte)(atol.HasValue ? 1 : 0), rtol ?? double.NegativeInfinity, (byte)(rtol.HasValue ? 1 : 0), (byte)(hermitian ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -423,7 +423,7 @@ namespace TorchSharp
             public static Tensor matrix_rank(Tensor input, Tensor atol, Tensor? rtol = null, bool hermitian = false)
             {
                 unsafe {
-                    var res = THSLinalg_matrix_rank_tensor(input.Handle, atol is null ? IntPtr.Zero : atol.Handle, rtol is null ? IntPtr.Zero : rtol.Handle, hermitian);
+                    var res = THSLinalg_matrix_rank_tensor(input.Handle, atol is null ? IntPtr.Zero : atol.Handle, rtol is null ? IntPtr.Zero : rtol.Handle, (byte)(hermitian ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -465,7 +465,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_norm_str(input.Handle, ord, (IntPtr)pdims, dims is null ? 0 : dims.Length, keepdim);
+                        var res = THSLinalg_norm_str(input.Handle, ord, (IntPtr)pdims, dims is null ? 0 : dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -484,7 +484,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_norm_float(input.Handle, ord, (IntPtr)pdims, dims is null ? 0 : dims.Length, keepdim);
+                        var res = THSLinalg_norm_float(input.Handle, ord, (IntPtr)pdims, dims is null ? 0 : dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -503,7 +503,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_norm_int(input.Handle, ord, (IntPtr)pdims, dims is null ? 0 : dims.Length, keepdim);
+                        var res = THSLinalg_norm_int(input.Handle, ord, (IntPtr)pdims, dims is null ? 0 : dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -521,7 +521,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_norm_opt(input.Handle, (IntPtr)pdims, dims is null ? 0 : dims.Length, keepdim);
+                        var res = THSLinalg_norm_opt(input.Handle, (IntPtr)pdims, dims is null ? 0 : dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -540,7 +540,7 @@ namespace TorchSharp
             public static Tensor pinv(Tensor input, double? atol = null, double? rtol = null, bool hermitian = false)
             {
                 unsafe {
-                    var res = THSLinalg_pinv(input.Handle, atol ?? double.NegativeInfinity, atol.HasValue, rtol ?? double.NegativeInfinity, rtol.HasValue, hermitian);
+                    var res = THSLinalg_pinv(input.Handle, atol ?? double.NegativeInfinity, (byte)(atol.HasValue ? 1 : 0), rtol ?? double.NegativeInfinity, (byte)(rtol.HasValue ? 1 : 0), (byte)(hermitian ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -558,7 +558,7 @@ namespace TorchSharp
             public static Tensor pinv(Tensor input, Tensor atol, Tensor? rtol = null, bool hermitian = false)
             {
                 unsafe {
-                    var res = THSLinalg_pinv_tensor(input.Handle, atol is null ? IntPtr.Zero : atol.Handle, rtol is null ? IntPtr.Zero : rtol.Handle, hermitian);
+                    var res = THSLinalg_pinv_tensor(input.Handle, atol is null ? IntPtr.Zero : atol.Handle, rtol is null ? IntPtr.Zero : rtol.Handle, (byte)(hermitian ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -594,7 +594,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor solve(Tensor A, Tensor B, bool left = true)
             {
-                var res = THSLinalg_solve(A.Handle, B.Handle, left);
+                var res = THSLinalg_solve(A.Handle, B.Handle, (byte)(left ? 1 : 0));
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -610,7 +610,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor result, Tensor info) solve_ex(Tensor A, Tensor B, bool left = true, bool check_errors = false)
             {
-                var res = THSLinalg_solve_ex(A.Handle, B.Handle, left, check_errors, out var infos);
+                var res = THSLinalg_solve_ex(A.Handle, B.Handle, (byte)(left ? 1 : 0), (byte)(check_errors ? 1 : 0), out var infos);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(infos));
@@ -629,8 +629,8 @@ namespace TorchSharp
             public static Tensor solve_triangular(Tensor A, Tensor B, bool upper, bool left = true, bool unitriangular = false, Tensor? @out = null)
             {
                 var res = (@out is null)
-                    ? THSLinalg_solve_triangular(A.Handle, B.Handle, upper, left, unitriangular)
-                    : THSLinalg_solve_triangular_out(A.Handle, B.Handle, upper, left, unitriangular, @out.Handle);
+                    ? THSLinalg_solve_triangular(A.Handle, B.Handle, (byte)(upper ? 1 : 0), (byte)(left ? 1 : 0), (byte)(unitriangular ? 1 : 0))
+                    : THSLinalg_solve_triangular_out(A.Handle, B.Handle, (byte)(upper ? 1 : 0), (byte)(left ? 1 : 0), (byte)(unitriangular ? 1 : 0), @out.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -644,7 +644,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static (Tensor U, Tensor S, Tensor Vh) svd(Tensor input, bool fullMatrices = true)
             {
-                var U = THSLinalg_svd(input.Handle, fullMatrices, out var S, out var Vh);
+                var U = THSLinalg_svd(input.Handle, (byte)(fullMatrices ? 1 : 0), out var S, out var Vh);
                 if (U == IntPtr.Zero || S == IntPtr.Zero || Vh == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(U), new Tensor(S), new Tensor(Vh));
@@ -707,7 +707,7 @@ namespace TorchSharp
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSLinalg_vector_norm(input.Handle, ord.ToScalar().Handle, (IntPtr)pdims, dims is null ? 0 : dims.Length, keepdim);
+                        var res = THSLinalg_vector_norm(input.Handle, ord.ToScalar().Handle, (IntPtr)pdims, dims is null ? 0 : dims.Length, (byte)(keepdim ? 1 : 0));
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -757,7 +757,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor lu_solve(Tensor LU, Tensor pivots, Tensor B, bool left = true, bool adjoint = false, Tensor? @out = null)
             {
-                var res = THSLinalg_lu_solve(B.Handle, LU.Handle, pivots.Handle, left, adjoint, @out is null ? IntPtr.Zero : @out.Handle);
+                var res = THSLinalg_lu_solve(B.Handle, LU.Handle, pivots.Handle, (byte)(left ? 1 : 0), (byte)(adjoint ? 1 : 0), @out is null ? IntPtr.Zero : @out.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);

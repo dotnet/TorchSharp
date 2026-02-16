@@ -543,7 +543,7 @@ namespace TorchSharp
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
             internal static bool CallTorchCudaIsAvailable()
             {
-                return THSTorchCuda_is_available();
+                return THSTorchCuda_is_available() != 0;
             }
 
             /// <summary>
@@ -562,7 +562,7 @@ namespace TorchSharp
             public static bool is_cudnn_available()
             {
                 TryInitializeDeviceType(DeviceType.CUDA);
-                return THSTorchCuda_cudnn_is_available();
+                return THSTorchCuda_cudnn_is_available() != 0;
             }
 
             /// <summary>
@@ -639,10 +639,10 @@ namespace TorchSharp
                         get {
                             var result = NativeMethods.THSBackend_cublas_get_allow_tf32();
                             CheckForErrors();
-                            return result;
+                            return result != 0;
                         }
                         set {
-                            NativeMethods.THSBackend_cublas_set_allow_tf32(value);
+                            NativeMethods.THSBackend_cublas_set_allow_tf32((byte)(value ? 1 : 0));
                             CheckForErrors();
                         }
                     }
@@ -651,10 +651,10 @@ namespace TorchSharp
                         get {
                             var result = NativeMethods.THSBackend_cuda_get_allow_fp16_reduced_precision_reduction();
                             CheckForErrors();
-                            return result;
+                            return result != 0;
                         }
                         set {
-                            NativeMethods.THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(value);
+                            NativeMethods.THSBackend_cuda_set_allow_fp16_reduced_precision_reduction((byte)(value ? 1 : 0));
                             CheckForErrors();
                         }
                     }
@@ -664,12 +664,12 @@ namespace TorchSharp
                 {
                     var result = NativeMethods.THSBackend_cuda_get_enable_flash_sdp();
                     CheckForErrors();
-                    return result;
+                    return result != 0;
                 }
 
                 public static void enable_flash_sdp(bool enable)
                 {
-                    NativeMethods.THSBackend_cuda_set_enable_flash_sdp(enable);
+                    NativeMethods.THSBackend_cuda_set_enable_flash_sdp((byte)(enable ? 1 : 0));
                     CheckForErrors();
                 }
 
@@ -677,12 +677,12 @@ namespace TorchSharp
                 {
                     var result = NativeMethods.THSBackend_cuda_get_enable_math_sdp();
                     CheckForErrors();
-                    return result;
+                    return result != 0;
                 }
 
                 public static void enable_math_sdp(bool enable)
                 {
-                    NativeMethods.THSBackend_cuda_set_enable_math_sdp(enable);
+                    NativeMethods.THSBackend_cuda_set_enable_math_sdp((byte)(enable ? 1 : 0));
                     CheckForErrors();
                 }
             }
@@ -693,10 +693,10 @@ namespace TorchSharp
                     get {
                         var result = NativeMethods.THSBackend_cudnn_get_allow_tf32();
                         CheckForErrors();
-                        return result;
+                        return result != 0;
                     }
                     set {
-                        NativeMethods.THSBackend_cudnn_set_allow_tf32(value);
+                        NativeMethods.THSBackend_cudnn_set_allow_tf32((byte)(value ? 1 : 0));
                         CheckForErrors();
                     }
                 }

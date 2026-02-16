@@ -23,7 +23,7 @@ namespace TorchSharp
 
                 internal SavedVariable(Tensor tensor, NodeUnmanagedPtr nodeHandle, bool is_inplace_on_view = false)
                 {
-                    _handle = THSAutograd_SavedVariable_ctor(tensor.Handle, nodeHandle, is_inplace_on_view);
+                    _handle = THSAutograd_SavedVariable_ctor(tensor.Handle, nodeHandle, (byte)(is_inplace_on_view ? 1 : 0));
                     CheckForErrors();
                 }
 
@@ -148,7 +148,7 @@ namespace TorchSharp
                 internal void SetNextEdges(List<Tensor> inputVars, bool isExecutable)
                 {
                     using var l = new PinnedArray<IntPtr>();
-                    THSAutograd_CSharpNode_setNextEdges(handle, l.CreateArrayWithSize(inputVars.ToHandleArray()), isExecutable);
+                    THSAutograd_CSharpNode_setNextEdges(handle, l.CreateArrayWithSize(inputVars.ToHandleArray()), (byte)(isExecutable ? 1 : 0));
                     CheckForErrors();
                 }
 

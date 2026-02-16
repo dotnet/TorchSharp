@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
@@ -400,7 +400,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor cross_entropy(Tensor input, Tensor target, Tensor? weight = null, long ignore_index = -100, Reduction reduction = Reduction.Mean, double label_smoothing = 0.0)
                 {
-                    var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ignore_index, true, (long)reduction, label_smoothing);
+                    var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ignore_index, (byte)1, (long)reduction, label_smoothing);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -417,7 +417,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor poisson_nll_loss(Tensor input, Tensor target, bool log_input = true, bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean)
                 {
-                    var res = THSNN_poisson_loss(input.Handle, target.Handle, log_input, full, eps, (long)reduction);
+                    var res = THSNN_poisson_loss(input.Handle, target.Handle, (byte)(log_input ? 1 : 0), (byte)(full ? 1 : 0), eps, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -451,7 +451,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor ctc_loss(Tensor log_probs, Tensor targets, Tensor input_lengths, Tensor target_lengths, long blank = 0, bool zero_infinity = false, Reduction reduction = Reduction.Mean)
                 {
-                    var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, zero_infinity, (long)reduction);
+                    var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, (byte)(zero_infinity ? 1 : 0), (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -618,7 +618,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor kl_div(Tensor input, Tensor target, bool log_target = true, Reduction reduction = Reduction.Mean)
                 {
-                    var res = THSNN_kl_div_loss(input.Handle, target.Handle, (long)reduction, log_target);
+                    var res = THSNN_kl_div_loss(input.Handle, target.Handle, (long)reduction, (byte)(log_target ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -673,7 +673,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor triplet_margin_loss(Tensor anchor, Tensor positive, Tensor negative, double margin = 1.0, long p = 2, double eps = 1e-06, bool swap = false, Reduction reduction = Reduction.Mean)
                 {
-                    var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, swap, (long)reduction);
+                    var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, (byte)(swap ? 1 : 0), (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -714,7 +714,7 @@ namespace TorchSharp
                             return res.Handle;
                         };
                     }
-                    var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, swap, (long)reduction);
+                    var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, (byte)(swap ? 1 : 0), (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -742,7 +742,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor input, Tensor target)
             {
                 var ii = ignore_index.HasValue ? ignore_index.Value : -100;
-                var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction, label_smoothing);
+                var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, (byte)(ignore_index.HasValue ? 1 : 0), (long)reduction, label_smoothing);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -809,7 +809,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor log_probs, Tensor targets, Tensor input_lengths, Tensor target_lengths)
             {
-                var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, zero_infinity, (long)reduction);
+                var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, (byte)(zero_infinity ? 1 : 0), (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -971,7 +971,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input, Tensor target)
             {
-                var res = THSNN_poisson_loss(input.Handle, target.Handle, log_input, full, eps, (long)reduction);
+                var res = THSNN_poisson_loss(input.Handle, target.Handle, (byte)(log_input ? 1 : 0), (byte)(full ? 1 : 0), eps, (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -1027,7 +1027,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input, Tensor target)
             {
-                var res = THSNN_kl_div_loss(input.Handle, target.Handle, (long)reduction, log_target);
+                var res = THSNN_kl_div_loss(input.Handle, target.Handle, (long)reduction, (byte)(log_target ? 1 : 0));
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -1078,7 +1078,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor anchor, Tensor positive, Tensor negative)
             {
-                var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, swap, (long)reduction);
+                var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, (byte)(swap ? 1 : 0), (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -1113,7 +1113,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor anchor, Tensor positive, Tensor negative)
             {
-                var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, distance, margin, swap, (long)reduction);
+                var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, distance, margin, (byte)(swap ? 1 : 0), (long)reduction);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

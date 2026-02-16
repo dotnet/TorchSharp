@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -118,9 +118,7 @@ namespace TorchSharp
                                 THSTensor_avg_pool3d(input.Handle,
                                     (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, stride.Length,
-                                    (IntPtr)ppadding, padding.Length,
-                                    ceil_mode,
-                                    count_include_pad, divisor_override ?? 0);
+                                    (IntPtr)ppadding, padding.Length, (byte)(ceil_mode ? 1 : 0), (byte)(count_include_pad ? 1 : 0), divisor_override ?? 0);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -143,9 +141,7 @@ namespace TorchSharp
                                 THSTensor_avg_pool3d_backward(input.Handle, originalInput.Handle,
                                     (IntPtr)pkernel_size, kernel_sizes.Length,
                                     (IntPtr)pstrides, strides.Length,
-                                    (IntPtr)ppadding, paddings.Length,
-                                    ceil_mode,
-                                    count_include_pad,
+                                    (IntPtr)ppadding, paddings.Length, (byte)(ceil_mode ? 1 : 0), (byte)(count_include_pad ? 1 : 0),
                                     divisor_override ?? 0);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);

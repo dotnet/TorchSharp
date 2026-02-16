@@ -149,7 +149,7 @@ namespace TorchSharp.Data
                     return true;
                 }
 
-                return THSData_moveNext(_iterator.handle.DangerousGetHandle());
+                return THSData_moveNext(_iterator.handle.DangerousGetHandle()) != 0;
             }
 
             public void Reset()

@@ -39,7 +39,7 @@ namespace TorchSharp
                         running_var is not null ? running_var.Handle : IntPtr.Zero,
                         weight is not null ? weight.Handle : IntPtr.Zero,
                         bias is not null ? bias.Handle : IntPtr.Zero,
-                        training,
+                        (byte)(training ? 1 : 0),
                         momentum, eps);
                     if (res == IntPtr.Zero)
                         torch.CheckForErrors();
@@ -73,7 +73,7 @@ namespace TorchSharp
                         running_var is not null ? running_var.Handle : IntPtr.Zero,
                         weight is not null ? weight.Handle : IntPtr.Zero,
                         bias is not null ? bias.Handle : IntPtr.Zero,
-                        use_input_stats,
+                        (byte)(use_input_stats ? 1 : 0),
                         momentum, eps);
                     if (res == IntPtr.Zero)
                         torch.CheckForErrors();

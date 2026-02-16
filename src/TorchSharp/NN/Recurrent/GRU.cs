@@ -99,7 +99,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static GRU GRU(long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_GRU_ctor(inputSize, hiddenSize, numLayers, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
+                var res = THSNN_GRU_ctor(inputSize, hiddenSize, numLayers, (byte)(bias ? 1 : 0), (byte)(batchFirst ? 1 : 0), dropout, (byte)(bidirectional ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new GRU(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional).MoveModule<GRU>(device, dtype);
             }

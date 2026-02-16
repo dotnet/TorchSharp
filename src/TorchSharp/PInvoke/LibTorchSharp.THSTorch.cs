@@ -8,8 +8,7 @@ namespace TorchSharp.PInvoke
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSTorch_scalar_to_bool(IntPtr handle);
+        internal static extern byte THSTorch_scalar_to_bool(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_dispose_scalar(IntPtr handle);
@@ -51,7 +50,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTorch_complex64_to_scalar(double real, double imaginary);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTorch_bool_to_scalar([MarshalAs(UnmanagedType.U1)] bool value);
+        internal static extern IntPtr THSTorch_bool_to_scalar(byte value);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_float16_to_scalar(float value);

@@ -106,7 +106,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             public static LSTMCell LSTMCell(long inputSize, long hiddenSize, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
+                var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, (byte)(bias ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new LSTMCell(res, boxedHandle).MoveModule<LSTMCell>(device, dtype);
             }
