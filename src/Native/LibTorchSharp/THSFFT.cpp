@@ -36,7 +36,7 @@ Tensor THSTensor_ifft2(const Tensor tensor, const int64_t* s, const int64_t* dim
     CATCH_TENSOR(torch::fft::ifft2(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_fftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+Tensor THSTensor_fftn(const Tensor tensor, const int64_t* s, const int32_t s_length, const int64_t* dim, const int32_t dim_length, int8_t norm)
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
@@ -45,7 +45,7 @@ Tensor THSTensor_fftn(const Tensor tensor, const int64_t* s, const int s_length,
     CATCH_TENSOR(torch::fft::fftn(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_ifftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+Tensor THSTensor_ifftn(const Tensor tensor, const int64_t* s, const int32_t s_length, const int64_t* dim, const int32_t dim_length, int8_t norm)
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
@@ -69,7 +69,7 @@ Tensor THSTensor_hfft2(const Tensor tensor, const int64_t* s, const int64_t* dim
     CATCH_TENSOR(torch::fft::hfft2(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_hfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+Tensor THSTensor_hfftn(const Tensor tensor, const int64_t* s, const int32_t s_length, const int64_t* dim, const int32_t dim_length, int8_t norm)
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
@@ -93,7 +93,7 @@ Tensor THSTensor_ihfft2(const Tensor tensor, const int64_t* s, const int64_t* di
     CATCH_TENSOR(torch::fft::ihfft2(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_ihfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+Tensor THSTensor_ihfftn(const Tensor tensor, const int64_t* s, const int32_t s_length, const int64_t* dim, const int32_t dim_length, int8_t norm)
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
@@ -134,7 +134,7 @@ Tensor THSTensor_irfft2(const Tensor tensor, const int64_t* s, const int64_t* di
     CATCH_TENSOR(torch::fft::irfft2(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_rfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+Tensor THSTensor_rfftn(const Tensor tensor, const int64_t* s, const int32_t s_length, const int64_t* dim, const int32_t dim_length, int8_t norm)
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
@@ -143,7 +143,7 @@ Tensor THSTensor_rfftn(const Tensor tensor, const int64_t* s, const int s_length
     CATCH_TENSOR(torch::fft::rfftn(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_irfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+Tensor THSTensor_irfftn(const Tensor tensor, const int64_t* s, const int32_t s_length, const int64_t* dim, const int32_t dim_length, int8_t norm)
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
@@ -152,7 +152,7 @@ Tensor THSTensor_irfftn(const Tensor tensor, const int64_t* s, const int s_lengt
     CATCH_TENSOR(torch::fft::irfftn(*tensor, sArg, dArg, normArg));
 }
 
-Tensor THSTensor_fftfreq(const int64_t n, const double d, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+Tensor THSTensor_fftfreq(const int64_t n, const double d, const int8_t scalar_type, const int32_t device_type, const int32_t device_index, const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -162,7 +162,7 @@ Tensor THSTensor_fftfreq(const int64_t n, const double d, const int8_t scalar_ty
     CATCH_TENSOR(d == 0.0 ? torch::fft::fftfreq(n, options) : torch::fft::fftfreq(n, d, options));
 }
 
-Tensor THSTensor_rfftfreq(const int64_t n, const double d, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+Tensor THSTensor_rfftfreq(const int64_t n, const double d, const int8_t scalar_type, const int32_t device_type, const int32_t device_index, const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -172,13 +172,13 @@ Tensor THSTensor_rfftfreq(const int64_t n, const double d, const int8_t scalar_t
     CATCH_TENSOR(d == 0.0 ? torch::fft::rfftfreq(n, options) : torch::fft::rfftfreq(n, d, options));
 }
 
-Tensor THSTensor_fftshift(const Tensor tensor, const int64_t* dim, const int dim_length)
+Tensor THSTensor_fftshift(const Tensor tensor, const int64_t* dim, const int32_t dim_length)
 {
     auto dArg = (dim == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(dim, dim_length));
     CATCH_TENSOR(torch::fft::fftshift(*tensor, dArg));
 }
 
-Tensor THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int dim_length)
+Tensor THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int32_t dim_length)
 {
     auto dArg = (dim == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(dim, dim_length));
     CATCH_TENSOR(torch::fft::ifftshift(*tensor, dArg));
