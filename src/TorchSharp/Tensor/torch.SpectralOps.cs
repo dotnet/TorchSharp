@@ -58,11 +58,11 @@ namespace TorchSharp
             }
             if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
 
-            var handle = THSTensor_bartlett_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+            var handle = THSTensor_bartlett_window(len, (byte)(periodic ? 1 : 0), (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_bartlett_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+                handle = THSTensor_bartlett_window(len, (byte)(periodic ? 1 : 0), (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
@@ -81,11 +81,11 @@ namespace TorchSharp
             }
             if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
 
-            var handle = THSTensor_blackman_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+            var handle = THSTensor_blackman_window(len, (byte)(periodic ? 1 : 0), (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_blackman_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+                handle = THSTensor_blackman_window(len, (byte)(periodic ? 1 : 0), (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
@@ -105,11 +105,11 @@ namespace TorchSharp
             }
             if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
 
-            var handle = THSTensor_hamming_window(len, periodic, alpha, beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+            var handle = THSTensor_hamming_window(len, (byte)(periodic ? 1 : 0), alpha, beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_hamming_window(len, periodic, alpha, beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+                handle = THSTensor_hamming_window(len, (byte)(periodic ? 1 : 0), alpha, beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
@@ -128,11 +128,11 @@ namespace TorchSharp
             }
             if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
 
-            var handle = THSTensor_hann_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+            var handle = THSTensor_hann_window(len, (byte)(periodic ? 1 : 0), (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_hann_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+                handle = THSTensor_hann_window(len, (byte)(periodic ? 1 : 0), (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
@@ -151,11 +151,11 @@ namespace TorchSharp
             }
             if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
 
-            var handle = THSTensor_kaiser_window(len, periodic, beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+            var handle = THSTensor_kaiser_window(len, (byte)(periodic ? 1 : 0), beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_kaiser_window(len, periodic, beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
+                handle = THSTensor_kaiser_window(len, (byte)(periodic ? 1 : 0), beta, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);

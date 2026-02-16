@@ -457,7 +457,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Measures the lossgiven an input tensor x and a labels tensor y (containing 1 or -1).
+                /// Measures the loss given an input tensor x and a labels tensor y (containing 1 or -1).
                 /// </summary>
                 /// <param name="input"></param>
                 /// <param name="target"></param>
@@ -624,7 +624,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Function that uses a squared termif the absolute element-wise error falls below beta and an L1 term otherwise.
+                /// Function that uses a squared term if the absolute element-wise error falls below beta and an L1 term otherwise.
                 /// </summary>
                 /// <param name="input"></param>
                 /// <param name="target"></param>
@@ -679,7 +679,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Creates a criterion that measures the triplet loss given input tensorsa, p, and n (representing anchor, positive, and negative examples, respectively),
+                /// Creates a criterion that measures the triplet loss given input tensors a, p, and n (representing anchor, positive, and negative examples, respectively),
                 /// and a nonnegative, real-valued function ("distance function") used to compute the relationship between the anchor and positive example ("positive distance")
                 /// and the anchor and negative example ("negative distance").
                 /// </summary>
@@ -814,7 +814,7 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public long blank{ get; }
+            public long blank { get; }
             public bool zero_infinity { get; }
         }
 
@@ -976,7 +976,7 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public bool log_input{ get; }
+            public bool log_input { get; }
             public bool full { get; }
             public float eps { get; }
 
@@ -1032,7 +1032,7 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public bool log_target{ get; }
+            public bool log_target { get; }
         }
 
         public sealed class SmoothL1Loss : Loss<Tensor, Tensor, Tensor>

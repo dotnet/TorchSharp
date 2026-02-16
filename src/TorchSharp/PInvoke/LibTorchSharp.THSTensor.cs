@@ -1375,22 +1375,22 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_logspace(double start, double end, long steps, double @base, sbyte scalarType, int deviceType, int deviceIndex, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_bartlett_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
+        internal static extern IntPtr THSTensor_bartlett_window(long len, byte periodic, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_blackman_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
+        internal static extern IntPtr THSTensor_blackman_window(long len, byte periodic, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_hamming_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
+        internal static extern IntPtr THSTensor_hamming_window(long len, byte periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_hann_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
+        internal static extern IntPtr THSTensor_hann_window(long len, byte periodic, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_kaiser_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, double beta, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
+        internal static extern IntPtr THSTensor_kaiser_window(long len, byte periodic, double beta, sbyte scalar_type, int device_type, int device_index, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_newBoolScalar([MarshalAs(UnmanagedType.U1)] bool scalar, int deviceType, int deviceIndex, byte requires_grad);
+        internal static extern IntPtr THSTensor_newBoolScalar(byte scalar, int deviceType, int deviceIndex, byte requires_grad);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_newByteScalar(byte scalar, int deviceType, int deviceIndex, byte requires_grad);
