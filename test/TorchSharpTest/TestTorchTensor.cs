@@ -102,6 +102,91 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void TestBFloat16ScalarToString()
+        {
+            // Scalar (0-d tensor)
+            {
+                var t = torch.tensor(3.14f, torch.bfloat16);
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[], type = BFloat16, device = cpu, value = 3.1406", str);
+            }
+            {
+                var t = torch.tensor(3.14f, torch.bfloat16);
+                var str = t.npstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("3.1406", str);
+            }
+            {
+                var t = torch.tensor(3.14f, torch.bfloat16);
+                var str = t.cstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[], type = BFloat16, device = cpu, value = 3.1406", str);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void TestBFloat16TensorToString()
+        {
+            // 1-D tensor
+            {
+                var t = torch.zeros(4, torch.bfloat16);
+                var str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[0, 0, 0, 0]", str);
+            }
+            // 1-D Julia
+            {
+                var t = torch.zeros(4, torch.bfloat16);
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[4], type = BFloat16, device = cpu{Environment.NewLine} 0 0 0 0{Environment.NewLine}", str);
+            }
+            // 1-D CSharp
+            {
+                var t = torch.zeros(4, torch.bfloat16);
+                var str = t.cstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[4], type = BFloat16, device = cpu, value = bfloat16 [] {0f, 0f, 0f, 0f}", str);
+            }
+            // 2-D tensor
+            {
+                var t = torch.ones(2, 3, torch.bfloat16);
+                var str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[[1, 1, 1]{Environment.NewLine} [1, 1, 1]]", str);
+            }
+            // print() should not throw
+            {
+                var t = torch.randn(3, 3).to(torch.bfloat16);
+                var originalOut = Console.Out;
+                using (var sw = new StringWriter()) {
+                    try {
+                        Console.SetOut(sw);
+                        t.print(cultureInfo: CultureInfo.InvariantCulture);
+                        var result = sw.ToString();
+                        Assert.False(string.IsNullOrEmpty(result));
+                    } finally {
+                        Console.SetOut(originalOut);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void TestFloat16TensorToString()
+        {
+            // 1-D CSharp
+            {
+                var t = torch.zeros(4, torch.float16);
+                var str = t.cstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[4], type = Float16, device = cpu, value = float16 [] {0f, 0f, 0f, 0f}", str);
+            }
+            // 1-D Numpy
+            {
+                var t = torch.zeros(4, torch.float16);
+                var str = t.npstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[0, 0, 0, 0]", str);
+            }
+        }
+
         private string _sep = Environment.NewLine;
 
         [Fact]
