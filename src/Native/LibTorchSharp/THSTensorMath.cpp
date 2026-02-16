@@ -379,9 +379,9 @@ void THSTensor_eq_scalar_(const Tensor left, const Scalar right)
     CATCH(left->eq_(*right);)
 }
 
-int THSTensor_equal(const Tensor left, const Tensor right)
+bool THSTensor_equal(const Tensor left, const Tensor right)
 {
-    CATCH_RETURN(int, 0, left->equal(*right));
+    CATCH_RETURN(bool, false, left->equal(*right));
 }
 
 Tensor THSTensor_exp(const Tensor tensor)

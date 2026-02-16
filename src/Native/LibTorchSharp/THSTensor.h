@@ -73,7 +73,7 @@ EXPORT_API(Tensor) THSTensor_adjoint(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_alias(const Tensor tensor);
 
-EXPORT_API(int) THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan);
+EXPORT_API(bool) THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan);
 
 EXPORT_API(Tensor) THSTensor_all(const Tensor tensor);
 
@@ -285,7 +285,7 @@ EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
 EXPORT_API(Tensor) THSTensor_conj(const Tensor tensor);
 
-EXPORT_API(int64_t) THSTensor_is_nonzero(const Tensor tensor);
+EXPORT_API(bool) THSTensor_is_nonzero(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
 
@@ -381,7 +381,7 @@ EXPORT_API(Tensor) THSTensor_cuda(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_pin_memory(const Tensor tensor);
 
-EXPORT_API(int64_t) THSTensor_is_pinned(const Tensor tensor);
+EXPORT_API(bool) THSTensor_is_pinned(const Tensor tensor);
 
 EXPORT_API(void) THSTensor_cummax(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim);
 
@@ -484,7 +484,7 @@ EXPORT_API(Tensor) THSTensor_eq_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(void) THSTensor_eq_scalar_(const Tensor left, const Scalar right);
 
-EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
+EXPORT_API(bool) THSTensor_equal(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_exp(const Tensor tensor);
 
@@ -692,11 +692,11 @@ EXPORT_API(Tensor) THSTensor_inner(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_inverse(const Tensor tensor);
 
-EXPORT_API(int) THSTensor_is_contiguous(const Tensor input);
+EXPORT_API(bool) THSTensor_is_contiguous(const Tensor input);
 
-EXPORT_API(int64_t) THSTensor_is_leaf(const Tensor tensor);
+EXPORT_API(bool) THSTensor_is_leaf(const Tensor tensor);
 
-EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
+EXPORT_API(bool) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isclose(const Tensor tensor, const Tensor other, const double rtol, const double atol, const bool equal_nan);
 
@@ -1145,7 +1145,7 @@ EXPORT_API(Tensor) THSTensor_repeat_interleave(const Tensor tensor, const Tensor
 
 EXPORT_API(Tensor) THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repeats, const int64_t dim, const int64_t output_size);
 
-EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
+EXPORT_API(bool) THSTensor_requires_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length);
 

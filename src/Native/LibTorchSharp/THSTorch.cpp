@@ -125,12 +125,12 @@ void THSGenerator_dispose(const Generator generator)
     delete generator;
 }
 
-int THSTorchCuda_is_available()
+bool THSTorchCuda_is_available()
 {
     return torch::cuda::is_available();
 }
 
-int THSTorchCuda_cudnn_is_available()
+bool THSTorchCuda_cudnn_is_available()
 {
     return torch::cuda::cudnn_is_available();
 }
