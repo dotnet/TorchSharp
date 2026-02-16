@@ -3,6 +3,7 @@
 
 #include "torch/torch.h"
 #include "torch/cuda.h"
+#include <c10/core/CachingDeviceAllocator.h>
 
 #if defined(USE_CUDA)
 #include <c10/cuda/CUDACachingAllocator.h>
@@ -229,38 +230,106 @@ int64_t THSTorchCuda_current_device()
 
 #else
 
+// Helper to resolve device index using torch::cuda APIs available without USE_CUDA
+static c10::DeviceIndex resolve_cuda_device(int64_t device_index)
+{
+    if (device_index < 0) {
+        // Use device 0 as default when CUDA headers aren't available
+        return 0;
+    }
+    return static_cast<c10::DeviceIndex>(device_index);
+}
+
 void THSTorchCuda_empty_cache()
 {
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            allocator->emptyCache();
+        }
+    )
 }
 
 size_t THSTorchCuda_memory_allocated(const int64_t device_index)
 {
-    return 0;
+    size_t res = 0;
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto device = resolve_cuda_device(device_index);
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            auto stats = allocator->getDeviceStats(device);
+            res = static_cast<size_t>(stats.allocated_bytes[static_cast<size_t>(c10::CachingAllocator::StatType::AGGREGATE)].current);
+        }
+    )
+    return res;
 }
 
 size_t THSTorchCuda_max_memory_allocated(const int64_t device_index)
 {
-    return 0;
+    size_t res = 0;
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto device = resolve_cuda_device(device_index);
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            auto stats = allocator->getDeviceStats(device);
+            res = static_cast<size_t>(stats.allocated_bytes[static_cast<size_t>(c10::CachingAllocator::StatType::AGGREGATE)].peak);
+        }
+    )
+    return res;
 }
 
 void THSTorchCuda_reset_peak_memory_stats(const int64_t device_index)
 {
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto device = resolve_cuda_device(device_index);
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            allocator->resetPeakStats(device);
+        }
+    )
 }
 
 size_t THSTorchCuda_memory_reserved(const int64_t device_index)
 {
-    return 0;
+    size_t res = 0;
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto device = resolve_cuda_device(device_index);
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            auto stats = allocator->getDeviceStats(device);
+            res = static_cast<size_t>(stats.reserved_bytes[static_cast<size_t>(c10::CachingAllocator::StatType::AGGREGATE)].current);
+        }
+    )
+    return res;
 }
 
 size_t THSTorchCuda_max_memory_reserved(const int64_t device_index)
 {
-    return 0;
+    size_t res = 0;
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto device = resolve_cuda_device(device_index);
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            auto stats = allocator->getDeviceStats(device);
+            res = static_cast<size_t>(stats.reserved_bytes[static_cast<size_t>(c10::CachingAllocator::StatType::AGGREGATE)].peak);
+        }
+    )
+    return res;
 }
 
 void THSTorchCuda_mem_get_info(const int64_t device_index, size_t* free, size_t* total)
 {
     *free = 0;
     *total = 0;
+    CATCH(
+        if (torch::cuda::is_available()) {
+            auto device = resolve_cuda_device(device_index);
+            auto* allocator = c10::getDeviceAllocator(c10::DeviceType::CUDA);
+            auto info = allocator->getMemoryInfo(device);
+            *free = info.first;
+            *total = info.second;
+        }
+    )
 }
 
 void THSTorchCuda_set_device(const int64_t device_index)
