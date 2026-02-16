@@ -30,7 +30,7 @@ jobs:
       displayName: 'Use .NET Core sdk'
       inputs:
         packageType: sdk
-        version: 8.x
+        version: 8.0.2xx
         installationPath: $(Agent.ToolsDirectory)/dotnet
     - script: $(_prepScript)
       displayName: Install build dependencies

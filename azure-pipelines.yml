@@ -635,7 +635,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 8.x
+      version: 8.0.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: ${{ variables.LinuxPrepScript }}
