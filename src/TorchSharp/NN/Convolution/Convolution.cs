@@ -145,7 +145,6 @@ namespace TorchSharp
             public Parameter weight {
                 get => _weight!;
                 set {
-                    if (value is null) throw new ArgumentNullException(nameof(weight));
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;

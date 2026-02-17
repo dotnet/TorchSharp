@@ -697,7 +697,6 @@ namespace TorchSharp
                 /// <returns>The tensor referenced by target</returns>
                 public virtual Tensor? get_buffer(string target)
                 {
-                    if (target is null) throw new ArgumentNullException("target");
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
                         return buffer.Item1;
                     }
