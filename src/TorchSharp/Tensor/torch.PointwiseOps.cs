@@ -542,6 +542,12 @@ namespace TorchSharp
         /// <returns>the output tensor</returns>
         [Pure]public static Tensor copysign(Tensor input, Tensor other) => input.copysign(other);
 
+        // https://pytorch.org/docs/stable/generated/torch.copysign
+        /// <summary>
+        /// Copies the signs of other to input, in-place.
+        /// </summary>
+        public static Tensor copysign_(Tensor input, Tensor other) => input.copysign_(other);
+
         // https://pytorch.org/docs/stable/generated/torch.cos
         /// <summary>
         /// Computes the cosine of the elements of input.
@@ -571,6 +577,12 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.deg2rad
         [Pure]public static Tensor deg2rad(Tensor input) => input.deg2rad();
+
+        // https://pytorch.org/docs/stable/generated/torch.deg2rad
+        /// <summary>
+        /// Convert each element from degrees to radians, in-place.
+        /// </summary>
+        public static Tensor deg2rad_(Tensor input) => input.deg2rad_();
 
         // https://pytorch.org/docs/stable/generated/torch.div
         /// <summary>
@@ -714,6 +726,12 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         public static Tensor exp2(Tensor input) => input.exp2();
 
+        // https://pytorch.org/docs/stable/generated/torch.exp2
+        /// <summary>
+        /// Computes the base 2 exponential function of input, in-place.
+        /// </summary>
+        public static Tensor exp2_(Tensor input) => input.exp2_();
+
         // https://pytorch.org/docs/stable/generated/torch.expm1
         /// <summary>
         /// Returns a new tensor with the exponential of the elements minus 1 of input.
@@ -783,6 +801,12 @@ namespace TorchSharp
         /// <param name="target">The exponent.</param>
         /// <remarks> If neither input is complex returns a torch.float64 tensor, and if one or more inputs is complex returns a torch.complex128 tensor.</remarks>
         [Pure]public static Tensor float_power(Tensor input, Tensor target) => input.float_power(target);
+
+        // https://pytorch.org/docs/stable/generated/torch.float_power
+        /// <summary>
+        /// Raises input to the power of exponent, elementwise, in double precision, in-place.
+        /// </summary>
+        public static Tensor float_power_(Tensor input, Tensor target) => input.float_power_(target);
 
         // https://pytorch.org/docs/stable/generated/torch.floor
         /// <summary>
@@ -879,6 +903,22 @@ namespace TorchSharp
         [Pure, Obsolete("not implemented", true)]
         public static ICollection<Tensor> gradient(Tensor input, int spacing = 1, long[]? dims = null, int edge_order = 1)
             => throw new NotImplementedException();
+
+        // https://pytorch.org/docs/stable/generated/torch.heaviside
+        /// <summary>
+        /// Computes the Heaviside step function for each element in input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="values">The values to use where input is zero.</param>
+        [Pure]public static Tensor heaviside(Tensor input, Tensor values) => input.heaviside(values);
+
+        // https://pytorch.org/docs/stable/generated/torch.heaviside
+        /// <summary>
+        /// Computes the Heaviside step function for each element in input, in-place.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="values">The values to use where input is zero.</param>
+        public static Tensor heaviside_(Tensor input, Tensor values) => input.heaviside_(values);
 
         // https://pytorch.org/docs/stable/generated/torch.imag
         [Pure]public static Tensor imag(Tensor input) => input.imag;
@@ -1066,6 +1106,15 @@ namespace TorchSharp
         /// <param name="eps">The epsilon for input clamp bound.</param>
         [Pure]public static Tensor logit(Tensor input, double? eps = null) => input.logit(eps);
 
+        // https://pytorch.org/docs/stable/generated/torch.logit
+        /// <summary>
+        /// Returns the logit of the elements of input, in-place.
+        /// input is clamped to [eps, 1 - eps] when eps is not null.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="eps">The epsilon for input clamp bound.</param>
+        public static Tensor logit_(Tensor input, double? eps = null) => input.logit_(eps);
+
         // https://pytorch.org/docs/stable/generated/torch.hypot
         /// <summary>
         /// Element-wise: given the legs of a right triangle, return its hypotenuse.
@@ -1081,6 +1130,13 @@ namespace TorchSharp
         /// <param name="input"></param>
         /// <returns></returns>
         [Pure]public static Tensor i0(Tensor input) => special.i0(input);
+
+        // https://pytorch.org/docs/stable/generated/torch.i0
+        /// <summary>
+        /// Computes the zeroth order modified Bessel function of the first kind for each element of input, in-place.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static Tensor i0_(Tensor input) => input.i0_();
 
         // https://pytorch.org/docs/stable/generated/torch.igamma
         /// <summary>
@@ -1205,6 +1261,13 @@ namespace TorchSharp
         public static Tensor nan_to_num(Tensor input, double nan = 0d, double? posinf = null, double? neginf = null)
             => input.nan_to_num(nan, posinf, neginf);
 
+        // https://pytorch.org/docs/stable/generated/torch.nan_to_num
+        /// <summary>
+        /// Replaces NaN, positive infinity, and negative infinity values in input, in-place.
+        /// </summary>
+        public static Tensor nan_to_num_(Tensor input, double nan = 0d, double? posinf = null, double? neginf = null)
+            => input.nan_to_num_(nan, posinf, neginf);
+
         // https://pytorch.org/docs/stable/generated/torch.neg
         /// <summary>
         /// Negation
@@ -1236,6 +1299,12 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.nextafter
         public static Tensor nextafter(Tensor input, Tensor other) => input.nextafter(other);
+
+        // https://pytorch.org/docs/stable/generated/torch.nextafter
+        /// <summary>
+        /// Return the next floating-point value after input towards other, elementwise, in-place.
+        /// </summary>
+        public static Tensor nextafter_(Tensor input, Tensor other) => input.nextafter_(other);
 
         // https://pytorch.org/docs/stable/generated/torch.polygamma
         /// <summary>
@@ -1343,6 +1412,12 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <returns>tensor with angles in radians</returns>
         public static Tensor rad2deg(Tensor input) => input.rad2deg();
+
+        // https://pytorch.org/docs/stable/generated/torch.rad2deg
+        /// <summary>
+        /// Convert each element from radians to degrees, in-place.
+        /// </summary>
+        public static Tensor rad2deg_(Tensor input) => input.rad2deg_();
 
         // https://pytorch.org/docs/stable/generated/torch.real
         /// <summary>
