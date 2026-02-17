@@ -118,7 +118,8 @@ namespace TorchSharp
                     if (query.dim() < 2 || key.dim() < 2 || value.dim() < 2) throw new ArgumentException("Query, key, and value must have at least 2 dimensions.");
                     if (!enable_gqa && (query.size(1) != key.size(1) || query.size(1) != value.size(1))) throw new InvalidOperationException("Query and key/value heads must be equal when Group Query Attention is not enabled.");
 
-                    var _scale = scale.HasValue ? new double[] { scale.Value } : null;
+                    var _scale = scale.HasValue ? scale.Value : default;
+                    var scalePtr = scale.HasValue ? &_scale : null;
 
                     unsafe {
                         fixed (double* scalePtr = _scale) {
