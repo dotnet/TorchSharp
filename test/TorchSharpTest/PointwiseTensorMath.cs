@@ -930,6 +930,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.i0_))]
+        public void I0InPlaceTorchTest()
+        {
+            var data = torch.arange(0, 5, 1, float32);
+            var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
+            var res = torch.i0_(data);
+            Assert.Same(data, res);
+            Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.hypot))]
         public void HypotTest()
         {

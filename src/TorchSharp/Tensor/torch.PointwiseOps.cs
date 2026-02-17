@@ -1109,7 +1109,10 @@ namespace TorchSharp
         // https://pytorch.org/docs/stable/generated/torch.logit
         /// <summary>
         /// Returns the logit of the elements of input, in-place.
+        /// input is clamped to [eps, 1 - eps] when eps is not null.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="eps">The epsilon for input clamp bound.</param>
         public static Tensor logit_(Tensor input, double? eps = null) => input.logit_(eps);
 
         // https://pytorch.org/docs/stable/generated/torch.hypot
@@ -1127,6 +1130,13 @@ namespace TorchSharp
         /// <param name="input"></param>
         /// <returns></returns>
         [Pure]public static Tensor i0(Tensor input) => special.i0(input);
+
+        // https://pytorch.org/docs/stable/generated/torch.i0
+        /// <summary>
+        /// Computes the zeroth order modified Bessel function of the first kind for each element of input, in-place.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static Tensor i0_(Tensor input) => input.i0_();
 
         // https://pytorch.org/docs/stable/generated/torch.igamma
         /// <summary>
