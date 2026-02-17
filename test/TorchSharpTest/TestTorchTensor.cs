@@ -7167,15 +7167,15 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(fft.hfft2))]
+        [TestOf(nameof(fft.hfftn))]
         public void Float32HFFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
-            var output = fft.hfft2(input);
+            var output = fft.hfftn(input);
             Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
             Assert.Equal(ScalarType.Float32, output.dtype);
 
-            var inverted = fft.ihfft2(output);
+            var inverted = fft.ihfftn(output);
             Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
             Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
         }
