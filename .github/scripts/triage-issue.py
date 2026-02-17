@@ -10,14 +10,15 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 
 GITHUB_API = "https://api.github.com"
-INFERENCE_API = "https://models.inference.ai.azure.com"
+INFERENCE_API = "https://models.github.ai/inference"
 MODEL = "gpt-4o-mini"
 
-TRIAGE_LABELS = {"bug", "Missing Feature", "question", "enhancement", "breaking-change"}
+TRIAGE_LABELS = {"bug", "Missing Feature", "question"}
 
 SYSTEM_PROMPT = """\
 You are an issue triage bot for TorchSharp, a .NET binding for PyTorch.
@@ -26,11 +27,9 @@ Classify the following GitHub issue into exactly ONE of these categories:
 - bug: Something is broken, crashes, throws an unexpected error, or produces wrong results.
 - Missing Feature: A PyTorch API or feature that is not yet available in TorchSharp.
 - question: The user is asking for help, guidance, or clarification on how to use TorchSharp.
-- enhancement: A suggestion to improve existing functionality (not a missing PyTorch API).
-- breaking-change: The issue reports or requests a change that would break existing public API.
 
 Respond with ONLY a JSON object in this exact format, no other text:
-{"label": "<one of: bug, Missing Feature, question, enhancement, breaking-change>", "reason": "<one sentence explanation>"}
+{"label": "<one of: bug, Missing Feature, question>", "reason": "<one sentence explanation>"}
 """
 
 COMMENT_TEMPLATES = {
@@ -53,18 +52,6 @@ COMMENT_TEMPLATES = {
         "I've triaged this as a **question**. {reason}\n\n"
         "A maintainer or community member will try to help as soon as possible. "
         "Please make sure to include the TorchSharp version and a code sample for context.\n\n"
-        "*This comment was generated automatically by the issue triage bot.*"
-    ),
-    "enhancement": (
-        "Thank you for the suggestion! 🙏\n\n"
-        "I've triaged this as an **enhancement** request. {reason}\n\n"
-        "A maintainer will review this when they get a chance.\n\n"
-        "*This comment was generated automatically by the issue triage bot.*"
-    ),
-    "breaking-change": (
-        "Thank you for reporting this! 🙏\n\n"
-        "I've triaged this as a potential **breaking change**. {reason}\n\n"
-        "A maintainer will review this carefully.\n\n"
         "*This comment was generated automatically by the issue triage bot.*"
     ),
 }
@@ -91,9 +78,27 @@ def github_request(method, path, body=None):
 
 def sanitize_reason(reason):
     """Sanitize LLM-generated reason to prevent markdown injection."""
+    # Limit length to avoid excessively long comments.
     reason = reason[:200]
-    reason = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", reason)  # Strip links
-    reason = re.sub(r"!\[([^\]]*)\]\([^\)]+\)", "", reason)  # Strip images
+
+    # Strip markdown links: [text](url) -> text
+    reason = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", reason)
+
+    # Strip markdown images entirely: ![alt](url) -> ""
+    reason = re.sub(r"!\[([^\]]*)\]\([^\)]+\)", "", reason)
+
+    # Remove fenced code blocks with triple backticks to prevent block injection.
+    reason = re.sub(r"```.*?```", "", reason, flags=re.DOTALL)
+
+    # Remove any remaining standalone backticks used for inline code.
+    reason = reason.replace("`", "")
+
+    # Strip simple HTML tags such as <script>, <b>, etc.
+    reason = re.sub(r"<[^>]+>", "", reason)
+
+    # Escape markdown special characters so the text is rendered literally.
+    reason = re.sub(r"([\\*_{}\[\]()>#+\-!])", r"\\\1", reason)
+
     return reason.strip()
 
 
@@ -115,29 +120,75 @@ def classify_issue(title, body):
     }
 
     data = json.dumps(payload).encode()
-    req = urllib.request.Request(
-        f"{INFERENCE_API}/chat/completions", data=data, method="POST"
-    )
-    req.add_header("Authorization", f"Bearer {token}")
-    req.add_header("Content-Type", "application/json")
 
-    try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            result = json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        error_body = e.read().decode(errors="replace") if e.fp else ""
-        raise RuntimeError(f"LLM API call failed ({e.code}): {error_body}") from e
+    # Retry with exponential backoff
+    max_retries = 3
+    result = None
+    for attempt in range(max_retries):
+        req = urllib.request.Request(
+            f"{INFERENCE_API}/chat/completions", data=data, method="POST"
+        )
+        req.add_header("Authorization", f"Bearer {token}")
+        req.add_header("Content-Type", "application/json")
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                result = json.loads(resp.read())
+            break
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as e:
+            if attempt < max_retries - 1:
+                wait = 2 ** attempt
+                print(f"::warning::LLM API attempt {attempt + 1} failed ({e}); retrying in {wait}s")
+                time.sleep(wait)
+            else:
+                error_detail = ""
+                if isinstance(e, urllib.error.HTTPError) and e.fp:
+                    error_detail = e.read().decode(errors="replace")
+                raise RuntimeError(f"LLM API call failed after {max_retries} attempts: {error_detail or e}") from e
 
-    content = result["choices"][0]["message"]["content"].strip()
+    # Validate response structure
+    if not isinstance(result, dict):
+        raise RuntimeError("LLM API returned unexpected response format: top-level JSON is not an object.")
+
+    choices = result.get("choices")
+    if not isinstance(choices, list) or not choices:
+        raise RuntimeError("LLM API returned unexpected response format: missing or empty 'choices' array.")
+
+    first_choice = choices[0]
+    if not isinstance(first_choice, dict):
+        raise RuntimeError("LLM API returned unexpected response format: first choice is not an object.")
+
+    message = first_choice.get("message")
+    if not isinstance(message, dict):
+        raise RuntimeError("LLM API returned unexpected response format: missing or invalid 'message' in first choice.")
+
+    content = message.get("content")
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError("LLM API returned unexpected response format: missing or invalid 'content' in message.")
+
+    content = content.strip()
 
     # Parse the JSON response, stripping markdown fences if present
     json_match = re.search(r"\{.*\}", content, re.DOTALL)
     if json_match:
         content = json_match.group(0)
 
-    parsed = json.loads(content)
-    label = parsed["label"]
-    reason = sanitize_reason(parsed.get("reason", ""))
+    try:
+        parsed = json.loads(content)
+    except (json.JSONDecodeError, TypeError) as e:
+        print(f"::warning::Failed to parse LLM JSON response ({e}); defaulting to 'question'")
+        return "question", "Could not parse LLM response; defaulting to 'question'."
+
+    if not isinstance(parsed, dict):
+        print("::warning::LLM JSON content is not an object, defaulting to 'question'")
+        return "question", "Could not determine the issue type."
+
+    label = parsed.get("label")
+    if not isinstance(label, str) or not label:
+        print("::warning::LLM response missing 'label', defaulting to 'question'")
+        label = "question"
+
+    reason_raw = parsed.get("reason", "")
+    reason = sanitize_reason(reason_raw if isinstance(reason_raw, str) else "")
 
     if label not in TRIAGE_LABELS:
         print(f"::warning::LLM returned unknown label '{label}', defaulting to 'question'")
