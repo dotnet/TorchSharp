@@ -459,7 +459,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_local_response_norm(IntPtr input, long size, double alpha, double beta, double k);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_scaled_dot_product_attention(IntPtr query, IntPtr key, IntPtr value, IntPtr attention_mask, double p, [MarshalAs(UnmanagedType.U1)] bool casual);
+        internal static extern IntPtr THSNN_scaled_dot_product_attention(IntPtr query, IntPtr key, IntPtr value, IntPtr attention_mask, double p, [MarshalAs(UnmanagedType.U1)] bool is_causal, IntPtr scale, [MarshalAs(UnmanagedType.U1)] bool enable_gqa);
     }
 #pragma warning restore CA2101
 }

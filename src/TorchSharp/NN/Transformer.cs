@@ -107,15 +107,25 @@ namespace TorchSharp
                 /// A float mask of the same type as query, key, value that is added to the attention score.
                 /// </param>
                 /// <param name="p">Dropout probability</param>
-                /// <param name="is_casual">If true, assumes causal attention masking and errors if both attn_mask and is_causal are set.</param>
+                /// <param name="is_causal">If true, assumes causal attention masking and errors if both attn_mask and is_causal are set.</param>
+                /// <param name="scale">Scaling factor applied prior to softmax. If null, 1/sqrt(E) is used.</param>
+                /// <param name="enable_gqa">If true, enable Group Query Attention</param>
                 /// <returns></returns>
-                public static Tensor scaled_dot_product_attention(Tensor query, Tensor key, Tensor value, Tensor? attn_mask = null, double p = 0.0, [MarshalAs(UnmanagedType.U1)] bool is_casual = false)
+                public static Tensor scaled_dot_product_attention(Tensor query, Tensor key, Tensor value, Tensor? attn_mask = null, double p = 0.0, [MarshalAs(UnmanagedType.U1)] bool is_causal = false, double? scale = null, bool enable_gqa = false)
                 {
                     if (p < 0) throw new ArgumentException("Dropout probability must be greater than or equal to zero.");
-                    if (is_casual && attn_mask is not null) throw new ArgumentException("Casual attention masking cannot pass a mask.");
-                    var res = THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, is_casual);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    if (is_causal && attn_mask is not null) throw new ArgumentException("Casual attention masking cannot pass a mask.");
+                    if (query.dim() < 2 || key.dim() < 2 || value.dim() < 2) throw new ArgumentException("Query, key, and value must have at least 2 dimensions.");
+                    if (!enable_gqa && (query.size(-3) != key.size(-3) || query.size(-3) != value.size(-3))) throw new InvalidOperationException("Query and key/value heads must be equal when Group Query Attention is not enabled.");
+
+                    var _scale = scale.HasValue ? scale.Value : default;
+
+                    unsafe {
+                        double* scalePtr = scale.HasValue ? &_scale : null;
+                        var res = THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, is_causal, (IntPtr)scalePtr, enable_gqa);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
                 }
             }
         }
