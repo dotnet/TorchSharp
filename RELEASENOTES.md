@@ -32,10 +32,6 @@ This release upgrades the libtorch backend to v2.7.1, using CUDA 12.8.
 
 # NuGet Version 0.105.1
 
-__Breaking Changes__:
-
-`torch.nn.functional.scaled_dot_product_attention`'s function signature has been changed. The `is_casual` argument has been renamed to `is_causal`.<br/>
-
 __Bug Fixes__:
 
 #1426 Sequential.eval() does not put model into eval mode<br/>
@@ -49,7 +45,6 @@ __API Changes__:
 `torch.optim.lr_scheduler.PolynomialLR` `power` type has been corrected, is now double.<br/>
 Returning an input tensor has been corrected, is now `alias()`.<br/>
 Add `torchvision.transforms.Resize` `interpolation` and `antialias`.<br />
-Add optional `scale` and `enable_gqa` arguments to `torch.nn.functional.scaled_dot_product_attention`.<br/>
 
 # NuGet Version 0.105.0
 
