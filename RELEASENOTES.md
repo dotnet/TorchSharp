@@ -2,6 +2,14 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.106.1
+
+__Build/Infrastructure__:
+
+Upgrade target framework from .NET 6 to .NET 8.<br/>
+Suppress CS8981 warning for intentional lowercase type names (e.g. `torch`, `nn`, `optim`) that mirror PyTorch's Python API.<br/>
+Update CI pipelines to use .NET 8 SDK.<br/>
+
 # NuGet Version 0.106.0
 
 This release upgrades the libtorch backend to v2.10.0, using CUDA 12.8.

@@ -54,7 +54,7 @@ jobs:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
-    # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
+    # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 8.0
     prepScript: ${{ variables.LinuxPrepScript }}
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
@@ -121,7 +121,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 6.0.402
+      version: 8.0.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: ${{ variables.LinuxPrepScript }}
@@ -191,7 +191,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 6.0.402
+      version: 8.0.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   # Build libtorch CPU and clean immediately
@@ -635,7 +635,7 @@ jobs:
     displayName: 'Use .NET Core sdk'
     inputs:
       packageType: sdk
-      version: 6.x
+      version: 8.0.x
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - script: ${{ variables.LinuxPrepScript }}

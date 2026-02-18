@@ -5,7 +5,7 @@
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
     <TargetFrameworks></TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net8.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <RootNamespace>Examples</RootNamespace>
     <AssemblyName>FSharp.Examples</AssemblyName>

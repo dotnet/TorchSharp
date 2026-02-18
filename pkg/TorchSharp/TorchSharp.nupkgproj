@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
     <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorch-cpu, libtorch-cuda-$(CudaVersionDot), libtorch-cuda-$(CudaVersionDot)-win-x64 or libtorch-cuda-$(CudaVersionDot)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).props" />
-    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net8.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net8.0\$(MSBuildProjectName).targets" />
     <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
     <PackageReference Include="Google.Protobuf" Version="3.21.9" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" />

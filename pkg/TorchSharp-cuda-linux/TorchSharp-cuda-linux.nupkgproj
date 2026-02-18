@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users. This package combines the TorchSharp package with LibTorch $(LibTorchVersion) CUDA $(CudaVersionDot) support for Linux.</PackageDescription>
   </PropertyGroup>
 
@@ -10,13 +10,13 @@
     <ProjectReference Include="..\libtorch-cuda-12.8-linux-x64\libtorch-cuda-12.8-linux-x64.nupkgproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).props" />
-    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).targets" />
-    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\net6.0\_._" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net8.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net8.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\net8.0\_._" />
     <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="LICENSE-LIBTORCH.txt" />
     <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>
