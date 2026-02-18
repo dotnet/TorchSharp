@@ -1627,6 +1627,13 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         [Pure]public static Tensor square(Tensor input) => input.square();
 
+        // https://pytorch.org/docs/stable/generated/torch.square
+        /// <summary>
+        /// Computes the element-wise square, in place
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        [Pure] public static Tensor square_(Tensor input) => input.square_();
+
         // https://pytorch.org/docs/stable/generated/torch.sub
         /// <summary>
         /// Element-wise subtraction

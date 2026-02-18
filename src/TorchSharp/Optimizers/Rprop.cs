@@ -136,11 +136,14 @@ namespace TorchSharp
 
                     var options = group.Options as Options;
                     var maximize = options.maximize.Value;
-                    var etaminus = options.etaminus.Value;
-                    var etaplus = options.etaplus.Value;
-                    var min_step = options.min_step.Value;
-                    var max_step = options.max_step.Value;
-                    var lr = options.LearningRate.Value;
+                    using var etaminus_scalar = options.etaminus.Value.ToScalar();
+                    using var etaplus_scalar = options.etaplus.Value.ToScalar();
+                    using var min_step_scalar = options.min_step.Value.ToScalar();
+                    using var max_step_scalar = options.max_step.Value.ToScalar();
+                    var lr = options.LearningRate.Value; // FIXME: Unused?
+                    using var zero_scalar = 0.ToScalar();
+                    using var one_scalar = 1.ToScalar();
+                    using var negative_one_scalar = (-1).ToScalar();
 
                     foreach (var param in group.Parameters) {
 
@@ -156,18 +159,18 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        var sign = grad.mul(state.prev).sign();
-                        sign[sign.gt(0)] = (Tensor)etaplus;
-                        sign[sign.lt(0)] = (Tensor)etaminus;
-                        sign[sign.eq(0)] = (Tensor)1;
+                        var sign = grad.mul(state.prev).sign(); // FIXME: Use torch.Tensor.sign_?
+                        sign.masked_fill_(sign.gt(zero_scalar), etaplus_scalar);
+                        sign.masked_fill_(sign.lt(zero_scalar), etaminus_scalar);
+                        sign.masked_fill_(sign.eq(zero_scalar), one_scalar);
 
-                        state.step_size.mul_(sign).clamp_(min_step, max_step);
+                        state.step_size.mul_(sign).clamp_(min_step_scalar, max_step_scalar);
 
                         grad = grad.clone();
 
-                        grad.index_put_(0, sign.eq(etaminus));
+                        grad.index_put_(zero_scalar, sign.eq(etaminus_scalar));
 
-                        param.addcmul_(grad.sign(), state.step_size, -1);
+                        param.addcmul_(grad.sign(), state.step_size, negative_one_scalar);
 
                         state.prev.copy_(grad);
                     }
@@ -308,7 +311,7 @@ namespace TorchSharp
 
                     this.step = 0;
                     this.prev = torch.zeros_like(_parameter).DetachFromDisposeScope();
-                    this.step_size = _parameter.new_empty(_parameter.shape).fill_((options as Options).LearningRate).DetachFromDisposeScope();
+                    this.step_size = _parameter.new_empty(_parameter.shape).fill_((double)(options as Options).LearningRate!).DetachFromDisposeScope();
                 }
             }
 

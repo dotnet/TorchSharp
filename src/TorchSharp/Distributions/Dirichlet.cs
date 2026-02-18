@@ -25,9 +25,11 @@ namespace TorchSharp
             {
                 get {
                     using var _ = NewDisposeScope();
-                    var concentrationm1 = (concentration - 1).clamp(min: 0.0);
+                    using var zero_scalar = 0.0.ToScalar();
+                    var concentrationm1 = (concentration - 1).clamp(min: zero_scalar);
                     var mode = concentrationm1 / concentrationm1.sum(-1, true);
-                    var mask = (concentration < 1).all(dim: -1);
+                    using var one_scalar = 1.ToScalar();
+                    var mask = (concentration < one_scalar).all(dim: -1);
                     mode[mask] = torch.nn.functional.one_hot(mode[mask].argmax(dim: -1), concentrationm1.shape[concentrationm1.ndim-1]).to(mode);
                     return mode.MoveToOuterDisposeScope();
                 }
@@ -40,7 +42,7 @@ namespace TorchSharp
                 get {
                     using var _ = NewDisposeScope();
                     var con0 = concentration.sum(-1, true);
-                    return (concentration * (con0 - concentration) / (con0.pow(2) * (con0 + 1))).MoveToOuterDisposeScope();
+                    return (concentration * (con0 - concentration) / (con0.square() * (con0 + 1))).MoveToOuterDisposeScope();
                 }
             }
 

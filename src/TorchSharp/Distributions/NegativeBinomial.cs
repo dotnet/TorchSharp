@@ -26,7 +26,10 @@ namespace TorchSharp
             /// Mode of the negative binomial distribution.
             /// </summary>
             public override Tensor mode =>
-                WrappedTensorDisposeScope(() => ((total_count - 1) * logits.exp()).floor_().clamp(min: 0));
+                WrappedTensorDisposeScope(() => {
+                    using var zero_scalar = 0.ToScalar();
+                    return ((total_count - 1) * logits.exp()).floor_().clamp(min: zero_scalar);
+                });
 
             /// <summary>
             /// The variance of the distribution
@@ -101,7 +104,8 @@ namespace TorchSharp
                 using var _ = NewDisposeScope();
                 var log_unnormalized_prob = (total_count * (-_logits).log_sigmoid() + value * logits.log_sigmoid());
                 var log_normalization = (-torch.lgamma(total_count + value) + torch.lgamma(1.0 + value) + torch.lgamma(total_count));
-                log_normalization = log_normalization.masked_fill(total_count + value == 0, 0);
+                using var zero_scalar = 0.ToScalar();
+                log_normalization = log_normalization.masked_fill(total_count + value == zero_scalar, zero_scalar);
 
                 return (log_unnormalized_prob - log_normalization).MoveToOuterDisposeScope();
             }

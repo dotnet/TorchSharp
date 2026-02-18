@@ -154,11 +154,18 @@ namespace TorchSharp
                     var options = group.Options as Options;
                     var beta1 = options.beta1.Value;
                     var beta2 = options.beta2.Value;
+                    using var beta1_scalar = beta1.ToScalar();
+                    using var beta2_scalar = beta2.ToScalar();
+                    var beta1_bar = 1 - beta1;
+                    var beta2_bar = 1 - beta2;
+                    using var beta1_bar_scalar = beta1_bar.ToScalar();
+                    using var beta2_bar_scalar = beta2_bar.ToScalar();
                     var weight_decay = options.weight_decay.Value;
                     var amsgrad = options.amsgrad.Value;
                     var maximize = options.maximize.Value;
-                    var eps = options.eps.Value;
+                    using var eps_scalar = options.eps.Value.ToScalar();
                     var lr = options.LearningRate.Value;
+                    using var lr_weight_decay_bar_scalar = (1 - lr * weight_decay).ToScalar();
 
                     foreach (var param in group.Parameters) {
 
@@ -172,26 +179,28 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        param.mul_(1 - lr * weight_decay);
+                        param.mul_(lr_weight_decay_bar_scalar);
 
                         var bias_correction1 = 1 - Math.Pow(beta1, state.step);
                         var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                        state.exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                        state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
+                        state.exp_avg.mul_(beta1_scalar).add_(grad, alpha: beta1_bar_scalar);
+                        state.exp_avg_sq.mul_(beta2_scalar).addcmul_(grad, grad, value: beta2_bar_scalar);
 
                         Tensor denom = null;
                         if (amsgrad) {
                             var t0 = state.max_exp_avg_sq;
                             state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetachFromDisposeScope();
                             t0.Dispose();
-                            denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
+                            denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps_scalar);
                         } else {
-                            denom = (state.exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
+                            denom = (state.exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps_scalar);
                         }
 
                         var step_size = lr / bias_correction1;
-                        param.addcdiv_(state.exp_avg, denom, value: -step_size);
+                        using var negative_step_size_scalar = (-step_size).ToScalar();
+                        param.addcdiv_(state.exp_avg, denom, value: negative_step_size_scalar);
+                        denom.Dispose();
                     }
                 }, closure);
             }

@@ -44,7 +44,7 @@ namespace TorchSharp
 
             public override Tensor variance =>
                 WrappedTensorDisposeScope(() =>
-                    scale.pow(2) * (torch.exp(torch.lgamma(1 + 2 * concentration_reciprocal)) - torch.exp(2 * torch.lgamma(1 + concentration_reciprocal)))
+                    scale.square() * (torch.exp(torch.lgamma(1 + 2 * concentration_reciprocal)) - torch.exp(2 * torch.lgamma(1 + concentration_reciprocal)))
                 );
 
             /// <summary>

@@ -3980,9 +3980,9 @@ namespace TorchSharp
             var ones = torch.ones(new long[] { 1, 9 });
             var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
 
-            var distanceFromZero = input.reshape(new long[] { -1, 1, 9 }).sub(zeros).pow(2.ToScalar()).sum(new long[] { 2 });
-            var distanceFromOne = input.reshape(new long[] { -1, 1, 9 }).sub(ones).pow(2.ToScalar()).sum(new long[] { 2 });
-            var distanceFromCentroids = input.reshape(new long[] { -1, 1, 9 }).sub(centroids).pow(2.ToScalar()).sum(new long[] { 2 });
+            var distanceFromZero = input.reshape(new long[] { -1, 1, 9 }).sub(zeros).square().sum(new long[] { 2 });
+            var distanceFromOne = input.reshape(new long[] { -1, 1, 9 }).sub(ones).square().sum(new long[] { 2 });
+            var distanceFromCentroids = input.reshape(new long[] { -1, 1, 9 }).sub(centroids).square().sum(new long[] { 2 });
 
             Assert.True(true);
         }

@@ -931,6 +931,16 @@ void THSTensor_sqrt_(const Tensor tensor)
     CATCH(tensor->sqrt_();)
 }
 
+Tensor THSTensor_square(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->square());
+}
+
+void THSTensor_square_(const Tensor tensor)
+{
+    CATCH(tensor->square_();)
+}
+
 Tensor THSTensor_sign(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sign());

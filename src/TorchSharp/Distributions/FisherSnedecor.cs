@@ -32,7 +32,7 @@ namespace TorchSharp
                     using var _ = torch.NewDisposeScope();
                     var df2 = this.df2.clone();
                     df2[df2 <= 4] = torch.tensor(float.NaN);
-                    return (2 * df2.pow(2) * (this.df1 + df2 - 2) / (this.df1 * (df2 - 2).pow(2) * (df2 - 4))).MoveToOuterDisposeScope();
+                    return (2 * df2.square() * (this.df1 + df2 - 2) / (this.df1 * (df2 - 2).square() * (df2 - 4))).MoveToOuterDisposeScope();
                 }
             }
 
@@ -80,11 +80,11 @@ namespace TorchSharp
                 var X1 = gamma1.rsample(sample_shape).view(shape);
                 var X2 = gamma2.rsample(sample_shape).view(shape);
 
-                var tiny = torch.finfo(X2.dtype).tiny;
-                X2.clamp_(min: tiny);
+                using var tiny_scalar = torch.finfo(X2.dtype).tiny.ToScalar();
+                X2.clamp_(min: tiny_scalar);
                 var Y = X1 / X2;
                 
-                return Y.clamp_(min: tiny).MoveToOuterDisposeScope();
+                return Y.clamp_(min: tiny_scalar).MoveToOuterDisposeScope();
             }
 
             /// <summary>

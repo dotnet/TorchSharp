@@ -14,6 +14,24 @@ using TorchSharp.PInvoke;
 #nullable enable
 namespace TorchSharp
 {
+    public static partial class TensorLeakDetector
+    {
+        /// <summary>
+        /// Allows implicit conversion to torch.Tensor.<br/>
+        /// FIXME: Declared true for default to be compatible to 0.105.1 or earlier.
+        /// </summary>
+        public static bool allowImplicitConversionOperator { get; set; } = true;
+        /// <summary>
+        /// Throws an exception if implicit conversion is not allowed.
+        /// </summary>
+        /// <exception cref="InvalidCastException"></exception>
+        public static void ThrowIfImplicitConversionNotAllowed()
+        {
+            if (!allowImplicitConversionOperator) {
+                throw new InvalidCastException("Unexpected implicit conversion to torch.Tensor.");
+            }
+        }
+    }
     public static partial class torch
     {
         /// <summary>
@@ -651,6 +669,31 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(byte value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(sbyte value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(short value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(int value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(long value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(Half value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+#endif
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(float value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(double value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(bool value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_((float, float) value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
+            /// <inheritdoc cref="fill_(Scalar)" />
+            public Tensor fill_(System.Numerics.Complex value) { using var value_scalar = value.ToScalar(); return fill_(value_scalar); }
 
             /// <summary>
             /// Gets the type of the tensor elements.
@@ -1665,6 +1708,31 @@ namespace TorchSharp
                 }
             }
 
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(byte value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(sbyte value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(short value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(int value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(long value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(Half value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#endif
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(float value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(double value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(bool value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_((float, float) value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, TensorIndex[])" />
+            public Tensor index_put_(System.Numerics.Complex value, params TensorIndex[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
@@ -1672,6 +1740,31 @@ namespace TorchSharp
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
+
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(byte value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(sbyte value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(short value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(int value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(long value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(Half value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+#endif
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(float value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(double value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(bool value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_((float, float) value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
+            /// <inheritdoc cref="index_put_(Scalar, Tensor[])" />
+            public Tensor index_put_(System.Numerics.Complex value, params Tensor[] indices) { using var value_scalar = value.ToScalar(); return index_put_(value_scalar, indices); }
 
             /// <summary>
             /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.
@@ -1791,6 +1884,31 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, byte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, sbyte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, short alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, int alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, long alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, Half alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+#endif
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, float alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, double alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, bool alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); } // FIXME: Well defined?
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, (float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add(long dim, Tensor index, Tensor source, System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add(dim, index, source, alpha_scalar); }
+
             /// <summary>
             /// Accumulate, in place, the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
             ///
@@ -1810,6 +1928,31 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, byte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, sbyte alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, short alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, int alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, long alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, Half alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+#endif
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, float alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, double alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, bool alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); } // FIXME: Well defined?
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, (float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
+            /// <inheritdoc cref="index_add_(long, Tensor, Tensor, Scalar)" />
+            public Tensor index_add_(long dim, Tensor index, Tensor source, System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return index_add_(dim, index, source, alpha_scalar); }
 
             /// <summary>
             /// Copies the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
@@ -1870,6 +2013,31 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, byte value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, sbyte value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, short value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, int value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, long value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, Half value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+#endif
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, float value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, double value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, bool value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, (float, float) value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill(long, Tensor, Scalar)" />
+            public Tensor index_fill(long dim, Tensor index, System.Numerics.Complex value) { using var value_scalar = value.ToScalar(); return index_fill(dim, index, value_scalar); }
+
             /// <summary>
             /// Fills, in place, the elements of the input tensor with value value by selecting the indices in the order given in index.
             ///
@@ -1888,6 +2056,31 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, byte value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, sbyte value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, short value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, int value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, long value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+#if NET6_0_OR_GREATER
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, Half value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+#endif
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, float value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, double value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, bool value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, (float, float) value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
+            /// <inheritdoc cref="index_fill_(long, Tensor, Scalar)" />
+            public Tensor index_fill_(long dim, Tensor index, System.Numerics.Complex value) { using var value_scalar = value.ToScalar(); return index_fill_(dim, index, value_scalar); }
 
             /// <summary>
             /// Returns a tensor with the same data and number of elements as the input tensor but with the specified shape.
@@ -2211,12 +2404,42 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            // FIXME: Consider in cases of threshold and value are not same typed?
+            public Tensor threshold(byte threshold, byte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(sbyte threshold, sbyte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(short threshold, short value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(int threshold, int value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(long threshold, long value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor threshold(Half threshold, Half value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+#endif
+            public Tensor threshold(float threshold, float value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(double threshold, double value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); }
+            public Tensor threshold(bool threshold, bool value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold((float, float) threshold, (float, float) value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold(System.Numerics.Complex threshold, System.Numerics.Complex value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return this.threshold(threshold_scalar, value_scalar); } // FIXME: Well defined?
+
             public Tensor threshold_(Scalar threshold, Scalar value)
             {
                 NativeMethods.THSTensor_threshold_(Handle, threshold.Handle, value.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            // FIXME: Consider in cases of threshold and value are not same typed?
+            public Tensor threshold_(byte threshold, byte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(sbyte threshold, sbyte value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(short threshold, short value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(int threshold, int value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(long threshold, long value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor threshold_(Half threshold, Half value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+#endif
+            public Tensor threshold_(float threshold, float value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(double threshold, double value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); }
+            public Tensor threshold_(bool threshold, bool value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold_((float, float) threshold, (float, float) value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); } // FIXME: Well defined?
+            public Tensor threshold_(System.Numerics.Complex threshold, System.Numerics.Complex value) { using var threshold_scalar = threshold.ToScalar(); using var value_scalar = value.ToScalar(); return threshold_(threshold_scalar, value_scalar); } // FIXME: Well defined?
 
             /// <summary>
             /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
@@ -2778,17 +3001,29 @@ namespace TorchSharp
             public Tensor softmax(long dim, ScalarType? dtype = null) =>
                 torch.special.softmax(this, dim, dtype);
 
-
-            public Tensor softplus(double beta = 1, double threshold = 20) =>
-                softplus1(beta, threshold);
-
-            private Tensor softplus1(Scalar beta, Scalar threshold)
+            public Tensor softplus(Scalar beta, Scalar threshold) // FIXME: No default beta and threshold?
             {
                 var res = NativeMethods.THSTensor_softplus(Handle, beta.Handle, threshold.Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
             }
+
+            // FIXME: Consider in cases of beta and threshold are not same typed?
+            public Tensor softplus(byte beta = 1, byte threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(sbyte beta = 1, sbyte threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(short beta = 1, short threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(int beta = 1, int threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+            public Tensor softplus(long beta = 1, long threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined?
+#if NET6_0_OR_GREATER
+            public Tensor softplus(Half beta, Half threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: No default beta and threshold?
+#endif
+            public Tensor softplus(float beta = 1, float threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); }
+            public Tensor softplus(double beta = 1, double threshold = 20) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); }
+            public Tensor softplus(bool beta, bool threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined? No default beta and threshold?
+            public Tensor softplus((float, float) beta, (float, float) threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined? No default beta and threshold?
+            public Tensor softplus(System.Numerics.Complex beta, System.Numerics.Complex threshold) { using var beta_scalar = beta.ToScalar(); using var threshold_scalar = threshold.ToScalar(); return softplus(beta_scalar, threshold_scalar); } // FIXME: Well defined? No default beta and threshold?
+            public Tensor softplus() => softplus(1.0, 20.0);
 
             public Tensor ravel()
             {
@@ -2848,10 +3083,6 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor celu() => this.celu(1.0);
-
-            public Tensor celu_() => this.celu_(1.0);
-
             public Tensor celu(Scalar alpha)
             {
                 var res = NativeMethods.THSTensor_celu(Handle, alpha.Handle);
@@ -2860,6 +3091,21 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor celu(byte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(sbyte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(short alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(int alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(long alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor celu(Half alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: No default alpha?
+#endif
+            public Tensor celu(float alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(double alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); }
+            public Tensor celu(bool alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu((float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu(System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return celu(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu() => celu(1.0);
+
             public Tensor celu_(Scalar alpha)
             {
                 NativeMethods.THSTensor_celu_(Handle, alpha.Handle);
@@ -2867,9 +3113,20 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor elu(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
-
-            public Tensor elu_(double alpha = 1) =>  elu(alpha, 1.0, 1.0);
+            public Tensor celu_(byte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(sbyte alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(short alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(int alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(long alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor celu_(Half alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: No default alpha?
+#endif
+            public Tensor celu_(float alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(double alpha = 1) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); }
+            public Tensor celu_(bool alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu_((float, float) alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu_(System.Numerics.Complex alpha) { using var alpha_scalar = alpha.ToScalar(); return celu_(alpha_scalar); } // FIXME: Well defined? No default alpha?
+            public Tensor celu_() => celu_(1.0);
 
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
@@ -2879,12 +3136,44 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            // FIXME: Consider in cases of alpha, scale and input_scale are not same typed?
+            public Tensor elu(byte alpha = 1, byte scale = 1, byte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(sbyte alpha = 1, sbyte scale = 1, sbyte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(short alpha = 1, short scale = 1, short input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(int alpha = 1, int scale = 1, int input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(long alpha = 1, long scale = 1, long input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor elu(Half alpha, Half scale, Half input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: No default alpha, scale and input_scale?
+#endif
+            public Tensor elu(float alpha = 1, float scale = 1, float input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(double alpha = 1, double scale = 1, double input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu(bool alpha, bool scale, bool input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu((float, float) alpha, (float, float) scale, (float, float) input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu(System.Numerics.Complex alpha, System.Numerics.Complex scale, System.Numerics.Complex input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu() => elu(1.0, 1.0, 1.0);
+
             public Tensor elu_(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 NativeMethods.THSTensor_elu_(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            // FIXME: Consider in cases of alpha, scale and input_scale are not same typed?
+            public Tensor elu_(byte alpha = 1, byte scale = 1, byte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(sbyte alpha = 1, sbyte scale = 1, sbyte input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(short alpha = 1, short scale = 1, short input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(int alpha = 1, int scale = 1, int input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(long alpha = 1, long scale = 1, long input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor elu_(Half alpha, Half scale, Half input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: No default alpha, scale and input_scale?
+#endif
+            public Tensor elu_(float alpha = 1, float scale = 1, float input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(double alpha = 1, double scale = 1, double input_scale = 1) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); }
+            public Tensor elu_(bool alpha, bool scale, bool input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu_((float, float) alpha, (float, float) scale, (float, float) input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu_(System.Numerics.Complex alpha, System.Numerics.Complex scale, System.Numerics.Complex input_scale) { using var alpha_scalar = alpha.ToScalar(); using var scale_scalar = scale.ToScalar(); using var input_scale_scalar = input_scale.ToScalar(); return elu_(alpha_scalar, scale_scalar, input_scale_scalar); } // FIXME: Well defined? No default alpha, scale and input_scale?
+            public Tensor elu_() => elu_(1.0, 1.0, 1.0);
 
             public Tensor gelu()
             {
@@ -2947,12 +3236,40 @@ namespace TorchSharp
                 return this;
             }
 
+            public Tensor hardtanh(byte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(sbyte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(short min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(int min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(long min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor hardtanh(Half min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+#endif
+            public Tensor hardtanh(float min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(double min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); }
+            public Tensor hardtanh(bool min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh((float, float) min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh(System.Numerics.Complex min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh(min_scalar, max_scalar); } // FIXME: Well defined?
+
             public Tensor hardtanh_(Scalar min, Scalar max)
             {
                 NativeMethods.THSTensor_hardtanh_(Handle, min.Handle, max.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            public Tensor hardtanh_(byte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(sbyte min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(short min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(int min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(long min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor hardtanh_(Half min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+#endif
+            public Tensor hardtanh_(float min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(double min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); }
+            public Tensor hardtanh_(bool min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh_((float, float) min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); } // FIXME: Well defined?
+            public Tensor hardtanh_(System.Numerics.Complex min, double max) { using var min_scalar = min.ToScalar(); using var max_scalar = max.ToScalar(); return hardtanh_(min_scalar, max_scalar); } // FIXME: Well defined?
 
             public Tensor heaviside(Tensor other)
             {
@@ -3113,12 +3430,40 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor leaky_relu(byte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu(sbyte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(short negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(int negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(long negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor leaky_relu(Half negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+#endif
+            public Tensor leaky_relu(float negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(double negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); }
+            public Tensor leaky_relu(bool negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu((float, float) negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu(System.Numerics.Complex negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu(negative_slope_scalar); } // FIXME: Well defined?
+
             public Tensor leaky_relu_(Scalar negative_slope)
             {
                 NativeMethods.THSTensor_leaky_relu_(Handle, negative_slope.Handle);
                 CheckForErrors();
                 return this;
             }
+
+            public Tensor leaky_relu_(byte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu_(sbyte negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(short negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(int negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(long negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+#if NET6_0_OR_GREATER
+            public Tensor leaky_relu_(Half negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+#endif
+            public Tensor leaky_relu_(float negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(double negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); }
+            public Tensor leaky_relu_(bool negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu_((float, float) negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
+            public Tensor leaky_relu_(System.Numerics.Complex negative_slope) { using var negative_slope_scalar = negative_slope.ToScalar(); return leaky_relu_(negative_slope_scalar); } // FIXME: Well defined?
 
             public Tensor selu()
             {
@@ -3551,7 +3896,7 @@ namespace TorchSharp
 
             public Tensor eq(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_eq(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3561,7 +3906,7 @@ namespace TorchSharp
 
             public Tensor eq_(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_eq_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3569,7 +3914,7 @@ namespace TorchSharp
 
             public Tensor eq(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_eq_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3577,7 +3922,7 @@ namespace TorchSharp
 
             public Tensor eq_(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_eq_scalar_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3608,7 +3953,7 @@ namespace TorchSharp
 
             public Tensor ge(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_ge(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3618,7 +3963,7 @@ namespace TorchSharp
 
             public Tensor ge_(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_ge_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3626,7 +3971,7 @@ namespace TorchSharp
 
             public Tensor ge(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_ge_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3634,7 +3979,7 @@ namespace TorchSharp
 
             public Tensor ge_(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_ge_scalar_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3642,7 +3987,7 @@ namespace TorchSharp
 
             public Tensor gt(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_gt(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3652,7 +3997,7 @@ namespace TorchSharp
 
             public Tensor gt_(Tensor target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_gt_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -3660,7 +4005,7 @@ namespace TorchSharp
 
             public Tensor gt(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 var res = NativeMethods.THSTensor_gt_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
@@ -3668,7 +4013,7 @@ namespace TorchSharp
 
             public Tensor gt_(Scalar target)
             {
-                if (target is null) return false;
+                if (target is null) return torch.tensor(false);
                 NativeMethods.THSTensor_gt_scalar_(Handle, target.Handle);
                 CheckForErrors();
                 return this;
@@ -6294,94 +6639,730 @@ namespace TorchSharp
 
             // Operators overloading
 
-            public static Tensor operator ==(Tensor left, Tensor right)
+            public static Tensor operator ==(Tensor left, Tensor right) => left.eq(right);
+
+            public static Tensor operator ==(Tensor left, Scalar right) => left.eq(right);
+
+            public static Tensor operator ==(Scalar left, Tensor right) => right.eq(left);
+
+            public static Tensor operator ==(Tensor left, byte right)
             {
-                return left.eq(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, int right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, long right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator ==(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+#endif
+            public static Tensor operator ==(Tensor left, float right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, double right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, bool right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, (float, float) right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(Tensor left, System.Numerics.Complex right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left == right_scalar;
+            }
+            public static Tensor operator ==(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(int left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(long left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator ==(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+#endif
+            public static Tensor operator ==(float left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(bool left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==((float, float) left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
+            }
+            public static Tensor operator ==(System.Numerics.Complex left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar == right;
             }
 
-            public static Tensor operator ==(Tensor left, Scalar right)
+            public static Tensor operator !=(Tensor left, Tensor right) => left.ne(right);
+
+            public static Tensor operator !=(Tensor left, Scalar right) => left.ne(right);
+
+            public static Tensor operator !=(Scalar left, Tensor right) => right.ne(left);
+
+            public static Tensor operator !=(Tensor left, byte right)
             {
-                return left.eq(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, int right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, long right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator !=(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+#endif
+            public static Tensor operator !=(Tensor left, float right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, double right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, bool right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, (float, float) right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(Tensor left, System.Numerics.Complex right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left != right_scalar;
+            }
+            public static Tensor operator !=(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(int left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(long left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator !=(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+#endif
+            public static Tensor operator !=(float left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(bool left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=((float, float) left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
+            }
+            public static Tensor operator !=(System.Numerics.Complex left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar != right;
             }
 
-            public static Tensor operator ==(Scalar left, Tensor right)
+            public static Tensor operator <(Tensor left, Tensor right) => left.lt(right);
+
+            public static Tensor operator <(Tensor left, Scalar right) => left.lt(right);
+
+            public static Tensor operator <(Scalar left, Tensor right) => right.gt(left);
+
+            public static Tensor operator <(Tensor left, byte right)
             {
-                return right.eq(left);
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, int right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, long right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+#endif
+            public static Tensor operator <(Tensor left, float right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, double right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left < right_scalar;
+            }
+            public static Tensor operator <(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(int left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(long left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+#endif
+            public static Tensor operator <(float left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
+            }
+            public static Tensor operator <(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar < right;
             }
 
-            public static Tensor operator !=(Tensor left, Tensor right)
+            public static Tensor operator <=(Tensor left, Tensor right) => left.le(right);
+
+            public static Tensor operator <=(Tensor left, Scalar right) => left.le(right);
+
+            public static Tensor operator <=(Scalar left, Tensor right) => right.ge(left);
+
+            public static Tensor operator <=(Tensor left, byte right)
             {
-                return left.ne(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, int right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, long right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <=(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+#endif
+            public static Tensor operator <=(Tensor left, float right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, double right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left <= right_scalar;
+            }
+            public static Tensor operator <=(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(int left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(long left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator <=(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+#endif
+            public static Tensor operator <=(float left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
+            }
+            public static Tensor operator <=(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar <= right;
             }
 
-            public static Tensor operator !=(Tensor left, Scalar right)
+            public static Tensor operator >(Tensor left, Tensor right) => left.gt(right);
+
+            public static Tensor operator >(Tensor left, Scalar right) => left.gt(right);
+
+            public static Tensor operator >(Scalar left, Tensor right) => right.lt(left);
+
+            public static Tensor operator >(Tensor left, byte right)
             {
-                return left.ne(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, sbyte right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, short right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, int right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, long right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >(Tensor left, Half right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+#endif
+            public static Tensor operator >(Tensor left, float right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, double right)
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, bool right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, (float, float) right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left > right_scalar;
+            }
+            public static Tensor operator >(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(int left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(long left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+#endif
+            public static Tensor operator >(float left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
+            }
+            public static Tensor operator >(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar > right;
             }
 
-            public static Tensor operator !=(Scalar left, Tensor right)
-            {
-                return right.ne(left);
-            }
+            public static Tensor operator >=(Tensor left, Tensor right) => left.ge(right);
 
-            public static Tensor operator <(Tensor left, Tensor right)
-            {
-                return left.lt(right);
-            }
+            public static Tensor operator >=(Tensor left, Scalar right) => left.ge(right);
 
-            public static Tensor operator <(Tensor left, Scalar right)
-            {
-                return left.lt(right);
-            }
+            public static Tensor operator >=(Scalar left, Tensor right) => right.le(left);
 
-            public static Tensor operator <(Scalar left, Tensor right)
+            public static Tensor operator >=(Tensor left, byte right)
             {
-                return right.gt(left);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator <=(Tensor left, Tensor right)
+            public static Tensor operator >=(Tensor left, sbyte right)
             {
-                return left.le(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator <=(Tensor left, Scalar right)
+            public static Tensor operator >=(Tensor left, short right)
             {
-                return left.le(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator <=(Scalar left, Tensor right)
+            public static Tensor operator >=(Tensor left, int right)
             {
-                return right.ge(left);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator >(Tensor left, Tensor right)
+            public static Tensor operator >=(Tensor left, long right)
             {
-                return left.gt(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator >(Tensor left, Scalar right)
+#if NET6_0_OR_GREATER
+            public static Tensor operator >=(Tensor left, Half right)
             {
-                return left.gt(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator >(Scalar left, Tensor right)
+#endif
+            public static Tensor operator >=(Tensor left, float right)
             {
-                return right.lt(left);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator >=(Tensor left, Tensor right)
+            public static Tensor operator >=(Tensor left, double right)
             {
-                return left.ge(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator >=(Tensor left, Scalar right)
+            public static Tensor operator >=(Tensor left, bool right) // FIXME: Well defined?
             {
-                return left.ge(right);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
             }
-
-            public static Tensor operator >=(Scalar left, Tensor right)
+            public static Tensor operator >=(Tensor left, (float, float) right) // FIXME: Well defined?
             {
-                return right.le(left);
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(Tensor left, System.Numerics.Complex right) // FIXME: Well defined?
+            {
+                using Scalar right_scalar = right.ToScalar();
+                return left >= right_scalar;
+            }
+            public static Tensor operator >=(byte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(sbyte left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(short left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(int left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(long left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+#if NET6_0_OR_GREATER
+            public static Tensor operator >=(Half left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+#endif
+            public static Tensor operator >=(float left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(double left, Tensor right)
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(bool left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=((float, float) left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
+            }
+            public static Tensor operator >=(System.Numerics.Complex left, Tensor right) // FIXME: Well defined?
+            {
+                using Scalar left_scalar = left.ToScalar();
+                return left_scalar >= right;
             }
 
             /// <summary>
@@ -6390,6 +7371,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(byte value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6399,6 +7381,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(sbyte value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6408,6 +7391,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(short value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6417,6 +7401,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(int value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6426,6 +7411,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(long value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6435,6 +7421,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(float value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6444,6 +7431,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(double value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6453,6 +7441,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(bool value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6462,6 +7451,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor((float, float) value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6471,6 +7461,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value.</param>
             public static implicit operator Tensor(System.Numerics.Complex value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6480,6 +7471,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(byte[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6489,6 +7481,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(sbyte[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6498,6 +7491,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(short[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6507,6 +7501,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(int[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6516,6 +7511,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(long[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6525,6 +7521,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(float[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6534,6 +7531,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(double[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6543,6 +7541,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(bool[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6552,6 +7551,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor((float, float)[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6561,6 +7561,7 @@ namespace TorchSharp
             /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(System.Numerics.Complex[] value)
             {
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return torch.tensor(value);
             }
 
@@ -6571,6 +7572,7 @@ namespace TorchSharp
             public static implicit operator Tensor(Scalar scalar)
             {
                 _throw();
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return new Tensor(IntPtr.Zero);
             }
 
@@ -6669,7 +7671,8 @@ namespace TorchSharp
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
 
                 if (dim == 0) {
-                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                    using (var scalar = t.ToScalar())
+                        PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                     return sb.ToString(); ;
                 }
 
@@ -6681,25 +7684,30 @@ namespace TorchSharp
                 else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                     } else {
                         for (var i = 0; i < leadingCols; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
                         sb.Append("... ");
 
                         for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                     }
                 } else {
                     var newline = string.Join("", Enumerable.Repeat(newLine, (int)dim - 1).ToList());
@@ -6757,7 +7765,8 @@ namespace TorchSharp
                     sb.Append(", value = ");
 
                     if (t.Dimensions == 0) {
-                        PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t.ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                         return sb.ToString(); ;
                     }
                 }
@@ -6831,16 +7840,19 @@ namespace TorchSharp
                 else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                         sb.Append(appendChar);
                     } else {
                         for (var i = 0; i < leadingCols; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
                         }
@@ -6848,12 +7860,14 @@ namespace TorchSharp
                         sb.Append("... ");
 
                         for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
-                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            using (var scalar = t[i].ToScalar())
+                                PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
                         }
 
-                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        using (var scalar = t[currentSize - 1].ToScalar())
+                            PrintValue(sb, t.dtype, scalar, fltFormat, actualCulturInfo);
                         sb.Append(appendChar);
                     }
                 } else {
@@ -6912,7 +7926,8 @@ namespace TorchSharp
                 if (Dimensions == 0) {
 
                     builder.Append(", value = ");
-                    PrintValue(builder, dtype, this.ToScalar(), fltFormat, actualCulturInfo);
+                    using (var scalar = this.ToScalar())
+                        PrintValue(builder, dtype, scalar, fltFormat, actualCulturInfo);
 
                 } else if (Dimensions == 1) {
 
@@ -7043,7 +8058,8 @@ namespace TorchSharp
                 for (int i = 0; i < t.shape[0]; i++) {
 
                     var builder = new StringBuilder();
-                    PrintValue(builder, type, t[i].ToScalar(), fltFormat, cultureInfo);
+                    using (var scalar = t[i].ToScalar())
+                        PrintValue(builder, type, scalar, fltFormat, cultureInfo);
 
                     var str = builder.ToString();
 
@@ -7315,6 +8331,7 @@ namespace TorchSharp
             public static implicit operator Tensor(TensorIndex value)
             {
                 _throw();
+                TensorLeakDetector.ThrowIfImplicitConversionNotAllowed();
                 return new Tensor(IntPtr.Zero);
             }
 

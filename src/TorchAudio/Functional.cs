@@ -73,14 +73,15 @@ namespace TorchSharp
                     spec_f = spec_f.reshape(spec_shape);
 
                     if (normalized) {
-                        spec_f /= window.pow(2.0).sum().sqrt();
+                        spec_f /= window.square().sum().sqrt();
                     }
 
                     if (power.HasValue) {
                         if (power.Value == 1.0) {
                             spec_f = spec_f.abs();
                         } else {
-                            spec_f = spec_f.abs().pow(power.Value);
+                            using var power_scalar = power.Value.ToScalar();
+                            spec_f = spec_f.abs().pow(power_scalar); // FIXME: Call torch.Tensor.square if power.Value == 2.0?
                         }
                     }
 
@@ -112,7 +113,7 @@ namespace TorchSharp
                 using (var d = torch.NewDisposeScope()) {
 
                     if (normalized) {
-                        spectrogram = spectrogram * window.pow(2.0).sum().sqrt();
+                        spectrogram = spectrogram * window.square().sum().sqrt();
                     }
 
                     // pack batch
@@ -180,23 +181,24 @@ namespace TorchSharp
                     throw new ArgumentOutOfRangeException($"momentum must be in range [0, 1). Found: {momentum}");
                 }
                 momentum = momentum / (1 + momentum);
+                var need_momentum = momentum > 0.0;
+                using var momentum_scalar = (need_momentum) ? momentum.ToScalar() : null;
 
                 // pack batch
                 var shape = specgram.size();
                 specgram = specgram.reshape(new long[] { -1, shape[shape.Length - 2], shape[shape.Length - 1] });
 
-                specgram = specgram.pow(1 / power);
+                using var exponent_scalar = (1 / power).ToScalar();
+                specgram = specgram.pow(exponent_scalar); // FIXME: Use inplace ops? Skip if power == 1?
 
                 // initialize the phase
-                Tensor angles;
-                if (rand_init) {
-                    angles = torch.rand(specgram.size(), dtype: _get_complex_dtype(specgram.dtype), device: specgram.device);
-                } else {
-                    angles = torch.full(specgram.size(), 1, dtype: _get_complex_dtype(specgram.dtype), device: specgram.device);
-                }
+                var angles = (rand_init)
+                    ? torch.rand(specgram.size(), dtype: _get_complex_dtype(specgram.dtype), device: specgram.device)
+                    : torch.ones(specgram.size(), dtype: _get_complex_dtype(specgram.dtype), device: specgram.device);
 
                 // And initialize the previous iterate to 0
                 var tprev = torch.tensor(0.0, dtype: specgram.dtype, device: specgram.device);
+                using var eps_scalar = (1e-16).ToScalar();
                 for (int i = 0; i < n_iter; i++) {
                     // Invert with our current estimate of the phases
                     var inverse = torch.istft(
@@ -218,10 +220,10 @@ namespace TorchSharp
 
                     // Update our phase estimates
                     angles = rebuilt;
-                    if (momentum > 0.0) {
-                        angles = angles - tprev.mul_(momentum);
+                    if (need_momentum) {
+                        angles = angles - tprev.mul_(momentum_scalar!); // FIXME: Use inplace ops?
                     }
-                    angles = angles.div(angles.abs().add(1e-16));
+                    angles = angles.div(angles.abs().add(eps_scalar));
 
                     // Store the previous iterate
                     tprev = rebuilt;
@@ -528,6 +530,8 @@ namespace TorchSharp
                 if (lowpass_filter_width <= 0) {
                     throw new ArgumentOutOfRangeException();
                 }
+                using var min_scalar = (-lowpass_filter_width).ToScalar();
+                using var max_scalar = lowpass_filter_width.ToScalar();
 
                 var kernels_list = new List<torch.Tensor>();
                 double base_freq = Math.Min(orig_freq, new_freq);
@@ -535,11 +539,14 @@ namespace TorchSharp
 
                 var width = (int)Math.Ceiling(((double)lowpass_filter_width) * orig_freq / base_freq);
                 var idx_dtype = dtype ?? torch.float64;
-                var idx = torch.arange(-width, width + orig_freq, device: device, dtype: idx_dtype);
+                using var start_scalar = (-width).ToScalar();
+                using var stop_scalar = (width + orig_freq).ToScalar();
+                var idx = torch.arange(start_scalar, stop_scalar, device: device, dtype: idx_dtype);
 
+                using var zero_scalar = 0.ToScalar();
                 for (int i = 0; i < new_freq; i++) {
                     var t = (-i / new_freq + idx / orig_freq) * base_freq;
-                    t = t.clamp_(-lowpass_filter_width, lowpass_filter_width);
+                    t = t.clamp_(min_scalar, max_scalar);
 
                     torch.Tensor window;
                     if (resampling_method == ResamplingMethod.sinc_interpolation) {
@@ -554,13 +561,14 @@ namespace TorchSharp
                     }
                     t *= Math.PI;
                     // Tensor.to(Tensor) of TorchSharp desn't change dtype.
-                    var kernel = torch.where(t == 0, torch.tensor(1.0).to(t).type_as(t), torch.sin(t) / t);
+                    var kernel = torch.where(t == zero_scalar, torch.tensor(1.0).to(t).type_as(t), torch.sin(t) / t);
                     kernel.mul_(window);
                     kernels_list.Add(kernel);
                 }
 
                 var scale = ((double)base_freq) / orig_freq;
-                var kernels = torch.stack(kernels_list.ToArray()).view(new_freq, 1, -1).mul_(scale);
+                using var scale_scalar = scale.ToScalar();
+                var kernels = torch.stack(kernels_list.ToArray()).view(new_freq, 1, -1).mul_(scale_scalar);
                 if (dtype == null) {
                     kernels = kernels.to(torch.float32);
                 }

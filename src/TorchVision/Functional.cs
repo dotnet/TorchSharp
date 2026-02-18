@@ -110,9 +110,12 @@ namespace TorchSharp
                         img = img.alias();
                     }
 
-                    using var t0 = img.pow(gamma);
+                    using var gamma_scalar = gamma.ToScalar();
+                    using var t0 = img.pow(gamma_scalar);
                     using var t1 = gain * t0;
-                    using var t2 = t1.clamp(0, 1);
+                    using var zero_scalar = 0.ToScalar();
+                    using var one_scalar = 1.ToScalar();
+                    using var t2 = t1.clamp(zero_scalar, one_scalar);
 
                     return convert_image_dtype(t2, dtype);
                 }
@@ -276,8 +279,10 @@ namespace TorchSharp
                     var t3 = t2.nonzero_as_list();
                     var eq_idxs = t3[0];
 
-                    using var t4 = minimum.index_put_(0, eq_idxs);
-                    using var t5 = maximum.index_put_(bound, eq_idxs);
+                    using var zero_scalar = 0.ToScalar();
+                    using var t4 = minimum.index_put_(zero_scalar, eq_idxs);
+                    using var bound_scalar = bound.ToScalar();
+                    using var t5 = maximum.index_put_(bound_scalar, eq_idxs);
 
                     using var t6 = (maximum - minimum);
                     using var t7 = torch.tensor(bound, float32);
@@ -286,7 +291,7 @@ namespace TorchSharp
 
                     using var t8 = (input - minimum);
                     using var t9 = t8 * scale;
-                    using var t10 = t9.clamp(0, bound);
+                    using var t10 = t9.clamp(zero_scalar, bound_scalar);
 
                     return t10.to(input.dtype);
                 }
@@ -344,7 +349,9 @@ namespace TorchSharp
                         }
 
                         var eps = 1e-3;
-                        using var result = image.mul(output_max + 1.0 - eps);
+                        var factor = output_max + 1.0 - eps;
+                        using var factor_scalar = factor.ToScalar();
+                        using var result = image.mul(factor_scalar);
                         return result.to_type(dtype);
 
                     } else {
@@ -359,7 +366,8 @@ namespace TorchSharp
 
                         if (input_max > output_max) {
                             var factor = (input_max + 1) / (output_max + 1);
-                            using var t0 = torch.div(image, factor);
+                            using var factor_scalar = factor.ToScalar();
+                            using var t0 = torch.div(image, factor_scalar);
                             return t0.to_type(dtype);
                         } else {
                             var factor = (output_max + 1) / (input_max + 1);
@@ -898,7 +906,9 @@ namespace TorchSharp
                     using var t0 = img1 * ratio;
                     using var t2 = img2 * (1.0 - ratio);
                     using var t3 = (t0 + t2);
-                    using var t4 = t3.clamp(0, bound);
+                    using var zero_scalar = 0.ToScalar();
+                    using var bound_scalar = bound.ToScalar();
+                    using var t4 = t3.clamp(zero_scalar, bound_scalar);
                     return t4.to(img1.dtype);
                 }
 
@@ -927,7 +937,7 @@ namespace TorchSharp
                     using var x = torch.linspace(-ksize_half, ksize_half, size);
                     using var t0 = x / sigma;
                     using var t1 = -t0;
-                    using var t2 = t1.pow(2);
+                    using var t2 = t1.square();
 
                     using var pdf = t2 * 0.5f;
                     using var sum = pdf.sum();
