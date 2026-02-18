@@ -779,6 +779,17 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the base 2 exponential function of input, in-place.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor exp2_()
+            {
+                THSTensor_exp2_(Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            /// <summary>
             /// Returns a new tensor with the exponential of the elements minus 1 of input.
             /// </summary>
             /// <returns></returns>
@@ -811,6 +822,18 @@ namespace TorchSharp
                 var res = THSTensor_float_power(Handle, target.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Raises input to the power of exponent, elementwise, in double precision, in-place.
+            /// </summary>
+            /// <param name="target">The exponent.</param>
+            /// <returns></returns>
+            public Tensor float_power_(Tensor target)
+            {
+                THSTensor_float_power_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1277,6 +1300,25 @@ namespace TorchSharp
                         var res = THSTensor_logit(Handle, (IntPtr)pEps);
                         if (res == IntPtr.Zero) { CheckForErrors(); }
                         return new Tensor(res);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Returns the logit of the elements of input, in-place.
+            /// input is clamped to [eps, 1 - eps] when eps is not null
+            /// </summary>
+            /// <param name="eps">The epsilon for input clamp bound.</param>
+            /// <returns></returns>
+            public Tensor logit_(double? eps = null)
+            {
+                var epsArr = eps.HasValue ? new double[] { eps.Value } : null;
+
+                unsafe {
+                    fixed (double* pEps = epsArr) {
+                        THSTensor_logit_(Handle, (IntPtr)pEps);
+                        CheckForErrors();
+                        return this;
                     }
                 }
             }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
 namespace TorchSharp
 {
 
@@ -26,11 +27,11 @@ namespace TorchSharp
                 {
                     protected bool _bijective = false;
 
-                    protected constraints.Constraint _domain;
+                    protected constraints.Constraint _domain = null!;
 
-                    protected constraints.Constraint _codomain;
+                    protected constraints.Constraint _codomain = null!;
 
-                    protected Transform _inv = null;
+                    protected Transform? _inv = null;
 
                     public virtual int event_dim {
                         get {
@@ -42,7 +43,7 @@ namespace TorchSharp
 
                     public virtual Transform inv {
                         get {
-                            Transform result = null;
+                            Transform? result = null;
                             if (this._inv != null)
                                 result = _inv;
                             if (result == null) {
@@ -118,19 +119,19 @@ namespace TorchSharp
 
                     public override constraints.Constraint domain {
                         get {
-                            return _inv.domain;
+                            return _inv!.domain;
                         }
                     }
 
                     public override constraints.Constraint codomain {
                         get {
-                            return _inv.codomain;
+                            return _inv!.codomain;
                         }
                     }
 
                     public override bool bijective {
                         get {
-                            return _inv.bijective;
+                            return _inv!.bijective;
                         }
                     }
 
@@ -140,32 +141,32 @@ namespace TorchSharp
 
                     protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y)
                     {
-                        return -_inv.log_abs_det_jacobian(y, x);
+                        return -_inv!.log_abs_det_jacobian(y, x);
                     }
 
                     protected internal override Tensor _call(Tensor x)
                     {
-                        return _inv._inverse(x);
+                        return _inv!._inverse(x);
                     }
 
                     protected internal override Tensor _inverse(Tensor y)
                     {
-                        return _inv._call(y);
+                        return _inv!._call(y);
                     }
 
                     protected internal override Tensor _sign()
                     {
-                        return _inv.sign;
+                        return _inv!.sign;
                     }
 
                     public override long[] forward_shape(long[] shape)
                     {
-                        return _inv.forward_shape(shape);
+                        return _inv!.forward_shape(shape);
                     }
 
                     public override long[] inverse_shape(long[] shape)
                     {
-                        return _inv.inverse_shape(shape);
+                        return _inv!.inverse_shape(shape);
                     }
                 }
 
@@ -173,8 +174,6 @@ namespace TorchSharp
                 {
                     public ComposeTransform(IEnumerable<Transform> parts, int cache_size = 0)
                     {
-                        if (parts == null) throw new ArgumentNullException("parts cannot be null");
-
                         _parts = parts.ToArray();
                         _reverse_parts = parts.Reverse().ToArray();
                     }
@@ -186,13 +185,13 @@ namespace TorchSharp
 
                     public override Transform inv {
                         get {
-                            Transform i = _inv;
+                            Transform? i = _inv;
 
                             if (i == null) {
                                 i = new ComposeTransform(_reverse_parts.Select(p => p.inv));
                                 _inv = i;
                             }
-                            return _inv;
+                            return _inv!;
                         }
                     }
 
