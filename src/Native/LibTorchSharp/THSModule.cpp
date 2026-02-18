@@ -98,10 +98,10 @@ Tensor THSNN_Module_get_parameter(const NNModule module, const char* name)
     CATCH_TENSOR(*(*module)->named_parameters().find(name));
 }
 
-void THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length), bool recurse)
+void THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator)(size_t length), bool recurse)
 {
     auto parameters = (*module)->parameters(recurse);
-    Tensor* result1 = allocator1(parameters.size());
+    Tensor* result1 = allocator(parameters.size());
 
     for (size_t i = 0; i < parameters.size(); i++)
     {
