@@ -6942,12 +6942,12 @@ namespace TorchSharp
         [TestOf(nameof(fft.hfft))]
         public void Float32HFFT()
         {
-            var input = torch.arange(4);
+            var input = torch.arange(4, complex64);
             var output = fft.hfft(input);
             Assert.Equal(6, output.shape[0]);
             Assert.Equal(ScalarType.Float32, output.dtype);
 
-            var inverted = fft.ifft(output);
+            var inverted = fft.ihfft(output);
             Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
         }
 
@@ -6955,12 +6955,12 @@ namespace TorchSharp
         [TestOf(nameof(fft.hfft))]
         public void Float64HFFT()
         {
-            var input = torch.arange(4, float64);
+            var input = torch.arange(4, complex128);
             var output = fft.hfft(input);
             Assert.Equal(6, output.shape[0]);
             Assert.Equal(ScalarType.Float64, output.dtype);
 
-            var inverted = fft.ifft(output);
+            var inverted = fft.ihfft(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 
@@ -7203,10 +7203,10 @@ namespace TorchSharp
         [TestOf(nameof(fft.hfft2))]
         public void Float32HFFT2()
         {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
             var output = fft.hfft2(input);
             Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
-            Assert.Equal(input.dtype, output.dtype);
+            Assert.Equal(ScalarType.Float32, output.dtype);
 
             var inverted = fft.ihfft2(output);
             Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
@@ -7217,10 +7217,10 @@ namespace TorchSharp
         [TestOf(nameof(fft.hfft2))]
         public void Float64HFFT2()
         {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex128);
             var output = fft.hfft2(input);
             Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
-            Assert.Equal(input.dtype, output.dtype);
+            Assert.Equal(ScalarType.Float64, output.dtype);
 
             var inverted = fft.ihfft2(output);
             Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
@@ -7228,15 +7228,15 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(fft.hfft2))]
+        [TestOf(nameof(fft.hfftn))]
         public void Float32HFFTN()
         {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 });
-            var output = fft.hfft2(input);
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
+            var output = fft.hfftn(input);
             Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
-            Assert.Equal(input.dtype, output.dtype);
+            Assert.Equal(ScalarType.Float32, output.dtype);
 
-            var inverted = fft.ihfft2(output);
+            var inverted = fft.ihfftn(output);
             Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
             Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
         }
@@ -7249,10 +7249,10 @@ namespace TorchSharp
 
                 // TODO: Something in this test makes if fail on Windows / Release and MacOS / Release
 
-                var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+                var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex128);
                 var output = fft.hfftn(input);
                 Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
-                Assert.Equal(input.dtype, output.dtype);
+                Assert.Equal(ScalarType.Float64, output.dtype);
 
                 var inverted = fft.ihfftn(output);
                 Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
