@@ -61,8 +61,8 @@
     <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-$(TargetArchitecture)</TargetRuntimeID>
 
-    <!-- on windows separate debug binaries of LibTorch are available (except ARM64, which currently uses the non-debug archive) -->
-    <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows' and '$(TargetArchitecture)' != 'arm64'">-debug</LibTorchDebug>
+    <!-- on windows separate debug binaries of LibTorch are available -->
+    <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
 
     <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
     <NativeCudaOutputPath>$(NativeOutputPath)cuda\</NativeCudaOutputPath>
