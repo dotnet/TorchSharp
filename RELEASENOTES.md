@@ -24,6 +24,7 @@ __Bug Fixes__:
 
 __API Changes__:
 
+#1498 Add support for torch.export ExportedProgram models (.pt2 files)<br/>
 #1503 Add ReadOnlySpan overloads to many methods.<br/>
 #1478 Fix `torch.jit.ScriptModule.zero_grad`.<br/>
 #1495 Make `torchvision.io.read_image` and `torchvision.io.read_image_async` allow subsequent opening of the file for reading.<br/>

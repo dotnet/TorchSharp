@@ -99,3 +99,7 @@ EXPORT_API(TensorOrScalar*) THSJIT_AllocateTensorOrScalarArray(int32_t size);
 EXPORT_API(void) THSJIT_FreeTensorOrScalarArray(TensorOrScalar* ptr);
 EXPORT_API(void) THSJIT_SetTensorOrScalar(TensorOrScalar* array, int32_t index, int64_t type_code, int64_t array_index, ptrdiff_t handle);
 EXPORT_API(TensorOrScalar*) THSJIT_GetTensorOrScalar(TensorOrScalar* array, int32_t index);
+
+// Helper functions (shared with THSExport)
+std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int length);
+TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t* idx);
