@@ -52,17 +52,16 @@
     <TargetOS Condition="'$(TargetOS)' == '' AND $([MSBuild]::IsOSPlatform('osx'))">mac</TargetOS>
     <TargetOS Condition="'$(TargetOS)' == '' AND '$(OS)' != 'Windows_NT'">linux</TargetOS>
 
+
     <TargetPlatform Condition="'$(TargetPlatform)' == ''">$(TargetOS)-$(TargetArchitecture)</TargetPlatform>
 
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'arm64'">win-arm64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows' and '$(TargetArchitecture)' != 'arm64'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
-
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-$(TargetArchitecture)</TargetRuntimeID>
 
-    <!-- on windows separate debug binaries of LibTorch are available-->
+    <!-- on windows separate debug binaries of LibTorch are available -->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
 
     <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
@@ -95,8 +94,8 @@
 
   <PropertyGroup>
     <!-- turned on/off manually in separate CI jobs -->
-    <SkipCuda Condition="'$(TargetOS)' == 'mac'">true</SkipCuda>
-    <SkipCuda Condition="'$(TargetOS)' != 'mac'">false</SkipCuda>
+    <SkipCuda Condition="'$(TargetOS)' == 'mac' or ('$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'arm64')">true</SkipCuda>
+    <SkipCuda Condition="'$(SkipCuda)' == ''">false</SkipCuda>
     <SkipTests>false</SkipTests>
 
     <!-- By default only TorchSharp and no libtorch-cpu or libtorch-cuda packages are built.  The CI file controls these via 'BuildLibTorchPackages' -->
@@ -141,7 +140,8 @@
     <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
     <LibTorchCudaLocalNameSuffix>cu$(CudaVersionNoDot)</LibTorchCudaLocalNameSuffix>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
-    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'arm64'">libtorch-win-arm64-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-cxx11-abi-shared-with-deps</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos-x86_64</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetPlatform)' == 'mac-arm64'">libtorch-macos-arm64</LibTorchArchiveCoreName>
     <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
