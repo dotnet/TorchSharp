@@ -8,7 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TorchSharp\TorchSharp.nupkgproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net8.0\$(MSBuildProjectName).props" />
     <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net8.0\$(MSBuildProjectName).targets" />
