@@ -466,5 +466,223 @@ namespace TorchSharp
         // Because some of the tests mess with global state, and are run in parallel, we need to
         // acquire a lock before testing setting the default RNG see.
         private static object _lock = new object();
+
+        [Fact]
+        [TestOf(nameof(ScalarType))]
+        public void QIntScalarTypeEnumValues()
+        {
+            // Verify the enum values match PyTorch's ScalarType ordinals
+            Assert.Equal(12, (int)ScalarType.QInt8);
+            Assert.Equal(13, (int)ScalarType.QUInt8);
+            Assert.Equal(14, (int)ScalarType.QInt32);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.is_quantized))]
+        public void IsQuantizedScalarType()
+        {
+            // Quantized types should return true
+            Assert.True(torch.is_quantized(ScalarType.QInt8));
+            Assert.True(torch.is_quantized(ScalarType.QUInt8));
+            Assert.True(torch.is_quantized(ScalarType.QInt32));
+
+            // Non-quantized types should return false
+            Assert.False(torch.is_quantized(ScalarType.Float32));
+            Assert.False(torch.is_quantized(ScalarType.Float64));
+            Assert.False(torch.is_quantized(ScalarType.Int8));
+            Assert.False(torch.is_quantized(ScalarType.Int32));
+            Assert.False(torch.is_quantized(ScalarType.Bool));
+            Assert.False(torch.is_quantized(ScalarType.Byte));
+            Assert.False(torch.is_quantized(ScalarType.ComplexFloat32));
+            Assert.False(torch.is_quantized(ScalarType.BFloat16));
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.qint8))]
+        public void QIntDtypeAliases()
+        {
+            // Verify dtype aliases map to the correct ScalarType values
+            Assert.Equal(ScalarType.QInt8, torch.qint8);
+            Assert.Equal(ScalarType.QUInt8, torch.quint8);
+            Assert.Equal(ScalarType.QInt32, torch.qint32);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.is_quantized))]
+        public void IsQuantizedNotIntegralOrFloating()
+        {
+            // Quantized types should not be classified as integral, floating, or complex
+            Assert.False(torch.is_integral(ScalarType.QInt8));
+            Assert.False(torch.is_integral(ScalarType.QUInt8));
+            Assert.False(torch.is_integral(ScalarType.QInt32));
+
+            Assert.False(torch.is_floating_point(ScalarType.QInt8));
+            Assert.False(torch.is_floating_point(ScalarType.QUInt8));
+            Assert.False(torch.is_floating_point(ScalarType.QInt32));
+
+            Assert.False(torch.is_complex(ScalarType.QInt8));
+            Assert.False(torch.is_complex(ScalarType.QUInt8));
+            Assert.False(torch.is_complex(ScalarType.QInt32));
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.quantize_per_tensor))]
+        public void QuantizePerTensorQInt8()
+        {
+            var floatTensor = torch.tensor(new float[] { 1.0f, 2.0f, 3.0f, 4.0f });
+
+            var qTensor = torch.quantize_per_tensor(floatTensor, 0.1, 0, ScalarType.QInt8);
+            Assert.True(qTensor.is_quantized());
+            Assert.Equal(ScalarType.QInt8, qTensor.dtype);
+            Assert.False(qTensor.is_floating_point());
+            Assert.False(qTensor.is_integral());
+            Assert.False(qTensor.is_complex());
+
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.quantize_per_tensor))]
+        public void QuantizePerTensorQUInt8()
+        {
+            var floatTensor = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f });
+
+            var qTensor = torch.quantize_per_tensor(floatTensor, 0.1, 128, ScalarType.QUInt8);
+            Assert.True(qTensor.is_quantized());
+            Assert.Equal(ScalarType.QUInt8, qTensor.dtype);
+
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.quantize_per_tensor))]
+        public void QuantizePerTensorQInt32()
+        {
+            var floatTensor = torch.tensor(new float[] { -1.0f, 0.0f, 1.0f, 2.0f });
+
+            var qTensor = torch.quantize_per_tensor(floatTensor, 0.01, 0, ScalarType.QInt32);
+            Assert.True(qTensor.is_quantized());
+            Assert.Equal(ScalarType.QInt32, qTensor.dtype);
+
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.quantize_per_tensor))]
+        public void QuantizePerTensorInvalidDtypeThrows()
+        {
+            var floatTensor = torch.tensor(new float[] { 1.0f, 2.0f });
+            Assert.Throws<ArgumentException>(() => torch.quantize_per_tensor(floatTensor, 0.1, 0, ScalarType.Float32));
+            Assert.Throws<ArgumentException>(() => torch.quantize_per_tensor(floatTensor, 0.1, 0, ScalarType.Int32));
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.dequantize))]
+        public void DequantizeRoundtrip()
+        {
+            var floatTensor = torch.tensor(new float[] { 1.0f, 2.0f, 3.0f });
+
+            var qTensor = torch.quantize_per_tensor(floatTensor, 1.0, 0, ScalarType.QInt8);
+            Assert.True(qTensor.is_quantized());
+
+            var dequantized = qTensor.dequantize();
+            Assert.False(dequantized.is_quantized());
+            Assert.True(dequantized.is_floating_point());
+            Assert.Equal(ScalarType.Float32, dequantized.dtype);
+
+            // With scale=1.0 and zero_point=0, values should roundtrip exactly
+            Assert.Equal(1.0f, dequantized[0].ToSingle());
+            Assert.Equal(2.0f, dequantized[1].ToSingle());
+            Assert.Equal(3.0f, dequantized[2].ToSingle());
+
+            dequantized.Dispose();
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.dequantize))]
+        public void DequantizeStaticMethod()
+        {
+            var floatTensor = torch.tensor(new float[] { 1.0f, 2.0f });
+            var qTensor = torch.quantize_per_tensor(floatTensor, 1.0, 0, ScalarType.QInt8);
+
+            var dequantized = torch.dequantize(qTensor);
+            Assert.False(dequantized.is_quantized());
+            Assert.Equal(ScalarType.Float32, dequantized.dtype);
+
+            dequantized.Dispose();
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.q_scale))]
+        public void QScaleAndZeroPoint()
+        {
+            var floatTensor = torch.tensor(new float[] { 1.0f, 2.0f, 3.0f });
+            double scale = 0.5;
+            long zeroPoint = 10;
+
+            var qTensor = torch.quantize_per_tensor(floatTensor, scale, zeroPoint, ScalarType.QInt8);
+            Assert.Equal(scale, qTensor.q_scale());
+            Assert.Equal(zeroPoint, qTensor.q_zero_point());
+
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.int_repr))]
+        public void IntReprReturnsUnderlyingIntegers()
+        {
+            var floatTensor = torch.tensor(new float[] { 0.0f, 1.0f, 2.0f });
+
+            // scale=1.0, zero_point=0: quantized values should be 0, 1, 2
+            var qTensor = torch.quantize_per_tensor(floatTensor, 1.0, 0, ScalarType.QInt8);
+            var intRepr = qTensor.int_repr();
+
+            Assert.False(intRepr.is_quantized());
+            Assert.Equal(ScalarType.Int8, intRepr.dtype);
+            Assert.Equal(0, intRepr[0].ToSByte());
+            Assert.Equal(1, intRepr[1].ToSByte());
+            Assert.Equal(2, intRepr[2].ToSByte());
+
+            intRepr.Dispose();
+            qTensor.Dispose();
+            floatTensor.Dispose();
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.quantize_per_channel))]
+        public void QuantizePerChannel()
+        {
+            // Create a 2D tensor: 2 channels x 3 elements
+            var floatTensor = torch.tensor(new float[] { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }).reshape(2, 3);
+            var scales = torch.tensor(new double[] { 0.1, 0.2 });
+            var zeroPoints = torch.tensor(new long[] { 0, 0 });
+
+            var qTensor = torch.quantize_per_channel(floatTensor, scales, zeroPoints, 0, ScalarType.QInt8);
+            Assert.True(qTensor.is_quantized());
+            Assert.Equal(ScalarType.QInt8, qTensor.dtype);
+
+            // Verify per-channel quantization parameters
+            var channelScales = qTensor.q_per_channel_scales();
+            var channelZeroPoints = qTensor.q_per_channel_zero_points();
+            Assert.Equal(0, qTensor.q_per_channel_axis());
+            Assert.Equal(0.1, channelScales[0].ToDouble(), 5);
+            Assert.Equal(0.2, channelScales[1].ToDouble(), 5);
+
+            channelScales.Dispose();
+            channelZeroPoints.Dispose();
+            qTensor.Dispose();
+            scales.Dispose();
+            zeroPoints.Dispose();
+            floatTensor.Dispose();
+        }
     }
 }

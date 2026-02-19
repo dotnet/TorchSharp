@@ -779,6 +779,47 @@ namespace TorchSharp
         public static Tensor fake_quantize_per_tensor_affine(Tensor input, Tensor scale, Tensor zero_point, long quant_min, long quant_max)
             => throw new NotImplementedException();
 
+        // https://pytorch.org/docs/stable/generated/torch.quantize_per_tensor
+        /// <summary>
+        /// Converts a float tensor to a quantized tensor with given scale and zero point.
+        /// </summary>
+        /// <param name="input">Float tensor to quantize</param>
+        /// <param name="scale">Scale to apply in quantization formula</param>
+        /// <param name="zero_point">Offset in integer value that maps to float zero</param>
+        /// <param name="dtype">The desired data type of returned tensor. Must be a quantized type (torch.qint8, torch.quint8, or torch.qint32).</param>
+        /// <returns>A newly quantized tensor</returns>
+        public static Tensor quantize_per_tensor(Tensor input, double scale, long zero_point, ScalarType dtype)
+        {
+            if (!is_quantized(dtype))
+                throw new ArgumentException("dtype must be a quantized type (QInt8, QUInt8, or QInt32)", nameof(dtype));
+            return input._quantize_per_tensor(scale, zero_point, dtype);
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.quantize_per_channel
+        /// <summary>
+        /// Converts a float tensor to a per-channel quantized tensor with given scales and zero points.
+        /// </summary>
+        /// <param name="input">Float tensor to quantize</param>
+        /// <param name="scales">Float 1D tensor of scales to use, size should match input.size(axis)</param>
+        /// <param name="zero_points">Integer 1D tensor of offsets to use, size should match input.size(axis)</param>
+        /// <param name="axis">Dimension on which to apply per-channel quantization</param>
+        /// <param name="dtype">The desired data type of returned tensor. Must be a quantized type (torch.qint8, torch.quint8, or torch.qint32).</param>
+        /// <returns>A newly quantized tensor</returns>
+        public static Tensor quantize_per_channel(Tensor input, Tensor scales, Tensor zero_points, long axis, ScalarType dtype)
+        {
+            if (!is_quantized(dtype))
+                throw new ArgumentException("dtype must be a quantized type (QInt8, QUInt8, or QInt32)", nameof(dtype));
+            return input._quantize_per_channel(scales, zero_points, axis, dtype);
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.dequantize
+        /// <summary>
+        /// Returns an fp32 Tensor by dequantizing a quantized Tensor.
+        /// </summary>
+        /// <param name="input">A quantized tensor</param>
+        /// <returns>A dequantized (float) tensor</returns>
+        public static Tensor dequantize(Tensor input) => input.dequantize();
+
         // https://pytorch.org/docs/stable/generated/torch.fix
         /// <summary>
         /// Returns a new tensor with the truncated integer values of the elements of input.

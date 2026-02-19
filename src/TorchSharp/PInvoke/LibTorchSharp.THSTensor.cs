@@ -2206,6 +2206,33 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_histogram_out_t(IntPtr input, IntPtr bins, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histogram_out_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_quantize_per_tensor(IntPtr tensor, double scale, long zero_point, sbyte scalar_type);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_quantize_per_channel(IntPtr tensor, IntPtr scales, IntPtr zero_points, long axis, sbyte scalar_type);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_dequantize(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern double THSTensor_q_scale(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern long THSTensor_q_zero_point(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_int_repr(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_q_per_channel_scales(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_q_per_channel_zero_points(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern long THSTensor_q_per_channel_axis(IntPtr tensor);
     }
 #pragma warning restore CA2101
 }

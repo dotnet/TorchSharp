@@ -2306,3 +2306,48 @@ Tensor THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_
 
     return nullptr;
 }
+
+Tensor THSTensor_quantize_per_tensor(const Tensor tensor, double scale, int64_t zero_point, int8_t scalar_type)
+{
+    CATCH_TENSOR(torch::quantize_per_tensor(*tensor, scale, zero_point, at::ScalarType(scalar_type)));
+}
+
+Tensor THSTensor_quantize_per_channel(const Tensor tensor, const Tensor scales, const Tensor zero_points, int64_t axis, int8_t scalar_type)
+{
+    CATCH_TENSOR(torch::quantize_per_channel(*tensor, *scales, *zero_points, axis, at::ScalarType(scalar_type)));
+}
+
+Tensor THSTensor_dequantize(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->dequantize());
+}
+
+double THSTensor_q_scale(const Tensor tensor)
+{
+    CATCH_RETURN(double, 0.0, tensor->q_scale());
+}
+
+int64_t THSTensor_q_zero_point(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->q_zero_point());
+}
+
+Tensor THSTensor_int_repr(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->int_repr());
+}
+
+Tensor THSTensor_q_per_channel_scales(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->q_per_channel_scales());
+}
+
+Tensor THSTensor_q_per_channel_zero_points(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->q_per_channel_zero_points());
+}
+
+int64_t THSTensor_q_per_channel_axis(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->q_per_channel_axis());
+}

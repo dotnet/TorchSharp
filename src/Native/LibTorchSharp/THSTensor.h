@@ -1808,3 +1808,15 @@ EXPORT_API(Tensor) THSTensor_kaiser_window(const int64_t len, bool periodic, dou
 
 EXPORT_API(Tensor) THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, int64_t onesided, bool return_complex);
 EXPORT_API(Tensor) THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool center, bool normalized, int64_t onesided, int64_t length, bool return_complex);
+
+// Quantization Ops
+
+EXPORT_API(Tensor) THSTensor_quantize_per_tensor(const Tensor tensor, double scale, int64_t zero_point, int8_t scalar_type);
+EXPORT_API(Tensor) THSTensor_quantize_per_channel(const Tensor tensor, const Tensor scales, const Tensor zero_points, int64_t axis, int8_t scalar_type);
+EXPORT_API(Tensor) THSTensor_dequantize(const Tensor tensor);
+EXPORT_API(double) THSTensor_q_scale(const Tensor tensor);
+EXPORT_API(int64_t) THSTensor_q_zero_point(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_int_repr(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_q_per_channel_scales(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_q_per_channel_zero_points(const Tensor tensor);
+EXPORT_API(int64_t) THSTensor_q_per_channel_axis(const Tensor tensor);

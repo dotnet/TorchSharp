@@ -272,6 +272,95 @@ namespace TorchSharp
             public bool is_complex() => torch.is_complex(dtype);
 
             /// <summary>
+            /// Returns True if the data type of input is a quantized data type i.e., one of torch.qint8, torch.quint8, and torch.qint32.
+            /// </summary>
+            public bool is_quantized() => torch.is_quantized(dtype);
+
+            /// <summary>
+            /// Given a quantized Tensor, returns a dequantized (float) Tensor.
+            /// </summary>
+            public Tensor dequantize()
+            {
+                var res = NativeMethods.THSTensor_dequantize(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor, returns the scale of the quantization as a double.
+            /// </summary>
+            public double q_scale()
+            {
+                var res = NativeMethods.THSTensor_q_scale(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor, returns the zero_point of the quantization as a long.
+            /// </summary>
+            public long q_zero_point()
+            {
+                var res = NativeMethods.THSTensor_q_zero_point(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor, returns a Tensor of the underlying integer representation.
+            /// </summary>
+            public Tensor int_repr()
+            {
+                var res = NativeMethods.THSTensor_int_repr(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor quantized per channel, returns a Tensor of the scales of the quantization for each channel.
+            /// </summary>
+            public Tensor q_per_channel_scales()
+            {
+                var res = NativeMethods.THSTensor_q_per_channel_scales(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor quantized per channel, returns a Tensor of the zero points of the quantization for each channel.
+            /// </summary>
+            public Tensor q_per_channel_zero_points()
+            {
+                var res = NativeMethods.THSTensor_q_per_channel_zero_points(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor quantized per channel, returns the axis along which per channel quantization is applied.
+            /// </summary>
+            public long q_per_channel_axis()
+            {
+                var res = NativeMethods.THSTensor_q_per_channel_axis(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            internal Tensor _quantize_per_tensor(double scale, long zero_point, ScalarType dtype)
+            {
+                var res = NativeMethods.THSTensor_quantize_per_tensor(Handle, scale, zero_point, (sbyte)dtype);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            internal Tensor _quantize_per_channel(Tensor scales, Tensor zero_points, long axis, ScalarType dtype)
+            {
+                var res = NativeMethods.THSTensor_quantize_per_channel(Handle, scales.Handle, zero_points.Handle, axis, (sbyte)dtype);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns True if the input is a single element tensor which is not equal to zero after type conversions,
             /// i.e. not equal to torch.tensor([0.]) or torch.tensor([0]) or torch.tensor([False]).
             /// Throws an InvalidOperationException if torch.numel() != 1.
@@ -7359,9 +7448,9 @@ namespace TorchSharp
             ComplexFloat32 = 9,
             ComplexFloat64 = 10,
             Bool = 11,
-            //QInt8 = 12,
-            //QUInt8 = 13,
-            //QUInt32 = 14,
+            QInt8 = 12,
+            QUInt8 = 13,
+            QInt32 = 14,
             BFloat16 = 15
         }
 
@@ -7493,6 +7582,18 @@ namespace TorchSharp
             }
         }
 
+        public static bool is_quantized(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.QInt8:
+            case ScalarType.QUInt8:
+            case ScalarType.QInt32:
+                return true;
+            default:
+                return false;
+            }
+        }
+
         public static long max_int_value(ScalarType type)
         {
             switch (type) {
@@ -7542,6 +7643,10 @@ namespace TorchSharp
 
         public static ScalarType cfloat = ScalarType.ComplexFloat32;
         public static ScalarType cdouble = ScalarType.ComplexFloat64;
+
+        public static ScalarType qint8 = ScalarType.QInt8;
+        public static ScalarType quint8 = ScalarType.QUInt8;
+        public static ScalarType qint32 = ScalarType.QInt32;
 
         /// <summary>
         /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
