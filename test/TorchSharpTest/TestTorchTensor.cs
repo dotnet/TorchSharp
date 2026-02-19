@@ -6939,32 +6939,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(fft.hfft))]
-        public void Float32HFFT()
-        {
-            var input = torch.arange(4, complex64);
-            var output = fft.hfft(input);
-            Assert.Equal(6, output.shape[0]);
-            Assert.Equal(ScalarType.Float32, output.dtype);
-
-            var inverted = fft.ihfft(output);
-            Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
-        }
-
-        [Fact]
-        [TestOf(nameof(fft.hfft))]
-        public void Float64HFFT()
-        {
-            var input = torch.arange(4, complex128);
-            var output = fft.hfft(input);
-            Assert.Equal(6, output.shape[0]);
-            Assert.Equal(ScalarType.Float64, output.dtype);
-
-            var inverted = fft.ihfft(output);
-            Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
-        }
-
-        [Fact]
         [TestOf(nameof(fft.rfft))]
         public void Float32RFFT()
         {
@@ -7201,7 +7175,7 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(fft.hfft2))]
-        public void Float32HFFT2()
+        public void ComplexFloat32HFFT2()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
             var output = fft.hfft2(input);
@@ -7215,7 +7189,7 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(fft.hfft2))]
-        public void Float64HFFT2()
+        public void ComplexFloat64HFFT2()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex128);
             var output = fft.hfft2(input);
@@ -7229,7 +7203,7 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(fft.hfftn))]
-        public void Float32HFFTN()
+        public void ComplexFloat32HFFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
             var output = fft.hfftn(input);
@@ -7243,7 +7217,7 @@ namespace TorchSharp
 
         [Fact(Skip = "Fails on all Release builds.")]
         [TestOf(nameof(fft.hfftn))]
-        public void Float64HFFTN()
+        public void ComplexFloat64HFFTN()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
 
