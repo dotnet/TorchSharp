@@ -16,7 +16,10 @@ namespace TorchSharp
         /// <param name="input">The input matrix</param>
         /// <param name="upper">If upper is true, the returned matrix U is upper-triangular. If upper is false, the returned matrix L is lower-triangular</param>
         /// <returns></returns>
+        [Obsolete("torch.cholesky is deprecated in favor of torch.linalg.cholesky and will be removed in a future release. Use torch.linalg.cholesky instead.", false)]
+#pragma warning disable CS0618 // Obsolete
         public static Tensor cholesky(Tensor input, bool upper) => input.cholesky(upper);
+#pragma warning restore CS0618
 
         /// <summary>
         /// Returns the matrix norm or vector norm of a given tensor.

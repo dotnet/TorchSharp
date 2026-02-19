@@ -351,14 +351,16 @@ Tensor THSLinalg_vecdot(const Tensor x, const Tensor y, const int64_t dim, Tenso
     CATCH_TENSOR(out == nullptr ? torch::linalg_vecdot(* x, *y, dim) : torch::linalg_vecdot_out(*out, *x, *y, dim))
 }
 
-Tensor THSTensor_lu_solve(const Tensor B, const Tensor LU, const Tensor pivots, bool left, bool adjoint, Tensor out)
+Tensor THSLinalg_lu_solve(const Tensor B, const Tensor LU, const Tensor pivots, bool left, bool adjoint, Tensor out)
 {
     CATCH_TENSOR(out == nullptr ? torch::linalg_lu_solve(*LU, *pivots, *B, left, adjoint) : torch::linalg_lu_solve_out(*out, *LU, *pivots, *B, left, adjoint))
 }
 
 Tensor THSTensor_cholesky(const Tensor tensor, const bool upper)
 {
-    CATCH_TENSOR(tensor->cholesky(upper))
+    // torch::cholesky is deprecated in favor of torch::linalg_cholesky.
+    // linalg_cholesky always returns lower-triangular; use .mH() for upper.
+    CATCH_TENSOR(upper ? torch::linalg_cholesky(*tensor).mH() : torch::linalg_cholesky(*tensor))
 }
 
 Tensor THSTensor_cholesky_inverse(const Tensor tensor, const bool upper)
@@ -441,7 +443,9 @@ Tensor THSTensor_lu(const Tensor tensor, bool pivot, bool get_infos, Tensor* inf
 
 Tensor THSTensor_lu_solve(const Tensor tensor, const Tensor LU_data, const Tensor LU_pivots)
 {
-    CATCH_TENSOR(tensor->lu_solve(*LU_data, *LU_pivots))
+    // tensor.lu_solve is deprecated in favor of torch::linalg_lu_solve.
+    // Note: linalg_lu_solve arg order is (LU, pivots, B).
+    CATCH_TENSOR(torch::linalg_lu_solve(*LU_data, *LU_pivots, *tensor))
 }
 
 Tensor THSTensor_lu_unpack(const Tensor LU_data, const Tensor LU_pivots, bool unpack_data, bool unpack_pivots, Tensor* L, Tensor* U)

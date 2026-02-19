@@ -131,7 +131,10 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.cholesky
 
+        [Obsolete("torch.cholesky is deprecated in favor of torch.linalg.cholesky and will be removed in a future release. Use torch.linalg.cholesky instead.", false)]
+#pragma warning disable CS0618 // Obsolete
         public static Tensor cholesky(Tensor input) => input.cholesky();
+#pragma warning restore CS0618
 
         // https://pytorch.org/docs/stable/generated/torch.cholesky_inverse
         /// <summary>
@@ -250,6 +253,7 @@ namespace TorchSharp
         /// The pivots of the LU factorization from torch.lu() of size (∗,m), where *∗ is zero or more batch dimensions.
         /// The batch dimensions of LU_pivots must be equal to the batch dimensions of LU_data.</param>
         /// <returns></returns>
+        [Obsolete("torch.lu_solve is deprecated in favor of torch.linalg.lu_solve and will be removed in a future release. Use torch.linalg.lu_solve(LU, pivots, B) instead.", false)]
         public static Tensor lu_solve(Tensor b, Tensor LU_data, Tensor LU_pivots)
         {
             var solution = THSTensor_lu_solve(b.Handle, LU_data.Handle, LU_pivots.Handle);
