@@ -1894,6 +1894,16 @@ Tensor THSTensor_to_dense(Tensor tensor)
     CATCH_TENSOR(tensor->to_dense());
 }
 
+Tensor THSTensor_to_sparse(Tensor tensor)
+{
+    CATCH_TENSOR(tensor->to_sparse());
+}
+
+Tensor THSTensor_to_sparse_with_dims(Tensor tensor, const int64_t sparse_dim)
+{
+    CATCH_TENSOR(tensor->to_sparse(sparse_dim));
+}
+
 void THSTensor_set_(Tensor tensor, const Tensor source)
 {
     CATCH(tensor->set_(*source););

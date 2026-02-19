@@ -1396,6 +1396,9 @@ EXPORT_API(Tensor) THSTensor_trapezoid_dx(const Tensor y, const double dx, int64
 
 EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_to_sparse(Tensor tensor);
+EXPORT_API(Tensor) THSTensor_to_sparse_with_dims(Tensor tensor, const int64_t sparse_dim);
+
 EXPORT_API(Tensor) THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index, const bool copy, const bool non_blocking);
 
 EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type, const bool copy, const bool non_blocking);
