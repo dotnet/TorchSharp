@@ -578,6 +578,8 @@ namespace TorchSharp
                     requires_grad: requires_grad),
                 true when typeof(T) == typeof(bool) => tensor((array as bool[])!, dimensions,
                     requires_grad: requires_grad),
+                true when typeof(T) == typeof(BFloat16) => tensor((array as BFloat16[])!, dimensions,
+                    requires_grad: requires_grad),
                 _ => throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.")
             };
         }
@@ -592,7 +594,8 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor ToTensor<T>(this T scalar, Device? device = null, bool requires_grad = false) where T : struct
         {
-            if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
+            if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)
+                && typeof(T) != typeof(BFloat16)) {
                 throw new ArgumentException(nameof(requires_grad), "Only floating point types support gradients.");
             }
 
@@ -610,6 +613,8 @@ namespace TorchSharp
                 return tensor((float)(object)scalar, float32, device, requires_grad);
             if (typeof(T) == typeof(double))
                 return tensor((double)(object)scalar, float64, device, requires_grad);
+            if (typeof(T) == typeof(BFloat16))
+                return tensor(new BFloat16[] { (BFloat16)(object)scalar }, bfloat16, device, requires_grad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
@@ -632,6 +637,12 @@ namespace TorchSharp
         /// <param name="value">The input tensor</param>
         public static Half ToHalf(this Tensor value) => value.ToScalar().ToHalf();
 #endif
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a BFloat16 value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
+        public static BFloat16 ToBFloat16(this Tensor value) => value.ToScalar().ToBFloat16();
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
