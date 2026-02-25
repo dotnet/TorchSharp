@@ -306,6 +306,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.cholesky))]
+        public void CholeskyUpperTest()
+        {
+            var a = randn(new long[] { 3, 2, 2 }, float64);
+            a = a.matmul(a.swapdims(-2, -1));
+#pragma warning disable CS0618 // Obsolete
+            var u = a.cholesky(upper: true);
+#pragma warning restore CS0618
+
+            // U should be upper-triangular: U^T * U == A
+            Assert.True(a.allclose(u.swapaxes(-2, -1).matmul(u)));
+        }
+
+        [Fact]
         [TestOf(nameof(linalg.cholesky_ex))]
         public void CholeskyExTest()
         {
