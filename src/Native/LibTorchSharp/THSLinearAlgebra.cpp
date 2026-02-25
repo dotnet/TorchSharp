@@ -359,7 +359,8 @@ Tensor THSLinalg_lu_solve(const Tensor B, const Tensor LU, const Tensor pivots, 
 Tensor THSTensor_cholesky(const Tensor tensor, const bool upper)
 {
     // torch::cholesky is deprecated in favor of torch::linalg_cholesky.
-    // linalg_cholesky always returns lower-triangular; use .mH() for upper.
+    // Here we call torch::linalg_cholesky with its default (lower-triangular) output,
+    // and return its conjugate transpose via .mH() when upper is true.
     CATCH_TENSOR(upper ? torch::linalg_cholesky(*tensor).mH() : torch::linalg_cholesky(*tensor))
 }
 
