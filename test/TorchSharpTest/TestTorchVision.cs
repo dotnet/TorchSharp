@@ -800,6 +800,203 @@ namespace TorchVision
         }
 
         [Fact]
+        public void TestSqueezeNet()
+        {
+            {
+                using var model = squeezenet1_0();
+                var sd = model.state_dict();
+                Assert.Equal(52, sd.Count);
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("features", names[0]),
+                    () => Assert.Equal("classifier", names[1])
+                );
+
+                using var input = torch.randn(2, 3, 224, 224);
+                using var output = model.call(input);
+
+                Assert.Equal(new long[] { 2, 1000 }, output.shape);
+            }
+            {
+                using var model = squeezenet1_1();
+                var sd = model.state_dict();
+                Assert.Equal(52, sd.Count);
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("features", names[0]),
+                    () => Assert.Equal("classifier", names[1])
+                );
+
+                using var input = torch.randn(2, 3, 224, 224);
+                using var output = model.call(input);
+
+                Assert.Equal(new long[] { 2, 1000 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestDenseNet121()
+        {
+            using var model = densenet121();
+            var sd = model.state_dict();
+            Assert.Equal(242, sd.Count);
+            var names = model.named_children().Select(nm => nm.name).ToArray();
+            Assert.Multiple(
+                () => Assert.Equal("features", names[0]),
+                () => Assert.Equal("classifier", names[1])
+            );
+
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestDenseNet161()
+        {
+            using var model = densenet161();
+            var names = model.named_children().Select(nm => nm.name).ToArray();
+            Assert.Multiple(
+                () => Assert.Equal("features", names[0]),
+                () => Assert.Equal("classifier", names[1])
+            );
+
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestDenseNet169()
+        {
+            using var model = densenet169();
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestDenseNet201()
+        {
+            using var model = densenet201();
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact]
+        public void TestShuffleNetV2()
+        {
+            using (var model = shufflenet_v2_x1_0()) {
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("conv1", names[0]),
+                    () => Assert.Equal("maxpool", names[1]),
+                    () => Assert.Equal("stage2", names[2]),
+                    () => Assert.Equal("stage3", names[3]),
+                    () => Assert.Equal("stage4", names[4]),
+                    () => Assert.Equal("conv5", names[5]),
+                    () => Assert.Equal("fc", names[6])
+                );
+
+                using var input = torch.randn(2, 3, 224, 224);
+                using var output = model.call(input);
+
+                Assert.Equal(new long[] { 2, 1000 }, output.shape);
+            }
+
+            using (var model = shufflenet_v2_x0_5()) {
+                using var input = torch.randn(2, 3, 224, 224);
+                using var output = model.call(input);
+                Assert.Equal(new long[] { 2, 1000 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestEfficientNetB0()
+        {
+            using var model = efficientnet_b0();
+            var sd = model.state_dict();
+            Assert.Equal(360, sd.Count);
+            var names = model.named_children().Select(nm => nm.name).ToArray();
+            Assert.Multiple(
+                () => Assert.Equal("avgpool", names[0]),
+                () => Assert.Equal("classifier", names[1]),
+                () => Assert.Equal("features", names[2])
+            );
+
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact]
+        public void TestEfficientNetV2S()
+        {
+            using var model = efficientnet_v2_s();
+            var sd = model.state_dict();
+            Assert.Equal(782, sd.Count);
+            var names = model.named_children().Select(nm => nm.name).ToArray();
+            Assert.Multiple(
+                () => Assert.Equal("avgpool", names[0]),
+                () => Assert.Equal("classifier", names[1]),
+                () => Assert.Equal("features", names[2])
+            );
+
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB1() { using var model = efficientnet_b1(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB2() { using var model = efficientnet_b2(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB3() { using var model = efficientnet_b3(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB4() { using var model = efficientnet_b4(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB5() { using var model = efficientnet_b5(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB6() { using var model = efficientnet_b6(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetB7() { using var model = efficientnet_b7(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetV2M() { using var model = efficientnet_v2_m(); }
+
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
+        public void TestEfficientNetV2L() { using var model = efficientnet_v2_l(); }
+
+        [Fact]
+        public void TestMNASNet()
+        {
+            using var model = mnasnet1_0();
+            var sd = model.state_dict();
+            var names = model.named_children().Select(nm => nm.name).ToArray();
+            Assert.Multiple(
+                () => Assert.Equal("layers", names[0]),
+                () => Assert.Equal("classifier", names[1])
+            );
+
+            using var input = torch.randn(2, 3, 224, 224);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 2, 1000 }, output.shape);
+        }
+
+        [Fact]
         public void TestReadingAndWritingImages()
         {
             var fileName = "vslogo.jpg";
