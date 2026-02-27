@@ -1377,6 +1377,29 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Converts a dense tensor to a sparse COO tensor.
+            /// </summary>
+            public Tensor to_sparse()
+            {
+                var res = NativeMethods.THSTensor_to_sparse(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Converts a dense tensor to a sparse COO tensor with the specified number of sparse dimensions.
+            /// </summary>
+            /// <param name="sparse_dim">The number of sparse dimensions.</param>
+            public Tensor to_sparse(int sparse_dim)
+            {
+                var res = NativeMethods.THSTensor_to_sparse_with_dims(Handle, sparse_dim);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns a copy of the tensor input.
             /// </summary>
             public Tensor clone()
