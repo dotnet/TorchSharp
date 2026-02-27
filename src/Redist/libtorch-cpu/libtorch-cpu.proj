@@ -30,7 +30,7 @@
     <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCpuPackages.$(IncludeLibTorchCpuPackages)</CopyToPackageSemaphore>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetOS)' == 'windows'">
+  <ItemGroup Condition="'$(TargetOS)' == 'windows' and '$(NativeTargetArchitecture)' != 'arm64'">
     <File Include="libtorch\lib\c10.dll" />
     <File Include="libtorch\lib\libiomp5md.dll" />
     <File Include="libtorch\lib\libiompstubs5md.dll" />
@@ -38,6 +38,15 @@
     <File Include="libtorch\lib\torch_cpu.dll" />
     <File Include="libtorch\lib\torch_global_deps.dll" />
     <File Include="libtorch\lib\uv.dll" />
+  </ItemGroup>
+  <!-- Windows ARM64 archive has a different layout (lib/ instead of libtorch/lib/) and uses ARM Performance Libraries instead of Intel OpenMP -->
+  <ItemGroup Condition="'$(TargetOS)' == 'windows' and '$(NativeTargetArchitecture)' == 'arm64'">
+    <File Include="lib\armpl_lp64.dll" />
+    <File Include="lib\c10.dll" />
+    <File Include="lib\torch.dll" />
+    <File Include="lib\torch_cpu.dll" />
+    <File Include="lib\torch_global_deps.dll" />
+    <File Include="lib\uv.dll" />
   </ItemGroup>
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(TargetOS)' == 'mac'">
     <File Include="libtorch\lib\libc10.dylib" />

@@ -30,6 +30,7 @@ popd
 :: Set the target architecture to a format cmake understands.
 if /i "%3" == "x64"     (set __ExtraCmakeParams=%__ExtraCmakeParams% -A x64)
 if /i "%3" == "x86"     (set __ExtraCmakeParams=%__ExtraCmakeParams% -A Win32)
+if /i "%3" == "ARM64"   (set __ExtraCmakeParams=%__ExtraCmakeParams% -A ARM64)
 
 echo "%CMakePath%" "-DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE%" "-DCMAKE_INSTALL_PREFIX=%__CMakeBinDir%" "-DLIBTORCH_PATH=%LIBTORCH_PATH%" -G "Visual Studio %__VSString%" %__ExtraCmakeParams% -B. -H%1
 "%CMakePath%" "-DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE%" "-DCMAKE_INSTALL_PREFIX=%__CMakeBinDir%" "-DLIBTORCH_PATH=%LIBTORCH_PATH%" -G "Visual Studio %__VSString%" %__ExtraCmakeParams% -B. -H%1
@@ -40,7 +41,7 @@ GOTO :DONE
   echo "Usage..."
   echo "gen-buildsys-win.bat <VSVersion> <Target Architecture>"
   echo "Specify the VSVersion to be used - VS2015, VS2017 or VS2019"
-  echo "Specify the Target Architecture - x86, or x64."
+  echo "Specify the Target Architecture - x86, x64, or ARM64."
   EXIT /B 1
 
 :DONE
