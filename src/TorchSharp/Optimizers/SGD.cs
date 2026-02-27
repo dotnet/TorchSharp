@@ -137,14 +137,21 @@ namespace TorchSharp
             public override Tensor step(Func<Tensor> closure = null)
             {
                 return _step<ParamGroup>(group => {
-
+                    #nullable enable
                     var options = group.Options;
-                    var momentum = options.momentum.Value;
-                    var dampening = options.dampening.Value;
-                    var weight_decay = options.weight_decay.Value;
-                    var nesterov = options.nesterov.Value;
-                    var maximize = options.maximize.Value;
-                    var lr = options.LearningRate.Value;
+                    var momentum = options.momentum!.Value;
+                    var need_momentum = momentum != 0;
+                    using var momentum_scalar = (need_momentum) ? momentum.ToScalar() : null;
+                    var dampening = options.dampening!.Value;
+                    var need_dampening = dampening != 1;
+                    using var dampening_bar_scalar = (need_momentum && need_dampening) ? (1 - dampening).ToScalar() : null;
+                    var weight_decay = options.weight_decay!.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = (need_weight_decay) ? weight_decay.ToScalar() : null;
+                    var nesterov = options.nesterov!.Value;
+                    var maximize = options.maximize!.Value;
+                    var lr = options.LearningRate!.Value;
+                    using var signed_lr_scalar = ((maximize) ? lr : -lr).ToScalar();
 
                     foreach (var param in group.Parameters) {
 
@@ -154,22 +161,21 @@ namespace TorchSharp
 
                         if (grad is null) continue;
 
-                        if (weight_decay != 0) {
-                            grad = grad.add(param, alpha: weight_decay);
-                        }
+                        if (need_weight_decay) grad = grad.add(param, alpha: weight_decay_scalar!);
 
-                        if (momentum != 0) {
+                        if (need_momentum) {
                             var buf = state.momentum_buffer;
 
                             if (buf is null) {
                                 buf = grad.clone().detach().DetachFromDisposeScope();
                                 state.momentum_buffer = buf;
                             } else {
-                                buf.mul_(momentum).add_(grad, alpha: (1 - dampening));
+                                buf.mul_(momentum_scalar!);
+                                if (need_dampening) buf.add_(grad, alpha: dampening_bar_scalar!);
                             }
 
                             if (nesterov) {
-                                grad = grad.add(buf, alpha: momentum);
+                                grad = grad.add(buf, alpha: momentum_scalar!);
                             } else {
                                 grad = buf;
                             }
@@ -177,10 +183,10 @@ namespace TorchSharp
                             state.momentum_buffer = buf;
                         }
 
-                        var alpha = maximize ? lr : -lr;
-                        param.add_(grad, alpha: alpha);
+                        param.add_(grad, alpha: signed_lr_scalar);
 
                     }
+                    #nullable disable
                 }, closure);
             }
 

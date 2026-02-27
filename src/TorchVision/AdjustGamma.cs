@@ -22,7 +22,10 @@ namespace TorchSharp
                 if (!torch.is_floating_point(img))
                     img = transforms.ConvertImageDtype(torch.float32).call(img);
 
-                img = (gain * img.pow(gamma)).clamp(0, 1);
+                using var gamma_scalar = gamma.ToScalar();
+                using var zero_scalar = 0.ToScalar();
+                using var one_scalar = 1.ToScalar();
+                img = (gain * img.pow(gamma_scalar)).clamp(zero_scalar, one_scalar);
 
                 return transforms.ConvertImageDtype(dtype).call(img); ;
             }

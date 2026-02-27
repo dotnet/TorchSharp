@@ -6,6 +6,28 @@ using static TorchSharp.PInvoke.NativeMethods;
 namespace TorchSharp
 {
     /// <summary>
+    /// Represents a leak detector for Scalar.
+    /// </summary>
+    public static partial class ScalarLeakDetector
+    {
+        /// <summary>
+        /// Allows implicit conversion from a .NET scalar value to Scalar.<br/>
+        /// FIXME: Declared true for default to be compatible to 0.105.1 or earlier.
+        /// </summary>
+        public static bool allowImplicitConversionOperator { get; set; } = true;
+        /// <summary>
+        /// Throws an exception if implicit conversion is not allowed.
+        /// </summary>
+        /// <exception cref="InvalidCastException"></exception>
+        public static void ThrowIfImplicitConversionNotAllowed()
+        {
+            if (!allowImplicitConversionOperator)
+            {
+                throw new InvalidCastException("Unexpected implicit conversion to Scalar.");
+            }
+        }
+    }
+    /// <summary>
     /// Represents a dynamically typed scalar value to the LibTorch runtime.
     /// </summary>
     public sealed class Scalar : IDisposable
@@ -31,6 +53,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(byte value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -40,6 +63,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(sbyte value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -49,6 +73,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(short value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -58,6 +83,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(int value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -67,6 +93,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(long value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -77,6 +104,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(Half value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 #endif
@@ -87,6 +115,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(float value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -96,6 +125,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(double value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -105,6 +135,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(bool value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -114,6 +145,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar((float, float) value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 
@@ -123,6 +155,7 @@ namespace TorchSharp
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(System.Numerics.Complex value)
         {
+            ScalarLeakDetector.ThrowIfImplicitConversionNotAllowed();
             return value.ToScalar();
         }
 

@@ -183,10 +183,16 @@ namespace TorchSharp
                 protected Tensor ClampProbs(Tensor probs)
                 {
                     var eps = torch.finfo(probs.dtype).eps;
-                    return probs.clamp(eps, 1 - eps);
+                    using var eps_scalar = eps.ToScalar();
+                    using var eps_bar_scalar = (1 - eps).ToScalar();
+                    return probs.clamp(eps_scalar, eps_bar_scalar);
                 }
 
-                protected Tensor ClampByZero(Tensor x) => (x.clamp_min(0) + x - x.clamp_max(0)) / 2;
+                protected Tensor ClampByZero(Tensor x)
+                {
+                    using var zero_scalar = 0.ToScalar();
+                    return (x.clamp_min(zero_scalar) + x - x.clamp_max(zero_scalar)) / 2;
+                }
 
                 protected torch.Generator generator;
                 bool disposedValue;

@@ -91,7 +91,7 @@ namespace TorchSharp.Modules
             if (this.feature_grad_mult != null && this.feature_grad_mult < 1.0) {
                 x = Wav2Vec2Model.GradMultiply.apply(x, this.feature_grad_mult.Value);
             }
-            var features_pen = x.@float().pow(2).mean();
+            var features_pen = x.@float().square().mean();
             if (lengths is not null) {
                 padding_mask = Wav2Vec2Model._get_padding_mask(x, lengths);
             } else {

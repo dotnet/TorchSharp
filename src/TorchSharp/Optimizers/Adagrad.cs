@@ -139,9 +139,12 @@ namespace TorchSharp
                     var options = group.Options as Options;
                     var lr_decay = options.lr_decay.Value;
                     var weight_decay = options.weight_decay.Value;
-                    var eps = options.eps.Value;
-                    var initial_accumulator_value = options.initial_accumulator_value.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
+                    using var eps_scalar = options.eps.Value.ToScalar();
+                    var initial_accumulator_value = options.initial_accumulator_value.Value; // FIXME: Unused?
                     var lr = options.LearningRate.Value;
+                    using var one_scalar = 1.ToScalar();
 
                     foreach (var param in group.Parameters) {
 
@@ -153,20 +156,19 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        if (weight_decay != 0) {
-                            grad = grad.add(param, alpha: weight_decay);
-                        }
+                        if (need_weight_decay) grad = grad.add(param, alpha: weight_decay_scalar);
 
                         var clr = lr / (1 + (state.step - 1) * lr_decay);
+                        using var negative_clr_scalar = (-clr).ToScalar();
 
                         if (grad.is_sparse)
                             throw new NotImplementedException("Adagrad optimization over sparse parameters");
                         if (torch.is_complex(grad))
                             throw new NotImplementedException("Adagrad optimization over complex parameters");
 
-                        state.sum.addcmul_(grad, grad, value: 1);
-                        var std = state.sum.sqrt().add_(eps);
-                        param.addcdiv_(grad, std, value: -clr);
+                        state.sum.addcmul_(grad, grad, value: one_scalar);
+                        var std = state.sum.sqrt().add_(eps_scalar);
+                        param.addcdiv_(grad, std, value: negative_clr_scalar);
                     }
 
 

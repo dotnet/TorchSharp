@@ -22,11 +22,11 @@ namespace TorchSharp
 
             public Tensor scale { get; private set; }
 
-            public override Tensor mean => torch.WrappedTensorDisposeScope(() => (loc + scale.pow(2) / 2).exp());
+            public override Tensor mean => torch.WrappedTensorDisposeScope(() => (loc + scale.square() / 2).exp());
 
             public override Tensor mode => torch.WrappedTensorDisposeScope(() => (loc - scale.square()).exp());
 
-            public override Tensor variance => torch.WrappedTensorDisposeScope(() => (scale.pow(2).exp() - 1) * (2 * loc + scale.pow(2)).exp());
+            public override Tensor variance => torch.WrappedTensorDisposeScope(() => (scale.square().exp() - 1) * (2 * loc + scale.square()).exp());
 
             protected override void Dispose(bool disposing)
             {
