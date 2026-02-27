@@ -89,6 +89,15 @@ jobs:
     pool:
       vmImage: 'macos-latest'
 
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: Windows_arm64
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 /p:SkipNetFxBuild=true -c
+    testScript: echo "Cannot run ARM64 tests on x64 Azure Pipelines agent"
+    pool:
+      vmImage: 'windows-latest'
+
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
 ################################################################################
@@ -286,12 +295,71 @@ jobs:
     artifact: MacAssets_arm64
 
 ################################################################################
+- job: Windows_arm64_Native_Build_For_Packages
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  # Initial cleanup
+  - script: |
+      rmdir /s /q .git 2>nul
+      dotnet nuget locals all --clear
+      dir
+    displayName: Initial cleanup
+    continueOnError: true
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 8.0.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  # Download ARM64 LibTorch and clean immediately
+  - script: |
+      dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /p:TargetArchitecture=arm64 /t:Build /p:IncludeLibTorchCpuPackages=true
+      del /s /q *.zip 2>nul
+      del /s /q *.tar.gz 2>nul
+    displayName: Download ARM64 libtorch native binaries and cleanup
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+
+  # Cross-compile LibTorchSharp for ARM64 on x64 host
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true /p:TargetArchitecture=arm64
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+    displayName: Build TorchSharp win-arm64
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true /p:TargetArchitecture=arm64
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true /p:TargetArchitecture=arm64
+    displayName: Build TorchAudio
+
+  # Clean up unnecessary files before publishing
+  - script: |
+      del /s /q $(Build.SourcesDirectory)\bin\*.pdb 2>nul
+      del /s /q $(Build.SourcesDirectory)\bin\*.xml 2>nul
+      del /s /q $(Build.SourcesDirectory)\bin\obj\packprep\$(BuildConfig)\*.lib 2>nul
+    displayName: Clean up unnecessary files
+    continueOnError: true
+
+  - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+    artifact: WindowsAssets_arm64
+
+################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], '${{ parameters.SourceBranchName }}'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
+  - Windows_arm64_Native_Build_For_Packages
   - MacOS_arm64_Native_Build_For_Packages
   timeoutInMinutes: 90
   variables:
@@ -494,6 +562,56 @@ jobs:
 
   - script: rmdir /s /q $(Pipeline.Workspace)\WindowsAssets
     displayName: Clean WindowsAssets immediately
+    continueOnError: true
+
+  # Process Windows ARM64 assets
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Windows ARM64 TorchSharp assets
+    inputs:
+      artifact: WindowsAssets_arm64
+      patterns: |
+        TorchSharp/**
+      path: $(Pipeline.Workspace)/WindowsAssets_arm64
+    retryCountOnTaskFailure: 3
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Windows ARM64 TorchAudio assets
+    inputs:
+      artifact: WindowsAssets_arm64
+      patterns: |
+        TorchAudio/**
+      path: $(Pipeline.Workspace)/WindowsAssets_arm64
+    retryCountOnTaskFailure: 3
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Windows ARM64 TorchVision assets
+    inputs:
+      artifact: WindowsAssets_arm64
+      patterns: |
+        TorchVision/**
+      path: $(Pipeline.Workspace)/WindowsAssets_arm64
+    retryCountOnTaskFailure: 3
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download Windows ARM64 libtorch-cpu assets
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+    inputs:
+      artifact: WindowsAssets_arm64
+      patterns: |
+        libtorch-cpu-win-arm64/**
+      path: $(Pipeline.Workspace)/WindowsAssets_arm64
+    retryCountOnTaskFailure: 3
+    continueOnError: true
+
+  - task: CopyFiles@2
+    displayName: Copy Windows ARM64 native assets (batch)
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets_arm64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+      cleanTargetFolder: false
+
+  - script: rmdir /s /q $(Pipeline.Workspace)\WindowsAssets_arm64
+    displayName: Clean WindowsAssets_arm64 immediately
     continueOnError: true
 
   # Restore and pack

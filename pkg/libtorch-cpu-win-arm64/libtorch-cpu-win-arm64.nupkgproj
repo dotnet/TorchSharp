@@ -4,13 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-     <ProjectReference Include="../libtorch-cpu-linux-x64/libtorch-cpu-linux-x64.nupkgproj" />
-     <ProjectReference Include="../libtorch-cpu-osx-arm64/libtorch-cpu-osx-arm64.nupkgproj" />
-     <ProjectReference Include="../libtorch-cpu-win-arm64/libtorch-cpu-win-arm64.nupkgproj" />
-     <ProjectReference Include="../libtorch-cpu-win-x64/libtorch-cpu-win-x64.nupkgproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
   </ItemGroup>
 
