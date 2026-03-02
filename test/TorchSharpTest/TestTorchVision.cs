@@ -933,7 +933,7 @@ namespace TorchVision
             Assert.Equal(new long[] { 2, 1000 }, output.shape);
         }
 
-        [Fact]
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestEfficientNetV2S()
         {
             using var model = efficientnet_v2_s();
