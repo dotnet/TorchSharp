@@ -839,7 +839,7 @@ namespace TorchVision
         {
             using var model = densenet121();
             var sd = model.state_dict();
-            Assert.Equal(242, sd.Count);
+            Assert.Equal(727, sd.Count);
             var names = model.named_children().Select(nm => nm.name).ToArray();
             Assert.Multiple(
                 () => Assert.Equal("features", names[0]),
@@ -922,9 +922,9 @@ namespace TorchVision
             Assert.Equal(360, sd.Count);
             var names = model.named_children().Select(nm => nm.name).ToArray();
             Assert.Multiple(
-                () => Assert.Equal("avgpool", names[0]),
-                () => Assert.Equal("classifier", names[1]),
-                () => Assert.Equal("features", names[2])
+                () => Assert.Equal("features", names[0]),
+                () => Assert.Equal("avgpool", names[1]),
+                () => Assert.Equal("classifier", names[2])
             );
 
             using var input = torch.randn(2, 3, 224, 224);
@@ -941,9 +941,9 @@ namespace TorchVision
             Assert.Equal(782, sd.Count);
             var names = model.named_children().Select(nm => nm.name).ToArray();
             Assert.Multiple(
-                () => Assert.Equal("avgpool", names[0]),
-                () => Assert.Equal("classifier", names[1]),
-                () => Assert.Equal("features", names[2])
+                () => Assert.Equal("features", names[0]),
+                () => Assert.Equal("avgpool", names[1]),
+                () => Assert.Equal("classifier", names[2])
             );
 
             using var input = torch.randn(2, 3, 224, 224);
