@@ -55,10 +55,12 @@
     <TargetPlatform Condition="'$(TargetPlatform)' == ''">$(TargetOS)-$(TargetArchitecture)</TargetPlatform>
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetPlatform)' == 'windows-arm64'">win-arm64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetPlatform)' == 'windows-arm64'">win-arm64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-$(TargetArchitecture)</TargetRuntimeID>
 
@@ -141,6 +143,7 @@
     <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
     <LibTorchCudaLocalNameSuffix>cu$(CudaVersionNoDot)</LibTorchCudaLocalNameSuffix>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetPlatform)' == 'windows-arm64'">libtorch-win-arm64-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos-x86_64</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetPlatform)' == 'mac-arm64'">libtorch-macos-arm64</LibTorchArchiveCoreName>
@@ -148,7 +151,9 @@
     <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
     <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>
     <LibTorchCudaLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaLocalNameSuffix)</LibTorchCudaLocalBase>
-    <LibTorchCmakePath>$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuLocalBase)\libtorch\share\cmake\Torch</LibTorchCmakePath>
+    <LibTorchCmakePath Condition="'$(TargetPlatform)' != 'windows-arm64'">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuLocalBase)\libtorch\share\cmake\Torch</LibTorchCmakePath>
+    <!-- Windows ARM64 archive has a different layout: share/cmake/Torch instead of libtorch/share/cmake/Torch -->
+    <LibTorchCmakePath Condition="'$(TargetPlatform)' == 'windows-arm64'">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuLocalBase)\share\cmake\Torch</LibTorchCmakePath>
   </PropertyGroup>
 
   <!-- Language configuration -->
