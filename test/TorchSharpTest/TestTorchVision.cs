@@ -1144,6 +1144,60 @@ namespace TorchVision
         }
 
         [Fact]
+        public void TestAffineTransform3D()
+        {
+            // 3D input: [C, H, W]
+            var img = torch.rand(new long[] { 1, 48, 48 });
+            var result = functional.affine(
+                img,
+                angle: 0f,
+                translate: new[] { 0, 0 },
+                scale: 1f,
+                shear: new[] { 1f, 1f },
+                fill: 0);
+            Assert.Equal(img.shape, result.shape);
+        }
+
+        [Fact]
+        public void TestAffineTransform4D()
+        {
+            // 4D input: [N, C, H, W] — reproduces issue #1502
+            var img = torch.rand(new long[] { 1, 1, 48, 48 });
+            var result = functional.affine(
+                img,
+                angle: 0f,
+                translate: new[] { 0, 0 },
+                scale: 1f,
+                shear: new[] { 1f, 1f },
+                fill: 0);
+            Assert.Equal(img.shape, result.shape);
+        }
+
+        [Fact]
+        public void TestAffineTransform4DBatch()
+        {
+            // 4D input with batch > 1
+            var img = torch.rand(new long[] { 4, 3, 32, 32 });
+            var result = functional.affine(
+                img,
+                angle: 15f,
+                translate: new[] { 5, 5 },
+                scale: 0.9f,
+                shear: new[] { 10f, 5f },
+                fill: 0);
+            Assert.Equal(img.shape, result.shape);
+        }
+
+        [Fact]
+        public void TestRotateWithFill()
+        {
+            // Rotate with fill also uses ApplyGridTransform — verify it works
+            var img = torch.rand(new long[] { 1, 1, 48, 48 });
+            var result = functional.rotate(img, 45f, InterpolationMode.Nearest, fill: new float[] { 0f });
+            Assert.Equal(img.shape, result.shape);
+        }
+
+        [Fact]
         public void Solarize_InvertedPixel_True()
         {
             {
