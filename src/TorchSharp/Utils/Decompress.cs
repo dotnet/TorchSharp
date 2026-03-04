@@ -23,14 +23,26 @@ namespace TorchSharp.Utils
         public static void DecompressGZipFile(string gzipFileName, string targetDir)
         {
             byte[] buf = new byte[4096];
+            string fnOut = Path.Combine(targetDir, Path.GetFileNameWithoutExtension(gzipFileName));
 
-            using (var fs = File.OpenRead(gzipFileName))
-            using (var gzipStream = new GZipInputStream(fs)) {
+            using (var fs = File.OpenRead(gzipFileName)) {
+                // Check for GZIP magic bytes (0x1F, 0x8B) to detect whether the
+                // file is actually gzip-compressed. Some HTTP servers or CDNs
+                // transparently decompress .gz files during transfer, leaving
+                // an uncompressed file with a .gz extension.
+                var b1 = fs.ReadByte();
+                var b2 = fs.ReadByte();
+                fs.Position = 0;
 
-                string fnOut = Path.Combine(targetDir, Path.GetFileNameWithoutExtension(gzipFileName));
-
-                using (var fsOut = File.Create(fnOut)) {
-                    StreamUtils.Copy(gzipStream, fsOut, buf);
+                if (b1 == 0x1F && b2 == 0x8B) {
+                    using (var gzipStream = new GZipInputStream(fs))
+                    using (var fsOut = File.Create(fnOut)) {
+                        StreamUtils.Copy(gzipStream, fsOut, buf);
+                    }
+                } else {
+                    using (var fsOut = File.Create(fnOut)) {
+                        StreamUtils.Copy(fs, fsOut, buf);
+                    }
                 }
             }
         }
