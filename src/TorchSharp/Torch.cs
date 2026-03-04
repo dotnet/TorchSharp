@@ -38,13 +38,13 @@ namespace TorchSharp
             RuntimeInformation.OSArchitecture == Architecture.Arm64;
 
         static string nativeRid =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ($"win-{(RuntimeInformation.OSArchitecture == Architecture.Arm64 ? "arm64" : "x64")}") :
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
             isAppleSilicon ? "osx-arm64" :
             "any";
 
         static string nativeGlob =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @".*\.dll" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @".*\.dll$" :
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? @".*\.dylib\.*" :
             // must match
             //   lib.so
@@ -129,7 +129,8 @@ namespace TorchSharp
 
                 if (useCudaBackend) {
                     var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                    if (isWindows) {
+                    // CUDA is not supported on Windows ARM64. Only attempt to load CUDA components on Windows x64.
+                    if (isWindows && RuntimeInformation.OSArchitecture == Architecture.X64) {
                         trace.AppendLine($"    Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.
@@ -152,9 +153,49 @@ namespace TorchSharp
 
                     ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+
+                    // On Windows, also attempt direct absolute-path loads from the assembly directory
+                    if (!ok && isWindows) {
+                        var asmDir = Path.GetDirectoryName(typeof(torch).Assembly.Location)!;
+                        var torchCudaPath = Path.Combine(asmDir, "torch_cuda.dll");
+                        var libTorchSharpPath = Path.Combine(asmDir, "LibTorchSharp.dll");
+                        trace.AppendLine($"    Attempting absolute-path load of native components from {asmDir}...");
+                        ok = TryLoadNativeLibraryFromFile(torchCudaPath, trace);
+                        if (ok) ok = TryLoadNativeLibraryFromFile(libTorchSharpPath, trace);
+                    }
                 } else {
-                    ok = TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
-                    ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                    if (isWindows) {
+                        // Preload dependency chain explicitly on Windows: torch_global_deps -> c10 -> uv -> torch -> torch_cpu -> LibTorchSharp
+                        trace.AppendLine($"    Try loading Windows CPU native dependency chain: torch_global_deps -> c10 -> uv -> torch -> torch_cpu -> LibTorchSharp");
+                        ok = TryLoadNativeLibraryByName("torch_global_deps", typeof(torch).Assembly, trace);
+                        if (ok) ok = TryLoadNativeLibraryByName("c10", typeof(torch).Assembly, trace);
+                        if (ok) ok = TryLoadNativeLibraryByName("uv", typeof(torch).Assembly, trace);
+                        if (ok) ok = TryLoadNativeLibraryByName("torch", typeof(torch).Assembly, trace);
+                        if (ok) ok = TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
+                        if (ok) ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    } else {
+                        ok = TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
+                        if (ok) ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    }
+
+                    // On Windows, also attempt direct absolute-path loads from the assembly directory
+                    if (!ok && isWindows) {
+                        var asmDir = Path.GetDirectoryName(typeof(torch).Assembly.Location)!;
+                        var torchGlobalDepsPath = Path.Combine(asmDir, "torch_global_deps.dll");
+                        var c10Path = Path.Combine(asmDir, "c10.dll");
+                        var uvPath = Path.Combine(asmDir, "uv.dll");
+                        var torchPath = Path.Combine(asmDir, "torch.dll");
+                        var torchCpuPath = Path.Combine(asmDir, "torch_cpu.dll");
+                        var libTorchSharpPath = Path.Combine(asmDir, "LibTorchSharp.dll");
+                        trace.AppendLine($"    Attempting absolute-path load of native components from {asmDir}...");
+                        ok = TryLoadNativeLibraryFromFile(torchGlobalDepsPath, trace);
+                        if (ok) ok = TryLoadNativeLibraryFromFile(c10Path, trace);
+                        if (ok) ok = TryLoadNativeLibraryFromFile(uvPath, trace);
+                        if (ok) ok = TryLoadNativeLibraryFromFile(torchPath, trace);
+                        if (ok) ok = TryLoadNativeLibraryFromFile(torchCpuPath, trace);
+                        if (ok) ok = TryLoadNativeLibraryFromFile(libTorchSharpPath, trace);
+                    }
                 }
 
                 trace.AppendLine($"    Result from regular native load of LibTorchSharp is {ok}");

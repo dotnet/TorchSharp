@@ -1,7 +1,12 @@
 <Project>
-  
+  <!-- Ensure NativeOutputPath is populated for consumer projects (examples/tests) on Windows ARM64 by staging redist first -->
+  <Target Name="EnsureNativeRedistStaged" BeforeTargets="PrepareForRun" Condition="'$(OS)' == 'Windows_NT' and '$(NativeTargetArchitecture)' == 'arm64' and '$(SkipNative)' != 'true'">
+    <Message Importance="High" Text="Ensuring Windows ARM64 native redist is staged to $(NativeOutputPath)" />
+    <MSBuild Projects="$(RepoRoot)src\Redist\libtorch-cpu\libtorch-cpu.proj" Targets="Build" Properties="Configuration=$(NativeConfiguration);TargetOS=windows;TargetArchitecture=arm64" />
+  </Target>
+
   <!-- We copy over the LibTorch native binaries in order to run tests.  This can probably be automated better. -->
-  <!-- These lists are duplicated in redist/... with file splitting added for package prep --> 
+  <!-- These lists are duplicated in redist/... with file splitting added for package prep -->
 
   <ItemGroup  Condition="'$(TestUsesLibTorch)' == 'true' and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="LibTorchSharp" />
@@ -16,6 +21,20 @@
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="uv" />
+  </ItemGroup>
+
+  <!-- Windows ARM64 CPU libtorch binary list used for examples and testing -->
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="aoti_custom_ops" />
+    <NativeAssemblyReference Include="backend_with_compiler" />
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="torchbind_test" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="uv" />
+    <NativeAssemblyReference Include="jitbackend_test" />
+    <NativeAssemblyReference Include="armpl_lp64" />
   </ItemGroup>
 
   <!-- Windows CUDA 12.1 libtorch binary list used for examples and testing -->
@@ -113,5 +132,5 @@
     </Copy>
 
   </Target>
-  
+
 </Project>
