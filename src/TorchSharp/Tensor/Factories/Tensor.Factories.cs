@@ -370,6 +370,8 @@ namespace TorchSharp
 
             switch (origType) {
             case ScalarType.Int16:
+            case ScalarType.Float16:
+            case ScalarType.BFloat16:
                 offset *= 2;
                 break;
             case ScalarType.Int32:
