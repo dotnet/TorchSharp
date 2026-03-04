@@ -17,7 +17,7 @@ Tensor THSLinalg_cholesky_ex(const Tensor tensor, bool check_errors, Tensor* inf
     return ResultTensor(std::get<0>(res));
 }
 
-Tensor THSLinalg_cond_int(const Tensor tensor, const int p)
+Tensor THSLinalg_cond_int(const Tensor tensor, const int32_t p)
 {
     CATCH_TENSOR(torch::linalg_cond(*tensor, p))
 }
@@ -187,19 +187,19 @@ Tensor THSLinalg_ldl_solve(const Tensor LD, const Tensor pivots, const Tensor B,
     CATCH_TENSOR(torch::linalg_ldl_solve(*LD, *pivots, *B, hermitian))
 }
 
-Tensor THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
     CATCH_TENSOR(torch::linalg_matrix_norm(*tensor, *ord, dims, keepdim, c10::nullopt))
 }
 
-Tensor THSLinalg_matrix_norm_fronuc(const Tensor tensor, const int8_t fronuc, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_matrix_norm_fronuc(const Tensor tensor, const int8_t fronuc, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
     CATCH_TENSOR(torch::linalg_matrix_norm(*tensor, (fronuc == 0) ? "fro" : "nuc", dims, keepdim, c10::nullopt))
 }
 
-Tensor THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
     CATCH_TENSOR(torch::linalg_vector_norm(*tensor, *ord, dims, keepdim, c10::nullopt))
@@ -226,30 +226,30 @@ Tensor THSLinalg_matrix_power(const Tensor tensor, const int64_t n)
     CATCH_TENSOR(torch::linalg_matrix_power(*tensor, n))
 }
 
-Tensor THSLinalg_multi_dot(const Tensor* tensors, const int length)
+Tensor THSLinalg_multi_dot(const Tensor* tensors, const int32_t length)
 {
     CATCH_TENSOR(torch::linalg_multi_dot(toTensors<at::Tensor>((torch::Tensor**)tensors, length)))
 }
 
-Tensor THSLinalg_norm_str(const Tensor tensor, const char* p, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_norm_str(const Tensor tensor, const char* p, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg_norm(*tensor, p, dims, keepdim, c10::nullopt))
 }
 
-Tensor THSLinalg_norm_float(const Tensor tensor, const double p, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_norm_float(const Tensor tensor, const double p, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg_norm(*tensor, p, dims, keepdim, c10::nullopt))
 }
 
-Tensor THSLinalg_norm_int(const Tensor tensor, const int p, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_norm_int(const Tensor tensor, const int32_t p, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg_norm(*tensor, p, dims, keepdim, c10::nullopt))
 }
 
-Tensor THSLinalg_norm_opt(const Tensor tensor, const int64_t* dim, const int dim_length, const bool keepdim)
+Tensor THSLinalg_norm_opt(const Tensor tensor, const int64_t* dim, const int32_t dim_length, const bool keepdim)
 {
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg_norm(*tensor, c10::nullopt, dims, keepdim, c10::nullopt))
@@ -276,7 +276,7 @@ Tensor THSLinalg_pinverse(const Tensor tensor, const double rcond, const bool he
     CATCH_TENSOR(torch::linalg_pinv(*tensor, rcond, hermitian))
 }
 
-Tensor THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R)
+Tensor THSLinalg_qr(const Tensor tensor, const uint8_t mode, Tensor* R)
 {
     std::tuple<at::Tensor, at::Tensor> res;
     if (mode == 0) {
@@ -335,7 +335,7 @@ Tensor THSLinalg_tensorinv(const Tensor tensor, const int64_t ind)
     CATCH_TENSOR(torch::linalg_tensorinv(*tensor, ind))
 }
 
-Tensor THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length)
+Tensor THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int32_t dim_length)
 {
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg_tensorsolve(*tensor, *other, dims))
@@ -467,9 +467,9 @@ Tensor THSLinalg_tensordot(
     const Tensor input1,
     const Tensor input2,
     const int64_t* dims1,
-    const int dims1_length,
+    const int32_t dims1_length,
     const int64_t* dims2,
-    const int dims2_length)
+    const int32_t dims2_length)
 {
     auto d1 = c10::ArrayRef<int64_t>(dims1, dims1_length);
     auto d2 = c10::ArrayRef<int64_t>(dims2, dims2_length);

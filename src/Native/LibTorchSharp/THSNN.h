@@ -18,8 +18,8 @@ EXPORT_API(void)        THSNN_Module_get_named_modules(const NNModule module, NN
 EXPORT_API(void)        THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length), bool recurse);
 EXPORT_API(int)         THSNN_Module_is_training(NNModule module);
 EXPORT_API(void)        THSNN_Module_train(NNModule module, bool on);
-EXPORT_API(long)        THSNN_Module_children_size(const NNModule module);
-EXPORT_API(NNModule)    THSNN_Module_child(const NNModule module, const int index);
+EXPORT_API(size_t)      THSNN_Module_children_size(const NNModule module);
+EXPORT_API(NNModule)    THSNN_Module_child(const NNModule module, const int32_t index);
 EXPORT_API(const char*) THSNN_Module_name(const NNModule module);
 EXPORT_API(void)        THSNN_Module_zero_grad(const NNModule module, bool set_to_none);
 EXPORT_API(void)        THSNN_Module_save(const NNModule module, const char* location);
@@ -70,10 +70,10 @@ EXPORT_API(Tensor)   THSNN_pixel_unshuffle(const Tensor tensor, const int64_t do
 
 // Vision -- Functions
 
-EXPORT_API(Tensor) THSNN_pad(const Tensor input, const int64_t* pad, const int pad_length, const int8_t mode, const double value);
-EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, const bool antialias);
+EXPORT_API(Tensor) THSNN_pad(const Tensor input, const int64_t* pad, const int32_t pad_length, const int8_t mode, const double value);
+EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int32_t size_len, const double* scale_factor, const int32_t scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, const bool antialias);
 EXPORT_API(Tensor) THSNN_grid_sample(const Tensor input, const Tensor grid, const int8_t mode, const int8_t padding_mode, const int8_t align_corners);
-EXPORT_API(Tensor) THSNN_affine_grid(const Tensor theta, const int64_t* size, const int size_len, const bool align_corners);
+EXPORT_API(Tensor) THSNN_affine_grid(const Tensor theta, const int64_t* size, const int32_t size_len, const bool align_corners);
 
 // Sparse
 
@@ -195,12 +195,12 @@ EXPORT_API(Tensor) THSNN_triplet_margin_with_distance_loss(const Tensor anchor, 
 
 // Optimizers
 
-EXPORT_API(Optimizer) THSNN_Adagrad_ctor(const Tensor* parameters, const int len, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps);
-EXPORT_API(Optimizer) THSNN_Adam_ctor(const Tensor* parameters, const int len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
-EXPORT_API(Optimizer) THSNN_AdamW_ctor(const Tensor* parameters, const int len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
-EXPORT_API(Optimizer) THSNN_LBFGS_ctor(const Tensor* parameters, const int len, const double lr, const int64_t max_iter, const int64_t max_eval, const double tolerange_grad, const double tolerance_change, const int64_t history_size);
-EXPORT_API(Optimizer) THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered);
-EXPORT_API(Optimizer) THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov);
+EXPORT_API(Optimizer) THSNN_Adagrad_ctor(const Tensor* parameters, const int32_t len, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps);
+EXPORT_API(Optimizer) THSNN_Adam_ctor(const Tensor* parameters, const int32_t len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
+EXPORT_API(Optimizer) THSNN_AdamW_ctor(const Tensor* parameters, const int32_t len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
+EXPORT_API(Optimizer) THSNN_LBFGS_ctor(const Tensor* parameters, const int32_t len, const double lr, const int64_t max_iter, const int64_t max_eval, const double tolerange_grad, const double tolerance_change, const int64_t history_size);
+EXPORT_API(Optimizer) THSNN_RMSprop_ctor(const Tensor* parameters, const int32_t length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered);
+EXPORT_API(Optimizer) THSNN_SGD_ctor(const Tensor* parameters, const int32_t length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov);
 
 EXPORT_API(void) THSNN_Adam_set_betas(const Optimizer optimizer, double beta1, double beta2);
 EXPORT_API(void) THSNN_AdamW_set_betas(const Optimizer optimizer, double beta1, double beta2);
@@ -244,5 +244,5 @@ EXPORT_API(Tensor) THSNN_PackedSequence_unsorted_indices(PackedSequence sequence
 EXPORT_API(void) THSNN_PackedSequence_dispose(PackedSequence sequence);
 EXPORT_API(PackedSequence) THSNN_pack_padded_sequence(Tensor input, Tensor lengths, bool batch_first, bool enforce_sorted);
 EXPORT_API(void) THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1, Tensor* res2);
-EXPORT_API(Tensor) THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value);
-EXPORT_API(PackedSequence) THSNN_pack_sequence(const Tensor* sequences, int sequences_len, bool enforce_sorted);
+EXPORT_API(Tensor) THSNN_pad_sequence(const Tensor* sequences, const int32_t sequences_len, bool batch_first, double padding_value);
+EXPORT_API(PackedSequence) THSNN_pack_sequence(const Tensor* sequences, int32_t sequences_len, bool enforce_sorted);

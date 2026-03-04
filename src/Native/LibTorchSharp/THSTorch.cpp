@@ -135,9 +135,9 @@ int THSTorchCuda_cudnn_is_available()
     return torch::cuda::cudnn_is_available();
 }
 
-int THSTorchCuda_device_count()
+int32_t THSTorchCuda_device_count()
 {
-    return (int)torch::cuda::device_count();
+    return (int32_t)torch::cuda::device_count();
 }
 
 void THSTorchCuda_synchronize(const int64_t device_index)
@@ -153,34 +153,34 @@ const char * THSTorch_get_and_reset_last_err()
     return tmp;
 }
 
-int THSTorch_get_num_threads()
+int32_t THSTorch_get_num_threads()
 {
-    CATCH_RETURN_RES(int, -1, res = torch::get_num_threads());
+    CATCH_RETURN_RES(int32_t, -1, res = torch::get_num_threads());
 }
 
-void THSTorch_set_num_threads(const int threads)
+void THSTorch_set_num_threads(const int32_t threads)
 {
     torch::set_num_threads(threads);
 }
 
-int THSTorch_get_num_interop_threads()
+int32_t THSTorch_get_num_interop_threads()
 {
-    CATCH_RETURN_RES(int, -1, res = torch::get_num_interop_threads());
+    CATCH_RETURN_RES(int32_t, -1, res = torch::get_num_interop_threads());
 }
 
-void THSTorch_set_num_interop_threads(const int threads)
+void THSTorch_set_num_interop_threads(const int32_t threads)
 {
     torch::set_num_interop_threads(threads);
 }
 
-int THSTorch_can_cast(const int type1, const int type2)
+int32_t THSTorch_can_cast(const int32_t type1, const int32_t type2)
 {
-    CATCH_RETURN_RES(int, -1, res = (int)torch::can_cast((c10::ScalarType)type1, (c10::ScalarType)type2));
+    CATCH_RETURN_RES(int32_t, -1, res = (int32_t)torch::can_cast((c10::ScalarType)type1, (c10::ScalarType)type2));
 }
 
-int THSTorch_promote_types(const int type1, const int type2)
+int32_t THSTorch_promote_types(const int32_t type1, const int32_t type2)
 {
-    CATCH_RETURN_RES(int, -1, res = (int)torch::promote_types((c10::ScalarType)type1, (c10::ScalarType)type2));
+    CATCH_RETURN_RES(int32_t, -1, res = (int32_t)torch::promote_types((c10::ScalarType)type1, (c10::ScalarType)type2));
 }
 
 
@@ -279,12 +279,12 @@ double THSTorch_scalar_to_float64(Scalar value)
     return value->toDouble();
 }
 
-void THSTorch_scalar_to_bfloat16(Scalar value, unsigned short* res)
+void THSTorch_scalar_to_bfloat16(Scalar value, uint16_t* res)
 {
     *res = value->toBFloat16().x;
 }
 
-void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
+void THSTorch_scalar_to_float16(Scalar value, uint16_t *res)
 {
     *res = value->toHalf().x;
 }
