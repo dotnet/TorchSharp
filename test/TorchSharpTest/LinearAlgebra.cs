@@ -315,7 +315,7 @@ namespace TorchSharp
             var u = a.cholesky(upper: true);
 #pragma warning restore CS0618
 
-            // U should be upper-triangular: U^T * U == A
+            // U should be upper-triangular: for real inputs U^T * U == A (more generally, U^H * U == A)
             Assert.True(a.allclose(u.swapaxes(-2, -1).matmul(u)));
         }
 
