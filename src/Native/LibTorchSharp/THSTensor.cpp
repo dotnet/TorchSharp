@@ -4,9 +4,9 @@
 #include <iostream>
 #include <fstream>
 
-int THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan)
+bool THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan)
 {
-    CATCH_RETURN(int, 0, left->allclose(*right, rtol, atol, equal_nan));
+    CATCH_RETURN(bool, false, left->allclose(*right, rtol, atol, equal_nan));
 }
 
 Tensor THSTensor_all(const Tensor tensor)
@@ -314,14 +314,14 @@ Tensor THSTensor_contiguous(const Tensor tensor)
     CATCH_TENSOR(tensor->contiguous());
 }
 
-int THSTensor_is_contiguous(const Tensor tensor)
+bool THSTensor_is_contiguous(const Tensor tensor)
 {
     bool result = false;
     CATCH(result = tensor->is_contiguous(););
     return result;
 }
 
-int64_t THSTensor_is_nonzero(const Tensor tensor)
+bool THSTensor_is_nonzero(const Tensor tensor)
 {
     bool result = false;
     CATCH(result = tensor->is_nonzero();)
@@ -365,7 +365,7 @@ Tensor THSTensor_pin_memory(const Tensor tensor)
     CATCH_TENSOR(tensor->pin_memory());
 }
 
-int64_t THSTensor_is_pinned(const Tensor tensor)
+bool THSTensor_is_pinned(const Tensor tensor)
 {
     bool result = false;
     CATCH(result = tensor->is_pinned(););
@@ -947,9 +947,9 @@ Tensor THSTensor_inverse(const Tensor tensor)
     CATCH_TENSOR(tensor->inverse());
 }
 
-int THSTensor_is_sparse(const Tensor tensor)
+bool THSTensor_is_sparse(const Tensor tensor)
 {
-    CATCH_RETURN(int, 0, tensor->is_sparse());
+    CATCH_RETURN(bool, false, tensor->is_sparse());
 }
 
 Scalar THSTensor_item(const Tensor tensor)
@@ -1270,9 +1270,9 @@ Tensor THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, c
     CATCH_TENSOR(tensor->renorm(p, dim, maxnorm));
 }
 
-int THSTensor_requires_grad(const Tensor tensor)
+bool THSTensor_requires_grad(const Tensor tensor)
 {
-    CATCH_RETURN(int, 0, tensor->requires_grad());
+    CATCH_RETURN(bool, false, tensor->requires_grad());
 }
 
 void THSTensor_retain_grad(const Tensor tensor)
@@ -1280,9 +1280,9 @@ void THSTensor_retain_grad(const Tensor tensor)
     CATCH(tensor->retain_grad(););
 }
 
-int64_t THSTensor_is_leaf(const Tensor tensor)
+bool THSTensor_is_leaf(const Tensor tensor)
 {
-    CATCH_RETURN(int64_t, 0, tensor->is_leaf(););
+    CATCH_RETURN(bool, false, tensor->is_leaf());
 }
 
 Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length)

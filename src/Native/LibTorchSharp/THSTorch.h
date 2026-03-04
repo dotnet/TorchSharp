@@ -23,8 +23,8 @@ EXPORT_API(Generator) THSGenerator_new(uint64_t seed, int64_t device, int64_t in
 EXPORT_API(int64_t)   THSGenerator_initial_seed(const Generator gen);
 EXPORT_API(void)      THSGenerator_dispose(const Generator generator);
 
-EXPORT_API(int) THSTorchCuda_is_available();
-EXPORT_API(int) THSTorchCuda_cudnn_is_available();
+EXPORT_API(bool) THSTorchCuda_is_available();
+EXPORT_API(bool) THSTorchCuda_cudnn_is_available();
 EXPORT_API(int) THSTorchCuda_device_count();
 EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device);
 
