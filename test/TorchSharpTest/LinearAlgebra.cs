@@ -49,7 +49,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
                 Assert.Equal(new long[] { 2, 3 }, pivots.shape);
 
-                var x = lu_solve(b, A_LU, pivots);
+                var x = linalg.lu_solve(A_LU, pivots, b);
                 Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
 
                 var y = norm(bmm(A, x) - b);
@@ -67,7 +67,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 2, 3 }, pivots.shape);
                 Assert.Equal(new long[] { 2 }, infos.shape);
 
-                var x = lu_solve(b, A_LU, pivots);
+                var x = linalg.lu_solve(A_LU, pivots, b);
                 Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
 
                 var y = norm(bmm(A, x) - b);
@@ -303,6 +303,20 @@ namespace TorchSharp
             var l = linalg.cholesky(a);
 
             Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1)))); // Worked this in to get it tested. Alias for 'transpose'
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.cholesky))]
+        public void CholeskyUpperTest()
+        {
+            var a = randn(new long[] { 3, 2, 2 }, float64);
+            a = a.matmul(a.swapdims(-2, -1));
+#pragma warning disable CS0618 // Obsolete
+            var u = a.cholesky(upper: true);
+#pragma warning restore CS0618
+
+            // U should be upper-triangular: for real inputs U^T * U == A (more generally, U^H * U == A)
+            Assert.True(a.allclose(u.swapaxes(-2, -1).matmul(u)));
         }
 
         [Fact]
