@@ -600,8 +600,8 @@ EXPORT_API(Tensor) THSTensor_ge_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(void) THSTensor_ge_scalar_(const Tensor left, const Scalar right);
 
-EXPORT_API(Tensor) THSTensor_gelu(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_gelu_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_gelu(const Tensor tensor, const char* approximate);
+EXPORT_API(Tensor) THSTensor_gelu_(const Tensor tensor, const char* approximate);
 
 EXPORT_API(Tensor) THSTensor_glu(const Tensor tensor, const int64_t dim);
 
