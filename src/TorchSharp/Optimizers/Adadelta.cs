@@ -129,10 +129,15 @@ namespace TorchSharp
 
                     var options = group.Options as Options;
                     var rho = options.rho.Value;
-                    var eps = options.eps.Value;
+                    using var rho_scalar = rho.ToScalar();
+                    using var rho_bar_scalar = (1 - rho).ToScalar();
+                    using var eps_scalar = options.eps.Value.ToScalar();
                     var weight_decay = options.weight_decay.Value;
+                    var need_weight_decay = (weight_decay != 0);
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
                     var maximize = options.maximize.Value;
                     var lr = options.LearningRate.Value;
+                    using var negative_lr_scalar = (-lr).ToScalar();
 
                     foreach (var param in group.Parameters) {
 
@@ -149,17 +154,17 @@ namespace TorchSharp
                         var square_avg = state.square_avg;
                         var acc_delta = state.acc_delta;
 
-                        grad = (weight_decay != 0)
-                            ? grad.add(param, alpha: weight_decay)
+                        grad = (need_weight_decay)
+                            ? grad.add(param, alpha: weight_decay_scalar)
                             : grad.alias();
 
-                        square_avg.mul_(rho).addcmul_(grad, grad, 1 - rho);
+                        square_avg.mul_(rho_scalar).addcmul_(grad, grad, rho_bar_scalar);
 
-                        var std = square_avg.add(eps).sqrt_();
-                        var delta = acc_delta.add(eps).sqrt_().div_(std).mul_(grad);
+                        var std = square_avg.add(eps_scalar).sqrt_();
+                        var delta = acc_delta.add(eps_scalar).sqrt_().div_(std).mul_(grad);
 
-                        param.add_(delta, alpha: -lr);
-                        acc_delta.mul_(rho).addcmul_(delta, delta, 1 - rho);
+                        param.add_(delta, alpha: negative_lr_scalar);
+                        acc_delta.mul_(rho_scalar).addcmul_(delta, delta, rho_bar_scalar);
                     }
                 }, closure);
             }

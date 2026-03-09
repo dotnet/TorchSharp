@@ -76,7 +76,7 @@ namespace TorchSharp
                 var xc2 = max(x2, x2g);
                 var yc2 = max(y2, y2g);
 
-                var diagonal_distance_squared = (xc2 - xc1).pow(2) + (yc2 - yc1).pow(2) + eps;
+                var diagonal_distance_squared = (xc2 - xc1).square() + (yc2 - yc1).square() + eps;
                 // centers of boxes
                 var x_p = (x2 + x1) / 2;
                 var y_p = (y2 + y1) / 2;
@@ -84,7 +84,7 @@ namespace TorchSharp
                 var y_g = (y1g + y2g) / 2;
 
                 // The distance between boxes' centers squared.
-                var centers_distance_squared = (x_p - x_g).pow(2) + (y_p - y_g).pow(2);
+                var centers_distance_squared = (x_p - x_g).square() + (y_p - y_g).square();
                 // The distance IoU is the IoU penalized by a normalized
                 // distance between boxes' centers squared.
                 var loss = 1 - iou + (centers_distance_squared / diagonal_distance_squared);

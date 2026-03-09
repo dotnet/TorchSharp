@@ -28,7 +28,7 @@ namespace TorchSharp
                 get {
                     using var _ = NewDisposeScope();
                     var total = concentration0 + concentration1;
-                    return (concentration1 * concentration0 / (total.pow(2) * (total + 1))).MoveToOuterDisposeScope();
+                    return (concentration1 * concentration0 / (total.square() * (total + 1))).MoveToOuterDisposeScope();
                 }
             }
 

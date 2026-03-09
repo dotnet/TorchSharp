@@ -142,8 +142,14 @@ namespace TorchSharp
                     var options = group.Options as Options;
                     var beta1 = options.beta1.Value;
                     var beta2 = options.beta2.Value;
-                    var eps = options.eps.Value;
+                    using var beta1_scalar = beta1.ToScalar();
+                    using var beta2_scalar = beta2.ToScalar();
+                    var beta1_bar = 1 - beta1;
+                    using var beta1_bar_scalar = beta1_bar.ToScalar();
+                    using var eps_scalar = options.eps.Value.ToScalar();
                     var weight_decay = options.weight_decay.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
                     var lr = options.LearningRate.Value;
 
                     foreach (var param in group.Parameters) {
@@ -161,21 +167,22 @@ namespace TorchSharp
                         var exp_avg = state.exp_avg;
                         var exp_inf = state.exp_inf;
 
-                        grad = (weight_decay != 0)
-                            ? grad.add(param, alpha: weight_decay)
+                        grad = (need_weight_decay)
+                            ? grad.add(param, alpha: weight_decay_scalar)
                             : grad.alias();
 
-                        exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                        exp_avg.mul_(beta1_scalar).add_(grad, alpha: beta1_bar_scalar);
 
                         var norm_buf = torch.cat(new Tensor[] {
-                                        exp_inf.mul_(beta2).unsqueeze(0),
-                                        grad.abs().add_(eps).unsqueeze_(0)
+                                        exp_inf.mul_(beta2_scalar).unsqueeze(0),
+                                        grad.abs().add_(eps_scalar).unsqueeze_(0)
                                     }, 0);
 
-                        torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+                        torch.amax(norm_buf, new long[] { 0 }, false, exp_inf); // FIXME: CA1806?
 
                         var clr = lr / (1 - Math.Pow(beta1, state.step));
-                        param.addcdiv_(exp_avg, exp_inf, value: -clr);
+                        using var negative_clr_scalar = (-clr).ToScalar();
+                        param.addcdiv_(exp_avg, exp_inf, value: negative_clr_scalar);
                     }
                 }, closure);
             }

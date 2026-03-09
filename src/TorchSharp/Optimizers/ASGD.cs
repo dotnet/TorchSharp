@@ -140,6 +140,8 @@ namespace TorchSharp
                     var lambd = options.lambd.Value;
                     var alpha = options.alpha.Value;
                     var weight_decay = options.weight_decay.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
                     var t0 = options.t0.Value;
                     var lr = options.LearningRate.Value;
 
@@ -157,15 +159,19 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        grad = (weight_decay != 0)
-                            ? grad.add(param, alpha: weight_decay)
+                        grad = (need_weight_decay)
+                            ? grad.add(param, alpha: weight_decay_scalar)
                             : grad.alias();
 
-                        param.mul_(1 - lambd * state.eta);
-                        param.add_(grad, alpha: -state.eta);
+                        var lambd_eta_bar = 1 - lambd * state.eta;
+                        using var lambd_eta_bar_scalar = lambd_eta_bar.ToScalar();
+                        param.mul_(lambd_eta_bar_scalar);
+                        using var negative_eta_scalar = (-state.eta).ToScalar();
+                        param.add_(grad, alpha: negative_eta_scalar);
 
                         if (state.mu != 1) {
-                            state.ax.add_(param.sub(state.ax).mul(state.mu));
+                            using var mu_scalar = state.mu.ToScalar();
+                            state.ax.add_(param.sub(state.ax).mul(mu_scalar));
                         } else {
                             state.ax.copy_(param);
                         }

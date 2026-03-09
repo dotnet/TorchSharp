@@ -36,7 +36,8 @@ namespace TorchSharp
                 var p = torch.sigmoid(inputs);
                 var ce_loss = binary_cross_entropy_with_logits(inputs, targets, reduction: nn.Reduction.None);
                 var p_t = p * targets + (1 - p) * (1 - targets);
-                var loss = ce_loss * (1 - p_t).pow(gamma);
+                using var gamma_scalar = gamma.ToScalar();
+                var loss = ce_loss * (1 - p_t).pow(gamma_scalar);
 
                 if (alpha >= 0) {
                     var alpha_t = alpha * targets + (1 - alpha) * (1 - targets);
