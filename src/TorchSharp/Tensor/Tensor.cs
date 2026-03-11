@@ -3008,9 +3008,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public Tensor gelu(TorchSharp.Modules.GELU.Approximate approximate)
+            public Tensor gelu(GELUApproximate approximate)
             {
-                var res = NativeMethods.THSTensor_gelu(Handle, approximate == TorchSharp.Modules.GELU.Approximate.tanh ? "tanh" : "none");
+                var res = NativeMethods.THSTensor_gelu(Handle, approximate == GELUApproximate.tanh ? "tanh" : "none");
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -3024,9 +3024,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public Tensor gelu_(TorchSharp.Modules.GELU.Approximate approximate)
+            public Tensor gelu_(GELUApproximate approximate)
             {
-                var res = NativeMethods.THSTensor_gelu_(Handle, approximate == TorchSharp.Modules.GELU.Approximate.tanh ? "tanh" : "none");
+                var res = NativeMethods.THSTensor_gelu_(Handle, approximate == GELUApproximate.tanh ? "tanh" : "none");
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

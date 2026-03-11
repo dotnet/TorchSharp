@@ -14,22 +14,7 @@ namespace TorchSharp
         /// </summary>
         public sealed class GELU : ParameterLessModule<Tensor, Tensor>
         {
-            /// <summary>
-            /// Specifies the approximation method for GELU.
-            /// </summary>
-            public enum Approximate
-            {
-                /// <summary>
-                /// Exact GELU computation.
-                /// </summary>
-                none,
-                /// <summary>
-                /// Tanh-based approximation.
-                /// </summary>
-                tanh
-            }
-
-            internal GELU(bool inplace, Approximate approximate = Approximate.none) : base(nameof(GELU))
+            internal GELU(bool inplace, GELUApproximate approximate = GELUApproximate.none) : base(nameof(GELU))
             {
                 this.inplace = inplace;
                 this.approximate = approximate;
@@ -42,7 +27,7 @@ namespace TorchSharp
 
             public bool inplace {get; set; }
 
-            public Approximate approximate { get; set; }
+            public GELUApproximate approximate { get; set; }
         }
     }
 
@@ -72,7 +57,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="approximate">The approximation method to use. Default: none</param>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
-            public static GELU GELU(GELU.Approximate approximate, bool inplace = false)
+            public static GELU GELU(GELUApproximate approximate, bool inplace = false)
             {
                 return new GELU(inplace, approximate);
             }
@@ -95,7 +80,7 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="approximate">The approximation method to use.</param>
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
-                public static Tensor gelu(Tensor x, GELU.Approximate approximate, bool inplace = false)
+                public static Tensor gelu(Tensor x, GELUApproximate approximate, bool inplace = false)
                 {
                     return inplace ? x.gelu_(approximate).alias() : x.gelu(approximate);
                 }
