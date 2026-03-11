@@ -42,33 +42,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestExport_DisposeIsIdempotent()
-        {
-            // Verify that double-dispose doesn't throw.
-            // We can't construct a valid ExportedProgram without a real model,
-            // so we catch the load error and verify we can still call Dispose
-            // without crashing (the constructor should have cleaned up already).
-            ExportedProgram? program = null;
-            try
-            {
-                program = torch.export.load("nonexistent.pt2");
-            }
-            catch (ExternalException)
-            {
-                // Expected - the file doesn't exist
-            }
-
-            // If somehow a program was created (shouldn't happen), dispose it twice
-            if (program != null)
-            {
-                program.Dispose();
-                program.Dispose(); // second dispose should not throw
-            }
-
-            // The fact that we reach here without crashing validates idempotent cleanup
-        }
-
-        [Fact]
         public void TestExport_GenericLoadNonExistentFile()
         {
             Assert.Throws<ExternalException>(() =>

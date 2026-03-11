@@ -29,6 +29,9 @@ void THSExport_Module_run(
     Tensor** result_tensors,
     int64_t* result_length)
 {
+    *result_tensors = nullptr;
+    *result_length = 0;
+
     CATCH(
         // Convert input tensor pointers to std::vector<torch::Tensor>
         std::vector<torch::Tensor> inputs;
@@ -41,12 +44,16 @@ void THSExport_Module_run(
         std::vector<torch::Tensor> outputs = module->run(inputs);
 
         // Allocate output array and copy results
-        *result_length = static_cast<int64_t>(outputs.size());
-        *result_tensors = new Tensor[outputs.size()];
+        auto count = outputs.size();
+        auto* tensors = new Tensor[count];
 
-        for (size_t i = 0; i < outputs.size(); i++) {
-            (*result_tensors)[i] = new torch::Tensor(outputs[i]);
+        for (size_t i = 0; i < count; i++) {
+            tensors[i] = new torch::Tensor(outputs[i]);
         }
+
+        // Only expose to caller after full success
+        *result_tensors = tensors;
+        *result_length = static_cast<int64_t>(count);
     );
 }
 
