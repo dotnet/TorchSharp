@@ -40,7 +40,7 @@ GOTO :DONE
 :USAGE
   echo "Usage..."
   echo "gen-buildsys-win.bat <VSVersion> <Target Architecture>"
-  echo "Specify the VSVersion to be used - VS2015, VS2017 or VS2019"
+  echo "Specify the VSVersion to be used - VS2015, VS2017, VS2019, VS2022, or VS2026"
   echo "Specify the Target Architecture - x86, x64, or ARM64."
   EXIT /B 1
 

@@ -54,12 +54,7 @@
 
     <TargetPlatform Condition="'$(TargetPlatform)' == ''">$(TargetOS)-$(TargetArchitecture)</TargetPlatform>
 
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetPlatform)' == 'windows-arm64'">win-arm64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
-
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'windows' AND '$(TargetPlatform)' != 'windows-arm64'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetPlatform)' == 'windows-arm64'">win-arm64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-$(TargetArchitecture)</TargetRuntimeID>

@@ -39,7 +39,7 @@ namespace TorchSharp
 
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? (RuntimeInformation.OSArchitecture == Architecture.Arm64 ? "win-arm64" : "win-x64") :
+                ? (RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "win-arm64" : "win-x64") :
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
             isAppleSilicon ? "osx-arm64" :
             "any";
