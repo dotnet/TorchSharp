@@ -2,7 +2,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -108,18 +107,28 @@ namespace TorchSharp
             torch.CheckForErrors();
 
             // Marshal result array
+            if (result_length < 0 || result_length > int.MaxValue)
+                throw new InvalidOperationException(
+                    $"Native export run returned an out-of-range result length: {result_length}.");
+
             int count = (int)result_length;
             torch.Tensor[] results = new torch.Tensor[count];
             IntPtr[] result_handles = new IntPtr[count];
-            Marshal.Copy(result_ptr, result_handles, 0, count);
 
-            for (int i = 0; i < count; i++)
+            try
             {
-                results[i] = new torch.Tensor(result_handles[i]);
-            }
+                Marshal.Copy(result_ptr, result_handles, 0, count);
 
-            // Free the native array (tensors are now owned by managed Tensor objects)
-            THSExport_Module_run_free_results(result_ptr);
+                for (int i = 0; i < count; i++)
+                {
+                    results[i] = new torch.Tensor(result_handles[i]);
+                }
+            }
+            finally
+            {
+                // Free the native array (tensors are now owned by managed Tensor objects)
+                THSExport_Module_run_free_results(result_ptr);
+            }
 
             return results;
         }
@@ -192,18 +201,31 @@ namespace TorchSharp
             // Handle tuple types
             if (typeof(TResult).IsGenericType)
             {
-                var genericType = typeof(TResult).GetGenericTypeDefinition();
+                var resultType = typeof(TResult);
+                var genericType = resultType.GetGenericTypeDefinition();
+
                 if (genericType == typeof(ValueTuple<,>))
                 {
+                    var typeArgs = resultType.GetGenericArguments();
+                    if (typeArgs[0] != typeof(torch.Tensor) || typeArgs[1] != typeof(torch.Tensor))
+                        throw new NotSupportedException(
+                            $"Tuple return type {resultType} is not supported. Only ValueTuple<Tensor, Tensor> is supported.");
+
                     if (results.Length != 2)
                         throw new InvalidOperationException($"Expected 2 output tensors, got {results.Length}");
-                    return (TResult)Activator.CreateInstance(typeof(TResult), results[0], results[1]);
+                    return (TResult)Activator.CreateInstance(resultType, results[0], results[1]);
                 }
+
                 if (genericType == typeof(ValueTuple<,,>))
                 {
+                    var typeArgs = resultType.GetGenericArguments();
+                    if (typeArgs[0] != typeof(torch.Tensor) || typeArgs[1] != typeof(torch.Tensor) || typeArgs[2] != typeof(torch.Tensor))
+                        throw new NotSupportedException(
+                            $"Tuple return type {resultType} is not supported. Only ValueTuple<Tensor, Tensor, Tensor> is supported.");
+
                     if (results.Length != 3)
                         throw new InvalidOperationException($"Expected 3 output tensors, got {results.Length}");
-                    return (TResult)Activator.CreateInstance(typeof(TResult), results[0], results[1], results[2]);
+                    return (TResult)Activator.CreateInstance(resultType, results[0], results[1], results[2]);
                 }
             }
 
