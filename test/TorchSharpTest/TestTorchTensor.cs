@@ -4825,6 +4825,27 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.heaviside_))]
+        public void HeavisideInPlaceTest()
+        {
+            var input = new float[] { -1.0f, 0.0f, 3.0f };
+            var values = new float[] { 1.0f, 2.0f, 1.0f };
+            var expected = new float[] { 0.0f, 2.0f, 1.0f };
+            {
+                var t = torch.tensor(input);
+                var res = t.heaviside_(torch.tensor(values));
+                Assert.Same(t, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var t = torch.tensor(input);
+                var res = torch.heaviside_(t, torch.tensor(values));
+                Assert.Same(t, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.maximum))]
         public void MaximumTest()
         {
@@ -4955,6 +4976,26 @@ namespace TorchSharp
             var expected = new float[] { -0.946446538f, 2.635313f, 0.6128909f, -1.71667457f, 0.6260796f };
             var res = torch.tensor(data).logit(eps: 1f - 6);
             Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.logit_))]
+        public void LogitInPlaceTest()
+        {
+            var data = new float[] { 0.2796f, 0.9331f, 0.6486f, 0.1523f, 0.6516f };
+            var expected = new float[] { -0.946446538f, 2.635313f, 0.6128909f, -1.71667457f, 0.6260796f };
+            {
+                var input = torch.tensor(data);
+                var res = input.logit_(eps: 1f - 6);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var input = torch.tensor(data);
+                var res = torch.logit_(input, eps: 1f - 6);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -6710,6 +6751,26 @@ namespace TorchSharp
                     var expected = torch.tensor(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
                     Assert.True(a.nan_to_num(nan: 2.0f, posinf: 3.0f, neginf: -13.0f).allclose(expected));
                 }
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.nan_to_num_))]
+        public void NanToNumInPlaceTest()
+        {
+            {
+                var a = torch.tensor(new float[] { Single.NaN, Single.PositiveInfinity, Single.NegativeInfinity, MathF.PI });
+                var expected = torch.tensor(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
+                var res = a.nan_to_num_(nan: 2.0f, posinf: 3.0f, neginf: -13.0f);
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var a = torch.tensor(new float[] { Single.NaN, Single.PositiveInfinity, Single.NegativeInfinity, MathF.PI });
+                var expected = torch.tensor(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
+                var res = torch.nan_to_num_(a, nan: 2.0f, posinf: 3.0f, neginf: -13.0f);
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
             }
         }
 

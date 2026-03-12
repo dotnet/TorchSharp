@@ -303,6 +303,9 @@ namespace TorchSharp
                 ScalarType.ComplexFloat32 => 8,
                 ScalarType.ComplexFloat64 => 16,
                 ScalarType.Bool => 1,
+                ScalarType.QInt8 => 1,
+                ScalarType.QUInt8 => 1,
+                ScalarType.QInt32 => 4,
                 ScalarType.BFloat16 => 2,
                 _ => throw new NotImplementedException()
             };
@@ -362,6 +365,23 @@ namespace TorchSharp
             switch (type) {
             case ScalarType.ComplexFloat32:
             case ScalarType.ComplexFloat64:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether a given element type is quantized.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns></returns>
+        internal static bool IsQuantized(this ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.QInt8:
+            case ScalarType.QUInt8:
+            case ScalarType.QInt32:
                 return true;
             default:
                 return false;

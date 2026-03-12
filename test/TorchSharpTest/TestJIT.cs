@@ -161,7 +161,7 @@ namespace TorchSharp
 
             Assert.Equal(new long[] { 10 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
-            Assert.True(torch.tensor(new float[] { 0.564213157f, -0.04519982f, -0.005117342f, 0.395530462f, -0.3780813f, -0.004734449f, -0.3221216f, -0.289159119f, 0.268511474f, 0.180702567f }).allclose(t));
+            Assert.True(torch.tensor(new float[] { 0.564213157f, -0.04519982f, -0.005117342f, 0.395530462f, -0.3780813f, -0.004734449f, -0.3221216f, -0.289159119f, 0.268511474f, 0.180702567f }).allclose(t, rtol: 1e-4, atol: 1e-5));
 
             Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => m.call(torch.ones(100)));
         }

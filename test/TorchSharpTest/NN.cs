@@ -5265,6 +5265,37 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestEmbeddingDefaultDevice()
+        {
+            // Regression test for https://github.com/dotnet/TorchSharp/issues/1438
+            // Embedding (and other native modules) ignored torch.set_default_device(),
+            // causing device mismatch when called with tensors on the default device.
+            var defaultDevice = torch.get_default_device();
+
+            try {
+                torch.set_default_device(torch.META);
+
+                // Before the fix, these modules were created on CPU despite META being
+                // the default device, which would cause "Expected all tensors to be on
+                // the same device" errors when used with tensors on the default device.
+                using (var emb = Embedding(2, 3)) {
+                    Assert.Equal(DeviceType.META, emb.weight!.device_type);
+                }
+
+                using (var emb = EmbeddingBag(2, 3)) {
+                    Assert.Equal(DeviceType.META, emb.weight!.device_type);
+                }
+
+                // Verify explicit device still takes precedence over default
+                using (var emb = Embedding(2, 3, device: torch.CPU)) {
+                    Assert.Equal(DeviceType.CPU, emb.weight!.device_type);
+                }
+            } finally {
+                torch.set_default_device(defaultDevice);
+            }
+        }
+
+        [Fact]
         public void TestOneHotEncoding1()
         {
             var ones = torch.tensor(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
