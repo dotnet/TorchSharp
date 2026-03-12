@@ -12,20 +12,19 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSData_loaderMNIST(
             [MarshalAs(UnmanagedType.LPStr)] string filename,
             long batchSize,
-            [MarshalAs(UnmanagedType.U1)] bool isTrain);
+            byte isTrain);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSData_loaderCIFAR10(
             [MarshalAs(UnmanagedType.LPStr)] string path,
             long batchSize,
-            [MarshalAs(UnmanagedType.U1)] bool isTrain);
+            byte isTrain);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSData_current(IntPtr iterator, IntPtr data, IntPtr target);
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSData_moveNext(IntPtr iterator);
+        internal static extern byte THSData_moveNext(IntPtr iterator);
 
         [DllImport("LibTorchSharp")]
         internal static extern long THSData_size(IntPtr iterator);

@@ -166,7 +166,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static RNN RNN(long inputSize, long hiddenSize, long numLayers = 1, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
+                var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, (byte)(bias ? 1 : 0), (byte)(batchFirst ? 1 : 0), dropout, (byte)(bidirectional ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new RNN(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional).MoveModule<RNN>(device, dtype);
             }

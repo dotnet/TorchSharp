@@ -27,7 +27,7 @@ namespace TorchSharp.PInvoke
         internal static extern void THSJIT_Module_named_buffers(torch.nn.Module.HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_named_attributes(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.U1)] bool recurse, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+        internal static extern void THSJIT_Module_named_attributes(torch.nn.Module.HType module, byte recurse, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_set_attribute(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.LPStr)] string name, IntPtr tensor);
@@ -45,17 +45,16 @@ namespace TorchSharp.PInvoke
         internal static extern int THSJIT_Module_num_outputs(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_train(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.U1)] bool on);
+        internal static extern void THSJIT_Module_train(torch.nn.Module.HType module, byte on);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_eval(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSJIT_Module_is_training(torch.nn.Module.HType module);
+        internal static extern byte THSJIT_Module_is_training(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_zero_grad(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.U1)] bool set_to_none);
+        internal static extern void THSJIT_Module_zero_grad(torch.nn.Module.HType module, byte set_to_none);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_to_device(torch.nn.Module.HType module, long deviceType, long deviceIndex);

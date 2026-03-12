@@ -257,7 +257,7 @@ namespace TorchSharp
         public static Scalar ToScalar(this bool value)
         {
             torch.InitializeDeviceType(DeviceType.CPU);
-            return new Scalar(THSTorch_bool_to_scalar(value));
+            return new Scalar(THSTorch_bool_to_scalar((byte)(value ? 1 : 0)));
         }
 
 #if NET6_0_OR_GREATER
@@ -364,7 +364,7 @@ namespace TorchSharp
         /// <param name="value">The input value.</param>
         public static bool ToBoolean(this Scalar value)
         {
-            return THSTorch_scalar_to_bool(value.Handle);
+            return THSTorch_scalar_to_bool(value.Handle) != 0;
         }
 
         /// <summary>

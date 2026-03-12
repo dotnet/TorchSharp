@@ -16,7 +16,7 @@ namespace TorchSharp
         public static Tensor tensor(int scalar, Device? device = null, bool requires_grad = false)
         {
             device = InitializeDevice(device);
-            var handle = THSTensor_newInt32Scalar(scalar, (int)device.type, device.index, requires_grad);
+            var handle = THSTensor_newInt32Scalar(scalar, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }

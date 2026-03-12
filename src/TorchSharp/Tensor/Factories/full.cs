@@ -109,11 +109,11 @@ namespace TorchSharp
 
             unsafe {
                 fixed (long* psizes = size) {
-                    var handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);

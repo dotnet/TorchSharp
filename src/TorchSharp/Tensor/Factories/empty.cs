@@ -106,11 +106,11 @@ namespace TorchSharp
 
             unsafe {
                 fixed (long* psizes = size, pstrides = strides) {
-                    var handle = THSTensor_empty_strided((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_empty_strided((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_empty_strided((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_empty_strided((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
@@ -138,11 +138,11 @@ namespace TorchSharp
 
             unsafe {
                 fixed (long* psizes = size) {
-                    var handle = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);

@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -56,7 +56,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor pairwise_distance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keepdim = false)
                 {
-                    var res = THSNN_pairwise_distance(input1.Handle, input2.Handle, p, eps, keepdim);
+                    var res = THSNN_pairwise_distance(input1.Handle, input2.Handle, p, eps, (byte)(keepdim ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }

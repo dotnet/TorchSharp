@@ -86,11 +86,11 @@ namespace TorchSharp
 
             columns = (columns == -1) ? rows : columns;
 
-            var handle = THSTensor_eye(rows, columns, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+            var handle = THSTensor_eye(rows, columns, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_eye(rows, columns, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                handle = THSTensor_eye(rows, columns, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             var result = new Tensor(handle);
@@ -169,12 +169,12 @@ namespace TorchSharp
                 IntPtr iPtr = (IntPtr)ptr;
 
                 fixed (long* shape = dimensions) {
-                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
 
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
 
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
@@ -228,12 +228,12 @@ namespace TorchSharp
                 IntPtr iPtr = (IntPtr)ptr;
 
                 fixed (long* shape = dimensions) {
-                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
 
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
 
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
@@ -400,12 +400,12 @@ namespace TorchSharp
             deleters.TryAdd(deleter, deleter); // keep the delegate alive
 
             unsafe {
-                var handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                var handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
 
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                 }
 
                 if (handle == IntPtr.Zero) { CheckForErrors(); }
@@ -445,11 +445,11 @@ namespace TorchSharp
 
             unsafe {
                 fixed (long* psizes = size) {
-                    var handle = THSTensor_sparse(indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_sparse(indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_sparse(indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_sparse(indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var tensor = new Tensor(handle);
@@ -509,7 +509,7 @@ namespace TorchSharp
                 dtype = get_default_dtype();
             }
 
-            var handle = THSTensor_from_file(StringEncoder.GetNullTerminatedUTF8ByteArray(filename), (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+            var handle = THSTensor_from_file(StringEncoder.GetNullTerminatedUTF8ByteArray(filename), (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
@@ -525,11 +525,11 @@ namespace TorchSharp
                 dtype = get_default_dtype();
             }
 
-            var handle = THSTensor_linspace(start, end, steps, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+            var handle = THSTensor_linspace(start, end, steps, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_linspace(start, end, steps, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                handle = THSTensor_linspace(start, end, steps, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
@@ -546,11 +546,11 @@ namespace TorchSharp
                 dtype = get_default_dtype();
             }
 
-            var handle = THSTensor_logspace(start, end, steps, @base, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+            var handle = THSTensor_logspace(start, end, steps, @base, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_logspace(start, end, steps, @base, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                handle = THSTensor_logspace(start, end, steps, @base, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             }
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);

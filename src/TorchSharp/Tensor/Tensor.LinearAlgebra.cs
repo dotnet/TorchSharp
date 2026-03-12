@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -258,7 +258,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor pinverse(double rcond = 1e-15, bool hermitian = false)
             {
-                var res = THSLinalg_pinverse(Handle, rcond, hermitian);
+                var res = THSLinalg_pinverse(Handle, rcond, (byte)(hermitian ? 1 : 0));
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -274,7 +274,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor ormqr(Tensor tau, Tensor other, bool left = true, bool transpose = false)
             {
-                var res = THSTensor_ormqr(Handle, tau.handle, other.Handle, left, transpose);
+                var res = THSTensor_ormqr(Handle, tau.handle, other.Handle, (byte)(left ? 1 : 0), (byte)(transpose ? 1 : 0));
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

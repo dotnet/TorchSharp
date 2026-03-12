@@ -56,7 +56,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor dropout2d(Tensor input, double p = 0.5, bool training = true, bool inplace = false)
                 {
-                    var res = THSNN_dropout2d(input.Handle, p, training, inplace);
+                    var res = THSNN_dropout2d(input.Handle, p, (byte)(training ? 1 : 0), (byte)(inplace ? 1 : 0));
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }

@@ -125,8 +125,8 @@ namespace TorchSharp
             public static EmbeddingBag EmbeddingBag(long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_EmbeddingBag_ctor(num_embeddings, embedding_dims,
-                    max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
-                    norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
+                    max_norm.HasValue ? max_norm.Value : 0.0, (byte)(max_norm.HasValue ? 1 : 0),
+                    norm_type, (byte)(scale_grad_by_freq ? 1 : 0), (long)mode, (byte)(sparse ? 1 : 0), (byte)(include_last_offset ? 1 : 0), padding_index, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new EmbeddingBag(res, boxedHandle).MoveModule<EmbeddingBag>(device, dtype);
             }
@@ -150,9 +150,9 @@ namespace TorchSharp
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
             public static EmbeddingBag EmbeddingBag_from_pretrained(Tensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, freeze,
-                    max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
-                    norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
+                var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, (byte)(freeze ? 1 : 0),
+                    max_norm.HasValue ? max_norm.Value : 0.0, (byte)(max_norm.HasValue ? 1 : 0),
+                    norm_type, (byte)(scale_grad_by_freq ? 1 : 0), (long)mode, (byte)(sparse ? 1 : 0), (byte)(include_last_offset ? 1 : 0), padding_index, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new EmbeddingBag(res, boxedHandle).MoveModule<EmbeddingBag>(device, dtype);
 

@@ -8,49 +8,45 @@ namespace TorchSharp.PInvoke
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSAutograd_isGradEnabled();
+        internal static extern byte THSAutograd_isGradEnabled();
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSAutograd_setGrad([MarshalAs(UnmanagedType.U1)] bool enabled);
+        internal static extern void THSAutograd_setGrad(byte enabled);
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSAutograd_isInferenceModeEnabled();
+        internal static extern byte THSAutograd_isInferenceModeEnabled();
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSAutograd_getInferenceModeGuard([MarshalAs(UnmanagedType.U1)] bool mode);
+        internal static extern IntPtr THSAutograd_getInferenceModeGuard(byte mode);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_deleteInferenceModeGuard(IntPtr guard);
         
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSAutograd_isAnomalyEnabled();
+        internal static extern byte THSAutograd_isAnomalyEnabled();
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSAutograd_shouldCheckNaN();
+        internal static extern byte THSAutograd_shouldCheckNaN();
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSAutograd_setAnomaly([MarshalAs(UnmanagedType.U1)] bool enabled, [MarshalAs(UnmanagedType.U1)] bool check_nan);
+        internal static extern void THSAutograd_setAnomaly(byte enabled, byte check_nan);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_grad(
             IntPtr outputs, long oLength,
             IntPtr inputs, long iLength,
             IntPtr grad_outs, long gLength,
-            [MarshalAs(UnmanagedType.U1)] bool retain_graph,
-            [MarshalAs(UnmanagedType.U1)] bool create_graph,
-            [MarshalAs(UnmanagedType.U1)] bool allow_unused,
+            byte retain_graph,
+            byte create_graph,
+            byte allow_unused,
             AllocatePinnedArray allocator);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_backward(
             IntPtr tensors, long tLength,
             IntPtr grad_tensors, long gtLength,
-            [MarshalAs(UnmanagedType.U1)] bool retain_graph,
-            [MarshalAs(UnmanagedType.U1)] bool create_graph,
+            byte retain_graph,
+            byte create_graph,
             IntPtr inputs, long iLength);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -81,7 +77,7 @@ namespace TorchSharp.PInvoke
         internal static extern void THSAutograd_CSharpNode_disposeWeakPtr(NodeUnmanagedPtr node);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSAutograd_CSharpNode_setNextEdges(NodeUnmanagedPtr node, ArrayWithSize vars, [MarshalAs(UnmanagedType.U1)] bool is_executable);
+        internal static extern void THSAutograd_CSharpNode_setNextEdges(NodeUnmanagedPtr node, ArrayWithSize vars, byte is_executable);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_CSharpNode_clearInputMetadata(NodeUnmanagedPtr node);
@@ -90,7 +86,7 @@ namespace TorchSharp.PInvoke
         internal static extern void THSAutograd_Function_wrapOutputs(ArrayWithSize vars, ArrayWithSize nonDiff, ArrayWithSize dirty, ArrayWithSize outputs, NodeUnmanagedPtr node, AllocatePinnedArray allocator);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSAutograd_SavedVariable_ctor(IntPtr variable, NodeUnmanagedPtr nodeRef, [MarshalAs(UnmanagedType.U1)] bool is_inplace_on_view);
+        internal static extern IntPtr THSAutograd_SavedVariable_ctor(IntPtr variable, NodeUnmanagedPtr nodeRef, byte is_inplace_on_view);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_SavedVariable_dispose(IntPtr saved_variable);

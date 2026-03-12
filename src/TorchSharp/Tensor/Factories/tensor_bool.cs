@@ -16,7 +16,7 @@ namespace TorchSharp
         public static Tensor tensor(bool scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
             device = InitializeDevice(device);
-            var handle = THSTensor_newBoolScalar(scalar, (int)device.type, device.index, requires_grad);
+            var handle = THSTensor_newBoolScalar((byte)(scalar ? 1 : 0), (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
             if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
             tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);

@@ -46,11 +46,11 @@ namespace TorchSharp
             if (result is null) {
                 unsafe {
                     fixed (long* psizes = shape) {
-                        var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                         if (handle == IntPtr.Zero) {
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
-                            handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                            handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                         }
                         if (handle == IntPtr.Zero) { CheckForErrors(); }
                         result = new Tensor(handle);
@@ -245,11 +245,11 @@ namespace TorchSharp
                     // but we can get around that by adding another dimension, creating a float tensor, and then
                     // converting it to a complex tensor in the end.
                     //
-                    var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
 
@@ -260,11 +260,11 @@ namespace TorchSharp
                     //
                     // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
                     //
-                    var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int)device.type, device.index, requires_grad);
+                    var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (res == IntPtr.Zero)
                         CheckForErrors();
 
-                    THSTensor_copy_(res, cmplx, false);
+                    THSTensor_copy_(res, cmplx, 0);
                     CheckForErrors();
 
                     THSTensor_dispose(handle);
@@ -306,11 +306,11 @@ namespace TorchSharp
                     // but we can get around that by adding another dimension, creating a float tensor, and then
                     // converting it to a complex tensor in the end.
                     //
-                    var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
 
@@ -321,11 +321,11 @@ namespace TorchSharp
                     //
                     // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
                     //
-                    var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int)device.type, device.index, requires_grad);
+                    var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (res == IntPtr.Zero)
                         CheckForErrors();
 
-                    THSTensor_copy_(res, cmplx, false);
+                    THSTensor_copy_(res, cmplx, 0);
                     CheckForErrors();
 
                     THSTensor_dispose(handle);
@@ -358,11 +358,11 @@ namespace TorchSharp
 
             unsafe {
                 fixed (long* psizes = size) {
-                    var handle = THSTensor_rand(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_rand(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_rand(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_rand(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
@@ -486,11 +486,11 @@ namespace TorchSharp
 
             unsafe {
                 fixed (long* psizes = size) {
-                    var handle = THSTensor_randn(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_randn(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randn(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_randn(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, (byte)(requires_grad ? 1 : 0));
                     }
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);

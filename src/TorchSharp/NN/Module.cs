@@ -165,7 +165,7 @@ namespace TorchSharp
                     if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
 
                     InitializeDeviceType(device.type);
-                    THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index, non_blocking);
+                    THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index, (byte)(non_blocking ? 1 : 0));
                     CheckForErrors();
 
                     _toEpilog(device, dtype, non_blocking);
@@ -192,7 +192,7 @@ namespace TorchSharp
                     if (deviceType != _deviceType || deviceIndex != _deviceIndex) {
 
                         InitializeDeviceType(deviceType);
-                        THSNN_Module_to_device(handle, (int)deviceType, deviceIndex, non_blocking);
+                        THSNN_Module_to_device(handle, (int)deviceType, deviceIndex, (byte)(non_blocking ? 1 : 0));
                         CheckForErrors();
 
                         _toEpilog(deviceType, deviceIndex, non_blocking);
@@ -215,7 +215,7 @@ namespace TorchSharp
                     if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
                         throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
 
-                    THSNN_Module_to_dtype(handle, (sbyte)dtype, non_blocking);
+                    THSNN_Module_to_dtype(handle, (sbyte)dtype, (byte)(non_blocking ? 1 : 0));
                     CheckForErrors();
 
                     _toEpilog(dtype, non_blocking);
@@ -397,7 +397,7 @@ namespace TorchSharp
                 /// </remarks>
                 public virtual void train(bool train = true)
                 {
-                    THSNN_Module_train(handle, train);
+                    THSNN_Module_train(handle, (byte)(train ? 1 : 0));
                     CheckForErrors();
                     foreach (var (_, m) in named_children()) { m.train(train); }
                 }
@@ -420,13 +420,13 @@ namespace TorchSharp
                     get {
                         var res = THSNN_Module_is_training(handle);
                         CheckForErrors();
-                        return res;
+                        return res != 0;
                     }
                 }
 
                 public virtual void zero_grad(bool set_to_none = true)
                 {
-                    THSNN_Module_zero_grad(handle, set_to_none);
+                    THSNN_Module_zero_grad(handle, (byte)(set_to_none ? 1 : 0));
                     CheckForErrors();
 
                     foreach (var (_, p) in named_parameters()) {
@@ -645,7 +645,7 @@ namespace TorchSharp
 
                     using (var pa = new PinnedArray<IntPtr>()) {
                         AllocatePinnedArray allocator = pa.CreateArray;
-                        THSNN_Module_get_parameters(handle, allocator, recurse);
+                        THSNN_Module_get_parameters(handle, allocator, (byte)(recurse ? 1 : 0));
                         CheckForErrors();
                         ptrArray = pa.Array;
                     }

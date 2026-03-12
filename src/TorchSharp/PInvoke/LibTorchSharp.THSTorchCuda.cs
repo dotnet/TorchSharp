@@ -7,12 +7,10 @@ namespace TorchSharp.PInvoke
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSTorchCuda_is_available();
+        internal static extern byte THSTorchCuda_is_available();
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool THSTorchCuda_cudnn_is_available();
+        internal static extern byte THSTorchCuda_cudnn_is_available();
 
         [DllImport("LibTorchSharp")]
         internal static extern int THSTorchCuda_device_count();

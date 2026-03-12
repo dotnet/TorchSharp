@@ -182,7 +182,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = size) {
-                            var res = THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners);
+                            var res = THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (byte)(align_corners ? 1 : 0));
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -218,7 +218,7 @@ namespace TorchSharp
                         fixed (long* psize = size) {
                             fixed (double* pSF = scale_factor) {
                                 byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
-                                var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor, antialias);
+                                var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, (byte)(recompute_scale_factor ? 1 : 0), (byte)(antialias ? 1 : 0));
                                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                                 return new Tensor(res);
                             }

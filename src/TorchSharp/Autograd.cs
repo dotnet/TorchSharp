@@ -15,8 +15,8 @@ namespace TorchSharp
 
         public AutoGradMode(bool enabled)
         {
-            _isPrevGrad = THSAutograd_isGradEnabled();
-            THSAutograd_setGrad(enabled);
+            _isPrevGrad = THSAutograd_isGradEnabled() != 0;
+            THSAutograd_setGrad((byte)(enabled ? 1 : 0));
         }
 
         public void Dispose()
@@ -29,11 +29,11 @@ namespace TorchSharp
         {
             if (disposing)
             {
-                THSAutograd_setGrad(_isPrevGrad);
+                THSAutograd_setGrad((byte)(_isPrevGrad ? 1 : 0));
             }
         }
 
-        public static bool IsEnabled { get => THSAutograd_isGradEnabled(); }
+        public static bool IsEnabled { get => THSAutograd_isGradEnabled() != 0; }
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace TorchSharp
 
         public InferenceMode(bool mode)
         {
-            _guard = THSAutograd_getInferenceModeGuard(mode);
+            _guard = THSAutograd_getInferenceModeGuard((byte)(mode ? 1 : 0));
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace TorchSharp
             }
         }
 
-        public static bool IsEnabled { get => THSAutograd_isInferenceModeEnabled(); }
+        public static bool IsEnabled { get => THSAutograd_isInferenceModeEnabled() != 0; }
     }
 
     /// <summary>
@@ -80,9 +80,9 @@ namespace TorchSharp
 
         public AnomalyMode(bool enabled, bool check_nan = true)
         {
-            _isPrevGrad = THSAutograd_isAnomalyEnabled();
-            _shouldCheckNaN = THSAutograd_shouldCheckNaN();
-            THSAutograd_setAnomaly(enabled, check_nan);
+            _isPrevGrad = THSAutograd_isAnomalyEnabled() != 0;
+            _shouldCheckNaN = THSAutograd_shouldCheckNaN() != 0;
+            THSAutograd_setAnomaly((byte)(enabled ? 1 : 0), (byte)(check_nan ? 1 : 0));
         }
 
         public void Dispose()
@@ -94,13 +94,13 @@ namespace TorchSharp
         protected virtual void Dispose(bool disposing)
         {
             if (disposing) {
-                THSAutograd_setAnomaly(_isPrevGrad, _shouldCheckNaN);
+                THSAutograd_setAnomaly((byte)(_isPrevGrad ? 1 : 0), (byte)(_shouldCheckNaN ? 1 : 0));
             }
         }
 
-        public static bool IsEnabled { get => THSAutograd_isAnomalyEnabled(); }
+        public static bool IsEnabled { get => THSAutograd_isAnomalyEnabled() != 0; }
 
-        public static bool ShouldCheckNaN { get => THSAutograd_shouldCheckNaN(); }
+        public static bool ShouldCheckNaN { get => THSAutograd_shouldCheckNaN() != 0; }
     }
 
     public static partial class torch
@@ -140,7 +140,7 @@ namespace TorchSharp
                 IntPtr gradsRef = grad_outputs == null ? IntPtr.Zero : grads.CreateArray(grad_outputs.ToHandleArray());
                 long gradsLength = grad_outputs == null ? 0 : grads.Array.Length;
 
-                THSAutograd_grad(outsRef, outs.Array.Length, insRef, ins.Array.Length, gradsRef, gradsLength, retain_graph, create_graph, allow_unused, results.CreateArray);
+                THSAutograd_grad(outsRef, outs.Array.Length, insRef, ins.Array.Length, gradsRef, gradsLength, (byte)(retain_graph ? 1 : 0), (byte)(create_graph ? 1 : 0), (byte)(allow_unused ? 1 : 0), results.CreateArray);
                 CheckForErrors();
                 return results.Array.Select(x => new Tensor(x)).ToList();
             }
@@ -184,7 +184,7 @@ namespace TorchSharp
                 long insLength = inputs == null ? 0 : ins.Array.Length;
                 long gradsLength = grad_tensors == null ? 0 : gts.Array.Length;
 
-                THSAutograd_backward(tensRef, ts.Array.Length, gradsRef, gradsLength, rt, create_graph, insRef, insLength);
+                THSAutograd_backward(tensRef, ts.Array.Length, gradsRef, gradsLength, (byte)(rt ? 1 : 0), (byte)(create_graph ? 1 : 0), insRef, insLength);
                 CheckForErrors();
             }
 

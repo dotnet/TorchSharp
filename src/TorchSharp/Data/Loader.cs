@@ -14,7 +14,7 @@ namespace TorchSharp.Data
         /// <returns></returns>
         public static DataIterator MNIST(string filename, long batchSize, bool isTrain = true)
         {
-            return new DataIterator(THSData_loaderMNIST(filename, batchSize, isTrain));
+            return new DataIterator(THSData_loaderMNIST(filename, batchSize, (byte)(isTrain ? 1 : 0)));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace TorchSharp.Data
         /// <returns></returns>
         public static DataIterator CIFAR10(string path, long batchSize, bool isTrain = true)
         {
-            return new DataIterator(THSData_loaderCIFAR10(path, batchSize, isTrain));
+            return new DataIterator(THSData_loaderCIFAR10(path, batchSize, (byte)(isTrain ? 1 : 0)));
         }
     }
 }

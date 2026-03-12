@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using static TorchSharp.PInvoke.NativeMethods;
 using static TorchSharp.torch;
@@ -32,7 +32,7 @@ namespace TorchSharp
                     key.Handle,
                     value.Handle,
                     key_padding_mask?.Handle ?? IntPtr.Zero,
-                    need_weights,
+                    (byte)(need_weights ? 1 : 0),
                     attn_mask?.Handle ?? IntPtr.Zero,
                     out var res1,
                     out var res2);
@@ -67,7 +67,7 @@ namespace TorchSharp
             {
                 var _kdim = kdim.HasValue ? kdim.Value : embedded_dim;
                 var _vdim = vdim.HasValue ? vdim.Value : embedded_dim;
-                var res = THSNN_MultiheadAttention_ctor(embedded_dim, num_heads, dropout, bias, add_bias_kv, add_zero_attn, _kdim, _vdim, out var boxedHandle);
+                var res = THSNN_MultiheadAttention_ctor(embedded_dim, num_heads, dropout, (byte)(bias ? 1 : 0), (byte)(add_bias_kv ? 1 : 0), (byte)(add_zero_attn ? 1 : 0), _kdim, _vdim, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new MultiheadAttention(res, boxedHandle);
             }

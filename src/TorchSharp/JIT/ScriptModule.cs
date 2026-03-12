@@ -50,7 +50,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_attributes(handle, recurse, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_attributes(handle, (byte)(recurse ? 1 : 0), pa.CreateArray, sa.CreateArray);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -115,7 +115,7 @@ namespace TorchSharp
                 /// </remarks>
                 public override void train(bool on = true)
                 {
-                    THSJIT_Module_train(handle, on);
+                    THSJIT_Module_train(handle, (byte)(on ? 1 : 0));
                     CheckForErrors();
                 }
 
@@ -139,13 +139,13 @@ namespace TorchSharp
                     get {
                         var res = THSJIT_Module_is_training(handle);
                         CheckForErrors();
-                        return res;
+                        return res != 0;
                     }
                 }
 
                 public override void zero_grad(bool set_to_none = true)
                 {
-                    THSJIT_Module_zero_grad(handle, set_to_none);
+                    THSJIT_Module_zero_grad(handle, (byte)(set_to_none ? 1 : 0));
                     CheckForErrors();
 
                     if (set_to_none) {

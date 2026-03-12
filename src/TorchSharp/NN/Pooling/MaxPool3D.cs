@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using static TorchSharp.torch;
@@ -120,8 +120,7 @@ namespace TorchSharp
                                     (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
-                                    (IntPtr)pdilation, dilation.Length,
-                                    ceil_mode);
+                                    (IntPtr)pdilation, dilation.Length, (byte)(ceil_mode ? 1 : 0));
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -154,8 +153,7 @@ namespace TorchSharp
                                     (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
-                                    (IntPtr)pdilation, dilation.Length,
-                                    ceil_mode);
+                                    (IntPtr)pdilation, dilation.Length, (byte)(ceil_mode ? 1 : 0));
                                 torch.CheckForErrors();
                             }
                         }

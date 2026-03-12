@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -200,7 +200,7 @@ namespace TorchSharp
             if (r < 0)
                 throw new ArgumentException($"r must be non-negative");
 
-            var res = THSTensor_combinations(input.Handle, r, with_replacement);
+            var res = THSTensor_combinations(input.Handle, r, (byte)(with_replacement ? 1 : 0));
             if (res == IntPtr.Zero)
                 CheckForErrors();
             return new Tensor(res);

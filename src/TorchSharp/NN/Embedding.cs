@@ -60,9 +60,9 @@ namespace TorchSharp
             public static Embedding Embedding(long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Embedding_ctor(num_embeddings, embedding_dims,
-                    padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
-                    max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
-                    norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
+                    padding_idx.HasValue ? padding_idx.Value : -1, (byte)(padding_idx.HasValue ? 1 : 0),
+                    max_norm.HasValue ? max_norm.Value : 0.0, (byte)(max_norm.HasValue ? 1 : 0),
+                    norm_type, (byte)(scale_grad_by_freq ? 1 : 0), (byte)(sparse ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Embedding(res, boxedHandle).MoveModule<Embedding>(device,dtype);
             }
@@ -84,10 +84,10 @@ namespace TorchSharp
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
             public static Embedding Embedding_from_pretrained(Tensor embeddings, bool freeze = true, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Embedding_from_pretrained(embeddings.Handle, freeze,
-                    padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
-                    max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
-                    norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
+                var res = THSNN_Embedding_from_pretrained(embeddings.Handle, (byte)(freeze ? 1 : 0),
+                    padding_idx.HasValue ? padding_idx.Value : -1, (byte)(padding_idx.HasValue ? 1 : 0),
+                    max_norm.HasValue ? max_norm.Value : 0.0, (byte)(max_norm.HasValue ? 1 : 0),
+                    norm_type, (byte)(scale_grad_by_freq ? 1 : 0), (byte)(sparse ? 1 : 0), out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Embedding(res, boxedHandle).MoveModule<Embedding>(device, dtype);
             }

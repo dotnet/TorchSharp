@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -69,7 +69,7 @@ namespace TorchSharp
 
                     unsafe {
                         fixed (long* pkernel_size = kernels, pstrides = strides) {
-                            var res = THSTensor_lp_pool1d(input.Handle, norm_type, (IntPtr)pkernel_size, kernels.Length, (IntPtr)pstrides, strides.Length, ceil_mode);
+                            var res = THSTensor_lp_pool1d(input.Handle, norm_type, (IntPtr)pkernel_size, kernels.Length, (IntPtr)pstrides, strides.Length, (byte)(ceil_mode ? 1 : 0));
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
