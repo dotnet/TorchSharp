@@ -93,7 +93,7 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_arm64
-    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 /p:SkipNetFxBuild=true -c Release
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 /p:SkipNetFxBuild=true -c
     testScript: echo "Cannot run ARM64 tests on x64 Azure Pipelines agent"
     pool:
       vmImage: 'windows-latest'
