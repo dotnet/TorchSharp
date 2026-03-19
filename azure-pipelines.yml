@@ -117,8 +117,10 @@ jobs:
     vmImage: 'ubuntu-latest'
   container: UbuntuContainer
   steps:
-  # Initial cleanup
+  # Initial cleanup - free as much disk space as possible
   - script: |
+      rm -rf .git
+      dotnet nuget locals all --clear 2>/dev/null || true
       rm -rf bin/obj
       find . -name "*.pdb" -type f -delete
       find . -name "*.xml" -type f -delete
@@ -145,6 +147,15 @@ jobs:
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch native binaries and cleanup archives
 
+  # Free intermediate space before CUDA download
+  - script: |
+      rm -rf bin/obj/AnyCPU.$(BuildConfig)/libtorch-cpu
+      rm -rf bin/downloads
+      df -h
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+    displayName: Free disk space before CUDA download
+    continueOnError: true
+
   # Build libtorch CUDA and clean immediately
   - script: |
       dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
@@ -153,6 +164,15 @@ jobs:
       find . -name "*.tar.gz" -type f -delete
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch CUDA binaries and cleanup archives
+
+  # Free intermediate space after CUDA build
+  - script: |
+      rm -rf bin/obj/AnyCPU.$(BuildConfig)/libtorch-cuda-12.8
+      rm -rf bin/downloads
+      df -h
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+    displayName: Free disk space after CUDA build
+    continueOnError: true
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     displayName: Build TorchSharp
@@ -211,6 +231,15 @@ jobs:
     displayName: Download libtorch native binaries and cleanup
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
 
+  # Free intermediate space before CUDA download
+  - script: |
+      rmdir /s /q bin\obj\AnyCPU.$(BuildConfig)\libtorch-cpu 2>nul
+      rmdir /s /q bin\downloads 2>nul
+      dir
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+    displayName: Free disk space before CUDA download
+    continueOnError: true
+
   # Build libtorch CUDA and clean immediately  
   - script: |
       dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.8/libtorch-cuda-12.8.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
@@ -218,6 +247,14 @@ jobs:
       del /s /q *.tar.gz 2>nul
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
     displayName: Download libtorch CUDA binaries and cleanup
+
+  # Free intermediate space after CUDA build
+  - script: |
+      rmdir /s /q bin\obj\AnyCPU.$(BuildConfig)\libtorch-cuda-12.8 2>nul
+      rmdir /s /q bin\downloads 2>nul
+    condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
+    displayName: Free disk space after CUDA build
+    continueOnError: true
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true
     condition: eq('${{ parameters.BuildLibTorchPackages }}', true)
