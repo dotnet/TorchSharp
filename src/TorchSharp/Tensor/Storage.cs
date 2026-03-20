@@ -139,7 +139,7 @@ namespace TorchSharp
             /// A pointer to the raw data in memory.
             /// </summary>
             /// <returns></returns>
-            protected IntPtr data_ptr()
+            public IntPtr data_ptr()
             {
                 if (_tensor_data_ptr != IntPtr.Zero)
                     return _tensor_data_ptr;

@@ -8312,6 +8312,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
+        public void Storage_DataPtr()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f, 4.0f };
+            var x = torch.tensor(data);
+
+            var st = x.storage<float>();
+            Assert.NotNull(st);
+
+            var ptr = st.data_ptr();
+            Assert.NotEqual(IntPtr.Zero, ptr);
+        }
+
+        [Fact]
         [TestOf(nameof(torch.stft))]
         public void Float32STFT()
         {
