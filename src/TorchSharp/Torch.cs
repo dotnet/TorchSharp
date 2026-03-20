@@ -158,7 +158,7 @@ namespace TorchSharp
                     ok &= TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 }
 
-                trace.AppendLine($"    Result from regular native load of LibTorchSharp is {ok}");
+                trace.AppendLine($"    Result from regular native load of backend libraries (CUDA preloads + torch_* + LibTorchSharp) is {ok}");
 
                 // Try dynamic load from package directories
                 if (!ok) {
