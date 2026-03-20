@@ -29,11 +29,11 @@ variables:
     sudo apt-get -y update
     sudo apt-get -y install clang git libunwind8 curl libomp-dev libomp5 wget gpg
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' | sudo tee /etc/apt/sources.list.d/kitware.list
+    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ resolute main' | sudo tee /etc/apt/sources.list.d/kitware.list
     sudo apt-get -y update
     sudo apt-get -y install cmake
     cmake --version
-    wget https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    wget https://packages.microsoft.com/config/ubuntu/26.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb
     sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update
     ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
@@ -46,7 +46,7 @@ resources:
 #   https://github.com/dotnet/versions/blob/main/build-info/docker/image-info.dotnet-dotnet-buildtools-prereqs-docker-main.json
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-26.04
 
 jobs:
 - template: /build/ci/job-template.yml
