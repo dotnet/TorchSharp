@@ -46,7 +46,7 @@ resources:
 #   https://github.com/dotnet/versions/blob/main/build-info/docker/image-info.dotnet-dotnet-buildtools-prereqs-docker-main.json
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-26.04
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-26.04-amd64
 
 jobs:
 - template: /build/ci/job-template.yml
