@@ -511,6 +511,20 @@ namespace TorchSharp
                 public virtual IEnumerable<Module> children() => named_children().Select(np => np.module);
 
                 /// <summary>
+                /// Return an enumeration of the module's state_dict key/value pairs.
+                ///
+                /// This is equivalent to calling state_dict() and iterating over its entries.
+                /// Both parameters and persistent buffers are included.
+                /// </summary>
+                /// <returns>An enumerator of (name, tensor) tuples</returns>
+                public virtual IEnumerator<(string name, Tensor value)> items()
+                {
+                    foreach (var kv in state_dict()) {
+                        yield return (kv.Key, kv.Value);
+                    }
+                }
+
+                /// <summary>
                 /// Returns a dictionary containing a whole state of the module.
                 ///
                 /// Both parameters and persistent buffers(e.g.running averages) are included.Keys are corresponding parameter and buffer names.
