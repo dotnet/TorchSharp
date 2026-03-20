@@ -117,7 +117,7 @@ namespace TorchSharp
             trace = null;
 
             if (!alreadyLoaded) {
-                bool ok;
+                bool ok = true;
                 trace = new StringBuilder();
                 trace.AppendLine($"");
                 trace.AppendLine($"TorchSharp: LoadNativeBackend: Initialising native backend, useCudaBackend = {useCudaBackend}");
@@ -135,27 +135,27 @@ namespace TorchSharp
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.
                         //
-                        ok = TryLoadNativeLibraryByName("cudnn_adv64_9", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_cnn64_9", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_ops64_9", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_graph64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_128", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_adv64_9", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_cnn64_9", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_ops64_9", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_graph64_9.dll", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("nvrtc-builtins64_128", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
+                        ok &= TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }
 
-                    ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
-                    ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 } else {
-                    ok = TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
-                    ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 }
 
                 trace.AppendLine($"    Result from regular native load of LibTorchSharp is {ok}");
