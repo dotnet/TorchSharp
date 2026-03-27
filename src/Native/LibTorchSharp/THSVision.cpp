@@ -184,7 +184,7 @@ Tensor THSVision_ApplyGridTransform(Tensor i, Tensor g, const int8_t m, const fl
 
             if (m == 0) {
                 mask = mask < 0.5;
-                img[mask] = fill_img[mask];
+                img = torch::where(mask, fill_img, img);
             }
             else {
                 img = img * mask + (-mask + 1.0) * fill_img;
