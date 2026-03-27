@@ -576,14 +576,24 @@ Tensor THSTensor_gather(
     CATCH_TENSOR(torch::gather(*tensor, dim, *index));
 }
 
-Tensor THSTensor_gelu(const Tensor tensor, const char* approximate)
+Tensor THSTensor_gelu(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::gelu(*tensor, approximate));
+    CATCH_TENSOR(torch::gelu(*tensor));
 }
 
-Tensor THSTensor_gelu_(const Tensor tensor, const char* approximate)
+Tensor THSTensor_gelu_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::gelu_(*tensor, approximate));
+    CATCH_TENSOR(torch::gelu_(*tensor));
+}
+
+Tensor THSTensor_gelu_with_approximate(const Tensor tensor, const char* approximate)
+{
+    CATCH_TENSOR(torch::gelu(*tensor, approximate ? approximate : "none"));
+}
+
+Tensor THSTensor_gelu_with_approximate_(const Tensor tensor, const char* approximate)
+{
+    CATCH_TENSOR(torch::gelu_(*tensor, approximate ? approximate : "none"));
 }
 
 Tensor THSTensor_get1(const Tensor tensor, int64_t index)

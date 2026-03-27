@@ -3002,7 +3002,7 @@ namespace TorchSharp
 
             public Tensor gelu()
             {
-                var res = NativeMethods.THSTensor_gelu(Handle, "none");
+                var res = NativeMethods.THSTensor_gelu(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -3010,7 +3010,12 @@ namespace TorchSharp
 
             public Tensor gelu(GELUApproximate approximate)
             {
-                var res = NativeMethods.THSTensor_gelu(Handle, approximate == GELUApproximate.tanh ? "tanh" : "none");
+                var approximateStr = approximate switch {
+                    GELUApproximate.none => "none",
+                    GELUApproximate.tanh => "tanh",
+                    _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
+                };
+                var res = NativeMethods.THSTensor_gelu_with_approximate(Handle, approximateStr);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -3018,7 +3023,7 @@ namespace TorchSharp
 
             public Tensor gelu_()
             {
-                var res = NativeMethods.THSTensor_gelu_(Handle, "none");
+                var res = NativeMethods.THSTensor_gelu_(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -3026,7 +3031,12 @@ namespace TorchSharp
 
             public Tensor gelu_(GELUApproximate approximate)
             {
-                var res = NativeMethods.THSTensor_gelu_(Handle, approximate == GELUApproximate.tanh ? "tanh" : "none");
+                var approximateStr = approximate switch {
+                    GELUApproximate.none => "none",
+                    GELUApproximate.tanh => "tanh",
+                    _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
+                };
+                var res = NativeMethods.THSTensor_gelu_with_approximate_(Handle, approximateStr);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

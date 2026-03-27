@@ -638,6 +638,11 @@ namespace TorchSharp
             var exact = torch.nn.functional.gelu(x);
             var approx = torch.nn.functional.gelu(x, GELUApproximate.tanh);
             Assert.False(exact.allclose(approx, rtol: 1e-5, atol: 1e-5));
+
+            // Verify that the in-place tanh approximate matches the out-of-place result
+            var xInPlace = x.clone();
+            xInPlace.gelu_(GELUApproximate.tanh);
+            Assert.True(approx.allclose(xInPlace, rtol: 1e-5, atol: 1e-5));
         }
 
         [Fact]
