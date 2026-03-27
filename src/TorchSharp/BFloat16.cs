@@ -87,9 +87,9 @@ namespace TorchSharp
 
         // --- IEquatable / IComparable ---
 
-        public bool Equals(BFloat16 other) => value == other.value;
+        public bool Equals(BFloat16 other) => ToSingle() == other.ToSingle();
         public override bool Equals(object? obj) => obj is BFloat16 other && Equals(other);
-        public override int GetHashCode() => value.GetHashCode();
+        public override int GetHashCode() => ToSingle().GetHashCode();
 
         public int CompareTo(BFloat16 other) => ToSingle().CompareTo(other.ToSingle());
         public int CompareTo(object? obj)
@@ -113,8 +113,9 @@ namespace TorchSharp
         public static readonly BFloat16 NegativeInfinity = FromRawValue(0xFF80);
         public static readonly BFloat16 MaxValue = FromRawValue(0x7F7F);       // ~3.39e+38
         public static readonly BFloat16 MinValue = FromRawValue(0xFF7F);       // ~-3.39e+38
-        public static readonly BFloat16 Epsilon = FromRawValue(0x0080);        // smallest normal
-        public static readonly BFloat16 SmallestSubnormal = FromRawValue(0x0001);
+        public static readonly BFloat16 SmallestSubnormal = FromRawValue(0x0001); // smallest positive (subnormal)
+        public static readonly BFloat16 Epsilon = SmallestSubnormal;              // .NET-style epsilon: smallest positive > 0
+        public static readonly BFloat16 MinNormal = FromRawValue(0x0080);         // smallest normal
 
         // --- Static helpers ---
 

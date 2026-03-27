@@ -596,7 +596,7 @@ namespace TorchSharp
         {
             if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)
                 && typeof(T) != typeof(BFloat16)) {
-                throw new ArgumentException(nameof(requires_grad), "Only floating point types support gradients.");
+                throw new ArgumentException("Only floating point types support gradients.", nameof(requires_grad));
             }
 
             if (typeof(T) == typeof(byte))
@@ -614,7 +614,7 @@ namespace TorchSharp
             if (typeof(T) == typeof(double))
                 return tensor((double)(object)scalar, float64, device, requires_grad);
             if (typeof(T) == typeof(BFloat16))
-                return tensor(new BFloat16[] { (BFloat16)(object)scalar }, bfloat16, device, requires_grad);
+                return tensor((BFloat16)(object)scalar, bfloat16, device, requires_grad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 

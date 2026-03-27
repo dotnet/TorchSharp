@@ -10,6 +10,15 @@ namespace TorchSharp
     public static partial class torch
     {
         /// <summary>
+        /// Create a scalar tensor from a single value
+        /// </summary>
+        [Pure]
+        public static Tensor tensor(BFloat16 scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
+        {
+            return _tensor_generic(new BFloat16[] { scalar }, stackalloc long[] { }, (sbyte)ScalarType.BFloat16, dtype, device, requires_grad);
+        }
+
+        /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
