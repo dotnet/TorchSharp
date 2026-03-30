@@ -189,31 +189,76 @@ namespace TorchSharp
 
                     // See https://github.com/dotnet/TorchSharp/issues/169
                     //
-                    // If we are loading in .NET Interactive or F# Interactive, these are in packages in separate
-                    // package directories. For managed DLLs this works OK, but native DLLs do not load transitive dependencies.
+                    // Native DLLs from NuGet packages may be in separate package directories.
+                    // For managed DLLs this works OK, but native DLLs do not load transitive dependencies
+                    // across different directories.
                     //
-                    // So we shadow copy the DLLs into the TorchSharp package, make a copy of the native DLL and continue
-                    // with the dynamic load
+                    // Additionally, on netstandard2.0 builds the NativeLibrary polyfill uses LoadLibraryEx
+                    // directly and does not probe deps.json, so native DLLs in the NuGet cache are not found.
                     //
-                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net6.0\TorchSharp.dll
+                    // We consolidate (shadow copy) all native DLLs into a single directory so that
+                    // inter-DLL dependencies can be resolved by the OS loader.
                     //
                     // TODO: on linux make these copies link not shadow-copy
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
-                    var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", "..", "..", ".."));
+
+                    // Try to find the NuGet global packages folder
+                    string? packagesDir = null;
+                    string? torchSharpVersion = null;
+
+                    // Path 1: F# Interactive / .NET Interactive - TorchSharp.dll is inside the NuGet cache
+                    // e.g. .../packages/torchsharp/0.106.1/lib/net6.0/TorchSharp.dll
+                    var interactivePackagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", "..", "..", ".."));
                     var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", ".."));
 
                     trace.AppendLine($"    torchsharpLoc = {torchsharpLoc}");
-                    trace.AppendLine($"    packagesDir = {packagesDir}");
-                    trace.AppendLine($"    torchsharpHome = {torchsharpHome}");
 
-                    if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
+                    if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(interactivePackagesDir) && Directory.Exists(torchsharpHome)) {
+                        packagesDir = interactivePackagesDir;
+                        torchSharpVersion = NormalizeNuGetVersion(Path.GetFileName(torchsharpHome));
+                        trace.AppendLine($"    Detected interactive scenario, packagesDir = {packagesDir}, torchSharpVersion = {torchSharpVersion}");
+                    }
 
-                        var torchSharpVersion = NormalizeNuGetVersion(Path.GetFileName(torchsharpHome));
+                    // Path 2: Regular project - TorchSharp.dll is in the output directory
+                    // Find the NuGet global packages folder independently
+                    if (packagesDir == null) {
+                        trace.AppendLine("    TorchSharp.dll not in NuGet cache, probing NuGet global packages folder...");
+
+                        var nugetPackagesPath = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
+                        if (string.IsNullOrEmpty(nugetPackagesPath)) {
+                            nugetPackagesPath = Path.Combine(
+                                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                ".nuget", "packages");
+                        }
+
+                        trace.AppendLine($"    nugetPackagesPath = {nugetPackagesPath}");
+
+                        if (Directory.Exists(nugetPackagesPath)) {
+                            packagesDir = nugetPackagesPath;
+                            // Determine TorchSharp NuGet package version from the assembly metadata
+                            var asm = typeof(torch).Assembly;
+                            var infoVersionAttr = asm.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false);
+                            if (infoVersionAttr.Length > 0) {
+                                var rawVersion = ((System.Reflection.AssemblyInformationalVersionAttribute)infoVersionAttr[0]).InformationalVersion;
+                                // Strip source hash suffix (e.g. "0.106.1+abc123def")
+                                var versionPart = rawVersion.Split('+')[0];
+                                torchSharpVersion = NormalizeNuGetVersion(versionPart);
+                            } else {
+                                torchSharpVersion = NormalizeNuGetVersion(asm.GetName().Version!.ToString());
+                            }
+                            trace.AppendLine($"    Resolved packagesDir = {packagesDir}, torchSharpVersion = {torchSharpVersion}");
+                        } else {
+                            trace.AppendLine($"    NuGet packages folder not found at {nugetPackagesPath}");
+                        }
+                    }
+
+                    if (packagesDir != null && torchSharpVersion != null && Directory.Exists(packagesDir)) {
+
                         var normalizedLibtorchPackageVersion = NormalizeNuGetVersion(libtorchPackageVersion);
                         if (useCudaBackend) {
-                            var consolidatedDir = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
+                            var consolidatedDir = Path.Combine(torchsharpLoc!, $"cuda-{cudaVersion}");
 
-                            trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cudaRootPackage}-* binaries to {consolidatedDir}...");
+                            trace.AppendLine($"    Trying dynamic load by consolidating native {cudaRootPackage}-* binaries to {consolidatedDir}...");
 
                             var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", normalizedLibtorchPackageVersion, consolidatedDir, trace);
                             if (cudaOk) {
@@ -229,9 +274,9 @@ namespace TorchSharp
                                 throw new NotSupportedException(message);
                             }
                         } else {
-                            var consolidatedDir = Path.Combine(torchsharpLoc, $"cpu");
+                            var consolidatedDir = Path.Combine(torchsharpLoc!, $"cpu");
 
-                            trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cpuRootPackage}-* binaries to {consolidatedDir}...");
+                            trace.AppendLine($"    Trying dynamic load by consolidating native {cpuRootPackage} binaries to {consolidatedDir}...");
 
                             var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, normalizedLibtorchPackageVersion, consolidatedDir, trace);
                             if (cpuOk) {
@@ -249,7 +294,7 @@ namespace TorchSharp
                         }
                     }
                     else {
-                        trace.AppendLine("    Giving up, TorchSharp.dll does not appear to have been loaded from package directories");
+                        trace.AppendLine("    Giving up, could not locate NuGet packages directory");
                     }
                     if (!ok) {
                         var message = $"This application or script uses TorchSharp but doesn't contain a reference to {(useCudaBackend ? cudaRootPackage : cpuRootPackage)}, Version={libtorchPackageVersion}.\n\nConsider referencing one of the combination packages TorchSharp-cpu, TorchSharp-cuda-linux, TorchSharp-cuda-windows or call System.Runtime.InteropServices.NativeLibrary.Load(path-to-{target}) explicitly for a Python install of pytorch. See https://github.com/dotnet/TorchSharp/issues/169.\".\n\nFor CUDA, you may need to call 'TorchSharp.torch.InitializeDeviceType(TorchSharp.DeviceType.CUDA)' before any use of TorchSharp CUDA packages from scripts or notebooks.\n\nTrace from LoadNativeBackend:\n{trace}";
