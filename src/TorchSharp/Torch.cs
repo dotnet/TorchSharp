@@ -154,19 +154,6 @@ namespace TorchSharp
                     ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 } else {
-                    var isWindowsArm64 = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
-                                         RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
-                    if (isWindowsArm64) {
-                        trace.AppendLine($"    Try loading Windows ARM64 native components");
-                        // Preloading these DLLs on Windows ARM64 ensures dependencies are resolved
-                        // when loading from NuGet package directories, similar to the CUDA preloading above.
-                        // ARM64 libtorch uses ARM Performance Libraries instead of Intel OpenMP.
-                        ok = TryLoadNativeLibraryByName("armpl_lp64", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("uv", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("c10", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("torch_global_deps", typeof(torch).Assembly, trace);
-                    }
-
                     ok = TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 }
