@@ -187,7 +187,7 @@ namespace TorchSharp
                     // inter-DLL dependencies can be resolved by the OS loader.
                     //
                     // TODO: on linux make these copies link not shadow-copy
-                    var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
+                    var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location)!;
 
                     // Try to find the NuGet global packages folder
                     string? packagesDir = null;
