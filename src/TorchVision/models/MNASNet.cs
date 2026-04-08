@@ -128,9 +128,9 @@ namespace TorchSharp
                     : base(name)
                 {
                     if (stride != 1 && stride != 2)
-                        throw new ArgumentOutOfRangeException($"stride should be 1 or 2 instead of {stride}");
+                        throw new ArgumentOutOfRangeException(nameof(stride), $"stride should be 1 or 2 instead of {stride}.");
                     if (kernel_size != 3 && kernel_size != 5)
-                        throw new ArgumentOutOfRangeException($"kernel_size should be 3 or 5 instead of {kernel_size}");
+                        throw new ArgumentOutOfRangeException(nameof(kernel_size), $"kernel_size should be 3 or 5 instead of {kernel_size}.");
 
                     var mid_ch = in_ch * expansion_factor;
                     apply_residual = in_ch == out_ch && stride == 1;
@@ -174,7 +174,7 @@ namespace TorchSharp
             private static Module<Tensor, Tensor> _stack(long in_ch, long out_ch, long kernel_size, long stride, long exp_factor, int repeats, double bn_momentum)
             {
                 if (repeats < 1)
-                    throw new ArgumentOutOfRangeException($"repeats should be >= 1, instead got {repeats}");
+                    throw new ArgumentOutOfRangeException(nameof(repeats), repeats, $"repeats should be >= 1, instead got {repeats}");
 
                 var modules = new List<Module<Tensor, Tensor>>();
                 // First one has no skip, because feature map size changes.
@@ -193,7 +193,10 @@ namespace TorchSharp
             private static int _round_to_multiple_of(double val, int divisor, double round_up_bias = 0.9)
             {
                 if (round_up_bias <= 0.0 || round_up_bias >= 1.0)
-                    throw new ArgumentOutOfRangeException($"round_up_bias should be greater than 0.0 and smaller than 1.0 instead of {round_up_bias}");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(round_up_bias),
+                        round_up_bias,
+                        $"round_up_bias should be greater than 0.0 and smaller than 1.0 instead of {round_up_bias}");
                 var new_val = Math.Max(divisor, (int)(val + divisor / 2) / divisor * divisor);
                 return new_val >= round_up_bias * val ? new_val : new_val + divisor;
             }
@@ -228,7 +231,7 @@ namespace TorchSharp
                 : base(nameof(MNASNet))
             {
                 if (alpha <= 0.0)
-                    throw new ArgumentOutOfRangeException($"alpha should be greater than 0.0 instead of {alpha}");
+                    throw new ArgumentOutOfRangeException(nameof(alpha), alpha, "alpha should be greater than 0.0.");
 
                 var depths = _get_depths(alpha);
                 var layerList = new List<Module<Tensor, Tensor>> {
