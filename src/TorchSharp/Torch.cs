@@ -195,12 +195,12 @@ namespace TorchSharp
 
                     // Path 1: F# Interactive / .NET Interactive - TorchSharp.dll is inside the NuGet cache
                     // e.g. .../packages/torchsharp/0.106.1/lib/net6.0/TorchSharp.dll
-                    var interactivePackagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", "..", "..", ".."));
-                    var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", ".."));
+                    var interactivePackagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..", "..", ".."));
+                    var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", ".."));
 
                     trace.AppendLine($"    torchsharpLoc = {torchsharpLoc}");
 
-                    if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(interactivePackagesDir) && Directory.Exists(torchsharpHome)) {
+                    if (torchsharpLoc.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(interactivePackagesDir) && Directory.Exists(torchsharpHome)) {
                         packagesDir = interactivePackagesDir;
                         torchSharpVersion = NormalizeNuGetVersion(Path.GetFileName(torchsharpHome));
                         trace.AppendLine($"    Detected interactive scenario, packagesDir = {packagesDir}, torchSharpVersion = {torchSharpVersion}");
@@ -243,7 +243,7 @@ namespace TorchSharp
 
                         var normalizedLibtorchPackageVersion = NormalizeNuGetVersion(libtorchPackageVersion);
                         if (useCudaBackend) {
-                            var consolidatedDir = Path.Combine(torchsharpLoc!, $"cuda-{cudaVersion}");
+                            var consolidatedDir = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
 
                             trace.AppendLine($"    Trying dynamic load by consolidating native {cudaRootPackage}-* binaries to {consolidatedDir}...");
 
@@ -261,7 +261,7 @@ namespace TorchSharp
                                 throw new NotSupportedException(message);
                             }
                         } else {
-                            var consolidatedDir = Path.Combine(torchsharpLoc!, $"cpu");
+                            var consolidatedDir = Path.Combine(torchsharpLoc, $"cpu");
 
                             trace.AppendLine($"    Trying dynamic load by consolidating native {cpuRootPackage} binaries to {consolidatedDir}...");
 
