@@ -224,7 +224,7 @@ namespace TorchSharp.Amp
                 if (optimizer_state["found_inf_per_device"] is Dictionary<DeviceType, torch.Tensor> dict) {
                     foreach (var d in dict)
                     {
-                        retval += (double)d.Value.item<float>();
+                        retval += (double)d.Value.item<double>();
                         //retval += d.Value.Sum(x=>x.item<double>());
                         /*foreach(var t in d.Value)
                             retval += t.item<double>();*/
@@ -242,7 +242,8 @@ namespace TorchSharp.Amp
                         retval += t.item<float>();*/
                 var res = optimizer.step(closure);
                 if (!(res is null)) {
-                    return res.item<float>();
+                    //return res.item<double>();
+                    return res.ToScalar();
                 }
 
                 /*if (retval == 0)
@@ -257,9 +258,7 @@ namespace TorchSharp.Amp
         {
             if (!Enabled) {
                 var res = optimizer.step(optimizer_args);
-                if (!(res is null))
-                    return res.item<float>();
-                return null;
+                return res?.item<float>();
             }
 
             if (optimizer_args != null)
