@@ -71,14 +71,43 @@ namespace TorchSharp
     /// </remarks>
     public class ExportedProgram : IDisposable
     {
-        private IntPtr handle;
-        private bool _disposed = false;
+        internal sealed class HType : SafeHandle
+        {
+            public HType(IntPtr preexistingHandle, bool ownsHandle)
+                : base(IntPtr.Zero, ownsHandle)
+            {
+                SetHandle(preexistingHandle);
+            }
+
+            public override bool IsInvalid => handle == IntPtr.Zero;
+
+            protected override bool ReleaseHandle()
+            {
+                if (!IsInvalid)
+                {
+                    THSExport_Module_dispose(handle);
+                }
+                SetHandle(IntPtr.Zero);
+                return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle();
+                }
+            }
+        }
+
+        internal HType handle;
 
         internal ExportedProgram(string filename)
         {
-            handle = THSExport_load(filename);
-            if (handle == IntPtr.Zero)
+            var res = THSExport_load(filename);
+            if (res == IntPtr.Zero)
                 torch.CheckForErrors();
+            handle = new HType(res, true);
         }
 
         /// <summary>
@@ -92,7 +121,7 @@ namespace TorchSharp
         /// </remarks>
         public torch.Tensor[] run(params torch.Tensor[] inputs)
         {
-            if (_disposed)
+            if (handle.IsInvalid)
                 throw new ObjectDisposedException(nameof(ExportedProgram));
 
             // Convert managed tensors to IntPtr array
@@ -103,7 +132,7 @@ namespace TorchSharp
             }
 
             // Call native run method
-            THSExport_Module_run(handle, input_handles, inputs.Length, out IntPtr result_ptr, out long result_length);
+            THSExport_Module_run(handle.DangerousGetHandle(), input_handles, inputs.Length, out IntPtr result_ptr, out long result_length);
             torch.CheckForErrors();
 
             // Marshal result array
@@ -151,14 +180,9 @@ namespace TorchSharp
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (disposing)
             {
-                if (handle != IntPtr.Zero)
-                {
-                    THSExport_Module_dispose(handle);
-                    handle = IntPtr.Zero;
-                }
-                _disposed = true;
+                handle.Dispose();
             }
         }
 
