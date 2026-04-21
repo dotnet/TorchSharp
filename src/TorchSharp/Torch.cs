@@ -607,6 +607,124 @@ namespace TorchSharp
                 TryInitializeDeviceType(device?.type ?? DeviceType.CUDA);
                 THSTorchCuda_synchronize(device?.index ?? -1);
             }
+
+            /// <summary>
+            /// Releases all unoccupied cached memory currently held by the caching allocator
+            /// so that those can be used in other GPU applications and visible in nvidia-smi.
+            /// </summary>
+            /// <remarks>
+            /// empty_cache() doesn't increase the amount of GPU memory available for PyTorch.
+            /// It only frees the memory that is cached by the allocator but not currently used by any tensor.
+            /// </remarks>
+            public static void empty_cache()
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSTorchCuda_empty_cache();
+                CheckForErrors();
+            }
+
+            /// <summary>
+            /// Returns the current GPU memory occupied by tensors in bytes for the given device.
+            /// </summary>
+            /// <param name="device">Selected device. Returns statistic for the current device, given by current_device(), if device is null.</param>
+            /// <returns>The amount of memory in bytes.</returns>
+            public static long memory_allocated(Device? device = null)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                var result = THSTorchCuda_memory_allocated(device?.index ?? -1);
+                CheckForErrors();
+                return (long)result;
+            }
+
+            /// <summary>
+            /// Returns the maximum GPU memory occupied by tensors in bytes for the given device.
+            /// </summary>
+            /// <param name="device">Selected device. Returns statistic for the current device, given by current_device(), if device is null.</param>
+            /// <returns>The peak amount of memory in bytes.</returns>
+            /// <remarks>
+            /// By default, this returns the peak allocated memory since the beginning of this program.
+            /// reset_peak_memory_stats() can be used to reset the starting point in tracking this metric.
+            /// </remarks>
+            public static long max_memory_allocated(Device? device = null)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                var result = THSTorchCuda_max_memory_allocated(device?.index ?? -1);
+                CheckForErrors();
+                return (long)result;
+            }
+
+            /// <summary>
+            /// Resets the starting point in tracking maximum GPU memory occupied by tensors for the given device.
+            /// </summary>
+            /// <param name="device">Selected device. Resets statistic for the current device, given by current_device(), if device is null.</param>
+            public static void reset_peak_memory_stats(Device? device = null)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSTorchCuda_reset_peak_memory_stats(device?.index ?? -1);
+                CheckForErrors();
+            }
+
+            /// <summary>
+            /// Returns the current GPU memory managed by the caching allocator in bytes for the given device.
+            /// </summary>
+            /// <param name="device">Selected device. Returns statistic for the current device, given by current_device(), if device is null.</param>
+            /// <returns>The amount of reserved memory in bytes.</returns>
+            public static long memory_reserved(Device? device = null)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                var result = THSTorchCuda_memory_reserved(device?.index ?? -1);
+                CheckForErrors();
+                return (long)result;
+            }
+
+            /// <summary>
+            /// Returns the maximum GPU memory managed by the caching allocator in bytes for the given device.
+            /// </summary>
+            /// <param name="device">Selected device. Returns statistic for the current device, given by current_device(), if device is null.</param>
+            /// <returns>The peak amount of reserved memory in bytes.</returns>
+            public static long max_memory_reserved(Device? device = null)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                var result = THSTorchCuda_max_memory_reserved(device?.index ?? -1);
+                CheckForErrors();
+                return (long)result;
+            }
+
+            /// <summary>
+            /// Returns the free and total memory on the CUDA device using cudaMemGetInfo.
+            /// </summary>
+            /// <param name="device">Selected device. Returns info for the current device, given by current_device(), if device is null.</param>
+            /// <returns>A tuple of (free, total) memory in bytes.</returns>
+            public static (long free, long total) mem_get_info(Device? device = null)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSTorchCuda_mem_get_info(device?.index ?? -1, out var free, out var total);
+                CheckForErrors();
+                return ((long)free, (long)total);
+            }
+
+            /// <summary>
+            /// Sets the current CUDA device.
+            /// </summary>
+            /// <param name="device">Selected device index.</param>
+            public static void set_device(int device)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSTorchCuda_set_device(device);
+                CheckForErrors();
+            }
+
+            /// <summary>
+            /// Returns the index of the currently selected CUDA device.
+            /// </summary>
+            /// <returns>The device index.</returns>
+            public static int current_device()
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                var result = THSTorchCuda_current_device();
+                CheckForErrors();
+                return (int)result;
+            }
         }
 
         /// <summary>

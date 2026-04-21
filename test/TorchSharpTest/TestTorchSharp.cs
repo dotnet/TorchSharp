@@ -118,6 +118,102 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EmptyCache()
+        {
+            // Should not throw, even if CUDA is not available
+            cuda.empty_cache();
+        }
+
+        [Fact]
+        public void MemoryAllocated()
+        {
+            if (!cuda.is_available()) return;
+
+            var before = cuda.memory_allocated();
+            Assert.True(before >= 0);
+
+            using (var t = ones(new long[] { 1024, 1024 }, device: CUDA)) {
+                var during = cuda.memory_allocated();
+                Assert.True(during > before);
+            }
+        }
+
+        [Fact]
+        public void MaxMemoryAllocated()
+        {
+            if (!cuda.is_available()) return;
+
+            cuda.reset_peak_memory_stats();
+            var baseline = cuda.max_memory_allocated();
+
+            using (var t = ones(new long[] { 1024, 1024 }, device: CUDA)) {
+                var peak = cuda.max_memory_allocated();
+                Assert.True(peak >= baseline);
+            }
+        }
+
+        [Fact]
+        public void ResetPeakMemoryStats()
+        {
+            if (!cuda.is_available()) return;
+
+            // Allocate then free a tensor to create a peak
+            using (var t = ones(new long[] { 1024, 1024 }, device: CUDA)) { }
+
+            var peakBefore = cuda.max_memory_allocated();
+            cuda.reset_peak_memory_stats();
+            var peakAfter = cuda.max_memory_allocated();
+            Assert.True(peakAfter <= peakBefore);
+        }
+
+        [Fact]
+        public void MemoryReserved()
+        {
+            if (!cuda.is_available()) return;
+
+            using (var t = ones(new long[] { 1024, 1024 }, device: CUDA)) {
+                var reserved = cuda.memory_reserved();
+                var allocated = cuda.memory_allocated();
+                Assert.True(reserved >= allocated);
+            }
+        }
+
+        [Fact]
+        public void MaxMemoryReserved()
+        {
+            if (!cuda.is_available()) return;
+
+            using (var t = ones(new long[] { 1024, 1024 }, device: CUDA)) {
+                var maxReserved = cuda.max_memory_reserved();
+                Assert.True(maxReserved > 0);
+            }
+        }
+
+        [Fact]
+        public void MemGetInfo()
+        {
+            if (!cuda.is_available()) return;
+
+            var (free, total) = cuda.mem_get_info();
+            Assert.True(total > 0);
+            Assert.True(free > 0);
+            Assert.True(free <= total);
+        }
+
+        [Fact]
+        public void SetAndGetCurrentDevice()
+        {
+            if (!cuda.is_available()) return;
+
+            var device = cuda.current_device();
+            Assert.True(device >= 0);
+
+            // Set to device 0 (always valid if CUDA is available)
+            cuda.set_device(0);
+            Assert.Equal(0, cuda.current_device());
+        }
+
+        [Fact]
         public void ExplicitDisposal()
         {
             // Allocate many 256MB tensors. Without explicit disposal memory use relies on finalization.
