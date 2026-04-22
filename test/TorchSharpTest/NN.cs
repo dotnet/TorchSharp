@@ -3309,6 +3309,75 @@ namespace TorchSharp
             Assert.True(sd.ContainsKey("_linear2.weight"));
         }
 
+        [Fact]
+        public void TestModuleItems()
+        {
+            var lin = Linear(10, 5, true);
+            var sd = lin.state_dict();
+            var items = new List<(string, Tensor)>();
+
+            using (var enumerator = lin.items()) {
+                while (enumerator.MoveNext()) {
+                    items.Add(enumerator.Current);
+                }
+            }
+
+            // items() should return the same entries as state_dict()
+            Assert.Equal(sd.Count, items.Count);
+            foreach (var (name, value) in items) {
+                Assert.True(sd.ContainsKey(name));
+                Assert.Equal(sd[name].shape, value.shape);
+            }
+        }
+
+        [Fact]
+        public void TestModuleItemsWithSubmodules()
+        {
+            var seq = Sequential(
+                ("lin1", Linear(10, 5)),
+                ("lin2", Linear(5, 2)));
+            var sd = seq.state_dict();
+            var items = new List<(string, Tensor)>();
+
+            using (var enumerator = seq.items()) {
+                while (enumerator.MoveNext()) {
+                    items.Add(enumerator.Current);
+                }
+            }
+
+            Assert.Equal(sd.Count, items.Count);
+            Assert.Contains(items, i => i.Item1 == "lin1.weight");
+            Assert.Contains(items, i => i.Item1 == "lin2.weight");
+        }
+
+        [Fact]
+        public void TestModelMergeUsingItemsAndStateDict()
+        {
+            // Demonstrate model merging pattern using items() + state_dict() + load_state_dict()
+            // This is how users would merge models, matching the PyTorch pattern
+            var model1 = Linear(10, 5, true);
+            var model2 = Linear(10, 5, true);
+
+            var sd1 = model1.state_dict();
+            var sd2 = model2.state_dict();
+
+            var merged = new Dictionary<string, Tensor>();
+            using (var enumerator = model1.items()) {
+                while (enumerator.MoveNext()) {
+                    var (name, _) = enumerator.Current;
+                    merged[name] = (sd1[name] + sd2[name]) / 2;
+                }
+            }
+
+            model1.load_state_dict(merged);
+
+            // Verify the merged parameters are the average
+            var finalSd = model1.state_dict();
+            foreach (var key in merged.Keys) {
+                Assert.True(finalSd[key].allclose(merged[key]));
+            }
+        }
+
         private class TestModule3 : Module<Tensor, Tensor>
         {
             public TestModule3() : base(nameof(TestModule3)) { RegisterComponents(); }
