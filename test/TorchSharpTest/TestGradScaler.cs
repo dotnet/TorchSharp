@@ -62,8 +62,8 @@ namespace TorchSharpTest.WithCudaBinaries
                 run.Invoke(res.data, res.modctrl, res.optctrl, scaler, res.loss_fn, res.skip_iter, false);
                 run.Invoke(res.data, res.modscal, res.optscal, scaler, res.loss_fn, res.skip_iter, true);
                 if (enabled) {
-                    var net_growth = unskipped > 0 ? MathF.Pow(scaler.get_growth_factor(), unskipped) : 1.0f;
-                    var net_backoff = skipped> 0 ? MathF.Pow(scaler.get_backoff_factor(), skipped) : 1.0f;
+                    var net_growth = unskipped > 0 ? Math.Pow(scaler.get_growth_factor(), unskipped) : 1.0f;
+                    var net_backoff = skipped> 0 ? Math.Pow(scaler.get_backoff_factor(), skipped) : 1.0f;
                     Assert.Equal((128.0f * net_growth * net_backoff), scaler.get_scale());
                     
                 } else {
@@ -157,12 +157,13 @@ namespace TorchSharpTest.WithCudaBinaries
                 }
 
                 var re = s0.state_dict();
-                s1.load_state_dict(re);
+                s1.load(re);
 
                 Assert.Equal(3.0f, s1.get_scale());
-                Assert.Equal(0.5f, s1.get_growth_factor());
+                Assert.Equal(4.0, s1.get_growth_factor());
+                Assert.Equal(0.5f, s1.get_backoff_factor());
                 Assert.Equal(2, s1.get_growth_interval());
-                Assert.Equal(0.0f, s1.get_init_growth_tracker());
+                Assert.Equal(0, s1.get_init_growth_tracker());
             }
         }
 

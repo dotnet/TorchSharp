@@ -1,17 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Security;
 
 namespace TorchSharp.BitsAndBytes
 {
+
     //BASED ON: https://github.com/LittleLittleCloud/TorchSharp.BitsAndBytes
-    public static class BitsAndBytesNatives
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1060:MovePInvokesToNativeMethodsClass", Justification = "Reviewed")]
+    static class BitsAndBytesNatives
     {
         private const string DllName = "libbitsandbytes";
         
         [DllImport(DllName)]
-        public static extern void cdequantize_blockwise_fp32_fp4(
+        internal static extern void cdequantize_blockwise_fp32_fp4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -21,7 +22,7 @@ namespace TorchSharp.BitsAndBytes
             IntPtr stream);
 
         [DllImport(DllName)]
-        public static extern void cdequantize_blockwise_fp32_nf4(
+        internal static extern void cdequantize_blockwise_fp32_nf4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -31,7 +32,7 @@ namespace TorchSharp.BitsAndBytes
             IntPtr stream);
 
         [DllImport(DllName)]
-        public static extern void cdequantize_blockwise_fp16_fp4(
+        internal static extern void cdequantize_blockwise_fp16_fp4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -41,7 +42,7 @@ namespace TorchSharp.BitsAndBytes
             IntPtr stream);
 
         [DllImport(DllName)]
-        public static extern void cdequantize_blockwise_fp16_nf4(
+        internal static extern void cdequantize_blockwise_fp16_nf4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -51,7 +52,7 @@ namespace TorchSharp.BitsAndBytes
             IntPtr stream);
 
         [DllImport(DllName)]
-        public static extern void cdequantize_blockwise_bf16_fp4(
+        internal static extern void cdequantize_blockwise_bf16_fp4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -61,7 +62,7 @@ namespace TorchSharp.BitsAndBytes
             IntPtr stream);
 
         [DllImport(DllName)]
-        public static extern void cdequantize_blockwise_bf16_nf4(
+        internal static extern void cdequantize_blockwise_bf16_nf4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -72,7 +73,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName)]
-        public static extern void cquantize_blockwise_fp32_fp4(
+        internal static extern void cquantize_blockwise_fp32_fp4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -82,7 +83,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName)]
-        public static extern void cquantize_blockwise_fp32_nf4(
+        internal static extern void cquantize_blockwise_fp32_nf4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -92,7 +93,7 @@ namespace TorchSharp.BitsAndBytes
          );
 
         [DllImport(DllName)]
-        public static extern void cquantize_blockwise_fp32(
+        internal static extern void cquantize_blockwise_fp32(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -102,7 +103,7 @@ namespace TorchSharp.BitsAndBytes
          );
 
         [DllImport(DllName)]
-        public static extern void cquantize_blockwise_fp16_fp4(
+        internal static extern void cquantize_blockwise_fp16_fp4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -112,7 +113,7 @@ namespace TorchSharp.BitsAndBytes
          );
 
         [DllImport(DllName)]
-        public static extern void cquantize_blockwise_fp16_nf4(
+        internal static extern void cquantize_blockwise_fp16_nf4(
             IntPtr code,        // float*
             IntPtr A,          // float*
             IntPtr absmax,     // float*
@@ -122,7 +123,7 @@ namespace TorchSharp.BitsAndBytes
          );
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cquantize_blockwise_bf16_fp4(
+        internal static extern void cquantize_blockwise_bf16_fp4(
             IntPtr code,        // float*
             IntPtr A,          // __nv_bfloat16*
             IntPtr absmax,     // float*
@@ -132,7 +133,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cquantize_blockwise_bf16_nf4(
+        internal static extern void cquantize_blockwise_bf16_nf4(
             IntPtr code,        // float*
             IntPtr A,          // __nv_bfloat16*
             IntPtr absmax,     // float*
@@ -142,7 +143,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName)]
-        public static extern void cgemm_4bit_inference_naive_fp16(
+        internal static extern void cgemm_4bit_inference_naive_fp16(
             int m,
             int n,
             int k,
@@ -159,7 +160,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName)]
-        public static extern void cgemm_4bit_inference_naive_fp32(
+        internal static extern void cgemm_4bit_inference_naive_fp32(
             int m,
             int n,
             int k,
@@ -176,7 +177,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName)]
-        public static extern void cgemm_4bit_inference_naive_bf16(
+        internal static extern void cgemm_4bit_inference_naive_bf16(
             int m,
             int n,
             int k,
@@ -193,7 +194,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void dequantize(
+        internal static extern void dequantize(
             IntPtr output,  // float* 
             IntPtr input,   // byte*
             IntPtr scale,   // float*
@@ -202,7 +203,7 @@ namespace TorchSharp.BitsAndBytes
         );
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cigemm(
+        internal static extern void cigemm(
             IntPtr context,
             bool transposeA,
             bool transposeB,
@@ -217,9 +218,9 @@ namespace TorchSharp.BitsAndBytes
             int ldc);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr get_context();
+        internal static extern IntPtr get_context();
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr get_cusparse();
+        internal static extern IntPtr get_cusparse();
     }
 }

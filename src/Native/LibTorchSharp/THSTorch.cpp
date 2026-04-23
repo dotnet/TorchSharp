@@ -58,7 +58,12 @@ void THSBackend_cudnn_set_allow_tf32(const bool flag)
 bool THSBackend_cuda_get_allow_fp16_reduced_precision_reduction()
 {
     auto result = false;
-    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+#if TORCH_VERSION_MAJOR >= 2 && TORCH_VERSION_MINOR >= 11
+        CATCH(result = at::globalContext().allowFP16ReductionCuBLAS()==at::CuBLASReductionOption::AllowReducedPrecisionWithSplitK;);
+#else
+        CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+#endif
+    
     return result;
 }
 

@@ -962,7 +962,8 @@ namespace TorchSharp
             public Tensor to(torch.Device device, ScalarType type, bool non_blocking)
             {
                 torch.InitializeDevice(device);
-                return ReturnCheckForErrors(res = NativeMethods.THSTensor_to_type_and_device_and_non_blocking(Handle, (sbyte)type, (int)device.type, device.index, non_blocking));
+                
+                return ReturnCheckForErrors(NativeMethods.THSTensor_to_type_and_device_and_non_blocking(Handle, (sbyte)type, (int)device.type, device.index, non_blocking));
             }
 
             /// <summary>
@@ -1767,7 +1768,7 @@ namespace TorchSharp
             /// <param name="index">The indices into tensor, an Int64 tensor.</param>
             public Tensor take(Tensor index)
             {
-                return ReturnCheckForErrors((NativeMethods.THSTensor_take(Handle, index.Handle));
+                return ReturnCheckForErrors(NativeMethods.THSTensor_take(Handle, index.Handle));
             }
 
             /// <summary>
@@ -3287,7 +3288,9 @@ namespace TorchSharp
             public bool Equals(Tensor target)
             {
                 if (target is null) return false;
-                return ReturnCheckForErrors(NativeMethods.THSTensor_equal(Handle, target.Handle));
+                var res = NativeMethods.THSTensor_equal(Handle, target.Handle);
+                CheckForErrors();
+                return res;
             }
 
             /// <summary>

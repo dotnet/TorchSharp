@@ -251,26 +251,51 @@ namespace TorchSharp.Utils
                 count = (int)Cnt;
             if (Cnt > array.Length)
                 count = array.Length + index;
-            if (array is byte[] ba)
+            //NOTE: The return of every check is for prevent consume more cycle CPU checking the next when one is acomplished
+            //I Mean, if array is char[] will copy and return. Not need check long[] or float[] because is char[]
+            if (array is byte[] ba) {
                 Marshal.Copy(_tensor_data_ptr, ba, index, count);
-            if (array is short[] sa)
+                return;
+            }
+            if (array is short[] sa) {
                 Marshal.Copy(_tensor_data_ptr, sa, index, count);
-            if (array is char[] ca)
+                return;
+            }
+            if (array is char[] ca) {
                 Marshal.Copy(_tensor_data_ptr, ca, index, count);
-            if (array is long[] la)
+                return;
+            }
+            if (array is long[] la) {
                 Marshal.Copy(_tensor_data_ptr, la, index, count);
-            if (array is float[] fa)
+                return;
+            }
+            if (array is float[] fa) {
                 Marshal.Copy(_tensor_data_ptr, fa, index, count);
-            if (array is int[] ia)
+                return;
+            }
+            if (array is int[] ia) {
                 Marshal.Copy(_tensor_data_ptr, ia, index, count);
-            if (array is double[] da)
+                return;
+            }
+            if (array is double[] da) {
                 Marshal.Copy(_tensor_data_ptr, da, index, count);
+                return;
+            }
             if (array is Half[] ha) {
-                throw new NotImplementedException();
+
+                //TODO: Test this
+#if NETSTANDARD2_0
+                Marshal.Copy(_tensor_data_ptr, ha.Select(HalfHelper.HalfToSingle).ToArray(), index, count);
+#else
+                Marshal.Copy(_tensor_data_ptr, ha.Select(x=> (float)x).ToArray(), index, count);
+                //throw new NotImplementedException();
+#endif
+                return;
             }
             if (array is BFloat16[] bfa) {
                 //TODO: Test this
                 Marshal.Copy(_tensor_data_ptr, bfa.Select(x=>x.ToFloat()).ToArray(), index, count);
+                return;
             }
         }
 
@@ -305,8 +330,6 @@ namespace TorchSharp.Utils
         public void CopyFrom(ReadOnlySpan<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
             unsafe {
-                /*var arr = array.ToArray();
-                SetValueTensor(ref arr, _tensor.shape, _tensor.stride(), Count, 0, true);*/
                 T* ptr = GetAndValidatePTR();
                 long count = Count;
                 var shape = _tensor.shape;
@@ -421,7 +444,6 @@ namespace TorchSharp.Utils
         {
             return !(left == right);
         }
-
 
         private IEnumerable<long> GetSubsequentIndices(long startingIndex)
         {

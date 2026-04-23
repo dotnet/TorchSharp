@@ -120,6 +120,16 @@ namespace TorchSharp
             public Storage<float> @float() => _tensor.to_type(ScalarType.Float32).storage<float>();
 
             /// <summary>
+            /// Convert to half storage.
+            /// </summary>
+            public Storage<Half> @half() => _tensor.to_type(ScalarType.Float16).storage<Half>();
+
+            /// <summary>
+            /// Convert to bfloat16 storage.
+            /// </summary>
+            public Storage<BFloat16> @bfloat16() => _tensor.to_type(ScalarType.BFloat16).storage<BFloat16>();
+
+            /// <summary>
             /// Convert to double storage.
             /// </summary>
             public Storage<double> @double() => _tensor.to_type(ScalarType.Float64).storage<double>();

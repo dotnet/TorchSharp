@@ -1,5 +1,5 @@
 //NOTE: This make compatibility of Range with NetStandard2.0 may need include System.Runtime.InteropServices.RuntimeInformation
-
+/*
 #if NETSTANDARD2_0
 #region License
 // MIT License
@@ -56,4 +56,4 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
-#endif
+#endif*/

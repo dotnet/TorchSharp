@@ -13,6 +13,7 @@
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
     <Configurations>Debug;Release;LibTorch2.3.1</Configurations>
+    <CustomLibTorchFullPath>K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-debug-2.6.0+cu126\libtorch\share\cmake\Torch</CustomLibTorchFullPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -150,11 +151,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="xunit" Version="2.4.2" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Update="xunit" Version="2.4.2" />
+    
   </ItemGroup>
 
 

@@ -675,6 +675,7 @@ namespace TorchSharp
                 CheckForErrors();
             return new Tensor(ptr);
         }
+     
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Tensor? ReturnNullCheckForErrors(IntPtr ptr)
         {

@@ -302,22 +302,22 @@ namespace TorchVision
 
             {
                 // With p == 0, nothing should happen
-                using var output = stochastic_depth(input, 0, torchvision.StochasticDepth.Mode.Batch, true);
+                using var output = stochastic_depth(input, 0, TorchSharp.torchvision.StochasticDepth.Mode.Batch, true);
                 Assert.Equal(size, output.count_nonzero().item<long>());
             }
             {
                 // With training == false, nothing should happen
-                using var output = stochastic_depth(input, 1, torchvision.StochasticDepth.Mode.Batch, false);
+                using var output = stochastic_depth(input, 1, TorchSharp.torchvision.StochasticDepth.Mode.Batch, false);
                 Assert.Equal(size, output.count_nonzero().item<long>());
             }
             {
                 // If training and p == 1, then all elements should be cleared.
-                using var output = stochastic_depth(input, 1, torchvision.StochasticDepth.Mode.Batch, true);
+                using var output = stochastic_depth(input, 1, TorchSharp.torchvision.StochasticDepth.Mode.Batch, true);
                 Assert.Equal(0, output.count_nonzero().item<long>());
             }
             {
                 // If training and p in ]0,1[, either all or none of the elements should be cleared.
-                using var output = stochastic_depth(input, 0.5, torchvision.StochasticDepth.Mode.Batch, true);
+                using var output = stochastic_depth(input, 0.5, TorchSharp.torchvision.StochasticDepth.Mode.Batch, true);
                 var nz = output.count_nonzero().item<long>();
                 Assert.True(nz == 0 || nz == size);
             }
@@ -809,17 +809,17 @@ namespace TorchVision
             if (System.IO.File.Exists(outName1)) System.IO.File.Delete(outName1);
             if (System.IO.File.Exists(outName2)) System.IO.File.Delete(outName2);
 
-            torchvision.io.DefaultImager = new torchvision.io.SkiaImager(100);
+            TorchSharp.torchvision.io.DefaultImager = new TorchSharp.torchvision.io.SkiaImager(100);
 
-            using var img = torchvision.io.read_image(fileName);
+            using var img = TorchSharp.torchvision.io.read_image(fileName);
             Assert.NotNull(img);
             Assert.Equal(uint8, img.dtype);
             //Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
 
-            torchvision.io.write_image(img, outName1, torchvision.ImageFormat.Jpeg);
+            TorchSharp.torchvision.io.write_image(img, outName1, TorchSharp.torchvision.ImageFormat.Jpeg);
             Assert.True(System.IO.File.Exists(outName1));
 
-            using var img2 = torchvision.io.read_image(outName1);
+            using var img2 = TorchSharp.torchvision.io.read_image(outName1);
             Assert.NotNull(img2);
             Assert.Equal(uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
@@ -827,7 +827,7 @@ namespace TorchVision
             using var grey = functional.rgb_to_grayscale(img);
             Assert.Equal(float32, grey.dtype);
 
-            torchvision.io.write_jpeg(functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
+            TorchSharp.torchvision.io.write_jpeg(functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
             Assert.True(System.IO.File.Exists(outName2));
 
             System.IO.File.Delete(outName1);
@@ -842,7 +842,7 @@ namespace TorchVision
             double[] stdevs = { 0.229, 0.224, 0.225, 0.222 }; // Different length
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => torchvision.transforms.Normalize(means, stdevs));
+            Assert.Throws<ArgumentException>(() => TorchSharp.torchvision.transforms.Normalize(means, stdevs));
         }
 
         [Fact]
@@ -853,7 +853,7 @@ namespace TorchVision
             double[] stdevs = { 0.229, 0.224 }; // Not 1 or 3
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => torchvision.transforms.Normalize(means, stdevs));
+            Assert.Throws<ArgumentException>(() => TorchSharp.torchvision.transforms.Normalize(means, stdevs));
         }
 
         [Fact]
@@ -864,7 +864,7 @@ namespace TorchVision
             double[] stdevs = { 0.229, 0.224, 0.225 };
 
             // Act
-            var result = torchvision.transforms.Normalize(means, stdevs);
+            var result = TorchSharp.torchvision.transforms.Normalize(means, stdevs);
 
             // Assert
             Assert.NotNull(result);
@@ -876,7 +876,7 @@ namespace TorchVision
             // Arrange
             double[] means = { 0.485, 0.456, 0.406 };
             double[] stdevs = { 0.229, 0.224, 0.225 };
-            var sut = torchvision.transforms.Normalize(means, stdevs);
+            var sut = TorchSharp.torchvision.transforms.Normalize(means, stdevs);
             var wrongSizeInput = torch.rand(new long[] { 1, 4, 32, 32 }); // wrong number of input channels
 
             // Act & Assert
@@ -889,7 +889,7 @@ namespace TorchVision
             // Arrange
             double[] means = { 0.485, 0.456, 0.406 };
             double[] stdevs = { 0.229, 0.224, 0.225 };
-            var sut = torchvision.transforms.Normalize(means, stdevs);
+            var sut = TorchSharp.torchvision.transforms.Normalize(means, stdevs);
             var inputChannels = 3;
             var input = torch.rand(new long[] { 1, inputChannels, 32, 32 }, dtype: float64);
 
@@ -906,11 +906,11 @@ namespace TorchVision
         public void Call_ThrowsException_WithWrongNumberOfChannels()
         {
             // Act
-            Assert.Throws<ArgumentException>(() => torchvision.transforms.Grayscale(outputChannels: 2));
+            Assert.Throws<ArgumentException>(() => TorchSharp.torchvision.transforms.Grayscale(outputChannels: 2));
 
             Tensor input = torch.rand(new long[] { 1, 2, 128, 128 });
 
-            var tfrm = torchvision.transforms.Grayscale(outputChannels: 1);
+            var tfrm = TorchSharp.torchvision.transforms.Grayscale(outputChannels: 1);
 
             Assert.Throws<ArgumentException>(() => tfrm.call(input));
         }
@@ -922,7 +922,7 @@ namespace TorchVision
             int height = 20;
             int width = 30;
             var input = torch.randn(1, 3, 256, 256);
-            var transform = torchvision.transforms.Resize(height, width);
+            var transform = TorchSharp.torchvision.transforms.Resize(height, width);
 
             //Act
             var result = transform.call(input);
@@ -939,7 +939,7 @@ namespace TorchVision
             int size = 20;
             int? maxSize = 30;
             var input = torch.randn(1, 3, 256, 256);
-            var transform = torchvision.transforms.Resize(size, maxSize);
+            var transform = TorchSharp.torchvision.transforms.Resize(size, maxSize);
 
             //Act
             var result = transform.call(input);
@@ -1211,7 +1211,8 @@ namespace TorchVision
         public void Adjust_Contrast_ReturnsTensorWithCorrectDtype()
         {
             var img1 = torch.randn(1, 32, 32).to(torch.uint8);
-            var img2 = torchvision.transforms.functional.adjust_contrast(img1, 2);
+            
+            var img2 = TorchSharp.torchvision.transforms.functional.adjust_contrast(img1, 2);
             Assert.Equal(img1.dtype, img2.dtype);
         }
     }
