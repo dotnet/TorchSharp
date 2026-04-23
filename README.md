@@ -147,3 +147,6 @@ See [DEVGUIDE.md](DEVGUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 [DiffSharp](https://github.com/DiffSharp/DiffSharp/) also uses this
 repository extensively and has been a major factor in iterating support.
+
+[TransformersSharp](https://github.com/dongfangzhizhu/TransformersSharp) 
+Transformer models implementation based on TorchSharp.
