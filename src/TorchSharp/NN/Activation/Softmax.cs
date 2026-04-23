@@ -12,19 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmax module.
         /// </summary>
-        public sealed class Softmax : ParameterLessModule<Tensor, Tensor>
+        public sealed class Softmax : torch.nn.Module<Tensor, Tensor>
         {
-            internal Softmax(long dim) : base(nameof(Softmax))
-            {
-                this.dim = dim;
-            }
+            internal Softmax(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.softmax(tensor, dim);
+                return ReturnCheckForErrors(THSNN_Softmax_forward(handle, tensor.Handle));
             }
 
-            public long dim {get; set;}
+            public override string GetName()
+            {
+                return typeof(Softmax).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -39,7 +45,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static Softmax Softmax(long dim)
             {
-                return new Softmax(dim);
+                var handle = THSNN_Softmax_ctor(dim, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Softmax(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -50,8 +58,7 @@ namespace TorchSharp
                 /// <param name="input">The input tensor</param>
                 /// <param name="dim">A dimension along which softmax will be computed.</param>
                 /// <param name="dtype">The desired data type of returned tensor.</param>
-                public static Tensor softmax(Tensor input, long dim, ScalarType? dtype = null) =>
-                    torch.special.softmax(input, dim, dtype);
+                public static Tensor softmax(Tensor input, long dim, ScalarType? dtype = null) => torch.special.softmax(input, dim, dtype);
             }
         }
     }

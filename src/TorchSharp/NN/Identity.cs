@@ -10,14 +10,20 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Identity : ParameterLessModule<Tensor, Tensor>
+        public sealed class Identity : torch.nn.Module<Tensor, Tensor>
         {
-            internal Identity() : base(nameof(Identity)) { }
+            internal Identity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return tensor.alias();
+                return ReturnCheckForErrors(THSNN_Identity_forward(handle, tensor.Handle));
             }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -31,7 +37,9 @@ namespace TorchSharp
             /// <returns>The same tensor as is input.</returns>
             public static Identity Identity()
             {
-                return new Identity();
+                var res = THSNN_Identity_ctor(out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Identity(res, boxedHandle);
             }
         }
     }

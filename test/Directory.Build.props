@@ -3,10 +3,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net48</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net48;netstandard2.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
+    <CustomLibTorchFullPath>K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-2.11.0+cpu\libtorch\share\cmake\Torch</CustomLibTorchFullPath>
     <!--
       Don't warn about missing documentation in test projects.
 

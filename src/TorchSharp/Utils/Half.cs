@@ -11,6 +11,7 @@ namespace System
 {
     //TODO: Implement c10::util::BFloat16.h, c10::util::BFloat16-inl.h,c10::util::BFloat16-math.h in TorchSharp c#
     //TODO: Or Implement https://github.com/oneapi-src/oneDNN/blob/main/src/common/bfloat16.hpp
+    //NOTE: V2, bfloat16 is not same as Half is different, Half work float16
 
     //This is from https://github.com/qingfengxia/System.Half
     /// <summary>

@@ -12,22 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ELU module.
         /// </summary>
-        public sealed class ELU : ParameterLessModule<Tensor, Tensor>
+        public sealed class ELU : torch.nn.Module<Tensor, Tensor>
         {
-            internal ELU(double alpha, bool inplace) : base(nameof(ELU))
-            {
-                this.alpha = alpha;
-                this.inplace = inplace;
-            }
+            internal ELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.elu(tensor, alpha, inplace);
+                return ReturnCheckForErrors(THSNN_ELU_forward(handle, tensor.Handle));
             }
 
-            public double alpha {get; set;}
+            public override string GetName()
+            {
+                return typeof(ELU).Name;
+            }
 
-            public bool inplace {get; set;}
+              // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -43,7 +46,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ELU ELU(double alpha = 1.0, bool inplace = false)
             {
-                return new ELU(alpha, inplace);
+                var handle = THSNN_ELU_ctor(alpha, inplace, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ELU(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -57,7 +62,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor elu(Tensor x, double alpha, bool inplace = false)
                 {
-                    return inplace ? x.elu_(alpha).alias() : x.elu(alpha);
+                    using (var m = nn.ELU(alpha, inplace)) {
+                        return m.call(x);
+                    }
                 }
             }
         }

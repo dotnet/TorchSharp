@@ -26,9 +26,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor get_state()
             {
-                var res = THSGenerator_get_rng_state(Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSGenerator_get_rng_state(Handle));
             }
 
             /// <summary>

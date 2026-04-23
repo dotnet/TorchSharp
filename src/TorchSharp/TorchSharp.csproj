@@ -11,6 +11,7 @@
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <IsPackable>false</IsPackable>
     <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
+    <CustomLibTorchFullPath>K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-2.11.0+cpu\libtorch\share\cmake\Torch</CustomLibTorchFullPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,6 +39,7 @@
     <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

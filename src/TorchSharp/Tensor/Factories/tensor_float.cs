@@ -17,17 +17,7 @@ namespace TorchSharp
         public static Tensor tensor(float scalar, Device? device = null, bool requires_grad = false)
         {
             device = InitializeDevice(device);
-            var handle = THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-
-
-            //var t = new Tensor(handle).AutoCast();
-            var t = new Tensor(handle);
-            /*if (is_autocast_cache_enabled()) {
-                if (is_autocast_gpu_enabled())
-                    return t.to(get_autocast_gpu_dtype()); //this work, but should put that on all tensor factorie... 
-            }*/
-            return t;
+            return ReturnCheckForErrors(THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requires_grad));
         }
 
         /// <summary>

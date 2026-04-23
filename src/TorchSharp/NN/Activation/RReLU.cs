@@ -12,22 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a RReLU module.
         /// </summary>
-        public sealed class RReLU : ParameterLessModule<Tensor, Tensor>
+        public sealed class RReLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal RReLU(double lower, double upper, bool inplace) : base(nameof(RReLU))
-            {
-                this.lower = lower;
-                this.upper = upper;
-                this.inplace = inplace;
-            }
+            internal RReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.rrelu(tensor, lower, upper, inplace);
+                return ReturnCheckForErrors(THSNN_RReLU_forward(handle, tensor.Handle));
             }
-            public double lower {get; set;}
-            public double upper {get; set;}
-            public bool inplace {get; set;}
+
+            public override string GetName()
+            {
+                return typeof(RReLU).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -44,7 +47,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static RReLU RReLU(double lower = one_eighth, double upper = one_third, bool inplace = false)
             {
-                return new RReLU(lower, upper, inplace);
+                var handle = THSNN_RReLU_ctor(lower, upper, inplace, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new RReLU(handle, boxedHandle);
             }
 
             private const double one_eighth = 1.0 / 8.0;
@@ -60,9 +65,11 @@ namespace TorchSharp
                 /// <param name="upper">Upper bound of the uniform distribution. Default: 1/3</param>
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                public static Tensor rrelu(Tensor x, double lower = one_eighth, double upper = one_third, bool inplace = false)
+                public static Tensor rrelu(Tensor x, double lower, double upper, bool inplace = false)
                 {
-                    return inplace ? x.rrelu_(lower, upper).alias() : x.rrelu(lower, upper);
+                    using (var m = nn.RReLU(lower, upper, inplace)) {
+                        return m.call(x);
+                    }
                 }
             }
         }

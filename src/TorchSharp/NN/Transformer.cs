@@ -38,8 +38,7 @@ namespace TorchSharp
                     src_key_padding_mask?.Handle ?? IntPtr.Zero,
                     tgt_key_padding_mask?.Handle ?? IntPtr.Zero,
                     memory_key_padding_mask?.Handle ?? IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(res);
             }
 
             /// <summary>
@@ -58,8 +57,7 @@ namespace TorchSharp
                     IntPtr.Zero,
                     IntPtr.Zero,
                     IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(res);
             }
         }
     }
@@ -113,9 +111,7 @@ namespace TorchSharp
                 {
                     if (p < 0) throw new ArgumentException("Dropout probability must be greater than or equal to zero.");
                     if (is_casual && attn_mask is not null) throw new ArgumentException("Casual attention masking cannot pass a mask.");
-                    var res = THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, is_casual);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, is_casual));
                 }
             }
         }

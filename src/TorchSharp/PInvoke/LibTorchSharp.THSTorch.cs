@@ -62,10 +62,12 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern float THSTorch_scalar_to_float32(IntPtr handle);
 
-#if NET6_0_OR_GREATER
+//#if NET6_0_OR_GREATER
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_scalar_to_float16(IntPtr value, out Half res);
-#endif
+//#endif
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_scalar_to_bfloat16(IntPtr value, out BFloat16 res);
 
         [DllImport("LibTorchSharp")]
         internal static extern double THSTorch_scalar_to_float64(IntPtr handle);
@@ -90,6 +92,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_scalar_to_complex64(IntPtr handle, AllocatePinnedArray allocator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTorch_libtorch_version();
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_get_and_reset_last_err();

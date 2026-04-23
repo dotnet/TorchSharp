@@ -21,7 +21,7 @@ namespace TorchSharp
             /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.21.1417
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
@@ -39,7 +39,7 @@ namespace TorchSharp
             /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.21.1417
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
@@ -57,7 +57,7 @@ namespace TorchSharp
             /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.21.1417
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
@@ -80,7 +80,7 @@ namespace TorchSharp
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
@@ -97,7 +97,7 @@ namespace TorchSharp
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>

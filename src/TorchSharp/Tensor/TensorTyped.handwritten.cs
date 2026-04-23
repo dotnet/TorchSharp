@@ -28,11 +28,7 @@ namespace TorchSharp
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
-                var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat32);
-                if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
-
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat32));
             }
 
             /// <summary>
@@ -41,9 +37,7 @@ namespace TorchSharp
             public static Tensor from((float Real, float Imaginary) scalar, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(handle);
+                return ReturnCheckForErrors(THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad));
             }
 
             /// <summary>
@@ -52,9 +46,7 @@ namespace TorchSharp
             public static Tensor from(float real, float imaginary = 0.0f, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(handle);
+                return ReturnCheckForErrors(THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requires_grad));
             }
 
             /// <summary>
@@ -127,11 +119,7 @@ namespace TorchSharp
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
-                var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat64);
-                if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
-
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat64));
             }
 
             /// <summary>
@@ -140,9 +128,7 @@ namespace TorchSharp
             public static Tensor from(System.Numerics.Complex scalar, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(handle);
+                return ReturnCheckForErrors(THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad));
             }
 
             /// <summary>
@@ -151,9 +137,7 @@ namespace TorchSharp
             public static Tensor from(double real, double imaginary = 0.0f, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(handle);
+                return ReturnCheckForErrors(THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requires_grad));
             }
 
             /// <summary>

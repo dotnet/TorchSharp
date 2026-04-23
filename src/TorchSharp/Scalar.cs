@@ -70,16 +70,25 @@ namespace TorchSharp
             return value.ToScalar();
         }
 
-#if NET6_0_OR_GREATER
+//#if NET6_0_OR_GREATER
         /// <summary>
         /// Implicitly convert a .NET scalar value to Scalar
         /// </summary>
         /// <param name="value">The scalar value.</param>
         public static implicit operator Scalar(Half value)
         {
+
             return value.ToScalar();
         }
-#endif
+        /// <summary>
+        /// Implicitly convert a .NET scalar value to Scalar
+        /// </summary>
+        /// <param name="value">The scalar value.</param>
+        public static implicit operator Scalar(BFloat16 value)
+        {
+            return value.ToScalar();
+        }
+        //#endif
 
         /// <summary>
         /// Implicitly convert a .NET scalar value to Scalar
@@ -219,7 +228,25 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_float32_to_scalar(value));
         }
-
+        /// <summary>
+        /// Explcitly construct a Scalar from a .NET scalar.
+        /// </summary>
+        /// <param name="value">The input scalar value</param>
+        public static Scalar ToScalar(this Half value)
+        {
+            torch.InitializeDeviceType(DeviceType.CPU);
+            
+            return new Scalar(THSTorch_float16_to_scalar((float)value));
+        }
+        /// <summary>
+        /// Explcitly construct a Scalar
+        /// </summary>
+        /// <param name="value">The input scalar value</param>
+        public static Scalar ToScalar(this BFloat16 value)
+        {
+            torch.InitializeDeviceType(DeviceType.CPU);
+            return new Scalar(THSTorch_bfloat16_to_scalar(value.ToFloat()));
+        }
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -260,7 +287,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_bool_to_scalar(value));
         }
 
-#if NET6_0_OR_GREATER
+/*#if NET6_0_OR_GREATER
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -280,9 +307,21 @@ namespace TorchSharp
         {
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_bfloat16_to_scalar(value));
+        }*/
+        public static BFloat16 ToBFloat16(this float value)
+        {
+            return new BFloat16(value);
+            //return res;
+            /*torch.InitializeDeviceType(DeviceType.CPU);
+            return new Scalar(THSTorch_bfloat16_to_scalar(value));*/
         }
 
-#if NET6_0_OR_GREATER
+        public static BFloat16 ToBFloat16(this Scalar value)
+        {
+            THSTorch_scalar_to_bfloat16(value.Handle, out BFloat16 res);
+            return res;
+        }
+        //#if NET6_0_OR_GREATER
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
@@ -293,7 +332,7 @@ namespace TorchSharp
             THSTorch_scalar_to_float16(value.Handle, out res);
             return res;
         }
-#endif
+//#endif
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar

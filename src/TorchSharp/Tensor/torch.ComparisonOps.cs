@@ -252,9 +252,7 @@ namespace TorchSharp
         /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
         public static Tensor searchsorted(Tensor sorted_sequence, Tensor values, bool out_int32 = false, bool right = false, Tensor sorter = null)
         {
-            var res = PInvoke.NativeMethods.THSTensor_searchsorted_t(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
-            if (res == IntPtr.Zero) CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(PInvoke.NativeMethods.THSTensor_searchsorted_t(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.searchsorted.html
@@ -271,9 +269,7 @@ namespace TorchSharp
         /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
         public static Tensor searchsorted(Tensor sorted_sequence, Scalar values, bool out_int32, bool right, Tensor sorter)
         {
-            var res = PInvoke.NativeMethods.THSTensor_searchsorted_s(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
-            if (res == IntPtr.Zero) CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(PInvoke.NativeMethods.THSTensor_searchsorted_s(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle));
         }
 
         /// https://github.com/numpy/numpy/blob/v1.24.0/numpy/lib/histograms.py#L679
@@ -306,9 +302,7 @@ namespace TorchSharp
         public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, Tensor bins, Tensor weight = null, bool density = false)
         {
             var res = PInvoke.NativeMethods.THSTensor_histogram_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges);
-            if (res == IntPtr.Zero) CheckForErrors();
-            if (r_bin_edges == IntPtr.Zero) CheckForErrors();
-            return (new Tensor(res), new Tensor(r_bin_edges));
+            return ReturnCheckForErrors(res, r_bin_edges);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.histogram.html

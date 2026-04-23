@@ -65,9 +65,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor alpha_dropout(Tensor input, double p = 0.5, bool training = false, bool inplace = false)
                 {
-                    var res = THSNN_alpha_dropout(input.Handle, p, training, inplace);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_alpha_dropout(input.Handle, p, training, inplace));
                 }
             }
         }

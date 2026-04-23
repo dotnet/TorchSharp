@@ -24,7 +24,23 @@ namespace TorchSharp.Utils
             return base.ContainsKey(Tuple.Create(key1, key2));
         }
     }
+    public class Dictionary<TKey1, TKey2, TKey3, TValue> : Dictionary<Tuple<TKey1, TKey2, TKey3>, TValue>, IDictionary<Tuple<TKey1, TKey2, TKey3>, TValue>
+    {
+        public TValue this[TKey1 key1, TKey2 key2, TKey3 key3] {
+            get { return base[Tuple.Create(key1, key2, key3)]; }
+            set { base[Tuple.Create(key1, key2, key3)] = value; }
+        }
 
+        public void Add(TKey1 key1, TKey2 key2, TKey3 key3, TValue value)
+        {
+            base.Add(Tuple.Create(key1, key2, key3), value);
+        }
+
+        public bool ContainsKey(TKey1 key1, TKey2 key2, TKey3 key3)
+        {
+            return base.ContainsKey(Tuple.Create(key1, key2, key3));
+        }
+    }
     public class UnorderedMap<TKey1, TKey2, TValue> : Dictionary<TKey1, TKey2, TValue>, IDisposable
     {
         bool disposedValue;

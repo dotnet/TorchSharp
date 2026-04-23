@@ -12,21 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a CELU module.
         /// </summary>
-        public sealed class CELU : ParameterLessModule<Tensor, Tensor>
+        public sealed class CELU : torch.nn.Module<Tensor, Tensor>
         {
-            internal CELU(double alpha, bool inplace) : base(nameof(CELU))
-            {
-                this.alpha = alpha;
-                this.inplace = inplace;
-            }
+            internal CELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.celu(tensor, alpha, inplace);
+                return ReturnCheckForErrors(THSNN_CELU_forward(handle, tensor.Handle));
             }
 
-            public double alpha {get; set;}
-            public bool inplace {get; set; }
+            public override string GetName()
+            {
+                return typeof(CELU).Name;
+            }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -42,7 +46,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static CELU CELU(double alpha = 1.0, bool inplace = false)
             {
-                return new CELU(alpha, inplace);
+                var handle = THSNN_CELU_ctor(alpha, inplace, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new CELU(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -56,7 +62,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor celu(Tensor x, double alpha, bool inplace = false)
                 {
-                    return inplace ? x.celu_(alpha).alias() : x.celu(alpha);
+                    using (var m = nn.CELU(alpha, inplace)) {
+                        return m.call(x);
+                    }
                 }
             }
         }

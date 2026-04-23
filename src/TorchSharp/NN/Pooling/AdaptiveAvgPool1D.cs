@@ -12,19 +12,22 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveAvgPool1D module.
         /// </summary>
-        public sealed class AdaptiveAvgPool1d : ParameterLessModule<Tensor, Tensor>
+        public sealed class AdaptiveAvgPool1d : torch.nn.Module<Tensor, Tensor>
         {
-            internal AdaptiveAvgPool1d(long output_size) : base(nameof(AdaptiveAvgPool1d))
+            internal AdaptiveAvgPool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.output_size = output_size;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.adaptive_avg_pool1d(input, this.output_size);
+                return ReturnCheckForErrors(THSNN_AdaptiveAvgPool1d_forward(handle.DangerousGetHandle(), tensor.Handle));
             }
 
-            public long output_size { get; set; }
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -36,11 +39,14 @@ namespace TorchSharp
             /// Applies a 1D adaptive average pooling over an input signal composed of several input planes.
             /// The output size is H, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="output_size">the target output size H</param>
+            /// <param name="outputSize">the target output size H</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool1d AdaptiveAvgPool1d(long output_size)
+            public static unsafe AdaptiveAvgPool1d AdaptiveAvgPool1d(long outputSize)
             {
-                return new AdaptiveAvgPool1d(output_size);
+                long* pkernelSize = stackalloc long[1] { outputSize };
+                var handle = THSNN_AdaptiveAvgPool1d_ctor((IntPtr)pkernelSize, 1, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AdaptiveAvgPool1d(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -57,10 +63,7 @@ namespace TorchSharp
                     var outputSizes = new long[] { output_size };
                     unsafe {
                         fixed (long* poutputSize = outputSizes) {
-                            var res =
-                                THSTensor_adaptive_avg_pool1d(input.Handle, (IntPtr)poutputSize, outputSizes.Length);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(THSTensor_adaptive_avg_pool1d(input.Handle, (IntPtr)poutputSize, outputSizes.Length));
                         }
                     }
                 }

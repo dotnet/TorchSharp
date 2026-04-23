@@ -6,6 +6,7 @@
 
   <PropertyGroup>
     <CustomLibTorchFullPath></CustomLibTorchFullPath>
+    <CustomOutputPath></CustomOutputPath>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Configurations>Debug;Release</Configurations>
     <_DefaultArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLower())</_DefaultArchitecture>

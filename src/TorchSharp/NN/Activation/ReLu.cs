@@ -12,19 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReLU module.
         /// </summary>
-        public sealed class ReLU : ParameterLessModule<Tensor, Tensor>
+        public sealed class ReLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal ReLU(bool inplace) : base(nameof(ReLU))
-            {
-                this.inplace = inplace;
-            }
+            internal ReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.relu(tensor, inplace);
+                return ReturnCheckForErrors(THSNN_ReLU_forward(handle, tensor.Handle));
             }
 
-            public bool inplace {get; set; }
+            public override string GetName()
+            {
+                return typeof(ReLU).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
     public static partial class torch
@@ -38,7 +44,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReLU ReLU(bool inplace = false)
             {
-                return new ReLU(inplace);
+                var handle = THSNN_ReLU_ctor(inplace, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReLU(handle, boxedHandle);
             }
 
             public static partial class functional

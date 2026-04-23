@@ -12,19 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GELU module.
         /// </summary>
-        public sealed class GELU : ParameterLessModule<Tensor, Tensor>
+        public sealed class GELU : torch.nn.Module<Tensor, Tensor>
         {
-            internal GELU(bool inplace) : base(nameof(GELU))
-            {
-                this.inplace = inplace;
-            }
+            internal GELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.gelu(tensor, inplace);
+                return ReturnCheckForErrors(THSNN_GELU_forward(handle, tensor.Handle));
             }
 
-            public bool inplace {get; set; }
+            public override string GetName()
+            {
+                return typeof(GELU).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -53,20 +59,12 @@ namespace TorchSharp
                 /// Gaussian Error Linear Units
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <param name="inplace">Do the operation in-place. Default: False</param>
-                public static Tensor gelu(Tensor x, bool inplace)
-                {
-                    return inplace ? x.gelu_().alias() : x.gelu();
-                }
-
-                /// <summary>
-                /// Gaussian Error Linear Units
-                /// </summary>
-                /// <param name="x">The input tensor</param>
-                /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
+                /// <returns></returns>
                 public static Tensor gelu(Tensor x)
                 {
-                    return gelu(x,false);
+                    using (var m = nn.GELU()) {
+                        return m.call(x);
+                    }
                 }
             }
         }

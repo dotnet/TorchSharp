@@ -11,18 +11,41 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class ConvTranspose2d : ConvolutionTranspose
+        public sealed class ConvTranspose2d : Convolution
         {
-            internal ConvTranspose2d(long in_channels, long out_channels, (long, long) kernel_size, (long, long) stride, (long, long) padding, (long, long) dilation, (long, long) output_padding, long groups = 1, bool bias = true, PaddingModes padding_mode = PaddingModes.Zeros, torch.Device? device = null, ScalarType? dtype = null)
-                        : base(nameof(ConvTranspose2d), in_channels, out_channels, new[] { kernel_size.Item1, kernel_size.Item2 }, new[] { stride.Item1, stride.Item2 }, new[] { padding.Item1, padding.Item2 }, null, new[] { dilation.Item1, dilation.Item2 }, true, new[] { output_padding.Item1, output_padding.Item2 }, groups, bias, padding_mode, device, dtype) { }
+            internal ConvTranspose2d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
 
-            public override Tensor forward(Tensor input, long[]? output_size)
+            public override Tensor forward(Tensor input)
             {
-                if (!ValidateShape(input, 2))
-                    throw new ArgumentException($"Expected 3D (unbatched) or 4D (batched) input with {in_channels} channels to ConvTranspose2d.");
+                if (ValidateShape(input, 2)) {
+                    return ReturnCheckForErrors(THSNN_ConvTranspose2d_forward(handle, input.Handle));
+                }
+                throw new ArgumentException($"Expected 3D (unbatched) or 4D (batched) input with {input_channels} channels to ConvTranspose2d.");
+            }
 
-                var output_padding = this._output_padding(input, output_size, kernel_size, stride, padding!, dilation, 2);
-                return torch.nn.functional.conv_transpose2d(input, weight, bias, stride, padding!, output_padding, dilation, groups);
+            public Parameter? bias {
+                get {
+                    return ReturnNullParameterCheckForErrors(THSNN_ConvTranspose2d_bias(handle));
+                }
+                set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
+                    THSNN_ConvTranspose2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
+                }
+            }
+            public Parameter? weight
+                {
+                get {
+                    return ReturnNullParameterCheckForErrors(THSNN_ConvTranspose2d_weight(handle));
+                }
+                set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'"); THSNN_ConvTranspose2d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
+                }
             }
         }
     }
@@ -36,7 +59,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernel_size">Size of the convolving kernel</param>
+            /// <param name="kernelSize">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: 1</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
             /// <param name="output_padding">Additional size added to one side of the output shape. Default: 0</param>
@@ -47,9 +70,11 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            public static ConvTranspose2d ConvTranspose2d(long in_channels, long out_channels, long kernel_size, long stride = 1, long padding = 0, long output_padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static ConvTranspose2d ConvTranspose2d(long in_channels, long out_channels, long kernelSize, long stride = 1, long padding = 0, long output_padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new ConvTranspose2d(in_channels, out_channels, (kernel_size, kernel_size), (stride, stride), (padding, padding), (dilation, dilation), (output_padding, output_padding), groups, bias, padding_mode, device, dtype);
+                var res = THSNN_ConvTranspose2d_ctor(in_channels, out_channels, kernelSize, stride, padding, output_padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ConvTranspose2d(res, boxedHandle, in_channels).MoveModule<ConvTranspose2d>(device, dtype);
             }
 
 
@@ -59,7 +84,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="in_channels">Number of channels in the input image</param>
             /// <param name="out_channels">Number of channels produced by the convolution</param>
-            /// <param name="kernel_size">Size of the convolving kernel</param>
+            /// <param name="kernelSize">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: (1,1)</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: (0,0)</param>
             /// <param name="output_padding">Additional size added to one side of the output shape. Default: 0</param>
@@ -70,13 +95,16 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            public static ConvTranspose2d ConvTranspose2d(long in_channels, long out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null, (long, long)? output_padding = null, (long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static ConvTranspose2d ConvTranspose2d(long in_channels, long out_channels, (long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null, (long, long)? output_padding = null, (long, long)? dilation = null, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                stride ??= (1, 1);
-                padding ??= (0, 0);
-                output_padding ??= (0, 0);
-                dilation ??= (1, 1);
-                return new ConvTranspose2d(in_channels, out_channels, kernel_size, stride.Value, padding.Value, dilation.Value, output_padding.Value, groups, bias, padding_mode, device, dtype);
+                if (stride == null) stride = (1, 1);
+                if (padding == null) padding = (0, 0);
+                if (output_padding == null) output_padding = (0, 0);
+                if (dilation == null) dilation = (1, 1);
+
+                var res = THSNN_ConvTranspose2d_ctor_1(in_channels, out_channels, kernelSize.Item1, kernelSize.Item2, stride.Value.Item1, stride.Value.Item2, padding.Value.Item1, padding.Value.Item2, output_padding.Value.Item1, output_padding.Value.Item2, dilation.Value.Item1, dilation.Value.Item2, (long)padding_mode, groups, bias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ConvTranspose2d(res, boxedHandle, in_channels).MoveModule<ConvTranspose2d>(device, dtype);
             }
 
             public static partial class functional
@@ -114,9 +142,7 @@ namespace TorchSharp
                                     (IntPtr)poutputPadding, output_padding.Length,
                                     (IntPtr)pdilation, dilation.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            res = AutocastMode.AutoCast(res);
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }

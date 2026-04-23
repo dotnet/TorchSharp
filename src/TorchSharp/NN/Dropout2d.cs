@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Dropout2d module.
         /// </summary>
-        public sealed class Dropout2d : ParameterLessModule<Tensor, Tensor>
+        public sealed class Dropout2d : torch.nn.Module<Tensor, Tensor>
         {
             internal Dropout2d(double p = 0.5, bool inplace = false) : base(nameof(Dropout2d))
             {
@@ -22,7 +22,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                return torch.nn.functional.dropout2d(input, this.p, this.training, this.inplace);
+                return ReturnCheckForErrors(THSNN_dropout2d(input.Handle, p, this.training, inplace));
             }
 
              // Rather than spending cycles only to discover that this module has neither
@@ -62,9 +62,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor dropout2d(Tensor input, double p = 0.5, bool training = true, bool inplace = false)
                 {
-                    var res = THSNN_dropout2d(input.Handle, p, training, inplace);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_dropout2d(input.Handle, p, training, inplace));
                 }
             }
         }

@@ -393,6 +393,8 @@ EXPORT_API(Tensor) THSTensor_cumsum(const Tensor tensor, const int64_t dim, bool
 
 EXPORT_API(void*) THSTensor_data(const Tensor tensor);
 
+EXPORT_API(void*) THSTensor_raw_data(const Tensor tensor);
+
 EXPORT_API(float) THSTensor_data_idx_float16(const Tensor tensor, const int64_t i);
 
 EXPORT_API(float) THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t i);

@@ -14,20 +14,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReLU6 module.
         /// </summary>
-        public sealed class ReLU6 : ParameterLessModule<Tensor, Tensor>
+        public sealed class ReLU6 : torch.nn.Module<Tensor, Tensor>
         {
-            internal ReLU6(bool inplace) : base(nameof(ReLU6))
-            {
-                this.inplace = inplace;
-            }
-
+            internal ReLU6(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.relu6(tensor, inplace);
+                return ReturnCheckForErrors(NativeMethods.THSNN_ReLU6_forward(handle, tensor.Handle));
             }
 
-            public bool inplace {get; set; }
+            public override string GetName()
+            {
+                return typeof(ReLU6).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -44,7 +49,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReLU6 ReLU6(bool inplace = false)
             {
-                return new ReLU6(inplace);
+                var handle = NativeMethods.THSNN_ReLU6_ctor(inplace, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReLU6(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -59,7 +66,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor relu6(Tensor x, bool inplace = false)
                 {
-                    return inplace ? x.relu6_().alias() : x.relu6();
+                    using (var m = nn.ReLU6(inplace)) {
+                        return m.call(x);
+                    }
                 }
             }
         }

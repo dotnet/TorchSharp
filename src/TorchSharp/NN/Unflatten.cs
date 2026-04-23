@@ -12,21 +12,22 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an unflattening operation.
         /// </summary>
-        public sealed class Unflatten : ParameterLessModule<Tensor, Tensor>
+        public sealed class Unflatten : torch.nn.Module<Tensor, Tensor>
         {
-            internal Unflatten(long dim, long[] unflattened_size) : base(nameof(Unflatten))
+            internal Unflatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.dim = dim;
-                this.unflattened_size = unflattened_size;
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                return tensor.unflatten(dim, unflattened_size);
+                return ReturnCheckForErrors(THSNN_Unflatten_forward(handle, tensor.Handle));
             }
 
-            public long dim { get; set; }
-            public long[] unflattened_size { get; set; }
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -38,11 +39,17 @@ namespace TorchSharp
             /// Unflattens a tensor dim expanding it to a desired shape. For use with Sequential.
             /// </summary>
             /// <param name="dim">Dimension to be unflattened</param>
-            /// <param name="unflattened_size">New shape of the unflattened dimension</param>
+            /// <param name="unflattenedSize">New shape of the unflattened dimension</param>
             /// <returns></returns>
-            public static Unflatten Unflatten(long dim, long[] unflattened_size)
+            public static Unflatten Unflatten(long dim, long[] unflattenedSize)
             {
-                return new Unflatten(dim, unflattened_size);
+                unsafe {
+                    fixed (long* pUnflattenedSize = unflattenedSize) {
+                        var handle = THSNN_Unflatten_ctor(dim, (IntPtr)pUnflattenedSize, unflattenedSize.Length, out var boxedHandle);
+                        if (handle == IntPtr.Zero) { CheckForErrors(); }
+                        return new Unflatten(handle, boxedHandle);
+                    }
+                }
             }
         }
     }

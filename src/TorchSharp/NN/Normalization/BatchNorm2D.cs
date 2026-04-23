@@ -13,22 +13,80 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a BatchNorm2D module.
         /// </summary>
-        public sealed class BatchNorm2d : BatchNorm
+        public sealed class BatchNorm2d : torch.nn.Module<Tensor, Tensor>
         {
-            internal BatchNorm2d(long num_features, 
-                            double eps, 
-                            double momentum, 
-                            bool affine, 
-                            bool track_running_stats, 
-                            Device? device, 
-                            ScalarType? dtype) : base(num_features, eps, momentum, affine, track_running_stats, device, dtype, nameof(BatchNorm1d))
+            internal BatchNorm2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
             }
 
-            protected override void ValidateInputDimensions(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                if (input.ndim != 4)
-                    throw new ArgumentException($"expected 4D input, but got {input.ndim}D input.");
+                if (tensor.Dimensions != 4) throw new ArgumentException($"Invalid number of dimensions for BatchNorm argument: {tensor.Dimensions}");
+                return ReturnCheckForErrors(THSNN_BatchNorm2d_forward(handle.DangerousGetHandle(), tensor.Handle));
+            }
+
+            public Parameter? bias {
+                get {
+                    return ReturnNullParameterCheckForErrors(THSNN_BatchNorm2d_bias(handle));
+                }
+                set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
+                    THSNN_BatchNorm2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
+                }
+            }
+
+            public Parameter? weight {
+                get {
+                    return ReturnNullParameterCheckForErrors(THSNN_BatchNorm2d_weight(handle));
+                }
+                set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
+                    THSNN_BatchNorm2d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
+                }
+            }
+
+            public Tensor? running_mean {
+                get {
+                    return ReturnNullCheckForErrors(THSNN_BatchNorm2d_get_mean(handle));
+                }
+                set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("running_mean cannot be set to 'null'");
+                    THSNN_BatchNorm2d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterBuffer("running_mean", value);
+                }
+            }
+
+            public Tensor? running_var {
+                get {
+                    return ReturnNullCheckForErrors(THSNN_BatchNorm2d_get_var(handle));
+                }
+                set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("running_var cannot be set to 'null'");
+                    THSNN_BatchNorm2d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterBuffer("running_var", value);
+                }
+            }
+
+            public Tensor? num_batches_tracked {
+                get {
+                    return ReturnNullCheckForErrors(THSNN_BatchNorm2d_get_batches(handle));
+                }
+            }
+
+            public void reset_running_stats()
+            {
+                THSNN_BatchNorm2d_reset_stats(handle);
+                torch.CheckForErrors();
             }
         }
     }
@@ -40,7 +98,7 @@ namespace TorchSharp
             /// <summary>
             /// Applies Batch Normalization over a 4D input (a mini-batch of 2D inputs with additional channel dimension) as described in the paper Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift.
             /// </summary>
-            /// <param name="num_features">C from an expected input of size (N,C,H,W)</param>
+            /// <param name="features">C from an expected input of size (N,C,H,W)</param>
             /// <param name="eps">A value added to the denominator for numerical stability. Default: 1e-5</param>
             /// <param name="momentum">The value used for the running_mean and running_var computation. Can be set to None for cumulative moving average (i.e. simple average). Default: 0.1</param>
             /// <param name="affine">A boolean value that when set to True, this module has learnable affine parameters. Default: true</param>
@@ -50,9 +108,13 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            public static BatchNorm2d BatchNorm2d(long num_features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true, Device? device = null, ScalarType? dtype = null)
+            public static BatchNorm2d BatchNorm2d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true, Device? device = null, ScalarType? dtype = null)
             {
-                return new BatchNorm2d(num_features, eps, momentum, affine, track_running_stats, device, dtype);
+                unsafe {
+                    var handle = THSNN_BatchNorm2d_ctor(features, eps, momentum, affine, track_running_stats, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new BatchNorm2d(handle, boxedHandle).MoveModule<BatchNorm2d>(device, dtype);
+                }
             }
         }
     }

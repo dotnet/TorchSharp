@@ -12,16 +12,13 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a SiLU module.
         /// </summary>
-        public sealed class SiLU : ParameterLessModule<Tensor, Tensor>
+        public sealed class SiLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal SiLU(bool inplace) : base(nameof(SiLU))
-            {
-                this.inplace = inplace;
-            }
+            internal SiLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.silu(tensor, inplace);
+                return ReturnCheckForErrors(THSNN_SiLU_forward(handle, tensor.Handle));
             }
 
             public override string GetName()
@@ -29,7 +26,11 @@ namespace TorchSharp
                 return typeof(SiLU).Name;
             }
 
-            public bool inplace {get; set; }
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
     public static partial class torch
@@ -39,17 +40,13 @@ namespace TorchSharp
             /// <summary>
             /// Sigmoid-Weighted Linear Unit
             /// </summary>
+            /// <returns></returns>
+            /// <remarks>The native libreary does not take an 'inplace' option, even though the PyTorch documentation mentions the parameter.</remarks>
             public static SiLU SiLU()
             {
-                return new SiLU(false);
-            }
-
-            /// <summary>
-            /// Sigmoid-Weighted Linear Unit
-            /// </summary>
-            public static SiLU SiLU(bool inplace)
-            {
-                return new SiLU(inplace);
+                var handle = THSNN_SiLU_ctor(out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new SiLU(handle, boxedHandle);
             }
 
             public static partial class functional

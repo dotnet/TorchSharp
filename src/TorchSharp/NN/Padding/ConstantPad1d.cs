@@ -12,9 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ConstantPad1d module.
         /// </summary>
-        public sealed class ConstantPad1d : PadBase
+        public sealed class ConstantPad1d : torch.nn.Module<Tensor, Tensor>
         {
-            internal ConstantPad1d(double value, params long[] padding) : base(nameof(ConstantPad1d), PaddingModes.Constant, value, padding) { }
+            internal ConstantPad1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+
+            /// <summary>
+            /// Forward pass.
+            /// </summary>
+            /// <param name="tensor">Input tensor</param>
+            /// <returns></returns>
+            public override Tensor forward(Tensor tensor)
+            {
+                return ReturnCheckForErrors(THSNN_ConstantPad1d_forward(handle, tensor.Handle));
+            }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -30,7 +46,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ConstantPad1d ConstantPad1d(long padding, double value)
             {
-                return new ConstantPad1d(value, padding, padding);
+                var handle = THSNN_ConstantPad1d_ctor(value, padding, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ConstantPad1d(handle, boxedHandle);
             }
 
             /// <summary>
@@ -41,7 +59,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ConstantPad1d ConstantPad1d((long, long) padding, double value)
             {
-                return new ConstantPad1d(value, padding.Item1, padding.Item2);
+                var handle = THSNN_ConstantPad1d_ctor_tuple(value, padding.Item1, padding.Item2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ConstantPad1d(handle, boxedHandle);
             }
         }
     }

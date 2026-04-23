@@ -15,6 +15,13 @@ namespace TorchSharp.Utils
         private static IEqualityComparer<T> _defaultComparer;
         public new static IEqualityComparer<T> Default => _defaultComparer ??= new ReferenceEqualityComparer<T>();
         public override bool Equals(T x, T y) => ReferenceEquals(x, y);
-        public override int GetHashCode(T obj) => RuntimeHelpers.GetHashCode(obj);
+        public override int GetHashCode(T obj)
+        {
+#if NETSTANDARD2_0
+            return obj.GetHashCode();
+#else
+            return RuntimeHelpers.GetHashCode(obj);
+#endif
+        }
     }
 }

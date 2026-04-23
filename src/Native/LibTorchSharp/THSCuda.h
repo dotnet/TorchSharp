@@ -46,3 +46,4 @@ EXPORT_API(int) THSCuda_get_device_count(int* count);
 EXPORT_API(int) THSCuda_get_free_total(int device, int* id, size_t* free, size_t* total);
 EXPORT_API(size_t) THSCuda_get_total_memory(int device);
 EXPORT_API(size_t) THSCuda_get_global_total_memory(int device);
+EXPORT_API(const char*) THSCuda_get_cuda_version();

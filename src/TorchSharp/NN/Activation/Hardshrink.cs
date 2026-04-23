@@ -12,19 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardshrink module.
         /// </summary>
-        public sealed class Hardshrink : ParameterLessModule<Tensor, Tensor>
+        public sealed class Hardshrink : torch.nn.Module<Tensor, Tensor>
         {
-            internal Hardshrink(double lambda = 0.5) : base(nameof(Hardshrink))
-            {
-                this.lambda = lambda;
-            }
+            internal Hardshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.hardshrink(tensor, lambda);
+                return ReturnCheckForErrors(THSNN_Hardshrink_forward(handle, tensor.Handle));
             }
 
-            public double lambda {get; set; }
+            public override string GetName()
+            {
+                return typeof(Hardshrink).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -39,7 +45,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static Hardshrink Hardshrink(double lambda = 0.5)
             {
-                return new Hardshrink(lambda);
+                var handle = THSNN_Hardshrink_ctor(lambda, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Hardshrink(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -50,22 +58,12 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="lambda">The λ value for the Hardshrink formulation. Default: 0.5</param>
                 /// <returns></returns>
-                public static Tensor hardshrink(Tensor x, double lambda = 0.5)
+                public static Tensor Hardshrink(Tensor x, double lambda = 0.5)
                 {
-                    using var sc = (Scalar)lambda;
-                    var result = THSTensor_hardshrink(x.Handle, sc.Handle);
-                    if (result == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(result);
+                    using (var m = nn.Hardshrink(lambda)) {
+                        return m.call(x);
+                    }
                 }
-
-                /// <summary>
-                /// Hardshrink
-                /// </summary>
-                /// <param name="x">The input tensor</param>
-                /// <param name="lambda">The λ value for the Hardshrink formulation. Default: 0.5</param>
-                /// <remarks>Only here for backward comaptibility.</remarks>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
-                public static Tensor Hardshrink(Tensor x, double lambda = 0.5) => hardshrink(x, lambda);
             }
         }
     }

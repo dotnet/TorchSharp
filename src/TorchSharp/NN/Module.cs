@@ -1168,6 +1168,12 @@ namespace TorchSharp
                 {
                     T module = (T)this;
 
+                    //https://github.com/dotnet/TorchSharp/issues/1438
+                    var d = torch.get_default_device();
+                    if (device == null || d != device) {
+                        device = d;
+                    }
+
                     return device != null ?
                        (dtype.HasValue ? (T)module._to(device, dtype.Value, false) : (T)module._to(device.type, device.index, false)) :
                        (dtype.HasValue ? (T)module._to(dtype.Value, false) : module);

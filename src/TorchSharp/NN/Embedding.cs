@@ -16,9 +16,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                var res = THSNN_Embedding_forward(handle, input.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSNN_Embedding_forward(handle, input.Handle));
             }
 
             public Parameter? weight {

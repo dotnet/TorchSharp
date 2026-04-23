@@ -12,9 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReflectionPad2d module.
         /// </summary>
-        public sealed class ReflectionPad2d : PadBase
+        public sealed class ReflectionPad2d : torch.nn.Module<Tensor, Tensor>
         {
-            internal ReflectionPad2d(params long[] padding) : base(nameof(ReflectionPad2d), PaddingModes.Reflect, 0, padding) { }        
+            internal ReflectionPad2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+
+            /// <summary>
+            /// Forward pass.
+            /// </summary>
+            /// <param name="tensor">Input tensor</param>
+            /// <returns></returns>
+            public override Tensor forward(Tensor tensor)
+            {
+                return ReturnCheckForErrors(THSNN_ReflectionPad2d_forward(handle, tensor.Handle));
+            }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -29,7 +45,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReflectionPad2d ReflectionPad2d(long padding)
             {
-                return new ReflectionPad2d(padding, padding, padding, padding);
+                var handle = THSNN_ReflectionPad2d_ctor(padding, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReflectionPad2d(handle, boxedHandle);
             }
 
             /// <summary>
@@ -39,7 +57,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReflectionPad2d ReflectionPad2d((long, long, long, long) padding)
             {
-                return new ReflectionPad2d(padding.Item1, padding.Item2, padding.Item3, padding.Item4);
+                var handle = THSNN_ReflectionPad2d_ctor_tuple(padding.Item1, padding.Item2, padding.Item3, padding.Item4, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReflectionPad2d(handle, boxedHandle);
             }
         }
     }

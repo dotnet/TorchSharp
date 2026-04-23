@@ -12,25 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Threshold module.
         /// </summary>
-        public sealed class Threshold : ParameterLessModule<Tensor, Tensor>
+        public sealed class Threshold : torch.nn.Module<Tensor, Tensor>
         {
-            internal Threshold(double threshold, double value, bool inplace) : base(nameof(Threshold))
-            {
-                this.inplace = inplace;
-                this.threshold = threshold;
-                this.value = value;
-            }
+            internal Threshold(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.threshold(tensor, threshold, value, inplace);
+                return ReturnCheckForErrors(THSNN_Threshold_forward(handle, tensor.Handle));
             }
 
-            public double threshold {get; set;}
+            public override string GetName()
+            {
+                return typeof(Threshold).Name;
+            }
 
-            public double value {get; set;}
-
-            public bool inplace {get; set;}
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -47,7 +47,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static Threshold Threshold(double threshold, double value, bool inplace = false)
             {
-                return new Threshold(threshold, value, inplace);
+                var handle = THSNN_Threshold_ctor(threshold, value, inplace, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Threshold(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -59,20 +61,13 @@ namespace TorchSharp
                 /// <param name="threshold">The value to threshold at</param>
                 /// <param name="value">The value to replace with</param>
                 /// <param name="inplace">Do the operation in-place</param>
-                public static Tensor threshold(Tensor x, double threshold, double value, bool inplace = false)
+                /// <returns></returns>
+                public static Tensor Threshold(Tensor x, double threshold, double value, bool inplace = false)
                 {
-                    return inplace ? x.threshold_(threshold, value).alias() : x.threshold(threshold, value);
+                    using (var m = nn.Threshold(threshold, value, inplace)) {
+                        return m.call(x);
+                    }
                 }
-
-                /// <summary>
-                /// Thresholds each element of the input Tensor.
-                /// </summary>
-                /// <param name="x">The input tensor</param>
-                /// <param name="threshold">The value to threshold at</param>
-                /// <param name="value">The value to replace with</param>
-                /// <param name="inplace">Do the operation in-place</param>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
-                public static Tensor Threshold(Tensor x, double threshold, double value, bool inplace = false) => nn.functional.threshold(x, threshold, value, inplace);
             }
         }
     }

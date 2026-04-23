@@ -13,32 +13,29 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxPool1D module.
         /// </summary>
-        public sealed class MaxPool1d : ParameterLessModule<Tensor, Tensor>
+        public sealed class MaxPool1d : torch.nn.Module<Tensor, Tensor>
         {
-            internal MaxPool1d(long kernel_size, long? stride = null, long? padding = null, long? dilation = null, bool ceil_mode = false) : base(nameof(MaxPool1d))
+            internal MaxPool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.kernel_size = kernel_size;
-                this.stride = stride;
-                this.padding = padding;
-                this.dilation = dilation;
-                this.ceil_mode = ceil_mode;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.max_pool1d(input, kernel_size, stride, padding, dilation, ceil_mode);
+                return ReturnCheckForErrors(THSNN_MaxPool1d_forward(handle, tensor.Handle));
             }
 
-            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor input)
+            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {
-                return torch.nn.functional.max_pool1d_with_indices(input, kernel_size, stride, padding, dilation, ceil_mode);
+                var res = THSNN_MaxPool1d_forward_with_indices(handle, tensor.Handle, out var indices);
+                return ReturnCheckForErrors(res, indices);
+                
             }
 
-            public long kernel_size { get; set; }
-            public long? stride { get; set; }
-            public long? padding { get; set; }
-            public long? dilation { get; set; }
-            public bool ceil_mode { get; set; }
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -49,15 +46,29 @@ namespace TorchSharp
             /// <summary>
             /// Applies a 1D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
+            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static MaxPool1d MaxPool1d(long kernel_size, long? stride = null, long? padding = null, long? dilation = null, bool ceil_mode = false)
+            public static MaxPool1d MaxPool1d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
             {
-                return new MaxPool1d(kernel_size, stride, padding, dilation, ceil_mode);
+                var pStride = stride.HasValue ? new long[] { stride.Value } : null;
+                var pPadding = padding.HasValue ? new long[] { padding.Value } : null;
+                var pDilation = dilation.HasValue ? new long[] { dilation.Value } : null;
+                return MaxPool1d(new long[] { kernelSize }, pStride, pPadding, pDilation, ceilMode);
+            }
+
+            private static MaxPool1d MaxPool1d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
+            {
+                unsafe {
+                    fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {
+                        var handle = THSNN_MaxPool1d_ctor((IntPtr)pkernelSize, (IntPtr)pstrides, (IntPtr)pPadding, (IntPtr)pDilation, ceilMode, out var boxedHandle);
+                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new MaxPool1d(handle, boxedHandle);
+                    }
+                }
             }
 
             public static partial class functional
@@ -66,30 +77,28 @@ namespace TorchSharp
                 /// Applies a 1D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernel_size"></param>
+                /// <param name="kernelSize"></param>
                 /// <param name="stride"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static Tensor max_pool1d(Tensor input, long kernel_size, long? stride = null,
+                public static Tensor max_pool1d(Tensor input, long kernelSize, long? stride = null,
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
-                    var kernel_sizes = new long[] { kernel_size };
-                    var strides = new long[] { stride ?? kernel_size };
+                    var kernelSizes = new long[] { kernelSize };
+                    var strides = new long[] { stride ?? kernelSize };
                     var paddings = new long[] { padding ?? 0 };
                     var dilations = new long[] { dilation ?? 1 };
                     unsafe {
-                        fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
-                            var res =
-                                THSTensor_max_pool1d(input.Handle,
-                                    (IntPtr)pkernel_size, kernel_sizes.Length,
+                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
+                            var res = THSTensor_max_pool1d(input.Handle,
+                                    (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     (IntPtr)pdilation, dilations.Length,
                                     ceil_mode);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrors(res);
                         }
                     }
                 }
@@ -98,27 +107,27 @@ namespace TorchSharp
                 /// Applies a 1D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernel_size"></param>
+                /// <param name="kernelSize"></param>
                 /// <param name="stride"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static (Tensor output, Tensor indices) max_pool1d_with_indices(Tensor input, long kernel_size, long? stride = null,
+                public static (Tensor output, Tensor indices) max_pool1d_with_indices(Tensor input, long kernelSize, long? stride = null,
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
-                    var kernel_sizes = new long[] { kernel_size };
-                    var strides = new long[] { stride ?? kernel_size };
+                    var kernelSizes = new long[] { kernelSize };
+                    var strides = new long[] { stride ?? kernelSize };
                     var paddings = new long[] { padding ?? 0 };
                     var dilations = new long[] { dilation ?? 1 };
                     IntPtr[] ptrArray;
 
                     using (var pa = new PinnedArray<IntPtr>()) {
                         unsafe {
-                            fixed (long* pkernel_size = kernel_sizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
+                            fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
                                 THSTensor_max_pool1d_with_indices(input.Handle,
                                     pa.CreateArray,
-                                    (IntPtr)pkernel_size, kernel_sizes.Length,
+                                    (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     (IntPtr)pdilation, dilations.Length,

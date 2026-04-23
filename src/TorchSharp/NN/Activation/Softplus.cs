@@ -13,21 +13,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softplus module.
         /// </summary>
-        public sealed class Softplus : ParameterLessModule<Tensor, Tensor>
+        public sealed class Softplus : torch.nn.Module<Tensor, Tensor>
         {
-            internal Softplus(double beta = 1, double threshold = 20) : base(nameof(Softplus))
-            {
-                this.beta = beta;
-                this.threshold = threshold;
-            }
+            internal Softplus(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.softplus(tensor, beta, threshold);
+                return ReturnCheckForErrors(THSNN_Softplus_forward(handle, tensor.Handle));
             }
 
-            public double beta {get; set;}
-            public double threshold {get; set;}
+            public override string GetName()
+            {
+                return typeof(Softplus).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -41,7 +45,7 @@ namespace TorchSharp
             /// <param name="beta">The β value for the Softplus formulation.</param>
             /// <param name="threshold">Values above this revert to a linear function</param>
             /// <returns></returns>
-            public static Softplus Softplus(double beta = 1, double threshold = 20)
+            public static Softplus Softplus(double beta = 1.0, double threshold = 20.0)
             {
                 var handle = THSNN_Softplus_ctor(beta, threshold, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -58,9 +62,11 @@ namespace TorchSharp
                 /// <param name="beta">The β value for the Softplus formulation.</param>
                 /// <param name="threshold">Values above this revert to a linear function</param>
                 /// <returns></returns>
-                public static Tensor softplus(Tensor x, double beta = 1, double threshold = 20)
+                public static Tensor softplus(Tensor x, double beta = 1.0, double threshold = 20.0)
                 {
-                    return x.softplus(beta, threshold);
+                    using (var m = nn.Softplus(beta, threshold)) {
+                        return m.call(x);
+                    }
                 }
             }
         }

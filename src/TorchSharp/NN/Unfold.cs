@@ -78,9 +78,7 @@ namespace TorchSharp
                 /// <param name="stride">The stride of the sliding blocks in the input spatial dimensions.</param>
                 public static Tensor unfold(Tensor input, long kernel_size, long dilation = 1, long padding = 0, long stride = 1)
                 {
-                    var res = THSNN_unfold(input.Handle, kernel_size, kernel_size, stride, stride, padding, padding, dilation, dilation);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(THSNN_unfold(input.Handle, kernel_size, kernel_size, stride, stride, padding, padding, dilation, dilation));
                 }
 
                 /// <summary>
@@ -102,8 +100,7 @@ namespace TorchSharp
                         stride.Value.Item1, stride.Value.Item2,
                         padding.Value.Item1, padding.Value.Item2,
                         dilation.Value.Item1, dilation.Value.Item2);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
             }
         }

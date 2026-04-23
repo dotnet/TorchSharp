@@ -399,6 +399,11 @@ void* THSTensor_data(const Tensor tensor)
     CATCH_RETURN(void*, nullptr, tensor->data_ptr());
 }
 
+void* THSTensor_raw_data(const Tensor tensor)
+{
+    return THSTensor_data(tensor);
+}
+
 float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
 {
     CATCH_RETURN(float, 0.0f, (float)(tensor->data_ptr<c10::Half>())[i]);

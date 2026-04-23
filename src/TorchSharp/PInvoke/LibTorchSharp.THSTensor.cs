@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using TorchSharp.Modules;
 
 namespace TorchSharp.PInvoke
@@ -257,6 +258,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_data(IntPtr handle);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern unsafe void* THSTensor_raw_data(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_real(IntPtr handle);

@@ -87,7 +87,7 @@
     <NativeAssemblyReference Include="gomp-98b21ff3" ExtraExtension=".1" />
   </ItemGroup>
 
-  <Target Name="CopyNativeAssemblies"
+  <!--<Target Name="CopyNativeAssemblies"
           BeforeTargets="PrepareForRun"
 					Condition="'$(SkipTests)' != 'true'">
 
@@ -104,7 +104,7 @@
       </NativeAssemblyReference>
     </ItemGroup>
 
-    <Copy SourceFiles = "@(NativeAssemblyReference->'%(FullAssemblyPath)')"
+	  <Copy SourceFiles = "@(NativeAssemblyReference->'%(FullAssemblyPath)')"
           DestinationFolder="$(OutputPath)"
           OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
           Retries="$(CopyRetryCount)"
@@ -113,8 +113,8 @@
           UseHardlinksIfPossible="$(CreateHardLinksForPublishFilesIfPossible)"
           UseSymboliclinksIfPossible="$(CreateSymbolicLinksForPublishFilesIfPossible)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-    </Copy>
+		</Copy>
 
-  </Target>
+  </Target>-->
   
 </Project>

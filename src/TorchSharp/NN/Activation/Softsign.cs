@@ -12,19 +12,25 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softsign module.
         /// </summary>
-        public sealed class Softsign : ParameterLessModule<Tensor, Tensor>
+        public sealed class Softsign : torch.nn.Module<Tensor, Tensor>
         {
-            internal Softsign(bool inplace) : base(nameof(Softsign))
-            {
-                this.inplace = inplace;
-            }
+            internal Softsign(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.softsign(tensor, inplace);
+                return ReturnCheckForErrors(THSNN_Softsign_forward(handle, tensor.Handle));
             }
 
-            public bool inplace {get; set; }
+            public override string GetName()
+            {
+                return typeof(Softsign).Name;
+            }
+
+           // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
         }
     }
 
@@ -35,18 +41,12 @@ namespace TorchSharp
             /// <summary>
             /// Softsign
             /// </summary>
+            /// <returns></returns>
             public static Softsign Softsign()
             {
-                return new Softsign(false);
-            }
-
-            /// <summary>
-            /// Softsign
-            /// </summary>
-            /// <param name="inplace">Do the operation in-place. Default: False</param>
-            public static Softsign Softsign(bool inplace)
-            {
-                return new Softsign(inplace);
+                var handle = THSNN_Softsign_ctor(out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Softsign(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -55,20 +55,13 @@ namespace TorchSharp
                 /// Softsign
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <param name="inplace">Do the operation in-place. Default: False</param>
-                public static Tensor softsign(Tensor x, bool inplace = false)
+                /// <returns></returns>
+                public static Tensor Softsign(Tensor x)
                 {
-                    using var abs = x.abs();
-                    using var y = 1 + abs;
-                    return inplace ? x.div_(y).alias() : x.div(y);
+                    using (var m = nn.Softsign()) {
+                        return m.call(x);
+                    }
                 }
-
-                /// <summary>
-                /// Softsign
-                /// </summary>
-                /// <param name="x">The input tensor</param>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
-                public static Tensor Softsign(Tensor x) => softsign(x, false);
             }
         }
     }

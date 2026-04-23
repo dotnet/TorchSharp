@@ -26,9 +26,7 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor input, Tensor? h0 = null)
             {
-                var hN = THSNN_RNNCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero);
-                if (hN == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(hN);
+                return ReturnCheckForErrors(THSNN_RNNCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero));
             }
 
             public Parameter? bias_ih {

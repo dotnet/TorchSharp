@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
+using System;
 using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
@@ -54,5 +55,7 @@ namespace TorchSharp.PInvoke
         internal static extern ulong THSCuda_get_total_memory(int device);
         [DllImport("LibTorchSharp")]
         internal static extern ulong THSCuda_get_global_total_memory(int device);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSCuda_get_cuda_version();
     }
 }

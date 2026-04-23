@@ -8,6 +8,7 @@
 //#include <ATen/impl.h>
 // API.
 
+EXPORT_API(const char*) THSTorch_libtorch_version();
 // Sets manually the seed.
 EXPORT_API(void)      THSTorch_manual_seed(const int64_t seed);
 EXPORT_API(void) THSCuda_manual_seed(const int64_t seed);
@@ -79,6 +80,7 @@ EXPORT_API(double) THSTorch_scalar_to_float64(Scalar value);
 EXPORT_API(bool) THSTorch_scalar_to_bool(Scalar value);
 
 EXPORT_API(void) THSTorch_scalar_to_float16(Scalar value, unsigned short* res);
+EXPORT_API(void) THSTorch_scalar_to_bfloat16(Scalar value, c10::BFloat16* res);
 
 EXPORT_API(void) THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length));
 EXPORT_API(void) THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length));

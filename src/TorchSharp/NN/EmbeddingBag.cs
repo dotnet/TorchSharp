@@ -31,10 +31,8 @@ namespace TorchSharp
             /// Only supported for mode='sum'.</param>
             /// <returns></returns>
             public override Tensor forward(Tensor input, Tensor? offsets, Tensor? perSampleWeights)
-            {                
-                var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+            {
+                return ReturnCheckForErrors(THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle));
             }
 
             public new Tensor call(Tensor input, Tensor? offsets, Tensor? perSampleWeights)
