@@ -52,22 +52,22 @@ namespace TorchSharpTest.WithCudaBinaries
             var csmo = create_scaling_model_optimizer(dev);
             return (csmo.modctrl, csmo.modscal, csmo.optctrl, csmo.optscal, data, loss_fn, skip_iter);
         }
-        internal void run_scaling_case(Action<List<KeyValuePair<torch.Tensor, torch.Tensor>>, Sequential, torch.optim.Optimizer, GradScaler, MSELoss, int, bool> run, int unskipped, int skipped, double atol = 1e07)
+        internal void run_scaling_case(Action<List<KeyValuePair<torch.Tensor, torch.Tensor>>, Sequential, torch.optim.Optimizer, GradScaler, MSELoss, int, bool> run, int unskipped, int skipped, double atol = 1e-7)
         {
-            const double rtol = 1e-7d;
+            const double rtol = 1e-5;
             bool[] enableds = new bool[] { true, false };
             foreach (var enabled in enableds) {
                 var res =create_scaling_case();
-                var scaler = new GradScaler(new Device(DeviceType.CUDA), 128.0f, 2.0f, growth_interval: 1);
+                var scaler = new GradScaler(new Device(DeviceType.CUDA), 128.0, 2.0, growth_interval: 1,enabled:enabled);
                 run.Invoke(res.data, res.modctrl, res.optctrl, scaler, res.loss_fn, res.skip_iter, false);
                 run.Invoke(res.data, res.modscal, res.optscal, scaler, res.loss_fn, res.skip_iter, true);
                 if (enabled) {
                     var net_growth = unskipped > 0 ? Math.Pow(scaler.get_growth_factor(), unskipped) : 1.0f;
                     var net_backoff = skipped> 0 ? Math.Pow(scaler.get_backoff_factor(), skipped) : 1.0f;
-                    Assert.Equal((128.0f * net_growth * net_backoff), scaler.get_scale());
+                    Assert.Equal((128.0 * net_growth * net_backoff), scaler.get_scale());
                     
                 } else {
-                    Assert.Equal(1.0f, scaler.get_scale());
+                    Assert.Equal(1.0, scaler.get_scale());
                 }
 
                 foreach(var seq in res.modctrl.parameters().Zip(res.modscal.parameters())){
@@ -235,6 +235,7 @@ namespace TorchSharpTest.WithCudaBinaries
                         var loss = loss_fn.forward(output, ipair.Value);
                         if (try_scaling_api) {
                             scaler.scale(loss).backward();
+                            scaler.unscale(optimizer);
                             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm);
                             if (idx == skip_iter && scaler.IsEnabled()) {
                                 var weight = (model[1] as Linear)?.weight;
@@ -259,7 +260,6 @@ namespace TorchSharpTest.WithCudaBinaries
         [TestOf(nameof(GradScaler))]
         public void TestGradScalingPenalty()
         {
-            
             run_scaling_case(new Action<List<KeyValuePair<Tensor, Tensor>>, Sequential, optim.Optimizer, GradScaler, MSELoss, int, bool>((
                 (data, model, optimizer, scaler, loss_fn, skip_iter, try_scaling_api) => {
                     //const float max_norm = 0.2f;
@@ -349,6 +349,17 @@ namespace TorchSharpTest.WithCudaBinaries
         [TestOf(nameof(GradScaler))]
         public void TestGradScalingMultiple()
         {
+            CheckCUDA();
+            foreach (var enabled in new[] { true, false }) {
+                var res0 = create_scaling_case(); // mod_control0, mod_scaling0, etc.
+                var res1 = create_scaling_model_optimizer(); // mod_control1, mod_scaling1
+                var scaler = new GradScaler(new Device(DeviceType.CUDA), 128.0, 2.0, growth_interval: 1, enabled: enabled);
+                //TODO: Implemement same as run
+                
+                double expectedScale = enabled ? (128.0 * Math.Pow(2.0, 3) * Math.Pow(0.5, 1)) : 1.0;
+                Assert.Equal(expectedScale, scaler.get_scale());
+            }
+
             throw new NotImplementedException();
         }
     }

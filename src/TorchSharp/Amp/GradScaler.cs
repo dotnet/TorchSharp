@@ -20,7 +20,7 @@ namespace TorchSharp.Amp
         public double _backoff_factor;
         private int _growth_interval;
         //private UnorderedMap<int, UnorderedMap<string, object>> _per_optimizer_states = new UnorderedMap<int, UnorderedMap<string, object>>();
-        private UnorderedMap<IntPtr, UnorderedMap<string, object>> _per_optimizer_states = new UnorderedMap<IntPtr, UnorderedMap<string, object>>();
+        private UnorderedMap<torch.optim.Optimizer, UnorderedMap<string, object>> _per_optimizer_states = new UnorderedMap<torch.optim.Optimizer, UnorderedMap<string, object>>();
         bool disposedValue;
 
         public enum OptState
@@ -194,6 +194,7 @@ namespace TorchSharp.Amp
                         } else {
                             if (!per_device_and_dtype_grads[to_unscale.device.type].ContainsKey(to_unscale.dtype)) {
                                 per_device_and_dtype_grads[to_unscale.device.type].Add(to_unscale.dtype, new List<torch.Tensor>());
+                                per_device_and_dtype_grads[to_unscale.device.type][to_unscale.dtype].Add(to_unscale);
                             } else {
                                 per_device_and_dtype_grads[to_unscale.device.type][to_unscale.dtype].Add(to_unscale);
                             }
@@ -211,19 +212,14 @@ namespace TorchSharp.Amp
             return per_device_found_inf.per_device_tensors;
         }
 
-        private UnorderedMap<string, object> get_per_optimizer_states(IntPtr ptr)
-        {
-            if (!_per_optimizer_states.ContainsKey(ptr))
-                _per_optimizer_states[ptr] = _refresh_per_optimizer_state();
-            return _per_optimizer_states[ptr];
-        }
 
-        private unsafe UnorderedMap<string, object> get_per_optimizer_states(torch.optim.Optimizer optim)
+        private UnorderedMap<string, object> get_per_optimizer_states(torch.optim.Optimizer optim)
         {
-            IntPtr ptr = (IntPtr)Unsafe.AsPointer(ref optim);
-            return get_per_optimizer_states(ptr);
+            if (!_per_optimizer_states.ContainsKey(optim))
+                _per_optimizer_states[optim] = _refresh_per_optimizer_state();
+            return _per_optimizer_states[optim];
         }
-        public unsafe void unscale(ref torch.optim.Optimizer optimizer)
+        public void unscale(torch.optim.Optimizer optimizer)
         {
             if (!Enabled)
                 return;
@@ -266,13 +262,13 @@ namespace TorchSharp.Amp
             //https://github.com/pytorch/pytorch/blob/a00fad017719346bac6e08da0819358146e647e3/torch/amp/grad_scaler.py#L351
             if (optimizer_state.ContainsKey("found_inf_per_device")) {
 
-                double? retval = 0; //NOTE I THINK THAT SHOULD BE double not float, but for now i want to test on float
-                //float? retval = 0;
+                double sum = 0;
                 if (optimizer_state["found_inf_per_device"] is Dictionary<DeviceType, torch.Tensor> dict) {
                     foreach (var d in dict)
                     {
                         //retval += d.Value.item<float>();
-                        retval += d.Value.item<float>();
+                        //sum += d.Value.item<float>();
+                        sum += d.Value.ToScalar().ToDouble();
                         //retval += d.Value.Sum(x=>x.item<double>());
                         /*foreach(var t in d.Value)
                             retval += t.item<double>();*/
@@ -286,18 +282,14 @@ namespace TorchSharp.Amp
 
                     //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13#file-gradscaler-hpp-L209   
                 }
+                if (sum == 0) {
+                    var res = optimizer.step(closure);
+                    return res?.ToScalar();
+                }
                 /*foreach (var d in optimizer_state)
                     if (d.Value is torch.Tensor t)
                         retval += t.item<float>();*/
-                if (retval.Value > 0) {
-                    var res = optimizer.step(closure);
-                    if (!(res is null)) {
-                        //return res.item<double>();
-                        return res.ToScalar();
-                    }
 
-                    return null;
-                }
 
                 /*if (retval == 0)
                     retval = .item<float>();
@@ -307,13 +299,13 @@ namespace TorchSharp.Amp
             return null;
         }
 
-        public unsafe Scalar step(torch.optim.Optimizer optimizer, Func<torch.Tensor> optimizer_args = null)
+        public Scalar step(torch.optim.Optimizer optimizer, Func<torch.Tensor> optimizer_args = null)
         {
             if (!Enabled) {
                 var res = optimizer.step(optimizer_args);
                 if(res is null)
-                    return null;
-                return res.item<float>();
+                    return null;    
+                return res.ToScalar().ToDouble();
             }
 
             if (optimizer_args != null)
@@ -369,7 +361,7 @@ namespace TorchSharp.Amp
             }
 
             if (optimizer_state["stage"] is OptState state1 && state1 == OptState.Ready)
-                unscale(ref optimizer);
+                unscale(optimizer);
             if (optimizer_state["found_inf_per_device"] is ICollection col)
             {
                 Debug.Assert(col.Count > 0, "(optimizer_state['found_inf_per_device'] as torch.Tensor).size(0) > 0");
@@ -435,6 +427,7 @@ namespace TorchSharp.Amp
                 torch.amp_update_scale_(_scale, _growth_tracker, found_inf_combined, (double)_growth_factor, (double)_backoff_factor, (long)_growth_interval);
             }
             //TODO: Implement defaultdict https://github.com/pytorch/pytorch/blob/758d78790164bfb041555daed380de96e06f78a3/torch/amp/grad_scaler.py#L531
+            _per_optimizer_states.Clear();
         }
 
         public void set_init_growth_tracker(long new_value)
@@ -452,10 +445,10 @@ namespace TorchSharp.Amp
                 if (_scale is null) {
                     return _init_scale;
                 } else {
-                    return _scale.item<float>();
+                    //return _scale.item<float>();
+                    return _scale.ToScalar().ToDouble();
                 }
             }
-
             return 1.0;
             /*if (!this.Enabled)
                 return 1.0f;
