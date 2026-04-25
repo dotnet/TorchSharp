@@ -9,7 +9,7 @@
   <PropertyGroup>
     <LibTorchVersion>2.7.1</LibTorchVersion>
     <LibTorchVersion Condition="'$(TargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'">2.2.2</LibTorchVersion>
-    <CudaVersionDot>12.8</CudaVersionDot>
+    <CudaVersionDot>13.0</CudaVersionDot>
     <CudaVersionNoDot>128</CudaVersionNoDot>
     <MklDnnVersion>2019.0.5.20190502</MklDnnVersion>
   </PropertyGroup>

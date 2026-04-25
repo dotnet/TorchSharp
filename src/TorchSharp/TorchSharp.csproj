@@ -67,6 +67,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <WarningLevel>4</WarningLevel>
+    <DefineConstants>$(DefineConstants);CUDA_$(CudaVersionDot.Replace('.', '_'));LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'))</DefineConstants>
   </PropertyGroup>
 
 

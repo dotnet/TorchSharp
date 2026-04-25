@@ -37,7 +37,7 @@ namespace TorchSharp.Amp
             };
         }
         //https://github.com/pytorch/pytorch/blob/main/torch/amp/grad_scaler.py
-        public GradScaler(torch.Device dev, double init_scale = 2.0e16, double growth_factor = 2.0,
+        public GradScaler(torch.Device dev, double init_scale = 65536, double growth_factor = 2.0,
             double backoff_factor = 0.5, int growth_interval = 2000, bool enabled = true)
         {
             //https://gist.github.com/dorpxam/67ad2bc222b2cf567d4a6fc298375e13
