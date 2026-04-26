@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -13,25 +12,20 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class LinearInfo
-        {
-            public long InFeatures { get; }
-            public long OutFeatures { get; }
-            public LinearInfo(long inFeatures, long outFeatures)
-            {
-                InFeatures = inFeatures;
-                OutFeatures = outFeatures;
-            }
-        }
         public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
-            public LinearInfo? linearInfo;
-            /*internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            const string WeightComponentName = nameof(weight);
+            const string BiasComponentName = nameof(bias);
+
+            internal Linear(Parameter weight, Parameter? bias = null) : base(nameof(Linear))
             {
-            }*/
-            internal Linear(IntPtr handle, IntPtr boxedHandle, long inFeat, long outFeat) : base(handle, boxedHandle)
-            {
-                linearInfo = new LinearInfo(inFeat, outFeat);
+                this.in_features = weight.shape[1];
+                this.out_features = weight.shape[0];
+
+                this.weight = weight;
+                if (bias is not null) {
+                    this.bias = bias;
+                }
             }
 
             internal Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Linear))
@@ -53,8 +47,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                //tensor.handle = Amp.AMPManager.GetInstance().AutoCast(tensor.handle); //WARNING should be here???? Research
-                return ReturnCheckForErrors(THSNN_Linear_forward(handle, tensor.Handle));
+                return torch.nn.functional.linear(tensor, _weight!, _bias);
             }
 
             protected override void Dispose(bool disposing)
@@ -70,7 +63,7 @@ namespace TorchSharp
                 set {
                     _bias?.Dispose();
                     _bias = value?.DetachFromDisposeScope() as Parameter;
-                    ConditionallyRegisterParameter("BiasComponentName", _bias);
+                    ConditionallyRegisterParameter(BiasComponentName, _bias);
                 }
             }
 
@@ -80,13 +73,14 @@ namespace TorchSharp
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;
-                        ConditionallyRegisterParameter("WeightComponentName", _weight);
+                        ConditionallyRegisterParameter(WeightComponentName, _weight);
                     }
                 }
             }
 
             // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, device, _weight, out var w)) {
                     weight = w!;
                 }
@@ -107,7 +101,8 @@ namespace TorchSharp
                 }
                 return this;
             }
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out var w)) {
                     weight = w!;
                 }
@@ -118,9 +113,9 @@ namespace TorchSharp
             }
 
 
-            [ComponentName(Name = "BiasComponentName")]
+            [ComponentName(Name = BiasComponentName)]
             private Parameter? _bias;
-            [ComponentName(Name = "WeightComponentName")]
+            [ComponentName(Name = WeightComponentName)]
             private Parameter? _weight;
 
             public long in_features { get; set; }
@@ -146,8 +141,16 @@ namespace TorchSharp
             {
                 return new Linear(inputSize, outputSize, hasBias, device, dtype);
             }
-                /*return new Linear(res, boxedHandle, inputSize, outputSize).MoveModule<Linear>(device, dtype);
-            }*/
+
+            /// <summary>
+            /// Create a Linear module with the given weights and bias.
+            /// </summary>
+            /// <param name="weight">The linear weight attribute.</param>
+            /// <param name="bias">The additive linear bias. Optional.</param>
+            public static Linear Linear(Parameter weight, Parameter? bias = null)
+            {
+                return new Linear(weight, bias);
+            }
 
             public static partial class functional
             {

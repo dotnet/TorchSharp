@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -195,7 +195,7 @@ namespace TorchSharp
                     // So we shadow copy the DLLs into the TorchSharp package, make a copy of the native DLL and continue
                     // with the dynamic load
                     //
-                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net6.0\TorchSharp.dll
+                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net8.0\TorchSharp.dll
                     //
                     // TODO: on linux make these copies link not shadow-copy
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
@@ -534,6 +534,15 @@ namespace TorchSharp
                     var bias = new Parameter(fused_b, linear_b.requires_grad);
 
                     return scope.MoveToOuter(weight, bias);
+                }
+                public static Linear fuse_linear_bn_eval(Linear linear, BatchNorm bn)
+                {
+                    if (linear.training || bn.training)
+                        throw new InvalidOperationException("Fusing operators is valid only for eval mode.");
+
+                    var (weight, bias) = fuse_linear_bn_weights(linear.weight, linear.bias, bn.running_mean!, bn.running_var!, bn.eps, bn.weight, bn.bias!);
+
+                    return Linear(weight, bias);
                 }
             }
         }

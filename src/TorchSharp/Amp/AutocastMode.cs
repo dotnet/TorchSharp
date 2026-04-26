@@ -123,7 +123,7 @@ namespace TorchSharp.Amp
         public static IntPtr To(IntPtr ptr, torch.ScalarType type)
         {
             Debug.WriteLine($"{nameof(AutocastMode)} Tensor converting from: {GetDtype(ptr)} to: {type}");
-            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
+            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type, false, false);
             if (res == IntPtr.Zero)
                 torch.CheckForErrors();
             return res;
@@ -144,7 +144,7 @@ namespace TorchSharp.Amp
             //TODO: Check if is from CPU to passing BFloat16 if support
             /*if (!NativeMethods.THSAmp_is_autocast_enabled(NativeMethods.THSTensor_device_type(ptr)))
                 return ptr;*/
-            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
+            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type, false, false);
             if (res == IntPtr.Zero)
                 torch.CheckForErrors();
             return res;
@@ -155,7 +155,7 @@ namespace TorchSharp.Amp
 
             if (!NativeMethods.THSAmp_is_autocast_enabled(NativeMethods.THSTensor_device_type(ptr)))
                 return ptr;
-            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type);
+            var res = NativeMethods.THSTensor_to_type(ptr, (sbyte)type, false,false);
             if (res == IntPtr.Zero)
                 torch.CheckForErrors();
             return res;

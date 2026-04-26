@@ -33,7 +33,9 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor input, Tensor? offsets, Tensor? perSampleWeights)
             {
-                return ReturnCheckForErrors(THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle));
+                var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
             public new Tensor call(Tensor input, Tensor? offsets, Tensor? perSampleWeights)

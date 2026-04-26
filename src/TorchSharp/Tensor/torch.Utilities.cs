@@ -83,7 +83,7 @@ namespace TorchSharp
         [Obsolete("not implemented", true)]
         public static void _assert(Func<bool> condition, string message) => throw new NotImplementedException();
 
-        public static void PrintModule(torch.nn.Module module)
+        /*public static void PrintModule(torch.nn.Module module)
         {
             if (module is Dropout2d drop2d) {
                 Console.WriteLine($"{module.GetName()}({drop2d.p}, {drop2d.inplace})");
@@ -99,6 +99,6 @@ namespace TorchSharp
                 return;
             }
             NativeMethods.THSNN_Print_Module(module.handle);
-        }
+        }*/
     }
 }

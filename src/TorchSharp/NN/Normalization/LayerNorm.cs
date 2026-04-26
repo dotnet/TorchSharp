@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -19,8 +18,8 @@ namespace TorchSharp
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            internal long[] _normalized_shape;
-            internal double _eps;
+            const string WeightComponentName = nameof(weight);
+            const string BiasComponentName = nameof(bias);
 
             internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
@@ -28,14 +27,10 @@ namespace TorchSharp
                 this.eps = eps;
                 this.elementwise_affine = elementwise_affine;
 
-                if (elementwise_affine)
-                {
+                if (elementwise_affine) {
                     weight = Parameter(torch.empty(normalized_shape, dtype, device));
-                    //weight.handle = AutocastMode.AutoCast(weight.handle, ScalarType.Float32); //This is correct???
-                    if (bias)
-                    {
+                    if (bias) {
                         this.bias = Parameter(torch.empty(normalized_shape, dtype, device));
-                        //bias.handle = AutocastMode.AutoCast(bias.handle, ScalarType.Float32); //This is correct???
                     }
                 }
 
@@ -44,12 +39,10 @@ namespace TorchSharp
 
             public void reset_parameters()
             {
-                if (elementwise_affine)
-                {
+                if (elementwise_affine) {
                     init.ones_(weight);
                 }
-                if (bias is not null)
-                {
+                if (bias is not null) {
                     init.zeros_(bias);
                 }
             }
@@ -87,7 +80,8 @@ namespace TorchSharp
             }
 
             // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, device, _weight, out Parameter? w)) {
                     weight = w!;
                 }
@@ -109,7 +103,8 @@ namespace TorchSharp
                 return this;
             }
 
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out Parameter? w)) {
                     weight = w!;
                 }

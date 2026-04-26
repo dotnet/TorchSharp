@@ -1,13 +1,15 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using TorchSharp.Amp;
 using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.Utils;
+    using F = TorchSharp.torch.nn.functional;
 
     namespace Modules
     {
@@ -17,46 +19,94 @@ namespace TorchSharp
         /// </summary>
         public sealed class GroupNorm : torch.nn.Module<Tensor, Tensor>
         {
-            internal GroupNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal GroupNorm(long num_groups, long num_channels, double eps, bool affine, Device? device, ScalarType? dtype) : base(nameof(GroupNorm))
             {
+                this.eps = eps;
+                this.affine = affine;
+                this.num_groups = num_groups;
+
+                if (affine) {
+                    weight = Parameter(torch.empty(num_channels, dtype, device));
+                    this.bias = Parameter(torch.empty(num_channels, dtype, device));
+                }
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
-
-                return ReturnCheckForErrorsAutocast(THSNN_GroupNorm_forward(handle.DangerousGetHandle(), tensor.Handle), ScalarType.Float32);
-                
+                if (tensor.Dimensions < 3)
+                    throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
+                return F.group_norm(tensor, num_groups, weight, bias, eps);
             }
 
-            public Parameter? bias
+            protected override void Dispose(bool disposing)
             {
+                _weight?.Dispose();
+                _bias?.Dispose();
+                base.Dispose(disposing);
+            }
+
+            public Parameter? bias {
                 get => _bias;
-                set
-                {
+                set {
                     _bias?.Dispose();
                     _bias = value?.DetachFromDisposeScope() as Parameter;
                     ConditionallyRegisterParameter(nameof(bias), _bias);
                 }
             }
 
-            public Parameter weight
-            {
-                get
-                {
-                    //May have problem with netstandard2.0?
-                    return _weight!;
-                }
-                set
-                {
-                    if (value.Handle != _weight?.Handle)
-                    {
+            public Parameter weight {
+                get => _weight!;
+                set {
+                    if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;
                         ConditionallyRegisterParameter(nameof(weight), _weight);
                     }
                 }
             }
+
+            // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
+            {
+                if (_weight is not null && ReplaceParameter(dtype, device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking)
+            {
+                var device = new Device(deviceType, deviceIndex);
+                if (_weight is not null && ReplaceParameter(_weight.dtype, device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(_bias.dtype, device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
+            {
+                if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out Parameter? w)) {
+                    weight = w!;
+                }
+                if (_bias is not null && ReplaceParameter(dtype, _bias.device, _bias, out Parameter? b)) {
+                    bias = b!;
+                }
+                return this;
+            }
+
+            [ComponentName(Name = nameof(bias))]
+            private Parameter? _bias;
+            [ComponentName(Name = nameof(weight))]
+            private Parameter? _weight;
+            public long num_groups { get; set; }
+            public double eps { get; set; }
+            public bool affine { get; set; }
         }
     }
 
@@ -76,12 +126,6 @@ namespace TorchSharp
             /// <returns></returns>
             public static GroupNorm GroupNorm(long num_groups, long num_channels, double eps = 1e-05, bool affine = true, Device? device = null, ScalarType? dtype = null)
             {
-                /*unsafe {
-                    var handle = THSNN_GroupNorm_ctor(num_groups, num_channels, eps, affine, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    handle= AutocastMode.AutoCast(handle, ScalarType.Float32);
-                    return new GroupNorm(handle, boxedHandle).MoveModule<GroupNorm>(device, dtype);
-                }*/
                 return new GroupNorm(num_groups, num_channels, eps, affine, device, dtype);
             }
         }

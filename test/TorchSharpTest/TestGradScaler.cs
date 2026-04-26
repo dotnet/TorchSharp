@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TorchSharp;
 using TorchSharp.Amp;
@@ -350,17 +351,53 @@ namespace TorchSharpTest.WithCudaBinaries
         public void TestGradScalingMultiple()
         {
             CheckCUDA();
-            foreach (var enabled in new[] { true, false }) {
-                var res0 = create_scaling_case(); // mod_control0, mod_scaling0, etc.
-                var res1 = create_scaling_model_optimizer(); // mod_control1, mod_scaling1
-                var scaler = new GradScaler(new Device(DeviceType.CUDA), 128.0, 2.0, growth_interval: 1, enabled: enabled);
-                //TODO: Implemement same as run
-                
-                double expectedScale = enabled ? (128.0 * Math.Pow(2.0, 3) * Math.Pow(0.5, 1)) : 1.0;
-                Assert.Equal(expectedScale, scaler.get_scale());
-            }
+            bool[] enableds = new bool[] { true, false };
+            foreach (var enabled in enableds) {
+                var res = create_scaling_case();
+                var res1 = create_scaling_model_optimizer();
+                var scaler = new GradScaler(new torch.Device(DeviceType.CUDA), 128.0, 2.0, growth_interval: 1, enabled: enabled);
+                var run = new Action<List<KeyValuePair<torch.Tensor, torch.Tensor>>, Sequential, Sequential, optim.Optimizer, optim.Optimizer, bool>((data, model0, model1, optimizer0, optimizer1, try_scaling_api) => {
+                    for (int i = 0; i < data.Count; i++) {
+                        var input = data[i].Key;
+                        var target = data[i].Value;
+                        optimizer0.zero_grad();
+                        optimizer1.zero_grad();
 
-            throw new NotImplementedException();
+                        var output0 = model0.forward(input);
+                        var output1 = model1.forward(input);
+
+                        var loss0 = res.loss_fn.forward(0.3 * output0 + 0.7 * output1, target);
+                        var loss1 = res.loss_fn.forward(0.6 * output0 - 0.4 * output1, target);
+                        if (try_scaling_api) {
+                            scaler.scale(loss0).backward(null, true);
+                            scaler.scale(loss1).backward();
+                            if (i == res.skip_iter && scaler.IsEnabled()) {
+                                var weight = (model1[1] as Linear).weight;
+                                weight.grad.fill_(float.PositiveInfinity);
+                            }
+                            scaler.unscale(optimizer0);
+                            scaler.step(optimizer0);
+                            scaler.step(optimizer1);
+                            scaler.update();
+                        } else {
+                            loss0.backward(null, true);
+                            loss1.backward();
+                            optimizer0.step();
+                            if (!scaler.IsEnabled() || (i != res.skip_iter))
+                                optimizer1.step();
+                        }
+                    }
+                });
+
+                run(res.data, res.modctrl, res1.modctrl, res.optctrl, res1.optctrl, false);
+                run(res.data, res.modscal, res1.modscal, res.optscal, res1.optscal, true);
+                Assert.True(scaler.get_scale() == (enabled ? 128.0 * Math.Pow(scaler.get_growth_factor(), 3) * Math.Pow(scaler.get_backoff_factor(), 1) : 1.0));
+                /*foreach(var z in res.modctrl.parameters().Zip(res1.modctrl.parameters()))
+                {
+
+                }*/
+
+            }
         }
     }
 }

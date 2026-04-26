@@ -119,7 +119,8 @@ namespace TorchVision
                 if (use_bias.HasValue && use_bias.Value) {
                     this.bias = new Parameter(torch.zeros(out_channels));
                 } else {
-                    base.register_parameter("bias", null);
+                    this.bias = null;
+                    //base.register_parameter("bias", null);
                 }
 
                 weight = new Parameter(torch.zeros(out_channels, in_channels / groups, kernel_size, kernel_size));

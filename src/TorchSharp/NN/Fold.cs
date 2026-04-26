@@ -24,7 +24,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.fold(tensor, output_size , kernel_size, dilation, padding, stride);
+                return torch.nn.functional.fold(tensor, output_size, kernel_size, dilation, padding, stride);
             }
 
             public (long, long) output_size { get; set; }
@@ -85,7 +85,9 @@ namespace TorchSharp
                 /// <remarks>Currently, only unbatched (3D) or batched (4D) image-like output tensors are supported.</remarks>
                 public unsafe static Tensor fold(Tensor input, long output_size, long kernel_size, long dilation = 1, long padding = 0, long stride = 1)
                 {
-                    return ReturnCheckForErrors(THSNN_fold(input.Handle, output_size, output_size, kernel_size, kernel_size, stride, stride, padding, padding, dilation, dilation));
+                    var res = THSNN_fold(input.Handle, output_size, output_size, kernel_size, kernel_size, stride, stride, padding, padding, dilation, dilation);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -98,7 +100,7 @@ namespace TorchSharp
                 /// <param name="padding">Implicit zero padding to be added on both sides of input.</param>
                 /// <param name="stride">The stride of the sliding blocks in the input spatial dimensions.</param>
                 /// <remarks>Currently, only unbatched (3D) or batched (4D) image-like output tensors are supported.</remarks>
-                public unsafe static Tensor fold(Tensor input, (long,long) output_size, (long, long) kernel_size, (long, long)? dilation = null, (long, long)? padding = null, (long, long)? stride = null)
+                public unsafe static Tensor fold(Tensor input, (long, long) output_size, (long, long) kernel_size, (long, long)? dilation = null, (long, long)? padding = null, (long, long)? stride = null)
                 {
                     dilation ??= (1, 1);
                     stride ??= (1, 1);
@@ -110,7 +112,8 @@ namespace TorchSharp
                         stride.Value.Item1, stride.Value.Item2,
                         padding.Value.Item1, padding.Value.Item2,
                         dilation.Value.Item1, dilation.Value.Item2);
-                    return ReturnCheckForErrors(res);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

@@ -16,15 +16,15 @@ namespace TorchSharp
     {
         public abstract class InstanceNorm : NormBase
         {
-            public InstanceNorm(long num_features, 
-                                double eps, 
-                                double? momentum, 
-                                bool affine, 
+            public InstanceNorm(long num_features,
+                                double eps,
+                                double? momentum,
+                                bool affine,
                                 bool track_running_stats,
-                                Device? device, 
-                                ScalarType? dtype, 
-                                string name) : base(num_features, eps, momentum.HasValue ? momentum : 0.1, affine, track_running_stats, device, dtype, name) 
-            {                
+                                Device? device,
+                                ScalarType? dtype,
+                                string name) : base(num_features, eps, momentum.HasValue ? momentum : 0.1, affine, track_running_stats, device, dtype, name)
+            {
             }
 
             protected abstract long GetNumberOfBatchDimensions();
@@ -42,8 +42,7 @@ namespace TorchSharp
                 if (feature_dim == 0) {
                     using var t0 = input.unsqueeze(0);
                     return ApplyInstanceNorm(t0).squeeze_(0);
-                }
-                else {
+                } else {
                     return ApplyInstanceNorm(input);
                 }
             }

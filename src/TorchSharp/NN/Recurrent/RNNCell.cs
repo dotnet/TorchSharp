@@ -1,5 +1,6 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Diagnostics.CodeAnalysis;
 using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
@@ -26,7 +27,9 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor input, Tensor? h0 = null)
             {
-                return ReturnCheckForErrors(THSNN_RNNCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero));
+                var hN = THSNN_RNNCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero);
+                if (hN == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(hN);
             }
 
             [DisallowNull]

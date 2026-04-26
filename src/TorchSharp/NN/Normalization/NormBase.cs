@@ -45,7 +45,7 @@ namespace TorchSharp
 
             private void ResetRunningStats()
             {
-                if (track_running_stats){
+                if (track_running_stats) {
                     init.zeros_(this._running_mean);
                     init.ones_(this._running_var);
                     init.zeros_(this._num_batches_tracked);
@@ -55,7 +55,8 @@ namespace TorchSharp
             // For backward compat.
             public void reset_running_stats() => ResetRunningStats();
 
-            public void reset_parameters() {
+            public void reset_parameters()
+            {
                 ResetRunningStats();
                 if (affine) {
                     init.ones_(this._weight);
@@ -123,7 +124,8 @@ namespace TorchSharp
             }
 
             // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, device, _weight, out var w)) {
                     weight = w!;
                 }
@@ -132,13 +134,16 @@ namespace TorchSharp
                 }
                 if (_running_mean is not null && ReplaceBuffer(dtype, device, _running_mean, out Tensor? rm)) {
                     running_mean = rm!;
-;               }
+                    ;
+                }
                 if (_running_var is not null && ReplaceBuffer(dtype, device, _running_var, out Tensor? rv)) {
                     running_var = rv!;
-;               }
+                    ;
+                }
                 if (_num_batches_tracked is not null && ReplaceBuffer(dtype, device, _num_batches_tracked, out Tensor? nbt)) {
                     num_batches_tracked = nbt!;
-;               }
+                    ;
+                }
                 return this;
             }
 
@@ -153,17 +158,21 @@ namespace TorchSharp
                 }
                 if (_running_mean is not null && ReplaceBuffer(_running_mean.dtype, device, _running_mean, out Tensor? rm)) {
                     running_mean = rm!;
-;               }
+                    ;
+                }
                 if (_running_var is not null && ReplaceBuffer(_running_var.dtype, device, _running_var, out Tensor? rv)) {
                     running_var = rv!;
-;               }
+                    ;
+                }
                 if (_num_batches_tracked is not null && ReplaceBuffer(_num_batches_tracked.dtype, device, _num_batches_tracked, out Tensor? nbt)) {
                     num_batches_tracked = nbt!;
-;               }
+                    ;
+                }
                 return this;
             }
 
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out var w)) {
                     weight = w!;
                 }
@@ -172,13 +181,16 @@ namespace TorchSharp
                 }
                 if (_running_mean is not null && ReplaceBuffer(dtype, _running_mean.device, _running_mean, out Tensor? rm)) {
                     running_mean = rm!;
-;               }
+                    ;
+                }
                 if (_running_var is not null && ReplaceBuffer(dtype, _running_var.device, _running_var, out Tensor? rv)) {
                     running_var = rv!;
-;               }
+                    ;
+                }
                 if (_num_batches_tracked is not null && ReplaceBuffer(dtype, _num_batches_tracked.device, _num_batches_tracked, out Tensor? nbt)) {
                     num_batches_tracked = nbt!;
-;               }
+                    ;
+                }
                 return this;
             }
 

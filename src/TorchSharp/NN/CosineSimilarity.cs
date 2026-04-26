@@ -23,7 +23,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                return ReturnCheckForErrorsAutocast(THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle), ScalarType.Float32);
+                return torch.nn.functional.cosine_similarity(input1, input2, this.dim, this.eps);
             }
 
             public long dim { get; set; }
@@ -43,10 +43,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static CosineSimilarity CosineSimilarity(long dim = 1, double eps = 1e-8)
             {
-                var handle = THSNN_CosineSimilarity_ctor(dim, eps, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                handle = AutocastMode.AutoCast(handle, ScalarType.Float32);
-                return new CosineSimilarity(handle, boxedHandle);
+                return new CosineSimilarity(dim, eps);
             }
 
             public static partial class functional
@@ -62,6 +59,7 @@ namespace TorchSharp
                 public static Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
                 {
                     var res = THSNN_cosine_similarity(x1.Handle, x2.Handle, dim, eps);
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }

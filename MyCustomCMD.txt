@@ -8,3 +8,5 @@ dotnet build TorchSharpFilter.slnf /p:CustomLibTorchFullPath="K:\FrameworksForC\
 
 dotnet build /p:CustomLibTorchFullPath="K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-2.11.0+cpu\libtorch\share\cmake\Torch"
 dotnet test /p:CustomLibTorchFullPath="K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-2.11.0+cpu\libtorch\share\cmake\Torch"
+
+dotnet build /p:CustomLibTorchFullPath="K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-debug-2.11.0+cu130\libtorch\share\cmake\Torch" -f netstandard2.0 -c Debug

@@ -47,7 +47,8 @@ namespace TorchSharp
                 }
 
                 var res = THSNN_LSTM_forward(handle, input.Handle, h0.Handle, c0.Handle, out IntPtr hN, out IntPtr cN);
-                return ReturnCheckForErrors(res, hN, cN);
+                if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new Tensor(res), new Tensor(hN), new Tensor(cN));
             }
 
             public new (Tensor, Tensor, Tensor) call(Tensor input, (Tensor, Tensor)? h0_c0 = null) => base.call(input, h0_c0);

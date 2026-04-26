@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Dropout3d module.
         /// </summary>
-        public sealed class Dropout3d : nn.Module<Tensor, Tensor>
+        public sealed class Dropout3d : ParameterLessModule<Tensor, Tensor>
         {
             internal Dropout3d(double p = 0.5, bool inplace = false) : base(nameof(Dropout3d))
             {
@@ -22,17 +22,11 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                return ReturnCheckForErrors(THSNN_dropout3d(input.Handle, p, this.training, inplace));
+                return torch.nn.functional.dropout3d(input, this.p, this.training, this.inplace);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
-
-            private bool inplace;
-            private double p;
+            public bool inplace { get; set; }
+            public double p { get; set; }
         }
     }
 
@@ -60,7 +54,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor dropout3d(Tensor input, double p = 0.5, bool training = true, bool inplace = false)
                 {
-                    return ReturnCheckForErrors(THSNN_dropout3d(input.Handle, p, training, inplace));
+                    var res = THSNN_dropout3d(input.Handle, p, training, inplace);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

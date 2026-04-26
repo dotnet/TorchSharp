@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSTorch.h"
 
 #include "torch/torch.h"
@@ -302,12 +302,12 @@ void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
 }
 
 
-void THSTorch_scalar_to_bfloat16(Scalar value, c10::BFloat16* res)
+/*void THSTorch_scalar_to_bfloat16(Scalar value, c10::BFloat16* res)
 {
     *res = value->toBFloat16();
-}
+}*/
 
-void THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length))
+void THSTorch_scalar_to_complex32(Scalar value, float* real, float* imaginary)
 {
     auto result = value->toComplexFloat();
     *real = result.real();

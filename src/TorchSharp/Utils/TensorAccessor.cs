@@ -294,7 +294,7 @@ namespace TorchSharp.Utils
             }
             if (array is BFloat16[] bfa) {
                 //TODO: Test this
-                Marshal.Copy(_tensor_data_ptr, bfa.Select(x=>x.ToFloat()).ToArray(), index, count);
+                Marshal.Copy(_tensor_data_ptr, bfa.Select(x=>x.ToSingle()).ToArray(), index, count);
                 return;
             }
         }

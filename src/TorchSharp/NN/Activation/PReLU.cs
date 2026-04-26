@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -7,6 +7,7 @@ using static TorchSharp.PInvoke.NativeMethods;
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.Utils;
 
     namespace Modules
     {
@@ -15,11 +16,20 @@ namespace TorchSharp
         /// </summary>
         public sealed class PReLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal PReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal PReLU(long num_parameters, double init, Device? device = null, ScalarType? dtype = null) : base(nameof(PReLU))
+            {
+                this.init = init;
+                this.num_parameters = num_parameters;
+
+                var w = torch.empty(num_parameters, device: device, dtype: dtype);
+                w.fill_(init);
+
+                this.weight = new Parameter(w);
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                return ReturnCheckForErrors(THSNN_PReLU_forward(handle, tensor.Handle));
+                return torch.nn.functional.prelu(tensor, weight);
             }
 
             public override string GetName()
@@ -27,12 +37,8 @@ namespace TorchSharp
                 return typeof(PReLU).Name;
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_PReLU_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
+            public Parameter weight {
+                get => _weight!;
                 set {
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
@@ -56,6 +62,9 @@ namespace TorchSharp
                     _weight?.Dispose();
                 }
             }
+
+            [ComponentName(Name = nameof(weight))]
+            private Parameter? _weight;
         }
     }
 
@@ -75,9 +84,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             public static PReLU PReLU(long num_parameters, double init = 0.25, Device? device = null, ScalarType? dtype = null)
             {
-                /*var handle = THSNN_PReLU_ctor(num_parameters, init, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }*/
-                return new PReLU(handle, boxedHandle).MoveModule<PReLU>(device, dtype);
+                return new PReLU(num_parameters, init).MoveModule<PReLU>(device, dtype);
             }
 
             public static partial class functional

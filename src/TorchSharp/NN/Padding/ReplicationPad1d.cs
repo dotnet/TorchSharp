@@ -12,25 +12,9 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReplicationPad1d module.
         /// </summary>
-        public sealed class ReplicationPad1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReplicationPad1d : PadBase
         {
-            internal ReplicationPad1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            /// <summary>
-            /// Forward pass.
-            /// </summary>
-            /// <param name="tensor">Input tensor</param>
-            /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
-            {
-                return ReturnCheckForErrors(THSNN_ReplicationPad1d_forward(handle, tensor.Handle));
-            }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            internal ReplicationPad1d(params long[] padding) : base(nameof(ReplicationPad1d), PaddingModes.Replicate, 0, padding) { }
         }
     }
 
@@ -45,9 +29,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReplicationPad1d ReplicationPad1d(long padding)
             {
-                var handle = THSNN_ReplicationPad1d_ctor(padding, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReplicationPad1d(handle, boxedHandle);
+                return new ReplicationPad1d(padding, padding);
             }
 
             /// <summary>
@@ -57,9 +39,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReplicationPad1d ReplicationPad1d((long, long) padding)
             {
-                var handle = THSNN_ReplicationPad1d_ctor_tuple(padding.Item1, padding.Item2, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReplicationPad1d(handle, boxedHandle);
+                return new ReplicationPad1d(padding.Item1, padding.Item2);
             }
         }
     }

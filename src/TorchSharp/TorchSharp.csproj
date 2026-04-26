@@ -1,16 +1,17 @@
-﻿<Project>
+<Project>
   <!-- Implicit top import -->
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-      <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
-      <LangVersion>9.0</LangVersion>
-      <IncludeInPackage>TorchSharp</IncludeInPackage>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
-      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-      <IsPackable>false</IsPackable>
-      <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
+    <IncludeInPackage>TorchSharp</IncludeInPackage>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+    <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+    <IsPackable>false</IsPackable>
+    <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
+    <CustomLibTorchFullPath>K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-debug-2.11.0+cu130\libtorch\share\cmake\Torch</CustomLibTorchFullPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -109,21 +109,29 @@ namespace TorchSharp
             /// common difference step, starting from start.
             /// </summary>
             /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-            public static Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
+            public static Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null,
+                bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
-                var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
+                var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64,
+                    (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
+                    handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64,
+                        (int)device.type, device.index, requires_grad);
                 }
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+
+                if (handle == IntPtr.Zero) {
+                    torch.CheckForErrors();
+                }
 
                 var res = THSTensor_to_type(handle, (sbyte)ScalarType.ComplexFloat64, false, false);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Create a scalar tensor from a single value

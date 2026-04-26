@@ -1,7 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Linq;
-using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -25,7 +23,8 @@ namespace TorchSharp
             Bilinear = 2,
             Bicubic = 3,
             Trilinear = 4,
-            Area = 5
+            Area = 5,
+            NearestExact = 6
         }
 
         public enum GridSampleMode
@@ -62,7 +61,9 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = pad) {
-                            return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value));
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
                         }
                     }
                 }
@@ -79,7 +80,9 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = pad) {
-                            return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value));
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
                         }
                     }
                 }
@@ -97,7 +100,9 @@ namespace TorchSharp
                     unsafe {
                         var correctedPad = stackalloc long[] { pad.Item1, pad.Item2 };
 
-                        return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)correctedPad, 2, (byte)mode, value));
+                        var res = THSNN_pad(input.Handle, (IntPtr)correctedPad, 2, (byte)mode, value);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
                     }
                 }
 
@@ -113,7 +118,9 @@ namespace TorchSharp
                 {
                     unsafe {
                         var correctedPad = stackalloc long[] { pad.Item1, pad.Item2, pad.Item3, pad.Item4 };
-                        return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)correctedPad, 4, (byte)mode, value));
+                        var res = THSNN_pad(input.Handle, (IntPtr)correctedPad, 4, (byte)mode, value);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
                     }
                 }
 
@@ -133,7 +140,9 @@ namespace TorchSharp
                         var correctedPad = stackalloc long[length];
                         for (var i = 0; i < length; i++) correctedPad[i] = pad;
 
-                        return ReturnCheckForErrors(THSNN_pad(input.Handle, (IntPtr)correctedPad, length, (byte)mode, value));
+                        var res = THSNN_pad(input.Handle, (IntPtr)correctedPad, length, (byte)mode, value);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
                     }
                 }
 
@@ -156,15 +165,9 @@ namespace TorchSharp
                 public static Tensor grid_sample(Tensor input, Tensor grid, GridSampleMode mode = GridSampleMode.Bilinear, GridSamplePaddingMode padding_mode = GridSamplePaddingMode.Zeros, bool? align_corners = null)
                 {
                     byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
-                    if (AutocastMode.IsAutocastEnabled()) {
-                        var sts = new[] { input.dtype, grid.dtype };
-                        if (sts.All(x => x == ScalarType.Float16))
-                            (input.handle, grid.handle) = AutocastMode.AutoCast(input.handle, grid.handle, ScalarType.Float16);
-                        if (sts.Any(x => x == ScalarType.Float32))
-                            (input.handle, grid.handle) = AutocastMode.AutoCast(input.handle, grid.handle, ScalarType.Float32);
-                    }
-
-                    return ReturnCheckForErrors(THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)padding_mode, ac));
+                    var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)padding_mode, ac);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -179,7 +182,9 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* psize = size) {
-                            return ReturnCheckForErrors(THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners));
+                            var res = THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
                         }
                     }
                 }
@@ -190,7 +195,7 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="size">Output spatial size</param>
                 /// <param name="scale_factor">Multiplier for spatial size. Has to match input size if it is a tuple.</param>
-                /// <param name="mode">The algorithm used for upsampling: 'nearest' | 'linear' | 'bilinear' | 'bicubic' | 'trilinear' | 'area'</param>
+                /// <param name="mode">The algorithm used for upsampling: 'nearest' | 'linear' | 'bilinear' | 'bicubic' | 'trilinear' | 'area' | 'nearest-exact'</param>
                 /// <param name="align_corners">Geometrically, we consider the pixels of the input and output as squares rather than points.
                 /// If set to true, the input and output tensors are aligned by the center points of their corner pixels, preserving the values at the corner pixels.
                 /// If set to false, the input and output tensors are aligned by the corner points of their corner pixels, and the interpolation uses edge value padding for out-of-boundary values, making this operation independent of input size when scale_factor is kept the same.</param>
@@ -201,14 +206,21 @@ namespace TorchSharp
                 /// Otherwise, a new scale_factor will be computed based on the output and input sizes for use in the interpolation computation
                 /// (i.e. the computation will be identical to if the computed output_size were passed-in explicitly).
                 /// </param>
+                /// <param name="antialias">
+                /// Flag to apply anti-aliasing. Using anti-alias
+                /// option together with align_corners = false, interpolation result would match Pillow
+                /// result for downsampling operation. Supported modes: 'bilinear', 'bicubic'.
+                /// </param>
                 /// <returns></returns>
-                public static Tensor interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolationMode mode = InterpolationMode.Nearest, bool? align_corners = null, bool recompute_scale_factor = false)
+                public static Tensor interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolationMode mode = InterpolationMode.Nearest, bool? align_corners = null, bool recompute_scale_factor = false, bool antialias = false)
                 {
                     unsafe {
                         fixed (long* psize = size) {
                             fixed (double* pSF = scale_factor) {
                                 byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
-                                return ReturnCheckForErrors(THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor));
+                                var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor, antialias);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
                             }
                         }
                     }

@@ -31,7 +31,7 @@ namespace TorchSharp
             }
 
             public bool inplace { get; set; }
-            public double p { get; set;}
+            public double p { get; set; }
         }
     }
 
@@ -60,7 +60,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor dropout(Tensor input, double p = 0.5, bool training = true, bool inplace = false)
                 {
-                    return ReturnCheckForErrors(THSNN_dropout(input.Handle, p, training, inplace));
+                    var res = THSNN_dropout(input.Handle, p, training, inplace);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

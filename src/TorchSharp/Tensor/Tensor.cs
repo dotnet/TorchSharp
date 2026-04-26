@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,6 +49,15 @@ namespace TorchSharp
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
                 OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+            }
+            internal Tensor(IntPtr handle, bool register = true)
+            {
+                this.handle = handle;
+                System.Threading.Interlocked.Increment(ref _totalCount);
+                _peakCount = Math.Max(_totalCount, _peakCount);
+                if (register) {
+                    OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
+                }
             }
 
             /// <summary>
@@ -1725,7 +1734,7 @@ namespace TorchSharp
                 unsafe {
                     fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
                         fixed (IntPtr* ptrTensors = arrTensors) {
-                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle);
+                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, false);
                             CheckForErrors();
                             GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
                             GC.KeepAlive(value);
@@ -1824,7 +1833,23 @@ namespace TorchSharp
                     }
                 }
             }
-
+            public Tensor index_put_(Tensor value, TensorIndex[] indices, bool accumulate = false)
+            {
+                EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+                if (accumulate && arrTensors == null)
+                    throw new Exception("Invalid 'indices' parameter. Must be an array of TensorIndex objects containing tensors with indices that match the shape of the tensor to update");
+                unsafe {
+                    fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                        fixed (IntPtr* ptrTensors = arrTensors) {
+                            NativeMethods.THSTensor_index_put_(Handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle, accumulate);
+                            CheckForErrors();
+                            GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                            GC.KeepAlive(value);
+                            return this;
+                        }
+                    }
+                }
+            }
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
@@ -2316,7 +2341,20 @@ namespace TorchSharp
                 CheckForErrors();
                 return this;
             }
+            public Tensor threshold(Scalar threshold, Scalar value)
+            {
+                var res = NativeMethods.THSTensor_threshold(Handle, threshold.Handle, value.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
 
+            public Tensor threshold_(Scalar threshold, Scalar value)
+            {
+                NativeMethods.THSTensor_threshold_(Handle, threshold.Handle, value.Handle);
+                CheckForErrors();
+                return this;
+            }
             /// <summary>
             /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
             /// </summary>
@@ -2791,9 +2829,12 @@ namespace TorchSharp
             public Tensor softmax(long dim, ScalarType? dtype = null) =>
                 torch.special.softmax(this, dim, dtype);
 
-            public Tensor softplus()
+            public Tensor softplus(double beta = 1, double threshold = 20) =>
+                softplus1(beta, threshold);
+
+            private Tensor softplus1(Scalar beta, Scalar threshold)
             {
-                return ReturnCheckForErrors(NativeMethods.THSTensor_softplus(Handle));
+                return ReturnCheckForErrors(NativeMethods.THSTensor_softplus(Handle, beta.Handle, threshold.Handle));
             }
 
             public Tensor ravel()
@@ -2813,6 +2854,23 @@ namespace TorchSharp
                 return this;
             }
 
+            private const double one_eighth = 1.0 / 8.0;
+            private const double one_third = 1.0 / 3.0;
+
+            public Tensor rrelu(double lower = one_eighth, double upper = one_third)
+            {
+                var res = NativeMethods.THSTensor_rrelu(Handle, lower, upper);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor rrelu_(double lower = one_eighth, double upper = one_third)
+            {
+                NativeMethods.THSTensor_rrelu_(Handle, lower, upper);
+                CheckForErrors();
+                return this;
+            }
             public Tensor relu6()
             {
                 return ReturnCheckForErrors(NativeMethods.THSTensor_relu6(Handle));
@@ -2825,14 +2883,18 @@ namespace TorchSharp
                 return this;
             }
 
-            public Tensor celu()
+            public Tensor celu() => this.celu(1.0);
+
+            public Tensor celu_() => this.celu_(1.0);
+
+            public Tensor celu(Scalar alpha)
             {
-                return ReturnCheckForErrors(NativeMethods.THSTensor_celu(Handle));
+                return ReturnCheckForErrors(NativeMethods.THSTensor_celu(Handle, alpha.Handle));
             }
 
-            public Tensor celu_()
+            public Tensor celu_(Scalar alpha)
             {
-                NativeMethods.THSTensor_celu_(Handle);
+                NativeMethods.THSTensor_celu_(Handle, alpha.Handle);
                 CheckForErrors();
                 return this;
             }
@@ -2841,7 +2903,8 @@ namespace TorchSharp
             {
                 return ReturnCheckForErrors(NativeMethods.THSTensor_elu(Handle, alpha.Handle, scale.Handle, input_scale.Handle));
             }
-
+            public Tensor elu(double alpha = 1) => elu(alpha, 1.0, 1.0);
+            public Tensor elu_(double alpha = 1) => elu(alpha, 1.0, 1.0);
             public Tensor elu_(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 NativeMethods.THSTensor_elu_(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
@@ -2852,6 +2915,22 @@ namespace TorchSharp
             public Tensor gelu()
             {
                 return ReturnCheckForErrors(NativeMethods.THSTensor_gelu(Handle));
+            }
+     
+            public Tensor gelu_()
+            {
+                var res = NativeMethods.THSTensor_gelu_(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor glu(long dim = -1)
+            {
+                var res = NativeMethods.THSTensor_glu(Handle, dim);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
             }
 
             public Tensor hardsigmoid()
@@ -4156,14 +4235,15 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor var(long[] dimensions, bool keepdim = false, ScalarType? type = null)
+            /*public Tensor var(long[] dimensions, bool keepdim = false, ScalarType? type = null)
             {
                 unsafe {
                     fixed (long* pdims = dimensions) {
+                        //return ReturnCheckForErrors(NativeMethods.THSTensor_var_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault()));
                         return ReturnCheckForErrors(NativeMethods.THSTensor_var_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault()));
                     }
                 }
-            }
+            }*/
 
             /// <summary>
             /// Returns the median of the values in input.
@@ -7049,7 +7129,6 @@ namespace TorchSharp
             { typeof(long), ScalarType.Int64 },
             { typeof(BFloat16), ScalarType.BFloat16 },
             { typeof(Half), ScalarType.Float16 },
-            { typeof(BFloat16), ScalarType.BFloat16},
             { typeof(float), ScalarType.Float32 },
             { typeof(double), ScalarType.Float64 },
             { typeof((float, float)), ScalarType.ComplexFloat32 },

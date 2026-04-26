@@ -12,22 +12,19 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveAvgPool2D module.
         /// </summary>
-        public sealed class AdaptiveAvgPool2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class AdaptiveAvgPool2d : ParameterLessModule<Tensor, Tensor>
         {
-            internal AdaptiveAvgPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal AdaptiveAvgPool2d(long[] output_size) : base(nameof(AdaptiveAvgPool2d))
             {
+                this.output_size = output_size;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                return ReturnCheckForErrors(THSNN_AdaptiveAvgPool2d_forward(handle.DangerousGetHandle(), tensor.Handle));
+                return torch.nn.functional.adaptive_avg_pool2d(input, this.output_size);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex, bool non_blocking) => this;
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) => this;
+            public long[] output_size { get; set; }
         }
     }
 
@@ -39,43 +36,33 @@ namespace TorchSharp
             /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
+            /// <param name="output_size">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long[] outputSize)
+            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long[] output_size)
             {
-                fixed (long* poutputSize = outputSize) {
-                    var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, outputSize.Length, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new AdaptiveAvgPool2d(handle, boxedHandle);
-                }
+                return new AdaptiveAvgPool2d(output_size);
             }
 
             /// <summary>
             /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
+            /// <param name="output_size">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d((long,long) outputSize)
+            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d((long, long) output_size)
             {
-                long* poutputSize = stackalloc long[2] { outputSize.Item1, outputSize.Item2 };
-                var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, 2, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new AdaptiveAvgPool2d(handle, boxedHandle);
+                return new AdaptiveAvgPool2d(new[] { output_size.Item1, output_size.Item2 });
             }
 
             /// <summary>
             /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
-            /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
+            /// <param name="output_size">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long outputSize)
+            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long output_size)
             {
-                long* poutputSize = stackalloc long[2] { outputSize, outputSize };
-                var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, 2, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new AdaptiveAvgPool2d(handle, boxedHandle);
+                return new AdaptiveAvgPool2d(new[] { output_size, output_size });
             }
 
             public static partial class functional
@@ -90,7 +77,9 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* poutputSize = output_size) {
-                            return ReturnCheckForErrors(THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length));
+                            var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
                         }
                     }
                 }
@@ -105,7 +94,9 @@ namespace TorchSharp
                 {
                     long* poutputSize = stackalloc long[2] { output_size.Item1, output_size.Item2 };
 
-                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2));
+                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -118,7 +109,9 @@ namespace TorchSharp
                 {
                     long* poutputSize = stackalloc long[2] { output_size, output_size };
 
-                    return ReturnCheckForErrors(THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2));
+                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

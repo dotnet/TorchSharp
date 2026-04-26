@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1150,7 +1150,7 @@ namespace TorchSharp
 
 
 
-                protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device device = null, ScalarType? dtype = null)
+                protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device? device = null, ScalarType? dtype = null)
                 {
                     if (!dtype.HasValue)
                         dtype = get_default_dtype();

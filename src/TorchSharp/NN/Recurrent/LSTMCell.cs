@@ -1,5 +1,6 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Diagnostics.CodeAnalysis;
 using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
@@ -25,7 +26,8 @@ namespace TorchSharp
             public override (Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0)
             {
                 var hN = THSNN_LSTMCell_forward(handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr cN);
-                return ReturnCheckForErrors(hN, cN);
+                if (hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new Tensor(hN), new Tensor(cN));
             }
 
             public new (Tensor, Tensor) call(Tensor input, (Tensor, Tensor)? h0_c0 = null) => base.call(input, h0_c0);
@@ -104,6 +106,7 @@ namespace TorchSharp
             {
                 var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+
                 res = AutocastMode.AutoCast(res);
                 return new LSTMCell(res, boxedHandle).MoveModule<LSTMCell>(device, dtype);
             }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Runtime.InteropServices;
@@ -65,12 +65,11 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_scalar_to_bfloat16(IntPtr value, out ushort res);
 
-#if NET6_0_OR_GREATER
+        /*[DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_scalar_to_bfloat16(IntPtr value, out BFloat16 res);*/
+
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_scalar_to_float16(IntPtr value, out Half res);
-//#endif
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSTorch_scalar_to_bfloat16(IntPtr value, out BFloat16 res);
 
         [DllImport("LibTorchSharp")]
         internal static extern double THSTorch_scalar_to_float64(IntPtr handle);

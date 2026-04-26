@@ -17,7 +17,9 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                return ReturnCheckForErrors(THSNN_Embedding_forward(handle, input.Handle));
+                var res = THSNN_Embedding_forward(handle, input.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
             [DisallowNull]
@@ -62,7 +64,7 @@ namespace TorchSharp
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                     norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Embedding(res, boxedHandle).MoveModule<Embedding>(device,dtype);
+                return new Embedding(res, boxedHandle).MoveModule<Embedding>(device, dtype);
             }
 
             /// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSAutograd.h"
 
 #include "torch/torch.h"
@@ -173,22 +173,17 @@ void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, T
                     "Please open a feature request on GitHub if you need this.");
             };
 
-    auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
-        return x.view_as(x);
-        };
-
-    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, false);
-    auto sz = res.size();
         auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
             return x.view_as(x);
             };
+
+        //auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, false);
 #if TORCH_VERSION_MAJOR >= 2 && TORCH_VERSION_MINOR >= 11
         auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, true);
 #else
         auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn);
 #endif
         auto sz = res.size();
-
         Tensor* result = allocator(sz);
         for (size_t i = 0; i < sz; i++)
             result[i] = res[i].has_value() ? ResultTensor(res[i].value()) : nullptr;

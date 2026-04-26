@@ -42,7 +42,8 @@ namespace TorchSharp
                 }
 
                 var res = THSNN_GRU_forward(handle, input.Handle, h0.Handle, out IntPtr hN);
-                return ReturnCheckForErrors(res, hN);
+                if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new Tensor(res), new Tensor(hN));
             }
 
             public new (Tensor, Tensor) call(Tensor input, Tensor h0 = null) => base.call(input, h0);

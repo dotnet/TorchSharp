@@ -14,15 +14,10 @@ namespace TorchSharp.Utils
             public object Kernel, Dilation, Stride; 
             public ConvInfo(Convolution conv)
             {
-                InChannel = conv._in_channel;
-                OutChannel = conv._out_channel;
-                if (conv._kernels.HasValue) {
-                    Kernel = conv._kernels.Value;
-                }
-                else {
-                    Kernel = conv._kernel;
-                }
-
+                InChannel = conv.in_channels;
+                OutChannel = conv.out_channels;
+                Kernel = conv.kernel_size;
+                
                 //TODO: Make all props;
                 throw new NotImplementedException("Need finish");
             }
