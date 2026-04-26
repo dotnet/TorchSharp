@@ -62,9 +62,7 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
-  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild" Condition="$(CustomLibTorchFullPath)!= ''">
-    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
-  </Target>
+
   <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild" Condition="$(CustomLibTorchFullPath) == ''">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <Message Importance="High" Text="Using Version = $(Version)" />
@@ -74,7 +72,9 @@
 
     <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
   </Target>
-
+  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild">
+    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+  </Target>
   <Target Name="RealPack" Condition="$(CustomLibTorchFullPath) == ''">
     <MSBuild Projects="..\..\pkg\pack.proj" Targets="Pack" />
   </Target>

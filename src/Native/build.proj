@@ -57,7 +57,7 @@
 
   </Target>
 
-  <Target Name="PreparePackageAssets">
+  <Target Name="PreparePackageAssets" Condition="'$(CustomLibTorchFullPath)'==''">
   
     <ItemGroup>
       <NativePackageAsset Include="$(NativeOutputPath)$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
