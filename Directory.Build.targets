@@ -84,6 +84,7 @@
     <NativeAssemblyReference Include="gomp-98b21ff3" ExtraExtension=".1" />
   </ItemGroup>
 
+  <!--
   <Target Name="CopyNativeAssemblies"
           BeforeTargets="PrepareForRun"
 					Condition="'$(SkipTests)' != 'true'">
@@ -112,6 +113,6 @@
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
 
-  </Target>
+  </Target>-->
   
 </Project>

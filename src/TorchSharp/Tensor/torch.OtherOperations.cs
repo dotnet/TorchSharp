@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -437,33 +438,53 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.histogram
         [Obsolete("not implemented", true)]
-        static Tensor histogram(
-            Tensor input,
+        static Tensor histogram(Tensor input,
             long bins,
             (float min, float max)? range = null,
             Tensor? weight = null,
             bool density = false)
-            => throw new NotImplementedException();
+        {
+            var weightsHandle = (weight is null ? IntPtr.Zero : weight.Handle);
+
+            if (range.HasValue) {
+                float[] ranges = new float[] { range.Value.min, range.Value.max };
+
+                unsafe {
+                    
+                    fixed (float* pranges = ranges) {
+                        THSHistogram_histogram(input.handle, bins, (IntPtr)pranges, ranges.Length, weightsHandle, density, out IntPtr hist, out IntPtr hist_bins);
+                        return new Tensor(hist);
+                    }
+                }
+            } else {
+                THSHistogram_histogram(input.handle, bins, IntPtr.Zero, 0, weightsHandle, density,
+                    out IntPtr hist, out IntPtr hist_bins);
+                return new Tensor(hist);
+            }
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.histogram
         [Obsolete("not implemented", true)]
-        static Tensor histogram(
-            Tensor input,
+        static Tensor histogram(Tensor input,
             long[] bins,
             (float min, float max)? range = null,
             Tensor? weight = null,
             bool density = false)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
+
 
         // https://pytorch.org/docs/stable/generated/torch.histogram
         [Obsolete("not implemented", true)]
-        static Tensor histogram(
-            Tensor input,
+        static Tensor histogram(Tensor input,
             Tensor[] bins,
             (float min, float max)? range = null,
             Tensor? weight = null,
             bool density = false)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.histogramdd
         [Obsolete("not implemented", true)]

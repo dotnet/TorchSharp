@@ -1,5 +1,12 @@
 project(LibTorchSharp)
 
+find_package(CUDA)
+if(CUDA_FOUND)
+	include_directories(${CUDA_INCLUDE_DIRS})
+	link_directories(${CUDA_LIBRARY_DIRS})
+	add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
+endif()
+
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
@@ -9,6 +16,7 @@ find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 set(SOURCES
     cifar10.h
 	crc32c.h
+	THSHistogram.h
     THSAutograd.h
     THSData.h
     THSJIT.h
@@ -21,6 +29,7 @@ set(SOURCES
     cifar10.cpp
 	crc32c.c
 	THSActivation.cpp
+	THSHistogram.cpp
     THSAutograd.cpp
 	THSData.cpp
 	THSFFT.cpp
@@ -69,6 +78,10 @@ endif()
 include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
+
+if(CUDA_FOUND)
+target_link_libraries(LibTorchSharp ${CUDA_LIBRARIES})
+endif()
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
