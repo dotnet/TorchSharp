@@ -263,7 +263,6 @@ namespace TorchSharpTest.WithCudaBinaries
         {
             run_scaling_case(new Action<List<KeyValuePair<Tensor, Tensor>>, Sequential, optim.Optimizer, GradScaler, MSELoss, int, bool>((
                 (data, model, optimizer, scaler, loss_fn, skip_iter, try_scaling_api) => {
-                    //const float max_norm = 0.2f;
                     int idx = 0;
                     foreach (var ipair in data) {
                         //ipair.
@@ -272,9 +271,7 @@ namespace TorchSharpTest.WithCudaBinaries
                         var loss = loss_fn.forward(output, ipair.Value);
                         IList<Tensor> grad_params = new List<Tensor>();
                         if (try_scaling_api) {
-                            //throw new NotImplementedException();
-                            //TODO: RESEARCH TORCH::AUTOGRAD:GRAD THE SECOND ARGUMENT SHOULD HAVE model->parameters();
-                            //grad_params = torch.autograd.grad(new List<Tensor>() { scaler.scale(loss) }, model.parameters());
+                            
                             grad_params = torch.autograd.grad(new List<Tensor>() { scaler.scale(loss) }, model.parameters(),create_graph:true);
                             var inv_scale = 1.0f / scaler.get_scale();
                             for (int i = 0; i < grad_params.Count; i++)
@@ -282,7 +279,7 @@ namespace TorchSharpTest.WithCudaBinaries
                         } else {
                             //throw new NotImplementedException();
                             //TODO: RESEARCH TORCH::AUTOGRAD:GRAD THE SECOND ARGUMENT SHOULD HAVE model->parameters();
-                            grad_params = torch.autograd.grad(new List<Tensor>() { scaler.scale(loss) }, model.parameters(), create_graph: true);
+                            grad_params = torch.autograd.grad(new List<Tensor>() { loss }, model.parameters(), create_graph: true);
                         }
 
                         var grad_norm = torch.zeros(new long[] { 1 }).to(ipair.Key.device);
