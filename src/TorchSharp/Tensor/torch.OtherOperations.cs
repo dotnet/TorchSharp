@@ -46,7 +46,7 @@ namespace TorchSharp
         public static Tensor block_diag(params Tensor[] tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
             return ReturnCheckForErrors(THSTensor_block_diag(tensorsRef, parray.Array.Length));
         }
@@ -70,7 +70,7 @@ namespace TorchSharp
             using (var pa = new PinnedArray<IntPtr>())
             using (var parray = new PinnedArray<IntPtr>()) {
 
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
                 THSTensor_broadcast_tensors(tensorsRef, tensors.Length, pa.CreateArray);
                 CheckForErrors();
@@ -123,21 +123,33 @@ namespace TorchSharp
         /// <summary>
         /// Do cartesian product of the given sequence of tensors.
         /// </summary>
-        /// <param name="tensors"></param>
-        public static Tensor cartesian_prod(IList<Tensor> tensors)
-        {
-            using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-            return ReturnCheckForErrors(THSTensor_cartesian_prod(tensorsRef, parray.Array.Length));
-        }
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the Cartesian product of the input <paramref name="tensors"/>.</returns>
+        public static Tensor cartesian_prod(IList<Tensor> tensors) => cartesian_prod(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
         /// <summary>
         /// Do cartesian product of the given sequence of tensors.
         /// </summary>
-        /// <param name="tensors"></param>
-        public static Tensor cartesian_prod(params Tensor[] tensors) => cartesian_prod((IList<Tensor>)tensors);
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the Cartesian product of the input <paramref name="tensors"/>.</returns>
+        public static Tensor cartesian_prod(params Tensor[] tensors) => cartesian_prod(tensors.ToHandleArray());
+
+        // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
+        /// <summary>
+        /// Do cartesian product of the given sequence of tensors.
+        /// </summary>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the Cartesian product of the input <paramref name="tensors"/>.</returns>
+        public static Tensor cartesian_prod(ReadOnlySpan<Tensor> tensors) => cartesian_prod(tensors.ToHandleArray());
+
+        static Tensor cartesian_prod(IntPtr[] tensors)
+        {
+            using var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorsRef = parray.CreateArray(tensors);
+
+            return ReturnCheckForErrors(THSTensor_cartesian_prod(tensorsRef, parray.Array.Length));
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.cdist
         /// <summary>
@@ -343,7 +355,7 @@ namespace TorchSharp
         public static Tensor einsum(string equation, params Tensor[] tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
             return ReturnCheckForErrors(THSTensor_einsum(equation, tensorsRef, parray.Array.Length));
         }
@@ -503,7 +515,7 @@ namespace TorchSharp
             IntPtr[] ptrArray;
 
             using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                 _ = THSTensor_meshgrid(tensorsRef, parray.Array.Length, indexing, parray.CreateArray);
                 CheckForErrors();
                 ptrArray = parray.Array;

@@ -402,6 +402,12 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>Gets the return value condition.</summary>
         public bool ReturnValue { get; }
     }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed class DisallowNullAttribute : Attribute
+    {
+        public DisallowNullAttribute() { }
+    }
 }
 
 namespace System.Linq

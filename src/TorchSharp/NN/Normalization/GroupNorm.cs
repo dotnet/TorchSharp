@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using TorchSharp.Amp;
 using static TorchSharp.torch;
@@ -29,31 +29,32 @@ namespace TorchSharp
                 
             }
 
-            public Parameter? bias {
-                get {
-                    return ReturnNullParameterCheckForErrors(THSNN_GroupNorm_bias(handle));
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
-                    THSNN_GroupNorm_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+            public Parameter? bias
+            {
+                get => _bias;
+                set
+                {
+                    _bias?.Dispose();
+                    _bias = value?.DetachFromDisposeScope() as Parameter;
+                    ConditionallyRegisterParameter(nameof(bias), _bias);
                 }
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_GroupNorm_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+            public Parameter weight
+            {
+                get
+                {
+                    //May have problem with netstandard2.0?
+                    return _weight!;
                 }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
-                    THSNN_GroupNorm_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
+                set
+                {
+                    if (value.Handle != _weight?.Handle)
+                    {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                    }
                 }
             }
         }
@@ -75,12 +76,13 @@ namespace TorchSharp
             /// <returns></returns>
             public static GroupNorm GroupNorm(long num_groups, long num_channels, double eps = 1e-05, bool affine = true, Device? device = null, ScalarType? dtype = null)
             {
-                unsafe {
+                /*unsafe {
                     var handle = THSNN_GroupNorm_ctor(num_groups, num_channels, eps, affine, out var boxedHandle);
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     handle= AutocastMode.AutoCast(handle, ScalarType.Float32);
                     return new GroupNorm(handle, boxedHandle).MoveModule<GroupNorm>(device, dtype);
-                }
+                }*/
+                return new GroupNorm(num_groups, num_channels, eps, affine, device, dtype);
             }
         }
     }

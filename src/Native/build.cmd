@@ -44,7 +44,9 @@ set "VSCMD_START_DIR=%__currentScriptDir%"
 call "%_VSCOMNTOOLS%\VsDevCmd.bat"
 
 :RunVCVars
-if "%VisualStudioVersion%"=="17.0" (
+if "%VisualStudioVersion%"=="18.0" (
+    goto :VS2026
+) else if "%VisualStudioVersion%"=="17.0" (
     goto :VS2022
 ) else if "%VisualStudioVersion%"=="16.0" (
     goto :VS2019
@@ -55,10 +57,20 @@ if "%VisualStudioVersion%"=="17.0" (
 )
 
 :MissingVersion
-:: Can't find VS 2015, 2017 or 2019
-echo Error: Visual Studio 2015, 2017 or 2019 required
-echo        Please see https://github.com/dotnet/machinelearning/tree/master/Documentation for build instructions.
+:: Can't find VS 2015, 2017, 2019, 2022, or 2026
+echo Error: Visual Studio 2015, 2017, 2019, 2022, or 2026 required
+echo        Please see https://github.com/dotnet/machinelearning/tree/main/docs for build instructions.
 exit /b 1
+
+:VS2026
+:: Setup vars for VS2026
+set __PlatformToolset=v145
+set __VSVersion=18 2026
+if NOT "%__BuildArch%" == "arm64" (
+    :: Set the environment for the native build
+    call "%VS180COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
+)
+goto :SetupDirs
 
 :VS2022
 :: Setup vars for VS2022
@@ -66,7 +78,7 @@ set __PlatformToolset=v143
 set __VSVersion=17 2022
 if NOT "%__BuildArch%" == "arm64" (
     :: Set the environment for the native build
-    call "%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
+    call "%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 )
 goto :SetupDirs
 

@@ -303,6 +303,9 @@ namespace TorchSharp
                 ScalarType.ComplexFloat32 => 8,
                 ScalarType.ComplexFloat64 => 16,
                 ScalarType.Bool => 1,
+                ScalarType.QInt8 => 1,
+                ScalarType.QUInt8 => 1,
+                ScalarType.QInt32 => 4,
                 ScalarType.BFloat16 => 2,
                 _ => throw new NotImplementedException()
             };
@@ -362,6 +365,23 @@ namespace TorchSharp
             switch (type) {
             case ScalarType.ComplexFloat32:
             case ScalarType.ComplexFloat64:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether a given element type is quantized.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns></returns>
+        internal static bool IsQuantized(this ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.QInt8:
+            case ScalarType.QUInt8:
+            case ScalarType.QInt32:
                 return true;
             default:
                 return false;
@@ -558,6 +578,8 @@ namespace TorchSharp
                     requires_grad: requires_grad),
                 true when typeof(T) == typeof(bool) => tensor((array as bool[])!, dimensions,
                     requires_grad: requires_grad),
+                true when typeof(T) == typeof(BFloat16) => tensor((array as BFloat16[])!, dimensions,
+                    requires_grad: requires_grad),
                 _ => throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.")
             };
         }
@@ -572,8 +594,9 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor ToTensor<T>(this T scalar, Device? device = null, bool requires_grad = false) where T : struct
         {
-            if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
-                throw new ArgumentException(nameof(requires_grad), "Only floating point types support gradients.");
+            if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)
+                && typeof(T) != typeof(BFloat16)) {
+                throw new ArgumentException("Only floating point types support gradients.", nameof(requires_grad));
             }
 
             if (typeof(T) == typeof(BFloat16)) {
@@ -593,6 +616,8 @@ namespace TorchSharp
                 return tensor((float)(object)scalar, float32, device, requires_grad);
             if (typeof(T) == typeof(double))
                 return tensor((double)(object)scalar, float64, device, requires_grad);
+            if (typeof(T) == typeof(BFloat16))
+                return tensor((BFloat16)(object)scalar, bfloat16, device, requires_grad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
@@ -615,6 +640,12 @@ namespace TorchSharp
         /// <param name="value">The input tensor</param>
         public static Half ToHalf(this Tensor value) => value.ToScalar().ToHalf();
 #endif
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a BFloat16 value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
+        public static BFloat16 ToBFloat16(this Tensor value) => value.ToScalar().ToBFloat16();
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.

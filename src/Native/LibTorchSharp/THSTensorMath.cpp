@@ -329,6 +329,12 @@ Tensor THSTensor_deg2rad(const Tensor tensor)
 {
     CATCH_TENSOR(torch::deg2rad(*tensor));
 }
+
+void THSTensor_deg2rad_(const Tensor tensor)
+{
+    CATCH(torch::deg2rad_(*tensor);)
+}
+
 Tensor THSTensor_div(const Tensor left, const Tensor right, const char* rounding_mode)
 {
     CATCH_TENSOR(rounding_mode == nullptr ? left->div(*right) : left->div(*right, rounding_mode));
@@ -394,6 +400,11 @@ Tensor THSTensor_exp2(const Tensor tensor)
     CATCH_TENSOR(tensor->exp2());
 }
 
+void THSTensor_exp2_(const Tensor tensor)
+{
+    CATCH(tensor->exp2_();)
+}
+
 void THSTensor_exp_(const Tensor tensor)
 {
     CATCH(tensor->exp_();)
@@ -442,6 +453,11 @@ void THSTensor_erfinv_(const Tensor tensor)
 Tensor THSTensor_float_power(const Tensor input, const Tensor exponent)
 {
     CATCH_TENSOR(input->float_power(*exponent));
+}
+
+void THSTensor_float_power_(const Tensor input, const Tensor exponent)
+{
+    CATCH(input->float_power_(*exponent);)
 }
 
 Tensor THSTensor_floor(const Tensor tensor)
@@ -715,9 +731,9 @@ Tensor THSTensor_logit(const Tensor tensor, const double* eps)
     CATCH_TENSOR((eps == nullptr) ? tensor->logit() : tensor->logit(*eps));
 }
 
-Tensor THSTensor_logit_(const Tensor tensor, const double* eps)
+void THSTensor_logit_(const Tensor tensor, const double* eps)
 {
-    CATCH_TENSOR((eps == nullptr) ? tensor->logit_() : tensor->logit_(*eps));
+    CATCH((eps == nullptr) ? tensor->logit_() : tensor->logit_(*eps);)
 }
 
 Tensor THSTensor_lt(const Tensor left, const Tensor right)
@@ -848,6 +864,11 @@ void THSTensor_pow_scalar_(const Tensor tensor, const Scalar exponent)
 Tensor THSTensor_rad2deg(const Tensor tensor)
 {
     CATCH_TENSOR(torch::rad2deg(*tensor));
+}
+
+void THSTensor_rad2deg_(const Tensor tensor)
+{
+    CATCH(torch::rad2deg_(*tensor);)
 }
 
 Tensor THSTensor_reciprocal(const Tensor tensor)

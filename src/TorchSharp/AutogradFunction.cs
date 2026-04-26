@@ -148,7 +148,7 @@ namespace TorchSharp
                 internal void SetNextEdges(List<Tensor> inputVars, bool isExecutable)
                 {
                     using var l = new PinnedArray<IntPtr>();
-                    THSAutograd_CSharpNode_setNextEdges(handle, l.CreateArrayWithSize(inputVars.Select(v => v.Handle).ToArray()), isExecutable);
+                    THSAutograd_CSharpNode_setNextEdges(handle, l.CreateArrayWithSize(inputVars.ToHandleArray()), isExecutable);
                     CheckForErrors();
                 }
 
@@ -166,10 +166,10 @@ namespace TorchSharp
                     using var outputArr = new PinnedArray<IntPtr>();
                     using var resultsArr = new PinnedArray<IntPtr>();
 
-                    var varsPtr = varsArr.CreateArrayWithSize(inputVars.Select(v => v.Handle).ToArray());
-                    var diffsPtr = diffArr.CreateArrayWithSize(_context.NonDifferentiableTensors.Select(v => v.Handle).ToArray());
-                    var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.Select(v => v.Handle).ToArray());
-                    var outputPtr = outputArr.CreateArrayWithSize(outputs.Select(v => v.Handle).ToArray());
+                    var varsPtr = varsArr.CreateArrayWithSize(inputVars.ToHandleArray());
+                    var diffsPtr = diffArr.CreateArrayWithSize(_context.NonDifferentiableTensors.ToHandleArray());
+                    var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.ToHandleArray());
+                    var outputPtr = outputArr.CreateArrayWithSize(outputs.ToHandleArray());
 
                     THSAutograd_Function_wrapOutputs(varsPtr, diffsPtr, dirtyPtr, outputPtr, isExecutable ? handle : new(), resultsArr.CreateArray);
                     CheckForErrors();

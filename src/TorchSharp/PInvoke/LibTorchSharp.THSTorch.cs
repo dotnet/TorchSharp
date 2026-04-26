@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Runtime.InteropServices;
@@ -62,7 +62,10 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern float THSTorch_scalar_to_float32(IntPtr handle);
 
-//#if NET6_0_OR_GREATER
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_scalar_to_bfloat16(IntPtr value, out ushort res);
+
+#if NET6_0_OR_GREATER
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_scalar_to_float16(IntPtr value, out Half res);
 //#endif
@@ -88,10 +91,10 @@ namespace TorchSharp.PInvoke
         internal static extern long THSTorch_scalar_to_int64(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSTorch_scalar_to_complex32(IntPtr handle, AllocatePinnedArray allocator);
+        internal static extern void THSTorch_scalar_to_complex32(IntPtr handle, out float real, out float imaginary);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSTorch_scalar_to_complex64(IntPtr handle, AllocatePinnedArray allocator);
+        internal static extern void THSTorch_scalar_to_complex64(IntPtr handle, out double real, out double imaginary);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_libtorch_version();

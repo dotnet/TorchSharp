@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,9 +54,8 @@ namespace TorchSharp
                     /// <returns>The padded tensor</returns>
                     public static torch.Tensor pad_sequence(IEnumerable<torch.Tensor> sequences, bool batch_first = false, double padding_value = 0.0)
                     {
-                        var sequences_arg = sequences.Select(p => p.Handle).ToArray();
+                        var sequences_arg = sequences.ToHandleArray();
                         return ReturnCheckForErrors(THSNN_pad_sequence(sequences_arg, sequences_arg.Length, batch_first, padding_value));
-                        
                     }
 
                     /// <summary>
@@ -67,7 +66,7 @@ namespace TorchSharp
                     /// <returns>The packed batch of variable length sequences</returns>
                     public static PackedSequence pack_sequence(IEnumerable<torch.Tensor> sequences, bool enforce_sorted = true)
                     {
-                        var sequences_arg = sequences.Select(p => p.Handle).ToArray();
+                        var sequences_arg = sequences.ToHandleArray();
                         var res = THSNN_pack_sequence(sequences_arg, sequences_arg.Length, enforce_sorted);
                         if (res.IsInvalid) { torch.CheckForErrors(); }
                         return new PackedSequence(res);

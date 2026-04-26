@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -44,9 +44,41 @@ namespace TorchSharp
             }
 
             using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
             return ReturnCheckForErrors(THSTensor_cat(tensorsRef, parray.Array.Length, dim));
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.cat
+        /// <summary>
+        /// Concatenates the given sequence of tensors in the given dimension.
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor cat(Tensor[] tensors, long dim = 0) => torch.cat((ReadOnlySpan<Tensor>)tensors, dim);
+
+        // https://pytorch.org/docs/stable/generated/torch.cat
+        /// <summary>
+        /// Concatenates the given sequence of tensors in the given dimension.
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor cat(ReadOnlySpan<Tensor> tensors, long dim = 0)
+        {
+            switch (tensors.Length)
+            {
+                case <=0: throw new ArgumentException(nameof(tensors));
+                case 1: return tensors[0].alias();
+            }
+
+            using var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
+
+            var res = THSTensor_cat(tensorsRef, parray.Array.Length, dim);
+            if (res == IntPtr.Zero) CheckForErrors();
+            return new Tensor(res);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.concat
@@ -57,6 +89,24 @@ namespace TorchSharp
         /// <param name="dim">The dimension over which the tensors are concatenated</param>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor concat(IList<Tensor> tensors, long dim = 0) => torch.cat(tensors, dim);
+
+        // https://pytorch.org/docs/stable/generated/torch.concat
+        /// <summary>
+        /// Alias of torch.cat()
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor concat(Tensor[] tensors, long dim = 0) => torch.cat(tensors, dim);
+
+        // https://pytorch.org/docs/stable/generated/torch.concat
+        /// <summary>
+        /// Alias of torch.cat()
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor concat(ReadOnlySpan<Tensor> tensors, long dim = 0) => torch.cat(tensors, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.conj
         /// <summary>
@@ -97,41 +147,45 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence depthwise (along third axis).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(params Tensor[] tensors)
-            => dstack((IEnumerable<Tensor>)tensors);
+            => dstack(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.dstack
         /// <summary>
         /// Stack tensors in sequence depthwise (along third axis).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(IList<Tensor> tensors)
+            => dstack(tensors.ToHandleArray());
+                var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.dstack
+        /// <summary>
+        /// Stack tensors in sequence depthwise (along third axis).
+        /// </summary>
+        /// <param name="tensors">A sequence of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
+        /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
+        public static Tensor dstack(IEnumerable<Tensor> tensors)
+            => dstack(tensors.ToHandleArray());
+
+        static Tensor dstack(IntPtr[] tensors)
         {
             using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
+                IntPtr tensorsRef = parray.CreateArray(tensors);
                 return ReturnCheckForErrors(THSTensor_dstack(tensorsRef, parray.Array.Length));
             }
         }
 
-        /// <summary>
-        /// Stack tensors in sequence depthwise (along third axis).
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
-        /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
-        public static Tensor dstack(IEnumerable<Tensor> tensors)
-        {
-            using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-            return ReturnCheckForErrors(THSTensor_dstack(tensorsRef, parray.Array.Length));
-        }
-        
         // https://pytorch.org/docs/stable/generated/torch.gather
         /// <summary>
         /// Gathers values along an axis specified by dim.
@@ -183,8 +237,8 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(IList<Tensor> tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
@@ -197,23 +251,33 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(params Tensor[] tensors)
-        {
-            return hstack((IEnumerable<Tensor>)tensors);
-        }
+            => hstack(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.hstack
         /// <summary>
         /// Stack tensors in sequence horizontally (column wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A sequence of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
         public static Tensor hstack(IEnumerable<Tensor> tensors)
+            => hstack(tensors.ToHandleArray());
+
+        // https://pytorch.org/docs/stable/generated/torch.hstack
+        /// <summary>
+        /// Stack tensors in sequence horizontally (column wise).
+        /// </summary>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
+        public static Tensor hstack(ReadOnlySpan<Tensor> tensors)
+            => hstack(tensors.ToHandleArray());
+
+        static Tensor hstack(IntPtr[] tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            IntPtr tensorsRef = parray.CreateArray(tensors);
 
             return ReturnCheckForErrors(THSTensor_hstack(tensorsRef, parray.Array.Length));
         }
@@ -464,7 +528,7 @@ namespace TorchSharp
         public static Tensor stack(IEnumerable<Tensor> tensors, long dim = 0)
         {
             using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
             return ReturnCheckForErrors(THSTensor_stack(tensorsRef, parray.Array.Length, dim));
         }
@@ -545,12 +609,33 @@ namespace TorchSharp
         /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
         public static Tensor vstack(IList<Tensor> tensors)
+            => vstack(tensors.ToHandleArray());
+
+        // https://pytorch.org/docs/stable/generated/torch.vstack
+        /// <summary>
+        /// Stack tensors in sequence vertically (row wise).
+        /// </summary>
+        /// <param name="tensors">An array of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
+        public static Tensor vstack(Tensor[] tensors)
+            => vstack(tensors.ToHandleArray());
+
+        // https://pytorch.org/docs/stable/generated/torch.vstack
+        /// <summary>
+        /// Stack tensors in sequence vertically (row wise).
+        /// </summary>
+        /// <param name="tensors">A span of input tensors.</param>
+        /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
+        public static Tensor vstack(ReadOnlySpan<Tensor> tensors)
+            => vstack(tensors.ToHandleArray());
+
+        static Tensor vstack(IntPtr[] tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            IntPtr tensorsRef = parray.CreateArray(tensors);
 
             return ReturnCheckForErrors(THSTensor_vstack(tensorsRef, parray.Array.Length));
         }

@@ -153,8 +153,30 @@ namespace TorchSharp
             /// <summary>
             /// A pointer to the raw data in memory.
             /// </summary>
-            /// <returns></returns>
-            protected IntPtr data_ptr()
+            /// <remarks>
+            /// <para>
+            /// The returned pointer refers to the underlying storage buffer of the associated tensor. Depending on the
+            /// device of the tensor, this pointer may reference CPU memory or device-specific memory (for example, CUDA
+            /// device memory). Callers must not assume that the pointer is always CPU-accessible.
+            /// </para>
+            /// <para>
+            /// The lifetime of the pointer is strictly tied to the lifetime and layout of the owning tensor/storage. The
+            /// pointer becomes invalid if the underlying tensor or storage is moved, reallocated, resized in a way that
+            /// changes the underlying buffer, or disposed. Code that dereferences the pointer must ensure that the
+            /// associated tensor/storage instance remains alive and is not modified or disposed for the entire duration
+            /// of pointer use (for example, by keeping a strong reference and/or using <see cref="GC.KeepAlive(object)"/>).
+            /// </para>
+            /// <para>
+            /// This API is intended for advanced interop and unsafe scenarios. The pointer must not be cached and reused
+            /// across operations that may cause the storage to be reallocated or moved, and callers are responsible for
+            /// any necessary synchronization with device operations before reading from or writing to the memory.
+            /// </para>
+            /// </remarks>
+            /// <returns>
+            /// An <see cref="IntPtr"/> that points to the first element in the storage buffer. The pointer is only valid
+            /// while the underlying tensor/storage remains alive and its storage is not reallocated or disposed.
+            /// </returns>
+            public IntPtr data_ptr()
             {
                 if (_tensor_data_ptr != IntPtr.Zero)
                     return _tensor_data_ptr;

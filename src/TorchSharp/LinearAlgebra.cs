@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -396,7 +396,7 @@ namespace TorchSharp
                 }
 
                 using (var parray = new PinnedArray<IntPtr>()) {
-                    IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                    IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                     return ReturnCheckForErrorsAutocast(THSLinalg_multi_dot(tensorsRef, parray.Array.Length));
                 }
             }

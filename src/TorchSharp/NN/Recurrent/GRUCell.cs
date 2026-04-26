@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using TorchSharp.Amp;
 using static TorchSharp.torch;
@@ -27,6 +27,7 @@ namespace TorchSharp
                 return ReturnCheckForErrors(THSNN_GRUCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero));
             }
 
+            [DisallowNull]
             public Parameter? bias_ih {
                 get {
                     var res = THSNN_GRUCell_bias_ih(handle);
@@ -34,14 +35,13 @@ namespace TorchSharp
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("bias_ih cannot be set to 'null'");
-                    THSNN_GRUCell_set_bias_ih(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    THSNN_GRUCell_set_bias_ih(handle, value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias_ih", value);
                 }
             }
 
+            [DisallowNull]
             public Parameter? bias_hh {
                 get {
                     var res = THSNN_GRUCell_bias_hh(handle);
@@ -49,14 +49,13 @@ namespace TorchSharp
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("bias_hh cannot be set to 'null'");
-                    THSNN_GRUCell_set_bias_hh(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    THSNN_GRUCell_set_bias_hh(handle, value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias_hh", value);
                 }
             }
 
+            [DisallowNull]
             public Parameter? weight_ih {
                 get {
                     var res = THSNN_GRUCell_weight_ih(handle);
@@ -64,14 +63,13 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight_ih cannot be set to 'null'");
-                    THSNN_GRUCell_set_weight_ih(handle, value is null ? IntPtr.Zero : value.Handle);
+                    THSNN_GRUCell_set_weight_ih(handle, value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_ih", value);
                 }
             }
 
+            [DisallowNull]
             public Parameter? weight_hh {
                 get {
                     var res = THSNN_GRUCell_weight_hh(handle);
@@ -79,9 +77,7 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight_hh cannot be set to 'null'");
-                    THSNN_GRUCell_set_weight_hh(handle, value is null ? IntPtr.Zero : value.Handle);
+                    THSNN_GRUCell_set_weight_hh(handle, value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_hh", value);
                 }

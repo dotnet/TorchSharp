@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -34,10 +34,26 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
-                    THSNN_PReLU_set_weight(handle, value!.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
+                    if (value.Handle != _weight?.Handle) {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                    }
+                }
+            }
+
+            public long num_parameters {
+                get; private set;
+            }
+
+            public double init {
+                get; private set;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    _weight?.Dispose();
                 }
             }
         }
@@ -59,8 +75,8 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             public static PReLU PReLU(long num_parameters, double init = 0.25, Device? device = null, ScalarType? dtype = null)
             {
-                var handle = THSNN_PReLU_ctor(num_parameters, init, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                /*var handle = THSNN_PReLU_ctor(num_parameters, init, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }*/
                 return new PReLU(handle, boxedHandle).MoveModule<PReLU>(device, dtype);
             }
 

@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSAutograd.h"
 
 #include "torch/torch.h"
@@ -173,6 +173,12 @@ void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, T
                     "Please open a feature request on GitHub if you need this.");
             };
 
+    auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
+        return x.view_as(x);
+        };
+
+    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, false);
+    auto sz = res.size();
         auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
             return x.view_as(x);
             };

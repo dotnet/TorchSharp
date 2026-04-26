@@ -143,6 +143,19 @@ namespace TorchSharp
                     }
                 }
 
+                public override void zero_grad(bool set_to_none = true)
+                {
+                    THSJIT_Module_zero_grad(handle, set_to_none);
+                    CheckForErrors();
+
+                    if (set_to_none) {
+                        foreach (var p in parameters()) {
+                            using var grad = p.grad;
+                            if (grad is not null) p.grad = null;
+                        }
+                    }
+                }
+
                 protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
@@ -234,13 +247,6 @@ namespace TorchSharp
                 public Type GetInputType(int index)
                 {
                     var type = new Type(THSJIT_Module_getInputType(handle, index), Type.TypeKind.AnyType);
-
-                    return GetType(type);
-                }
-
-                public Type GetOutputType(int index)
-                {
-                    var type = new Type(THSJIT_getOutputType(handle, index), Type.TypeKind.AnyType);
 
                     return GetType(type);
                 }

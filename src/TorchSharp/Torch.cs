@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace TorchSharp
 #elif LIBTORCH_2_11_0_0
     const string libtorchPackageVersion = "2.11.0.0";
 #elif LIBTORCH_2_7_1_0
-        const string libtorchPackageVersion = "2.7.1.0";
+    const string libtorchPackageVersion = "2.7.1.0";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -62,8 +62,30 @@ namespace TorchSharp
         static bool nativeBackendCudaLoaded = false;
 
         public static string __version__ => libtorchPackageVersion;
-        public static string? libtorch_version {
-            get {
+        public static string NormalizeNuGetVersion(string versionString)
+        {
+            if (string.IsNullOrWhiteSpace(versionString))
+                throw new ArgumentException($"Invalid NuGet version: {versionString}. Version string is null, empty or only contains whitespaces");
+
+            string[] parts = versionString.Split('-', '+');
+            string[] versionParts = parts[0].Split('.');
+
+            if (versionParts.Length < 2 || versionParts.Length > 4 || !versionParts.All(v => int.TryParse(v, out _)))
+                throw new ArgumentException($"Invalid NuGet version: {versionString}. Please check: https://learn.microsoft.com/en-us/nuget/concepts/package-versioning");
+
+            string normalizedVersion = versionParts[0] + "." + versionParts[1];
+            if (versionParts.Length > 2) normalizedVersion += "." + versionParts[2];
+            if (versionParts.Length > 3 && int.Parse(versionParts[3]) != 0) normalizedVersion += "." + versionParts[3];
+
+            if (parts.Length > 1)
+                normalizedVersion += "-" + parts[1];
+
+            return normalizedVersion;
+        }
+        public static string? libtorch_version
+        {
+            get
+            {
                 return Marshal.PtrToStringAnsi(NativeMethods.THSTorch_libtorch_version());
             }
         }
@@ -136,6 +158,10 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cufft64_11", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cusparse64_12", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }
 
                     ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
@@ -182,14 +208,14 @@ namespace TorchSharp
 
                     if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
 
-                        var torchSharpVersion = Path.GetFileName(torchsharpHome); // really GetDirectoryName
-
+                        var torchSharpVersion = NormalizeNuGetVersion(Path.GetFileName(torchsharpHome));
+                        var normalizedLibtorchPackageVersion = NormalizeNuGetVersion(libtorchPackageVersion);
                         if (useCudaBackend) {
                             var consolidatedDir = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
 
                             trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cudaRootPackage}-* binaries to {consolidatedDir}...");
 
-                            var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", libtorchPackageVersion, consolidatedDir, trace);
+                            var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", normalizedLibtorchPackageVersion, consolidatedDir, trace);
                             if (cudaOk) {
                                 cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir, trace);
                                 if (cudaOk) {
@@ -207,7 +233,7 @@ namespace TorchSharp
 
                             trace.AppendLine($"    Trying dynamic load for .NET/F# Interactive by consolidating native {cpuRootPackage}-* binaries to {consolidatedDir}...");
 
-                            var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, libtorchPackageVersion, consolidatedDir, trace);
+                            var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, normalizedLibtorchPackageVersion, consolidatedDir, trace);
                             if (cpuOk) {
                                 cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir, trace);
                                 if (cpuOk) {
@@ -281,7 +307,8 @@ namespace TorchSharp
 
         public static bool TryInitializeDeviceType(DeviceType deviceType)
         {
-            if (deviceType == DeviceType.MPS && !isAppleSilicon) {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon)
+            {
                 return false;
             }
 
@@ -295,7 +322,8 @@ namespace TorchSharp
 
         public static void InitializeDeviceType(DeviceType deviceType)
         {
-            if (deviceType == DeviceType.MPS && !isAppleSilicon) {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon)
+            {
                 throw new InvalidOperationException($"Torch device type 'MPS' is not available on this platform.");
             }
 
@@ -379,7 +407,7 @@ namespace TorchSharp
                 public static double clip_grad_norm_(IEnumerable<Modules.Parameter> tensors, double max_norm, double norm_type = 2.0)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                         var value = THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
                         CheckForErrors();
                         return value;
@@ -395,7 +423,7 @@ namespace TorchSharp
                 public static void clip_grad_value_(IEnumerable<Modules.Parameter> tensors, double clip_value)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
                         THSTensor_clip_grad_value_(tensorsRef, parray.Array.Length, clip_value);
                         CheckForErrors();
                     }
@@ -409,7 +437,7 @@ namespace TorchSharp
                 public static Tensor parameters_to_vector(IEnumerable<Modules.Parameter> tensors)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
                         var res = THSTensor_parameters_to_vector(tensorsRef, parray.Array.Length);
                         if (res == IntPtr.Zero)
@@ -427,7 +455,7 @@ namespace TorchSharp
                 public static void vector_to_parameters(Tensor vec, IEnumerable<Modules.Parameter> tensors)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
                         THSTensor_vector_to_parameters(vec.Handle, tensorsRef, parray.Array.Length);
                         CheckForErrors();

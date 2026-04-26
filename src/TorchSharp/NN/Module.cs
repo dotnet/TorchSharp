@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -697,7 +697,6 @@ namespace TorchSharp
                 /// <returns>The tensor referenced by target</returns>
                 public virtual Tensor? get_buffer(string target)
                 {
-                    if (target is null) throw new ArgumentNullException("target");
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
                         return buffer.Item1;
                     }
@@ -1167,16 +1166,8 @@ namespace TorchSharp
                 internal T MoveModule<T>(Device? device, ScalarType? dtype) where T : Module
                 {
                     T module = (T)this;
-
-                    //https://github.com/dotnet/TorchSharp/issues/1438
-                    var d = torch.get_default_device();
-                    if (device == null || d != device) {
-                        device = d;
-                    }
-
-                    return device != null ?
-                       (dtype.HasValue ? (T)module._to(device, dtype.Value, false) : (T)module._to(device.type, device.index, false)) :
-                       (dtype.HasValue ? (T)module._to(dtype.Value, false) : module);
+                    var (targetDevice, targetDtype) = GetDefaultDeviceAndType(device, dtype);
+                    return (T)module._to(targetDevice, targetDtype, false);
                 }
 
                 protected void ClearModules() { _internal_submodules.clear(); }

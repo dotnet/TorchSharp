@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using TorchSharp.Amp;
 using static TorchSharp.torch;
@@ -23,32 +23,25 @@ namespace TorchSharp
             }
 
             public Parameter? bias {
-                get {
-                    var res = THSNN_Bilinear_bias(handle);
-                    if (res == IntPtr.Zero) { CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
-                    THSNN_Bilinear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
-                    CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+                get => _bias;
+                set
+                {
+                    _bias?.Dispose();
+                    _bias = value?.DetachFromDisposeScope() as Parameter;
+                    ConditionallyRegisterParameter(BiasComponentName, _bias);
                 }
             }
 
             public Parameter? weight {
-                get {
-                    var res = THSNN_Bilinear_weight(handle);
-                    if (res == IntPtr.Zero) { CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
-                set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
-                    THSNN_Bilinear_set_weight(handle, value?.Handle ?? IntPtr.Zero);
-                    CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
+                get => _weight!;
+                set
+                {
+                    if (value.Handle != _weight?.Handle)
+                    {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(WeightComponentName, _weight);
+                    }
                 }
             }
         }
