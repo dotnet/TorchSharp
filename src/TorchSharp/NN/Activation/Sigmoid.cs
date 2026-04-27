@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.sigmoid(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
     public static partial class torch
@@ -70,7 +70,7 @@ namespace TorchSharp
                 /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
                 public static Tensor sigmoid(Tensor x)
                 {
-                    return sigmoid(x,false);
+                    return sigmoid(x, false);
                 }
             }
         }

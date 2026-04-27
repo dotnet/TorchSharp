@@ -29,7 +29,7 @@ namespace TorchSharp
                 return typeof(Tanh).Name;
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 

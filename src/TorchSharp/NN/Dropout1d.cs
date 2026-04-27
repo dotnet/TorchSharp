@@ -28,7 +28,7 @@ namespace TorchSharp
             }
 
             public bool inplace { get; set; }
-            public double p { get; set;}
+            public double p { get; set; }
         }
     }
 

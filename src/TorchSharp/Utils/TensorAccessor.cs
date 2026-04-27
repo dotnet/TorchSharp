@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
@@ -38,18 +40,119 @@ namespace TorchSharp.Utils
             _tensor = tensor; // Keep the tensor alive now that everything is alright.
         }
 
-        public long Count => (_tensor is not null ? _tensor.numel() : 0);
+        public long Count => _tensor?.numel() ?? 0;
 
         public bool IsReadOnly => false;
 
+        /// <summary>
+        /// Be carefully using this because the max array that NET is allowed to handle is 2Gb 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public T[] ToArray()
         {
             if (_tensor.ndim < 2)
                 return (T[])ToNDArray();
+            long Cnt = Count;
+            if (_tensor.is_contiguous()) {
+                if (Cnt == 0)
+                    throw new Exception("Invalid");
+                unsafe {
+                    return new Span<T>(_tensor_data_ptr.ToPointer(), Convert.ToInt32(Cnt)).ToArray();
+                }
+            }
+            unsafe {
+                var res = new T[Cnt];
+                SetValueTensor(ref res, _tensor.shape, _tensor.stride(), Cnt);
+                return res;
+            }
+        }
 
-            var result = new T[Count];
-            CopyTo(result);
-            return result;
+        public T[] ToArray(long from_index, long count = 0)
+        {
+            long Cnt = this.Count;
+            bool countDefined = count != 0;
+            if (countDefined) {
+                if (from_index + count >= Cnt) {
+                    throw new Exception("Out-bound");
+                }
+            } else {
+                count += from_index;
+                if (count > Cnt)
+                    Cnt = count;
+            }
+            var res = new T[count];
+            SetValueTensor(ref res, _tensor.shape, _tensor.stride(), countDefined ? from_index + (Cnt - count) : Cnt, from_index);
+            return res;
+        }
+        private long numel(long[] dims)
+        {
+            if (dims.Length == 0)
+                return 0;
+            long res = 1;
+            foreach (var d in dims)
+                res *= d;
+            return res;
+        }
+
+        /// <summary>
+        /// This is ref of raw data ptr tensor is very fast
+        /// Be carefully the max length of Span is 2^(32-1)
+        /// Can call this method if shape dimensions is greather or equal than 2
+        /// </summary>
+        /// <param name="batch_idx"></param>
+        /// <returns></returns>
+        public Span<T> ToSpan(int batch_idx)
+        {
+            unsafe {
+                var sh = _tensor.shape;
+                if (sh.Length <= 1)
+                    return null;
+                void* p = _tensor.GetRawData();
+                sh = sh.Skip(1).ToArray();
+
+                long len = numel(sh);
+                int ilen = Convert.ToInt32(len);
+                if(batch_idx > 0)
+                    p = Unsafe.Add<int>(p, batch_idx*ilen); //offset pointer
+                return new Span<T>(p, ilen);
+            }
+        }
+
+        /// <summary>
+        /// Be carefully using this because the max array that NET is allowed to handle is 2Gb 
+        /// </summary>
+        /// <returns></returns>
+        public Span<T> ToSpan()
+        {
+            unsafe {
+                return new Span<T>(_tensor.GetRawData(), Convert.ToInt32(_tensor.numel()));
+            }
+        }
+
+        private unsafe T* GetAndValidatePTR()
+        {
+            T* ptr = (T*)_tensor_data_ptr;
+            if (ptr == null)
+                throw new Exception($"Ptr of {nameof(_tensor_data_ptr)} is null");
+            return ptr;
+        }
+
+        private unsafe void SetValueTensor(ref T[] res, long[] shape, long[] strides, long count, long idx = 0, bool onThis = false)
+        {
+            T* ptr = GetAndValidatePTR();
+            long idxforThis = 0;
+            long cnt = (idx == 0 || (res.Length + idx > count) ? count : res.Length + idx);
+            for (long index = idx; index < cnt; index++) {
+                long ptrIndex = TranslateIndex(index, shape, strides);
+                if (onThis) {
+                    if (res.Length <= idxforThis)
+                        break;
+                    ptr[ptrIndex] = res[idxforThis++];
+                    continue;
+                }
+                res[idx != 0 ? index - idx : index] = ptr[ptrIndex];
+            }
         }
 
         /// <summary>
@@ -58,132 +161,40 @@ namespace TorchSharp.Utils
         /// <returns>An array object, which should be cast to the concrete array type.</returns>
         public Array ToNDArray()
         {
-            var shape = _tensor.shape;
-            var strides = _tensor.stride();
-            switch (_tensor.ndim) {
-            default:
-                return ToNDArray(shape, strides);
-            case 0:
-                unsafe {
+            long[] shape = _tensor.shape;
+            long[] strides = _tensor.stride();
+            long ndim = _tensor.ndim;
+            unsafe {
+                T* ptr = GetAndValidatePTR();
+                if (ndim == 0) {
                     var result = new T[1];
-                    T* ptr = (T*)_tensor_data_ptr;
                     result[0] = ptr[0];
                     return result;
                 }
-            case 1:
-                unsafe {
-                    var result = new T[shape[0]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        result[i0] = ptr[off0];
-                    }
-                    return result;
+                Array array = Array.CreateInstance(typeof(T), shape);
+                long Cnt = Count;
+                long[] ndIndices = new long[ndim];
+                for (long index = 0; index < Cnt; index++) {
+                    long ptrIndex = TranslateIndex(index, shape, strides, ndIndices);
+                    array.SetValue(ptr[ptrIndex], ndIndices);
                 }
-            case 2:
-                unsafe {
-                    var result = new T[shape[0], shape[1]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            result[i0, i1] = ptr[off1];
-                        }
-                    }
-                    return result;
-                }
-            case 3:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                result[i0, i1, i2] = ptr[off2];
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 4:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
-                                    result[i0, i1, i2, i3] = ptr[off3];
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 5:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
-                                    for (long i4 = 0, off4 = off3; i4 < shape[4]; i4++, off4 += strides[4]) {
-                                        result[i0, i1, i2, i3, i4] = ptr[off4];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 6:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4], shape[5]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
-                                    for (long i4 = 0, off4 = off3; i4 < shape[4]; i4++, off4 += strides[4]) {
-                                        for (long i5 = 0, off5 = off4; i5 < shape[5]; i5++, off5 += strides[5]) {
-                                            result[i0, i1, i2, i3, i4, i5] = ptr[off5];
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
+                return array;
             }
         }
 
-        private Array ToNDArray(long[] shape, long[] strides)
+        private long TranslateIndex(long index, long[] shape, long[] strides, long[] ndindices = null)
         {
-            Array array = Array.CreateInstance(typeof(T), shape);
-            long[] indexes = new long[_tensor.ndim];
-            long[] off = new long[_tensor.ndim];
-
-            while (true) {
-                unsafe {
-                    T* ptr = (T*)_tensor_data_ptr;
-                    array.SetValue(ptr[off[array.Rank - 1]], indexes);
-                }
-
-                for (int i = array.Rank - 1; i >= 0; i--) {
-                    if (indexes[i] < shape[i] - 1) {
-                        indexes[i]++;
-                        off[i] += strides[i];
-                        for (int j = i; j < array.Rank - 1; j++)
-                            off[j + 1] = off[j];
-                        break;
-                    } else {
-                        if (i == 0) {
-                            return array;
-                        }
-                        indexes[i] = 0;
-                    }
-                }
+            long offset = index;
+            long ptrIndex = 0;
+            for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+            {
+                long i = offset % shape[d]; // Current index in dimension d
+                ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                if (ndindices != null)
+                    ndindices[d] = i;
+                offset /= shape[d]; // Move to the next dimension
             }
+            return ptrIndex;
         }
 
         /// <summary>
@@ -231,43 +242,109 @@ namespace TorchSharp.Utils
             if (index >= Count) throw new IndexOutOfRangeException();
         }
 
+        private void CopyContiguous(T[] array, int index = 0, int count = 0)
+        {
+            if (!_tensor.is_contiguous())
+                throw new Exception("The tensor is not contiguous");
+            var Cnt = Count;
+            if (count > Cnt || count == 0)
+                count = (int)Cnt;
+            if (Cnt > array.Length)
+                count = array.Length + index;
+            //NOTE: The return of every check is for prevent consume more cycle CPU checking the next when one is acomplished
+            //I Mean, if array is char[] will copy and return. Not need check long[] or float[] because is char[]
+            if (array is byte[] ba) {
+                Marshal.Copy(_tensor_data_ptr, ba, index, count);
+                return;
+            }
+            if (array is short[] sa) {
+                Marshal.Copy(_tensor_data_ptr, sa, index, count);
+                return;
+            }
+            if (array is char[] ca) {
+                Marshal.Copy(_tensor_data_ptr, ca, index, count);
+                return;
+            }
+            if (array is long[] la) {
+                Marshal.Copy(_tensor_data_ptr, la, index, count);
+                return;
+            }
+            if (array is float[] fa) {
+                Marshal.Copy(_tensor_data_ptr, fa, index, count);
+                return;
+            }
+            if (array is int[] ia) {
+                Marshal.Copy(_tensor_data_ptr, ia, index, count);
+                return;
+            }
+            if (array is double[] da) {
+                Marshal.Copy(_tensor_data_ptr, da, index, count);
+                return;
+            }
+            if (array is Half[] ha) {
+
+                //TODO: Test this
+#if NETSTANDARD2_0
+                Marshal.Copy(_tensor_data_ptr, ha.Select(HalfHelper.HalfToSingle).ToArray(), index, count);
+#else
+                Marshal.Copy(_tensor_data_ptr, ha.Select(x=> (float)x).ToArray(), index, count);
+                //throw new NotImplementedException();
+#endif
+                return;
+            }
+            if (array is BFloat16[] bfa) {
+                //TODO: Test this
+                Marshal.Copy(_tensor_data_ptr, bfa.Select(x=>x.ToSingle()).ToArray(), index, count);
+                return;
+            }
+        }
+
+        /*public float[] GetFloats()
+        {
+            //TODO: Get float from Storage.cpp. Adapt the code maybe have better performance than copy
+        }*/
+
         public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
-            int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
-                idx += 1;
+            if (_tensor.is_contiguous()) {
+                CopyContiguous(array, arrayIndex, array.Length);
+                return;
             }
+            ToArray().CopyTo(array, arrayIndex);
         }
 
         public void CopyTo(Span<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
-            int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { array[idx] = ((T*)_tensor_data_ptr)[offset]; }
-                idx += 1;
+            if (_tensor.is_contiguous()) {
+                ToArray().CopyTo(array);
+                return;
             }
+            ToArray().CopyTo(array);
         }
 
         public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
         {
-            int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
-                idx += 1;
-            }
+            SetValueTensor(ref array, _tensor.shape, _tensor.stride(), Count, arrayIndex, onThis: true);
         }
 
         public void CopyFrom(ReadOnlySpan<T> array, int arrayIndex = 0, long tensorIndex = 0)
         {
-            int idx = arrayIndex;
-            foreach (int offset in GetSubsequentIndices(tensorIndex)) {
-                if (idx >= array.Length) break;
-                unsafe { ((T*)_tensor_data_ptr)[offset] = array[idx]; }
-                idx += 1;
+            unsafe {
+                T* ptr = GetAndValidatePTR();
+                long count = Count;
+                var shape = _tensor.shape;
+                var strides = _tensor.stride();
+                for (long index = arrayIndex; index < count; index++) {
+                    long offset = index;
+                    long ptrIndex = 0;
+                    for (long d = shape.Length - 1; d >= 0; d--) // Traverse dimensions in reverse order
+                    {
+                        long i = offset % shape[d]; // Current index in dimension d
+                        ptrIndex += i * strides[d]; // Calculate ptrIndex using strides
+                        offset /= shape[d]; // Move to the next dimension
+                    }
+                    ptr[ptrIndex] = array[(int)index];
+                }
             }
         }
 
@@ -326,9 +403,13 @@ namespace TorchSharp.Utils
 
             unsafe {
                 var res = THSTensor_data(tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) {
+                    torch.CheckForErrors();
+                }
                 // NOTE: there is no safety here.
                 T* ptr = (T*)res;
+                if (ptr == null)
+                    return default(T);
                 return ptr[TranslateIndex(index, tensor)];
             }
         }
@@ -363,7 +444,6 @@ namespace TorchSharp.Utils
         {
             return !(left == right);
         }
-
 
         private IEnumerable<long> GetSubsequentIndices(long startingIndex)
         {

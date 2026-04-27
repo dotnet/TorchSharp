@@ -1,9 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
     <LangVersion>9.0</LangVersion>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks);netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net8.0</TargetFrameworks>
   </PropertyGroup>
 
@@ -17,7 +19,10 @@
 
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.4.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <PackageReference Condition="'$(TargetFrameworks)' == ''" Include="SixLabors.ImageSharp" Version="3.1.5" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworks)' != ''">
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.11" />
   </ItemGroup>
 
   <ItemGroup>

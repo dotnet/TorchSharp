@@ -49,7 +49,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="output_size">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d((long,long) output_size)
+            public static unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d((long, long) output_size)
             {
                 return new AdaptiveAvgPool2d(new[] { output_size.Item1, output_size.Item2 });
             }

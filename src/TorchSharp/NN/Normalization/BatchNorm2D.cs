@@ -15,12 +15,12 @@ namespace TorchSharp
         /// </summary>
         public sealed class BatchNorm2d : BatchNorm
         {
-            internal BatchNorm2d(long num_features, 
-                            double eps, 
-                            double momentum, 
-                            bool affine, 
-                            bool track_running_stats, 
-                            Device? device, 
+            internal BatchNorm2d(long num_features,
+                            double eps,
+                            double momentum,
+                            bool affine,
+                            bool track_running_stats,
+                            Device? device,
                             ScalarType? dtype) : base(num_features, eps, momentum, affine, track_running_stats, device, dtype, nameof(BatchNorm1d))
             {
             }

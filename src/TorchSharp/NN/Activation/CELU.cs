@@ -25,8 +25,8 @@ namespace TorchSharp
                 return torch.nn.functional.celu(tensor, alpha, inplace);
             }
 
-            public double alpha {get; set;}
-            public bool inplace {get; set; }
+            public double alpha { get; set; }
+            public bool inplace { get; set; }
         }
     }
 

@@ -21,7 +21,7 @@ namespace TorchSharp
             /// https://dl.acm.org/citation.cfm?id=131098
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
@@ -39,7 +39,7 @@ namespace TorchSharp
             /// https://dl.acm.org/citation.cfm?id=131098
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
@@ -57,7 +57,7 @@ namespace TorchSharp
             /// https://dl.acm.org/citation.cfm?id=131098
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
@@ -80,7 +80,7 @@ namespace TorchSharp
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
@@ -97,7 +97,7 @@ namespace TorchSharp
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>

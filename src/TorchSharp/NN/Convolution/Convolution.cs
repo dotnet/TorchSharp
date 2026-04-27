@@ -154,7 +154,8 @@ namespace TorchSharp
             }
 
             // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, device, _weight, out Parameter? w)) {
                     weight = w!;
                 }
@@ -176,7 +177,8 @@ namespace TorchSharp
                 return this;
             }
 
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out Parameter? w)) {
                     weight = w!;
                 }
@@ -188,7 +190,8 @@ namespace TorchSharp
 
             // Included to avoid API compat issues.
             [Obsolete("Deprecated API", true)]
-            protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle) {
+            protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
+            {
                 throw new NotImplementedException("Deprecated API.");
             }
 

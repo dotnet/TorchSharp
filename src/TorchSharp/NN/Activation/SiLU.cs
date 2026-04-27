@@ -29,7 +29,7 @@ namespace TorchSharp
                 return typeof(SiLU).Name;
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
     public static partial class torch

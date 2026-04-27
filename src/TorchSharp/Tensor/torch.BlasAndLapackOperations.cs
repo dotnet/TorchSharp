@@ -143,7 +143,8 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.cholesky_solve
         /// <summary>
-        /// Solves a linear system of equations with a positive semidefinite matrix to be inverted given its Cholesky factor matrix u.
+        /// Solves a
+        /// system of equations with a positive semidefinite matrix to be inverted given its Cholesky factor matrix u.
         /// </summary>
         /// <returns></returns>
         public static Tensor cholesky_solve(Tensor input, Tensor input2, bool upper = false)
@@ -218,10 +219,12 @@ namespace TorchSharp
         /// <returns></returns>
         public static (Tensor Solution, Tensor QR) lstsq(Tensor B, Tensor A)
         {
-            var solution = THSTorch_lstsq(B.Handle, A.Handle, out var qr);
+            //TODO: Test if this worked
+            return ReturnCheckForErrors(THSTorch_lstsq(B.Handle, A.Handle, out var qr), qr);
+            /*var solution = THSTorch_lstsq(B.Handle, A.Handle, out var qr);
             if (solution == IntPtr.Zero || qr == IntPtr.Zero)
                 CheckForErrors();
-            return (new Tensor(solution), new Tensor(qr));
+            return (new Tensor(solution), new Tensor(qr));*/
         }
 
         // https://pytorch.org/docs/stable/generated/torch.lu
@@ -252,10 +255,7 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor lu_solve(Tensor b, Tensor LU_data, Tensor LU_pivots)
         {
-            var solution = THSTensor_lu_solve(b.Handle, LU_data.Handle, LU_pivots.Handle);
-            if (solution == IntPtr.Zero)
-                CheckForErrors();
-            return new Tensor(solution);
+            return ReturnCheckForErrors(THSTensor_lu_solve(b.Handle, LU_data.Handle, LU_pivots.Handle));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.lu_unpack
@@ -317,6 +317,7 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         public static Tensor mm(Tensor input, Tensor target) => input.mm(target);
+        
 
         // https://pytorch.org/docs/stable/generated/torch.mv
         /// <summary>

@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.glu(tensor, dim);
             }
 
-            public long dim {get; set;}
+            public long dim { get; set; }
         }
     }
 

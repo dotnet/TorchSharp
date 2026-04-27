@@ -96,9 +96,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors);
 
-            var res = THSTensor_column_stack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_column_stack(tensorsRef, parray.Array.Length));
         }
 
         /// <summary>
@@ -127,9 +125,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors);
 
-            var res = THSTensor_row_stack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_row_stack(tensorsRef, parray.Array.Length));
         }
 
         /// <summary>
@@ -173,16 +169,12 @@ namespace TorchSharp
 
         public static Tensor _standard_gamma(Tensor input, Generator? generator = null)
         {
-            var res = THSTensor_standard_gamma_(input.Handle, generator is null ? IntPtr.Zero : generator.Handle);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_standard_gamma_(input.Handle, generator is null ? IntPtr.Zero : generator.Handle));
         }
 
         public static Tensor _sample_dirichlet(Tensor input, Generator? generator = null)
         {
-            var res = THSTensor_sample_dirichlet_(input.Handle, generator is null ? IntPtr.Zero : generator.Handle);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_sample_dirichlet_(input.Handle, generator is null ? IntPtr.Zero : generator.Handle));
         }
 
         /// <summary>

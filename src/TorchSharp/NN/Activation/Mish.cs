@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.mish(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 
@@ -67,7 +67,7 @@ namespace TorchSharp
                 /// A Self Regularized Non-Monotonic Neural Activation Function.
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
+                [Obsolete("Not using the PyTorch naming convention.", false)]
                 public static Tensor Mish(Tensor x) => mish(x, false);
             }
         }

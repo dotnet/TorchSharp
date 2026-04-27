@@ -17,7 +17,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                if (!ValidateShape(input, 1)) 
+                if (!ValidateShape(input, 1))
                     throw new ArgumentException($"Expected 2D (unbatched) or 3D (batched) input with {in_channels} channels to Conv1d.");
 
                 if (padding_mode != PaddingModes.Zeros) {
@@ -108,8 +108,7 @@ namespace TorchSharp
                                     (IntPtr)ppadding, paddingArray.Length,
                                     (IntPtr)pdilation, dilationArray.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }
@@ -142,8 +141,7 @@ namespace TorchSharp
                                     (int)padding,
                                     (IntPtr)pdilation, dilationArray.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }

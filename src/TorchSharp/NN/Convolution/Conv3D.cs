@@ -150,8 +150,7 @@ namespace TorchSharp
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)pdilation, dilation.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }
@@ -184,8 +183,7 @@ namespace TorchSharp
                                     (int)padding,
                                     (IntPtr)pdilation, dilation.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }

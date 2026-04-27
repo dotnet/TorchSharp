@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Diagnostics.CodeAnalysis;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -105,6 +106,8 @@ namespace TorchSharp
             {
                 var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+
+                res = AutocastMode.AutoCast(res);
                 return new LSTMCell(res, boxedHandle).MoveModule<LSTMCell>(device, dtype);
             }
         }

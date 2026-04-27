@@ -25,8 +25,8 @@ namespace TorchSharp
                 return torch.nn.functional.leaky_relu(tensor, negative_slope, inplace);
             }
 
-            public bool inplace {get; set; }
-            public double negative_slope {get; set;}
+            public bool inplace { get; set; }
+            public double negative_slope { get; set; }
         }
     }
 

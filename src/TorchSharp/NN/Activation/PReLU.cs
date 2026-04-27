@@ -16,12 +16,12 @@ namespace TorchSharp
         /// </summary>
         public sealed class PReLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal PReLU(long num_parameters, double init, Device? device = null, ScalarType? dtype = null) : base(nameof(PReLU)) 
-            { 
+            internal PReLU(long num_parameters, double init, Device? device = null, ScalarType? dtype = null) : base(nameof(PReLU))
+            {
                 this.init = init;
                 this.num_parameters = num_parameters;
- 
-                var w = torch.empty(num_parameters, device:device, dtype:dtype);
+
+                var w = torch.empty(num_parameters, device: device, dtype: dtype);
                 w.fill_(init);
 
                 this.weight = new Parameter(w);

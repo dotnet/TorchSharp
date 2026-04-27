@@ -111,15 +111,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    var result = new Tensor(handle);
-
-                    if (names != null && names.Length > 0) {
-
-                        result.rename_(names);
-                    }
-
-                    return result;
+                    return ReturnCheckForErrorsAndRename(handle, names);
                 }
             }
         }

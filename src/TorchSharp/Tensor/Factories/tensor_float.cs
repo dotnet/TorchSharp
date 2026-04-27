@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -16,9 +17,7 @@ namespace TorchSharp
         public static Tensor tensor(float scalar, Device? device = null, bool requires_grad = false)
         {
             device = InitializeDevice(device);
-            var handle = THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+            return ReturnCheckForErrors(THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requires_grad));
         }
 
         /// <summary>

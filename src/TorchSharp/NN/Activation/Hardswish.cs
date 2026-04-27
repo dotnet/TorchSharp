@@ -13,7 +13,7 @@ namespace TorchSharp
         /// </summary>
         public sealed class Hardswish : ParameterLessModule<Tensor, Tensor>
         {
-            public bool inplace { get; set;}
+            public bool inplace { get; set; }
 
             internal Hardswish(bool inplace = false) : base(nameof(Hardswish))
             {

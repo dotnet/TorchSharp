@@ -599,6 +599,9 @@ namespace TorchSharp
                 throw new ArgumentException("Only floating point types support gradients.", nameof(requires_grad));
             }
 
+            if (typeof(T) == typeof(BFloat16)) {
+                throw new NotImplementedException("Not implemented BFloat16");
+            }
             if (typeof(T) == typeof(byte))
                 return tensor((byte)(object)scalar, uint8, device, requires_grad);
             if (typeof(T) == typeof(sbyte))

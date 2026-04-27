@@ -6,14 +6,16 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorchSharp.Amp;
 using TorchSharp.Modules;
 using TorchSharp.PInvoke;
+using TorchSharp.Utils;
 using static TorchSharp.PInvoke.NativeMethods;
 
-#nullable enable
 namespace TorchSharp
 {
     public static partial class torch
@@ -22,6 +24,8 @@ namespace TorchSharp
     const string libtorchPackageVersion = "2.2.2.0";
 #elif LIBTORCH_2_10_0_0
     const string libtorchPackageVersion = "2.10.0.0";
+#elif LIBTORCH_2_11_0_0
+    const string libtorchPackageVersion = "2.11.0.0";
 #elif LIBTORCH_2_7_1_0
     const string libtorchPackageVersion = "2.7.1.0";
 #else
@@ -29,6 +33,8 @@ namespace TorchSharp
 #endif
 #if CUDA_12_8
         const string cudaVersion = "12.8";
+#elif CUDA_13_0
+        const string cudaVersion = "13.0";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
@@ -76,8 +82,16 @@ namespace TorchSharp
 
             return normalizedVersion;
         }
+        public static string? libtorch_version
+        {
+            get
+            {
+                return Marshal.PtrToStringAnsi(NativeMethods.THSTorch_libtorch_version());
+            }
+        }
 
-        internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace) {
+        internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace)
+        {
             bool ok;
             try {
                 trace.AppendLine($"    Trying to load native component {path}");
@@ -141,7 +155,7 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_heuristic64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_precompiled64_9.dll", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_engines_runtime_compiled64_9.dll", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_128", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cublasLt64_12", typeof(torch).Assembly, trace);
@@ -181,7 +195,7 @@ namespace TorchSharp
                     // So we shadow copy the DLLs into the TorchSharp package, make a copy of the native DLL and continue
                     // with the dynamic load
                     //
-                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net6.0\TorchSharp.dll
+                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net8.0\TorchSharp.dll
                     //
                     // TODO: on linux make these copies link not shadow-copy
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
@@ -233,8 +247,7 @@ namespace TorchSharp
                                 throw new NotSupportedException(message);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         trace.AppendLine("    Giving up, TorchSharp.dll does not appear to have been loaded from package directories");
                     }
                     if (!ok) {
@@ -522,7 +535,6 @@ namespace TorchSharp
 
                     return scope.MoveToOuter(weight, bias);
                 }
-
                 public static Linear fuse_linear_bn_eval(Linear linear, BatchNorm bn)
                 {
                     if (linear.training || bn.training)
@@ -537,7 +549,6 @@ namespace TorchSharp
 
         public static partial class cuda
         {
-
             /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
             /// is not raised as early as a DllImportException
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
@@ -607,6 +618,73 @@ namespace TorchSharp
                 TryInitializeDeviceType(device?.type ?? DeviceType.CUDA);
                 THSTorchCuda_synchronize(device?.index ?? -1);
             }
+
+            public static bool is_bf16_supported()
+            {
+                //TODO IMPLEMENT: torch.cuda.current_device() https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L153
+                if (int.TryParse(cudaVersion.Split('.')[0], out int res)){
+
+                    //TODO: Implement get device properties
+                    //WARNING: Need Major compute capability version https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L161
+                    var compute = torch.cuda.get_compute_capability();
+                    if (res >= 11 && compute.major >= 8)
+                        return true;
+                }
+
+                return check_bf16_tensor_supported(torch.CUDA);
+            }
+
+            private static bool check_bf16_tensor_supported(torch.Device dev)
+            {
+                try {
+                    var va = torch.tensor(new float[] { 1.0f }, dtype: ScalarType.BFloat16, device: dev);
+                    return true;
+                } catch {
+                    return false;
+                }
+            }
+
+            public static (int major, int minor) get_compute_capability()
+            {
+                return (THSCuda_get_major_compute_capability(), THSCuda_get_minor_compute_capability());
+            }
+
+            public static (int res, int id, ulong free, ulong total) get_free_total_memory(int device)
+            {
+                int id = 0;
+                ulong f=0;
+                ulong t=0;
+                int res = THSCuda_get_free_total(device, ref id, ref f, ref t);
+                return (res, id, f, t);
+            }
+
+            public static int get_device_count(ref int count)
+            {
+                return THSCuda_get_device_count(ref count);
+            }
+
+            public static ulong get_total_memory(int device)
+            {
+                return THSCuda_get_total_memory(device);
+            }
+            public static ulong get_global_total_memory(int device)
+            {
+                return THSCuda_get_global_total_memory(device);
+            }
+            public static string? get_cuda_version()
+            {
+                return Marshal.PtrToStringAnsi(THSCuda_get_cuda_version());
+            }
+            /*public static cudaDeviceProp get_device_prop(int device)
+            {
+#if CUDA_TOOLKIT_FOUND
+                cudaDeviceProp cdp = new cudaDeviceProp();
+                throw new NotImplementedException("Implement the cudaDeviceProp THSCuda");
+                //return cdp;
+#else
+                return null;
+#endif
+            }*/
         }
 
         /// <summary>
@@ -622,13 +700,83 @@ namespace TorchSharp
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
-
-            if (error != IntPtr.Zero)
-            {
+            if (error != IntPtr.Zero) {
                 throw new ExternalException(Marshal.PtrToStringAnsi(error));
             }
         }
 
+        /// <summary>
+        /// Refactor all Tensors with this method for example the LinearAlgebra.cs of cholesky we can just put return <see cref="ReturnCheckForErrors(IntPtr)"/>;
+        /// public static Tensor cholesky(Tensor input) => ReturnCheckForErrors(THSLinalg_cholesky(input.Handle));
+        /// </summary>
+        /// <param name="ptr"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Tensor ReturnCheckForErrors(IntPtr ptr)
+        {
+            if(ptr == IntPtr.Zero)
+                CheckForErrors();
+            return new Tensor(ptr);
+        }
+     
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Tensor? ReturnNullCheckForErrors(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero) {
+                CheckForErrors();
+                return null;
+            }
+
+            return new Tensor(ptr);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Parameter? ReturnNullParameterCheckForErrors(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero)
+                CheckForErrors();
+            return (ptr == IntPtr.Zero) ? null : new Parameter(ptr);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Tensor ReturnCheckForErrorsAndRename(IntPtr ptr, string[]? names)
+        {
+            if (ptr == IntPtr.Zero)
+                CheckForErrors();
+            var result = new Tensor(ptr);
+            if (names != null && names.Length > 0) {
+                result.rename_(names);
+            }
+
+            return result;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static (Tensor,Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1)
+        {
+            if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero)
+                CheckForErrors();
+            return (new Tensor(ptr), new Tensor(ptr1));
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static (Tensor, Tensor, Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1, IntPtr ptr2)
+        {
+            if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero || ptr2 == IntPtr.Zero)
+                CheckForErrors();
+            return (new Tensor(ptr), new Tensor(ptr1), new Tensor(ptr2));
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static (Tensor, Tensor, Tensor, Tensor) ReturnCheckForErrors(IntPtr ptr, IntPtr ptr1, IntPtr ptr2, IntPtr ptr3)
+        {
+            if (ptr == IntPtr.Zero || ptr1 == IntPtr.Zero || ptr2 == IntPtr.Zero || ptr3 == IntPtr.Zero)
+                CheckForErrors();
+            return (new Tensor(ptr), new Tensor(ptr1), new Tensor(ptr2), new Tensor(ptr3));
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Tensor ReturnCheckForErrorsAutocast(IntPtr ptr, ScalarType? st = null)
+        {
+            if (ptr == IntPtr.Zero)
+                CheckForErrors();
+            ptr = st == null ? AutocastMode.AutoCast(ptr) : AutocastMode.AutoCast(ptr, st.Value);
+            return new Tensor(ptr);
+        }
         public static partial class backends
         {
             public static partial class cuda

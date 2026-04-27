@@ -23,7 +23,7 @@ namespace TorchVision
         public void RandAugment_TestMemoryUsage()
         {
             using (var d = torch.NewDisposeScope()) {
-                var transform = torchvision.transforms.RandAugment();
+                var transform = TorchSharp.torchvision.transforms.RandAugment();
                 var result = transform.call(image);
                 Assert.Equal(1, d.DisposablesCount);
                 result?.Dispose();
@@ -42,7 +42,7 @@ namespace TorchVision
             var g = new torch.Generator();
             g.manual_seed(3);
 
-            var transform = torchvision.transforms.RandAugment(generator: g);
+            var transform = TorchSharp.torchvision.transforms.RandAugment(generator: g);
 
             var result = transform.call(image);
 
@@ -68,7 +68,7 @@ namespace TorchVision
         public void AugMix_TestMemoryUsage()
         {
             using (var d = torch.NewDisposeScope()) {
-                var transform = torchvision.transforms.AugMix();
+                var transform = TorchSharp.torchvision.transforms.AugMix();
                 var result = transform.call(image);
                 Assert.Equal(1, d.DisposablesCount);
                 result?.Dispose();
@@ -82,7 +82,7 @@ namespace TorchVision
             var g = new torch.Generator();
             g.manual_seed(3);
 
-            var transform = torchvision.transforms.AugMix(generator: g);
+            var transform = TorchSharp.torchvision.transforms.AugMix(generator: g);
 
             var result = transform.call(image);
 

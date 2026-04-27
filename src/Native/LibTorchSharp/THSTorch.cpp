@@ -4,6 +4,11 @@
 #include "torch/torch.h"
 #include "torch/cuda.h"
 
+const char* THSTorch_libtorch_version()
+{
+    return TORCH_VERSION;
+}
+
 void THSTorch_manual_seed(const int64_t seed)
 {
     torch::manual_seed(seed);
@@ -53,7 +58,12 @@ void THSBackend_cudnn_set_allow_tf32(const bool flag)
 bool THSBackend_cuda_get_allow_fp16_reduced_precision_reduction()
 {
     auto result = false;
-    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS() == at::CuBLASReductionOption::AllowReducedPrecisionWithSplitK;);
+#if TORCH_VERSION_MAJOR >= 2 && TORCH_VERSION_MINOR >= 11
+        CATCH(result = at::globalContext().allowFP16ReductionCuBLAS()==at::CuBLASReductionOption::AllowReducedPrecisionWithSplitK;);
+#else
+        CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+#endif
+    
     return result;
 }
 
@@ -117,6 +127,7 @@ Generator THSGenerator_new(uint64_t seed, int64_t device, int64_t index)
 {
     // TODO: Support creation of GPU RNGs. 'device' and 'index' are in the
     //       function signature in preparation thereof.
+    //auto dl = std::make_shared<c10::GeneratorImpl>(c10::Device(c10::DeviceType::CUDA, device), c10::DispatchKeySet()).get();
     return new at::Generator(at::detail::createCPUGenerator(seed));
 }
 
@@ -207,6 +218,7 @@ Scalar THSTorch_int32_to_scalar(int32_t value)
 Scalar THSTorch_int64_to_scalar(int64_t value)
 {
     return new torch::Scalar(value);
+    //return new torch::Scalar(static_cast<int64_t>(value));
 }
 
 Scalar THSTorch_float32_to_scalar(float value)
@@ -221,12 +233,12 @@ Scalar THSTorch_float64_to_scalar(double value)
 
 Scalar THSTorch_float16_to_scalar(float value)
 {
-    return new torch::Scalar((c10::Half)value);
+    return new torch::Scalar(static_cast<c10::Half>(value));
 }
 
 Scalar THSTorch_bfloat16_to_scalar(float value)
 {
-    return new torch::Scalar((c10::BFloat16)value);
+    return new torch::Scalar(static_cast<c10::BFloat16>(value));
 }
 
 Scalar THSTorch_bool_to_scalar(bool value)
@@ -289,6 +301,12 @@ void THSTorch_scalar_to_float16(Scalar value, unsigned short *res)
     *res = value->toHalf().x;
 }
 
+
+/*void THSTorch_scalar_to_bfloat16(Scalar value, c10::BFloat16* res)
+{
+    *res = value->toBFloat16();
+}*/
+
 void THSTorch_scalar_to_complex32(Scalar value, float* real, float* imaginary)
 {
     auto result = value->toComplexFloat();
@@ -327,3 +345,9 @@ double THSSpecial_erfc_scalar(const double x)
 {
     return erfc(x);
 }
+
+
+/*bool THSTorch_jit_is_scripting()
+{
+    
+}*/

@@ -66,7 +66,7 @@ namespace TorchSharp
             /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
             /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
             /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
-            public static unsafe AvgPool2d AvgPool2d((long,long) kernel_size, (long,long)? stride = null, (long,long)? padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
+            public static unsafe AvgPool2d AvgPool2d((long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
                 long[] kernelValue = new[] { kernel_size.Item1, kernel_size.Item2 };
                 long[] strideValue = stride == null ? null : new[] { stride.Value.Item1, stride.Value.Item2 };

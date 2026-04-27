@@ -58,9 +58,7 @@ namespace TorchSharp
                 {
                     if (input.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {input.Dimensions}");
                     var res = THSNN_local_response_norm(input.Handle, size, alpha, beta, k);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
             }
         }

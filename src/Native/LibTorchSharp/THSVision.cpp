@@ -51,7 +51,7 @@ void _hsv_to_rgb(at::Tensor& h, at::Tensor& s, at::Tensor& v, at::Tensor& img)
     auto i = torch::floor(h6);
     auto f = h6 - i;
     i = i.to(at::ScalarType::Int) % 6;
-
+    
     auto p = torch::clamp((v * (1.0f - s)), 0.0, 1.0);
     auto q = torch::clamp((v * (1.0 - s * f)), 0.0, 1.0);
     auto t = torch::clamp((v * (1.0 - s * (1.0 - f))), 0.0, 1.0);

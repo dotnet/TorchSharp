@@ -62,7 +62,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static unsafe AdaptiveAvgPool3d AdaptiveAvgPool3d(long output_size)
             {
-                return new AdaptiveAvgPool3d(new [] { output_size, output_size, output_size });
+                return new AdaptiveAvgPool3d(new[] { output_size, output_size, output_size });
             }
 
             public static partial class functional

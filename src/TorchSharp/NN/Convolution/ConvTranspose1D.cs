@@ -86,8 +86,7 @@ namespace TorchSharp
                                     (IntPtr)poutputPadding, outputPaddings.Length,
                                     (IntPtr)pdilation, dilations.Length,
                                     groups);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return ReturnCheckForErrorsAutocast(res);
                         }
                     }
                 }

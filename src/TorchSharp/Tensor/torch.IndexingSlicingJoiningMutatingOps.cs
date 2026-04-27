@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using TorchSharp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -46,9 +47,7 @@ namespace TorchSharp
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
-            var res = THSTensor_cat(tensorsRef, parray.Array.Length, dim);
-            if (res == IntPtr.Zero) CheckForErrors();
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_cat(tensorsRef, parray.Array.Length, dim));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.cat
@@ -164,16 +163,7 @@ namespace TorchSharp
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
         public static Tensor dstack(IList<Tensor> tensors)
             => dstack(tensors.ToHandleArray());
-
-        // https://pytorch.org/docs/stable/generated/torch.dstack
-        /// <summary>
-        /// Stack tensors in sequence depthwise (along third axis).
-        /// </summary>
-        /// <param name="tensors">A span of input tensors.</param>
-        /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
-        /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
-        public static Tensor dstack(ReadOnlySpan<Tensor> tensors)
-            => dstack(tensors.ToHandleArray());
+         
 
         // https://pytorch.org/docs/stable/generated/torch.dstack
         /// <summary>
@@ -182,17 +172,14 @@ namespace TorchSharp
         /// <param name="tensors">A sequence of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked along the third axis (depth-wise).</returns>
         /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
-        public static Tensor dstack(IEnumerable<Tensor> tensors)
+        public static torch.Tensor dstack(IEnumerable<torch.Tensor> tensors)
             => dstack(tensors.ToHandleArray());
 
-        static Tensor dstack(IntPtr[] tensors)
+        static torch.Tensor dstack(IntPtr[] tensors)
         {
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors);
-
-                var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return ReturnCheckForErrors(THSTensor_dstack(tensorsRef, parray.Array.Length));
             }
         }
 
@@ -200,34 +187,34 @@ namespace TorchSharp
         /// <summary>
         /// Gathers values along an axis specified by dim.
         /// </summary>
-        public static Tensor gather(Tensor input, long dim, Tensor index) => input.gather(dim, index);
+        public static torch.Tensor gather(torch.Tensor input, long dim, torch.Tensor index) => input.gather(dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.gather
         // TODO: implement parameter sparse_grad
-        public static Tensor gather(Tensor input, long dim, Tensor index, bool sparse_grad=false)
+        public static torch.Tensor gather(torch.Tensor input, long dim, torch.Tensor index, bool sparse_grad=false)
             => input.gather(dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.hsplit
-        public static Tensor[] hsplit(Tensor input, Tensor indices_or_sections)
+        public static torch.Tensor[] hsplit(torch.Tensor input, torch.Tensor indices_or_sections)
             => input.hsplit(indices_or_sections);
 
         // https://pytorch.org/docs/stable/generated/torch.hsplit
-        public static Tensor[] hsplit(Tensor input, long indices_or_sections)
+        public static torch.Tensor[] hsplit(torch.Tensor input, long indices_or_sections)
             => input.hsplit(indices_or_sections);
 
         // https://pytorch.org/docs/stable/generated/torch.hsplit
-        public static Tensor[] hsplit(Tensor input, long[] indices_or_sections)
+        public static torch.Tensor[] hsplit(torch.Tensor input, long[] indices_or_sections)
             => input.hsplit(indices_or_sections);
 
         // https://pytorch.org/docs/stable/generated/torch.hsplit
-        public static Tensor[] hsplit(Tensor input, (long, long) indices_or_sections)
+        public static torch.Tensor[] hsplit(torch.Tensor input, (long, long) indices_or_sections)
             => input.hsplit(new[]{
                 indices_or_sections.Item1,
                 indices_or_sections.Item2
             });
 
         // https://pytorch.org/docs/stable/generated/torch.hsplit
-        public static Tensor[] hsplit(Tensor input, (long, long, long) indices_or_sections)
+        public static torch.Tensor[] hsplit(torch.Tensor input, (long, long, long) indices_or_sections)
             => input.hsplit(new[]{
                 indices_or_sections.Item1,
                 indices_or_sections.Item2,
@@ -235,7 +222,7 @@ namespace TorchSharp
             });
 
         // https://pytorch.org/docs/stable/generated/torch.hsplit
-        public static Tensor[] hsplit(Tensor input, (long, long, long, long) indices_or_sections)
+        public static torch.Tensor[] hsplit(torch.Tensor input, (long, long, long, long) indices_or_sections)
             => input.hsplit(new[]{
                 indices_or_sections.Item1,
                 indices_or_sections.Item2,
@@ -249,8 +236,13 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A list of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
-        public static Tensor hstack(IList<Tensor> tensors)
-            => hstack(tensors.ToHandleArray());
+        public static torch.Tensor hstack(IList<torch.Tensor> tensors)
+        {
+            using var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+            return ReturnCheckForErrors(THSTensor_hstack(tensorsRef, parray.Array.Length));
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.hstack
         /// <summary>
@@ -258,7 +250,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">An array of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
-        public static Tensor hstack(params Tensor[] tensors)
+        public static torch.Tensor hstack(params torch.Tensor[] tensors)
             => hstack(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.hstack
@@ -267,7 +259,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A sequence of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
-        public static Tensor hstack(IEnumerable<Tensor> tensors)
+        public static torch.Tensor hstack(IEnumerable<torch.Tensor> tensors)
             => hstack(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.hstack
@@ -276,17 +268,15 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A span of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked horizontally (column-wise).</returns>
-        public static Tensor hstack(ReadOnlySpan<Tensor> tensors)
+        public static torch.Tensor hstack(ReadOnlySpan<torch.Tensor> tensors)
             => hstack(tensors.ToHandleArray());
 
-        static Tensor hstack(IntPtr[] tensors)
+        static torch.Tensor hstack(IntPtr[] tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors);
 
-            var res = THSTensor_hstack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_hstack(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.index_add
@@ -302,7 +292,7 @@ namespace TorchSharp
         /// <param name="source">The tensor containing values to add</param>
         /// <param name="alpha">The scalar multiplier for source</param>
         /// <returns></returns>
-        public static Tensor index_add(Tensor input, long dim, Tensor index, Tensor source, Scalar alpha)
+        public static torch.Tensor index_add(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor source, Scalar alpha)
             => input.index_add(dim, index, source, alpha);
 
         // https://pytorch.org/docs/stable/generated/torch.index_add
@@ -318,7 +308,7 @@ namespace TorchSharp
         /// <param name="source">The tensor containing values to add</param>
         /// <param name="alpha">The scalar multiplier for source</param>
         /// <returns></returns>
-        public static Tensor index_add_(Tensor input, long dim, Tensor index, Tensor source, Scalar alpha)
+        public static torch.Tensor index_add_(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor source, Scalar alpha)
             => input.index_add_(dim, index, source, alpha);
 
         // https://pytorch.org/docs/stable/generated/torch.index_copy
@@ -333,7 +323,7 @@ namespace TorchSharp
         /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
         /// <param name="source">The tensor containing values to copy</param>
         /// <returns></returns>
-        public static Tensor index_copy(Tensor input, long dim, Tensor index, Tensor source)
+        public static torch.Tensor index_copy(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor source)
             => input.index_copy(dim, index, source);
 
         // https://pytorch.org/docs/stable/generated/torch.index_copy
@@ -348,77 +338,77 @@ namespace TorchSharp
         /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
         /// <param name="source">The tensor containing values to copy</param>
         /// <returns></returns>
-        public static Tensor index_copy_(Tensor input, long dim, Tensor index, Tensor source)
+        public static torch.Tensor index_copy_(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor source)
             => input.index_copy_(dim, index, source);
 
         // https://pytorch.org/docs/stable/generated/torch.index_reduce
         [Obsolete("not implemented", true)]
-        public static Tensor index_reduce(Tensor input, long dim, Tensor index, Tensor source, Reduce reduce, bool include_self=true)
+        public static torch.Tensor index_reduce(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor source, Reduce reduce, bool include_self=true)
             => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.index_select
         /// <summary>
         /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.
         /// </summary>
-        public static Tensor index_select(Tensor input, long dim, Tensor index)
+        public static torch.Tensor index_select(torch.Tensor input, long dim, torch.Tensor index)
             => input.index_select(dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.masked_select
-        public static Tensor masked_select(Tensor input, Tensor mask)
+        public static torch.Tensor masked_select(torch.Tensor input, torch.Tensor mask)
             => input.masked_select(mask);
 
         // https://pytorch.org/docs/stable/generated/torch.movedim
-        public static Tensor movedim(Tensor input, long source, long destination)
+        public static torch.Tensor movedim(torch.Tensor input, long source, long destination)
             => input.movedim(new[]{source}, new[]{destination});
 
         // https://pytorch.org/docs/stable/generated/torch.movedim
-        static Tensor movedim(Tensor input, (long, long) source, (long, long) destination)
+        static torch.Tensor movedim(torch.Tensor input, (long, long) source, (long, long) destination)
             => input.movedim(
                 new[]{source.Item1, source.Item2},
                 new[]{destination.Item1, destination.Item2});
 
         // https://pytorch.org/docs/stable/generated/torch.movedim
-        static Tensor movedim(Tensor input, (long, long, long) source, (long, long, long) destination)
+        static torch.Tensor movedim(torch.Tensor input, (long, long, long) source, (long, long, long) destination)
             => input.movedim(
                 new[]{source.Item1, source.Item2, source.Item3},
                 new[]{destination.Item1, destination.Item2, destination.Item3});
 
         // https://pytorch.org/docs/stable/generated/torch.movedim
-        static Tensor movedim(Tensor input, (long, long, long, long) source, (long, long, long, long) destination)
+        static torch.Tensor movedim(torch.Tensor input, (long, long, long, long) source, (long, long, long, long) destination)
             => input.movedim(
                 new[]{source.Item1, source.Item2, source.Item3, source.Item4},
                 new[]{destination.Item1, destination.Item2, destination.Item3, destination.Item4});
 
         // https://pytorch.org/docs/stable/generated/torch.movedim
-        public static Tensor movedim(Tensor input, long[] source, long[] destination)
+        public static torch.Tensor movedim(torch.Tensor input, long[] source, long[] destination)
             => input.movedim(source, destination);
 
         // https://pytorch.org/docs/stable/generated/torch.moveaxis
-        public static Tensor moveaxis(Tensor input, long source, long destination)
+        public static torch.Tensor moveaxis(torch.Tensor input, long source, long destination)
             => input.moveaxis(new[]{source}, new[]{destination});
 
         // https://pytorch.org/docs/stable/generated/torch.moveaxis
-        public static Tensor moveaxis(Tensor input, (long, long) source, (long, long) destination)
+        public static torch.Tensor moveaxis(torch.Tensor input, (long, long) source, (long, long) destination)
             => input.moveaxis(
                 new[]{source.Item1, source.Item2 },
                 new[]{ destination.Item1, destination.Item2 });
 
         // https://pytorch.org/docs/stable/generated/torch.moveaxis
-        public static Tensor moveaxis(Tensor input, (long, long, long) source, (long, long, long) destination)
+        public static torch.Tensor moveaxis(torch.Tensor input, (long, long, long) source, (long, long, long) destination)
             => input.moveaxis(
                 new[]{source.Item1, source.Item2, source.Item3 },
                 new[]{ destination.Item1, destination.Item2, destination.Item3 });
 
-        public static Tensor moveaxis(Tensor input, (long, long, long, long) source, (long, long, long, long) destination)
+        public static torch.Tensor moveaxis(torch.Tensor input, (long, long, long, long) source, (long, long, long, long) destination)
             => input.moveaxis(
                 new[]{source.Item1, source.Item2, source.Item3, source.Item4 },
                 new[]{ destination.Item1, destination.Item2, destination.Item3, destination.Item4 });
 
-        public static Tensor moveaxis(Tensor input, long[] source, long[] destination)
+        public static torch.Tensor moveaxis(torch.Tensor input, long[] source, long[] destination)
             => input.moveaxis(source, destination);
 
         // https://pytorch.org/docs/stable/generated/torch.narrow
-        public static Tensor narrow(Tensor input, long dim, long start, long length)
+        public static torch.Tensor narrow(torch.Tensor input, long dim, long start, long length)
             => input.narrow(dim, start, length);
 
         // https://pytorch.org/docs/stable/generated/torch.nonzero
@@ -427,7 +417,7 @@ namespace TorchSharp
         /// Each row in the result contains the indices of a non-zero element in input.
         /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
         /// </summary>
-        public static Tensor nonzero(Tensor input) => input.nonzero();
+        public static torch.Tensor nonzero(torch.Tensor input) => input.nonzero();
 
         // https://pytorch.org/docs/stable/generated/torch.permute
         /// <summary>
@@ -435,7 +425,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor.</param>
         /// <param name="permutation">The desired ordering of dimensions</param>
-        public static Tensor permute(Tensor input, params long[] permutation) => input.permute(permutation);
+        public static torch.Tensor permute(torch.Tensor input, params long[] permutation) => input.permute(permutation);
 
         // https://pytorch.org/docs/stable/generated/torch.reshape
         /// <summary>
@@ -443,10 +433,10 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="shape">The new tensor shape.</param>
-        public static Tensor reshape(Tensor input, params long[] shape) => input.reshape(shape);
+        public static torch.Tensor reshape(torch.Tensor input, params long[] shape) => input.reshape(shape);
 
         // https://pytorch.org/docs/stable/generated/torch.select
-        public static Tensor select(Tensor input, long dim, long index)
+        public static torch.Tensor select(torch.Tensor input, long dim, long index)
             => input.select(dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.scatter
@@ -455,7 +445,7 @@ namespace TorchSharp
         ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
         ///  corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter(Tensor input, long dim, Tensor index, Tensor src)
+        public static torch.Tensor scatter(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor src)
             => input.scatter(dim, index, src);
 
         // https://pytorch.org/docs/stable/generated/torch.scatter
@@ -464,7 +454,7 @@ namespace TorchSharp
         ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
         ///  corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter_(Tensor input, long dim, Tensor index, Tensor src)
+        public static torch.Tensor scatter_(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor src)
             => input.scatter_(dim, index, src);
 
         // https://pytorch.org/docs/stable/generated/torch.diagonal_scatter
@@ -476,7 +466,7 @@ namespace TorchSharp
         /// <param name="offset">Which diagonal to consider. Default: main diagonal.</param>
         /// <param name="dim1">First dimension with respect to which to take diagonal.</param>
         /// <param name="dim2">Second dimension with respect to which to take diagonal.</param>
-        public static Tensor diagonal_scatter(Tensor input, Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L) => input.diagonal_scatter(src, offset, dim1, dim2);
+        public static torch.Tensor diagonal_scatter(torch.Tensor input, torch.Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L) => input.diagonal_scatter(src, offset, dim1, dim2);
 
         // https://pytorch.org/docs/stable/generated/torch.select_scatter
         /// <summary>
@@ -487,7 +477,7 @@ namespace TorchSharp
         /// <param name="dim">The dimension to insert the slice into</param>
         /// <param name="index">The index to select with</param>
         /// <remarks>This function returns a tensor with fresh storage; it does not create a view.</remarks>
-        public static Tensor select_scatter(Tensor input, Tensor src, long dim, long index) => input.select_scatter(src, dim, index);
+        public static torch.Tensor select_scatter(torch.Tensor input, torch.Tensor src, long dim, long index) => input.select_scatter(src, dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.slice_scatter
         /// <summary>
@@ -499,7 +489,7 @@ namespace TorchSharp
         /// <param name="start">The start index of where to insert the slice</param>
         /// <param name="end">The end index of where to insert the slice</param>
         /// <param name="step">How many elements to skip</param>
-        public static Tensor slice_scatter(Tensor input, Tensor src, long dim = 0L, long? start = null, long? end = null, long step = 1L)
+        public static torch.Tensor slice_scatter(torch.Tensor input, torch.Tensor src, long dim = 0L, long? start = null, long? end = null, long step = 1L)
             => input.slice_scatter(src, dim, start, end, step);
 
         // https://pytorch.org/docs/stable/generated/torch.scatter_add
@@ -508,22 +498,22 @@ namespace TorchSharp
         /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
         /// corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter_add(Tensor input, long dim, Tensor index, Tensor src)
+        public static torch.Tensor scatter_add(torch.Tensor input, long dim, torch.Tensor index, torch.Tensor src)
             => input.scatter_add(dim, index, src);
 
         // https://pytorch.org/docs/stable/generated/torch.scatter_reduce
         [Obsolete("not implemented", true)]
-        static Tensor scatter_reduce(
-            Tensor input,
+        static torch.Tensor scatter_reduce(
+            torch.Tensor input,
             long dim,
-            Tensor index,
-            Tensor src,
+            torch.Tensor index,
+            torch.Tensor src,
             Reduce reduce,
             bool include_self = true)
             => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.split
-        public static Tensor[] split(Tensor tensor, long[] split_size_or_sections, long dim = 0L)
+        public static torch.Tensor[] split(torch.Tensor tensor, long[] split_size_or_sections, long dim = 0L)
             => tensor.split(split_size_or_sections, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.stack
@@ -532,50 +522,48 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         /// <remarks>All tensors need to be of the same size.</remarks>
-        public static Tensor stack(IEnumerable<Tensor> tensors, long dim = 0)
+        public static torch.Tensor stack(IEnumerable<torch.Tensor> tensors, long dim = 0)
         {
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.ToHandleArray());
 
-            var res = THSTensor_stack(tensorsRef, parray.Array.Length, dim);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_stack(tensorsRef, parray.Array.Length, dim));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.swapaxes
-        public static Tensor swapaxes(Tensor input, long axis0, long axis1)
+        public static torch.Tensor swapaxes(torch.Tensor input, long axis0, long axis1)
             => input.swapaxes(axis0, axis1);
 
         // https://pytorch.org/docs/stable/generated/torch.swapdims
-        public static Tensor swapdims(Tensor input, long dim0, long dim1)
+        public static torch.Tensor swapdims(torch.Tensor input, long dim0, long dim1)
             => input.swapdims(dim0, dim1);
 
         // https://pytorch.org/docs/stable/generated/torch.t
-        public static Tensor t(Tensor input)
+        public static torch.Tensor t(torch.Tensor input)
             => input.t();
 
         // https://pytorch.org/docs/stable/generated/torch.take
-        public static Tensor take(Tensor input, Tensor index)
+        public static torch.Tensor take(torch.Tensor input, torch.Tensor index)
             => input.take(index);
 
         // https://pytorch.org/docs/stable/generated/torch.take_along_dim
-        public static Tensor take_along_dim(Tensor input, Tensor indices, long dim = 0L)
+        public static torch.Tensor take_along_dim(torch.Tensor input, torch.Tensor indices, long dim = 0L)
             => input.take_along_dim(indices, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.take_along_dim
-        public static Tensor take_along_dim(Tensor input, IEnumerable<long> indices, long dim = 0L)
+        public static torch.Tensor take_along_dim(torch.Tensor input, IEnumerable<long> indices, long dim = 0L)
             => input.take_along_dim(indices, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.tensor_split
-        public static Tensor[] tensor_split(Tensor input, long indices_or_sections, long dim = 0L)
+        public static torch.Tensor[] tensor_split(torch.Tensor input, long indices_or_sections, long dim = 0L)
             => input.tensor_split(indices_or_sections, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.tensor_split
-        public static Tensor[] tensor_split(Tensor input, long[] indices_or_sections, long dim = 0L)
+        public static torch.Tensor[] tensor_split(torch.Tensor input, long[] indices_or_sections, long dim = 0L)
             => input.tensor_split(indices_or_sections, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.tensor_split
-        public static Tensor[] tensor_split(Tensor input, Tensor indices_or_sections, long dim = 0L)
+        public static torch.Tensor[] tensor_split(torch.Tensor input, torch.Tensor indices_or_sections, long dim = 0L)
             => input.tensor_split(indices_or_sections, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.tile
@@ -584,14 +572,14 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="dims">The number of repetitions per dimension.</param>
-        public static Tensor tile(Tensor input, long[] dims) => input.tile(dims);
+        public static torch.Tensor tile(torch.Tensor input, long[] dims) => input.tile(dims);
 
         // https://pytorch.org/docs/stable/generated/torch.transpose
-        public static Tensor transpose(Tensor input, long dim0, long dim1)
+        public static torch.Tensor transpose(torch.Tensor input, long dim0, long dim1)
             => input.transpose(dim0, dim1);
 
         // https://pytorch.org/docs/stable/generated/torch.unbind
-        public static Tensor[] unbind(Tensor input, long dim = 0L)
+        public static torch.Tensor[] unbind(torch.Tensor input, long dim = 0L)
             => input.unbind(dim);
 
         // https://pytorch.org/docs/stable/generated/torch.unsqueeze
@@ -599,7 +587,7 @@ namespace TorchSharp
         ///  Returns a new tensor with a dimension of size one inserted at the specified position.
         ///  The returned tensor shares the same underlying data with this tensor.
         /// </summary>
-        public static Tensor unsqueeze(Tensor input, long dim)
+        public static torch.Tensor unsqueeze(torch.Tensor input, long dim)
             => input.unsqueeze(dim);
 
         // https://pytorch.org/docs/stable/generated/torch.unsqueeze
@@ -607,11 +595,11 @@ namespace TorchSharp
         ///  Returns a new tensor with a dimension of size one inserted at the specified position.
         ///  The returned tensor shares the same underlying data with this tensor.
         /// </summary>
-        public static Tensor unsqueeze_(Tensor input, long dim)
+        public static torch.Tensor unsqueeze_(torch.Tensor input, long dim)
             => input.unsqueeze_(dim);
 
         // https://pytorch.org/docs/stable/generated/torch.vsplit
-        public static Tensor[] vsplit(Tensor input, long[] indices_or_sections)
+        public static torch.Tensor[] vsplit(torch.Tensor input, long[] indices_or_sections)
             => input.vsplit(indices_or_sections);
 
         // https://pytorch.org/docs/stable/generated/torch.vstack
@@ -620,7 +608,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A list of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
-        public static Tensor vstack(IList<Tensor> tensors)
+        public static torch.Tensor vstack(IList<torch.Tensor> tensors)
             => vstack(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.vstack
@@ -629,7 +617,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">An array of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
-        public static Tensor vstack(Tensor[] tensors)
+        public static torch.Tensor vstack(torch.Tensor[] tensors)
             => vstack(tensors.ToHandleArray());
 
         // https://pytorch.org/docs/stable/generated/torch.vstack
@@ -638,17 +626,15 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A span of input tensors.</param>
         /// <returns>A tensor containing the input tensors stacked vertically (row-wise).</returns>
-        public static Tensor vstack(ReadOnlySpan<Tensor> tensors)
+        public static torch.Tensor vstack(ReadOnlySpan<torch.Tensor> tensors)
             => vstack(tensors.ToHandleArray());
 
-        static Tensor vstack(IntPtr[] tensors)
+        static torch.Tensor vstack(IntPtr[] tensors)
         {
             using var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors);
 
-            var res = THSTensor_vstack(tensorsRef, parray.Array.Length);
-            if (res == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(res);
+            return ReturnCheckForErrors(THSTensor_vstack(tensorsRef, parray.Array.Length));
         }
 
         // https://pytorch.org/docs/stable/generated/torch.where
@@ -659,7 +645,7 @@ namespace TorchSharp
         /// <param name="x">Values selected at indices where condition is true</param>
         /// <param name="y">Values selected at indices where condition is false</param>
         /// <returns></returns>
-        public static Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
+        public static torch.Tensor where(torch.Tensor condition, torch.Tensor x, torch.Tensor y) => x.where(condition, y);
 
         // https://pytorch.org/docs/stable/generated/torch.where
         /// <summary>
@@ -670,9 +656,9 @@ namespace TorchSharp
         /// <param name="condition">The input tensor</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Tensor[] where(Tensor condition)
+        public static torch.Tensor[] where(torch.Tensor condition)
         {
-            if (condition.dtype != ScalarType.Bool) throw new ArgumentException("The condition to 'where' must be a boolean tensor.");
+            if (condition.dtype != torch.ScalarType.Bool) throw new ArgumentException("The condition to 'where' must be a boolean tensor.");
 
             IntPtr[] ptrArray;
 
@@ -682,7 +668,7 @@ namespace TorchSharp
                 ptrArray = pa.Array;
             }
 
-            return ptrArray.Select(x => new Tensor(x)).ToArray();
+            return ptrArray.Select(x => new torch.Tensor(x)).ToArray();
         }
     }
 }

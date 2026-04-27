@@ -22,11 +22,12 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
+                //AutocastMode here?
                 return torch.nn.functional.softplus(tensor, beta, threshold);
             }
 
-            public double beta {get; set;}
-            public double threshold {get; set;}
+            public double beta { get; set; }
+            public double threshold { get; set; }
         }
     }
 
@@ -56,6 +57,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor softplus(Tensor x, double beta = 1, double threshold = 20)
                 {
+                    //AutocastMode
                     return x.softplus(beta, threshold);
                 }
             }

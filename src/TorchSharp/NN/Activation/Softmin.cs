@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -24,7 +25,7 @@ namespace TorchSharp
                 return torch.nn.functional.softmin(tensor, dim);
             }
 
-            public long dim {get; set;}
+            public long dim { get; set; }
         }
     }
 
@@ -53,6 +54,7 @@ namespace TorchSharp
                 public static Tensor softmin(Tensor x, long dim)
                 {
                     using var minus_x = -x;
+                    //minus_x = AutocastMode.AutoCast(minus_x.handle, ScalarType.Float32);
                     return softmax(minus_x, dim);
                 }
             }

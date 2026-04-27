@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.tanhshrink(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 
@@ -66,7 +66,7 @@ namespace TorchSharp
                 /// Tanhshrink
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
+                [Obsolete("Not using the PyTorch naming convention.", false)]
                 public static Tensor Tanhshrink(Tensor x) => tanhshrink(x, false);
             }
         }

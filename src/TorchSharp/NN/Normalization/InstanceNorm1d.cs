@@ -16,12 +16,12 @@ namespace TorchSharp
         /// </summary>
         public sealed class InstanceNorm1d : InstanceNorm
         {
-            internal InstanceNorm1d(long num_features, 
-                                double eps, 
-                                double momentum, 
-                                bool affine, 
-                                bool track_running_stats, 
-                                Device? device, 
+            internal InstanceNorm1d(long num_features,
+                                double eps,
+                                double momentum,
+                                bool affine,
+                                bool track_running_stats,
+                                Device? device,
                                 ScalarType? dtype) : base(num_features, eps, momentum, affine, track_running_stats, device, dtype, nameof(InstanceNorm1d))
             {
             }

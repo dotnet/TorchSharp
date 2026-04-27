@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.gelu(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 
@@ -68,7 +68,7 @@ namespace TorchSharp
                 /// <remarks>The defaulting of 'inplace' to 'false' is implemented as an overload to avoid a breaking change.</remarks>
                 public static Tensor gelu(Tensor x)
                 {
-                    return gelu(x,false);
+                    return gelu(x, false);
                 }
             }
         }

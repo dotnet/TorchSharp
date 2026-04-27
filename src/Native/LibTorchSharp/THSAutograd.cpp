@@ -143,46 +143,57 @@ void THSAutograd_CSharpNode_clearInputMetadata(CSharpNodePtr node) {
 }
 
 void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, TensorArray dirty_, TensorArray outputs_, CSharpNodePtr node, Tensor* (*allocator)(size_t length)) {
-    CATCH(
-    auto vars = toTensors<at::Tensor>(vars_.array, vars_.size);
-    auto output_tensors = toTensors<at::Tensor>(outputs_.array, outputs_.size);
-    auto outputs = torch::autograd::to_optional(output_tensors);
+    torch_last_err = 0;
+    try {
+        auto vars = toTensors<at::Tensor>(vars_.array, vars_.size);
+        auto output_tensors = toTensors<at::Tensor>(outputs_.array, outputs_.size);
+        auto outputs = torch::autograd::to_optional(output_tensors);
 
-    // Convert the list of Tensor to a set of unsafe impl
-    std::unordered_set<at::TensorImpl*> nonDiff;
-    nonDiff.reserve(nonDiff_.size);
-    for (int i = 0; i < nonDiff_.size; i++)
-        nonDiff.insert(nonDiff_.array[i]->unsafeGetTensorImpl());
+        // Convert the list of Tensor to a set of unsafe impl
+        std::unordered_set<at::TensorImpl*> nonDiff;
+        nonDiff.reserve(nonDiff_.size);
+        for (int i = 0; i < nonDiff_.size; i++)
+            nonDiff.insert(nonDiff_.array[i]->unsafeGetTensorImpl());
 
-    // Convert the list of Tensors to a set of unsafe impl, and then apply the behavior of AutogradContext::get_and_bump_dirty()
-    std::unordered_set<at::TensorImpl*> dirty;
-    dirty.reserve(dirty_.size);
-    for (int i = 0; i < dirty_.size; i++) {
-        auto t = dirty_.array[i]->unsafeGetTensorImpl();
-        t->bump_version();
-        dirty.insert(t);
+        // Convert the list of Tensors to a set of unsafe impl, and then apply the behavior of AutogradContext::get_and_bump_dirty()
+        std::unordered_set<at::TensorImpl*> dirty;
+        dirty.reserve(dirty_.size);
+        for (int i = 0; i < dirty_.size; i++) {
+            auto t = dirty_.array[i]->unsafeGetTensorImpl();
+            t->bump_version();
+            dirty.insert(t);
+        }
+
+        // Copied these functions from custom_function.h
+        torch::autograd::_jvp_fn_t jvp_fn = [](const variable_list& inputs,
+            const variable_list& gI) -> variable_list {
+                TORCH_CHECK(
+                    false,
+                    "jvp is not implemented for the c++ API of custom Function yet.",
+                    "Please open a feature request on GitHub if you need this.");
+            };
+
+        auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
+            return x.view_as(x);
+            };
+
+        //auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, false);
+#if TORCH_VERSION_MAJOR >= 2 && TORCH_VERSION_MINOR >= 11
+        auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, true);
+#else
+        auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn);
+#endif
+        auto sz = res.size();
+        Tensor* result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = res[i].has_value() ? ResultTensor(res[i].value()) : nullptr;
     }
-
-    // Copied these functions from custom_function.h
-    torch::autograd::_jvp_fn_t jvp_fn = [](const variable_list& inputs,
-        const variable_list& gI) -> variable_list {
-            TORCH_CHECK(
-                false,
-                "jvp is not implemented for the c++ API of custom Function yet.",
-                "Please open a feature request on GitHub if you need this.");
-        };
-
-    auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
-        return x.view_as(x);
-        };
-
-    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn, false);
-    auto sz = res.size();
-
-    Tensor* result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = res[i].has_value() ? ResultTensor(res[i].value()) : nullptr;
-    )
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what()); \
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what()); \
+    }
 }
 
 SavedVariable THSAutograd_SavedVariable_ctor(Tensor variable, CSharpNodePtr node, bool is_inplace_on_view)

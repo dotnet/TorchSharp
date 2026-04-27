@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,8 +42,7 @@ namespace TorchSharp
                         IntPtr res1, res2;
                         long total_length_arg = total_length.HasValue ? total_length.Value : -1;
                         THSNN_pad_packed_sequence(sequence.Handle, batch_first, padding_value, total_length_arg, out res1, out res2);
-                        if (res1 == IntPtr.Zero || res2 == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return (new torch.Tensor(res1), new torch.Tensor(res2));
+                        return ReturnCheckForErrors(res1, res2);
                     }
 
                     /// <summary>
@@ -56,9 +55,7 @@ namespace TorchSharp
                     public static torch.Tensor pad_sequence(IEnumerable<torch.Tensor> sequences, bool batch_first = false, double padding_value = 0.0)
                     {
                         var sequences_arg = sequences.ToHandleArray();
-                        var res = THSNN_pad_sequence(sequences_arg, sequences_arg.Length, batch_first, padding_value);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new torch.Tensor(res);
+                        return ReturnCheckForErrors(THSNN_pad_sequence(sequences_arg, sequences_arg.Length, batch_first, padding_value));
                     }
 
                     /// <summary>

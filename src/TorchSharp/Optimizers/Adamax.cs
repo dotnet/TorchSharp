@@ -21,7 +21,7 @@ namespace TorchSharp
             /// https://arxiv.org/abs/1412.6980
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
@@ -39,7 +39,7 @@ namespace TorchSharp
             /// https://arxiv.org/abs/1412.6980
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
@@ -57,7 +57,7 @@ namespace TorchSharp
             /// https://arxiv.org/abs/1412.6980
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
@@ -82,7 +82,7 @@ namespace TorchSharp
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
@@ -99,7 +99,7 @@ namespace TorchSharp
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>

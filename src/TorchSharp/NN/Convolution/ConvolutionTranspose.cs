@@ -24,7 +24,7 @@ namespace TorchSharp
                 return this.forward(input, null);
             }
             public abstract Tensor forward(Tensor input, long[]? output_size);
-            
+
             protected long[] _output_padding(Tensor input, long[]? output_size, long[] kernel_size, long[] stride, long[] padding, long[] dilation, long num_spatial_dims)
             {
                 if (output_size is null)

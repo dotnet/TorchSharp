@@ -27,11 +27,9 @@ namespace TorchSharp
                 this.eps = eps;
                 this.elementwise_affine = elementwise_affine;
 
-                if (elementwise_affine)
-                {
+                if (elementwise_affine) {
                     weight = Parameter(torch.empty(normalized_shape, dtype, device));
-                    if (bias)
-                    {
+                    if (bias) {
                         this.bias = Parameter(torch.empty(normalized_shape, dtype, device));
                     }
                 }
@@ -41,12 +39,10 @@ namespace TorchSharp
 
             public void reset_parameters()
             {
-                if (elementwise_affine)
-                {
+                if (elementwise_affine) {
                     init.ones_(weight);
                 }
-                if (bias is not null)
-                {
+                if (bias is not null) {
                     init.zeros_(bias);
                 }
             }
@@ -84,7 +80,8 @@ namespace TorchSharp
             }
 
             // Rather than spending cycles discovering what parameters exist, we can just hardcode it.
-            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(Device device, ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, device, _weight, out Parameter? w)) {
                     weight = w!;
                 }
@@ -106,7 +103,8 @@ namespace TorchSharp
                 return this;
             }
 
-            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking) {
+            protected internal override nn.Module _to(ScalarType dtype, bool non_blocking)
+            {
                 if (_weight is not null && ReplaceParameter(dtype, _weight.device, _weight, out Parameter? w)) {
                     weight = w!;
                 }

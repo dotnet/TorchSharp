@@ -23,9 +23,7 @@ namespace TorchSharp
                     var res = THSNN_normalize(
                         input.Handle,
                         p, dim, eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -41,9 +39,7 @@ namespace TorchSharp
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         training,
                         momentum, eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -57,9 +53,7 @@ namespace TorchSharp
                         weight is not null ? weight.Handle : IntPtr.Zero,
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -75,9 +69,7 @@ namespace TorchSharp
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         use_input_stats,
                         momentum, eps);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
 
                 /// <summary>
@@ -97,12 +89,10 @@ namespace TorchSharp
                                 eps);
                         }
                     }
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                    return ReturnCheckForErrors(res);
                 }
-
             }
+            
         }
     }
 }

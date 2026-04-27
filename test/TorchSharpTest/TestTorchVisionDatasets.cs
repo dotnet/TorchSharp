@@ -36,7 +36,7 @@ namespace TorchVision
             try {
                 string md5 = "098f6bcd4621d373cade4e832627b4f6";
                 // This should not download file from GDrive and exit without exception.
-                torchvision.datasets.utils.download_file_from_google_drive(
+                TorchSharp.torchvision.datasets.utils.download_file_from_google_drive(
                     file_id, root, filename: filename, md5: md5);
             } finally {
                 File.Delete(filepath);
@@ -71,7 +71,7 @@ namespace TorchVision
 
         public void TestMNISTDownload()
         {
-            var data = torchvision.datasets.MNIST("TestMNISTDownload", true, true);
+            var data = TorchSharp.torchvision.datasets.MNIST("TestMNISTDownload", true, true);
 
             Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "train-images-idx3-ubyte.gz")));
             Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "test_data", "train-images-idx3-ubyte")));

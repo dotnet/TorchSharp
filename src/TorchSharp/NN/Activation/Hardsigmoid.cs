@@ -23,7 +23,7 @@ namespace TorchSharp
                 return torch.nn.functional.hardsigmoid(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 

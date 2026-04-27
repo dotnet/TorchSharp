@@ -25,9 +25,9 @@ namespace TorchSharp
             {
                 return torch.nn.functional.rrelu(tensor, lower, upper, inplace);
             }
-            public double lower {get; set;}
-            public double upper {get; set;}
-            public bool inplace {get; set;}
+            public double lower { get; set; }
+            public double upper { get; set; }
+            public bool inplace { get; set; }
         }
     }
 

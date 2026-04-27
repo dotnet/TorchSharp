@@ -21,7 +21,7 @@ namespace TorchSharp
             /// https://arxiv.org/abs/1212.5701
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
@@ -38,7 +38,7 @@ namespace TorchSharp
             /// https://arxiv.org/abs/1212.5701
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
@@ -55,7 +55,7 @@ namespace TorchSharp
             /// https://arxiv.org/abs/1212.5701
             /// </summary>
             /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
@@ -75,7 +75,7 @@ namespace TorchSharp
             /// Constructor
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
@@ -89,7 +89,7 @@ namespace TorchSharp
             /// Constructor
             /// </summary>
             /// <param name="parameters">Parameters to optimize.</param>
-            /// <param name="lr ">Learning rate</param>
+            /// <param name="lr">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>

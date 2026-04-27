@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.softshrink(tensor, lambda);
             }
 
-            public double lambda {get; set; }
+            public double lambda { get; set; }
         }
     }
 
@@ -63,7 +63,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <param name="lambda">The λ value for the Softshrink formulation. Default: 0.5</param>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
+                [Obsolete("Not using the PyTorch naming convention.", false)]
                 public static Tensor Softshrink(Tensor x, double lambda = 0.5) => softshrink(x, lambda);
             }
         }

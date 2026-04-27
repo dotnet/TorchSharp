@@ -27,7 +27,7 @@ namespace TorchSharp
                 return torch.nn.functional.relu6(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 

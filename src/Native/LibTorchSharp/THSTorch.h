@@ -4,9 +4,11 @@
 #include "../Stdafx.h"
 
 #include "Utils.h"
-
+#include <ATen/autocast_mode.h>
+//#include <ATen/impl.h>
 // API.
 
+EXPORT_API(const char*) THSTorch_libtorch_version();
 // Sets manually the seed.
 EXPORT_API(void)      THSTorch_manual_seed(const int64_t seed);
 EXPORT_API(void) THSCuda_manual_seed(const int64_t seed);
@@ -79,6 +81,7 @@ EXPORT_API(bool) THSTorch_scalar_to_bool(Scalar value);
 
 EXPORT_API(void) THSTorch_scalar_to_bfloat16(Scalar value, unsigned short* res);
 EXPORT_API(void) THSTorch_scalar_to_float16(Scalar value, unsigned short* res);
+//EXPORT_API(void) THSTorch_scalar_to_bfloat16(Scalar value, c10::BFloat16* res);
 
 EXPORT_API(void) THSTorch_scalar_to_complex32(Scalar value, float* real, float* imaginary);
 EXPORT_API(void) THSTorch_scalar_to_complex64(Scalar value, double* real, double* imaginary);
@@ -92,3 +95,4 @@ EXPORT_API(void) THSTorch_dispose_scalar(Scalar scalar);
 
 EXPORT_API(double) THSSpecial_erf_scalar(const double x);
 EXPORT_API(double) THSSpecial_erfc_scalar(const double x);
+

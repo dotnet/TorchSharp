@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.softsign(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 
@@ -67,7 +67,7 @@ namespace TorchSharp
                 /// Softsign
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
+                [Obsolete("Not using the PyTorch naming convention.", false)]
                 public static Tensor Softsign(Tensor x) => softsign(x, false);
             }
         }

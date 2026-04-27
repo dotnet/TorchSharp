@@ -33,7 +33,7 @@ namespace TorchSharp
 
             public double min_val { get; set; }
             public double max_val { get; set; }
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
 
@@ -76,7 +76,7 @@ namespace TorchSharp
                 /// <param name="max_val">Maximum value of the linear region range.</param>
                 /// <param name="inplace">Do the operation in-place</param>
                 /// <remarks>Only here for backward comaptibility.</remarks>
-                [Obsolete("Not using the PyTorch naming convention.",false)]
+                [Obsolete("Not using the PyTorch naming convention.", false)]
                 public static Tensor Hardtanh(Tensor x, double min_val = -1.0, double max_val = 1.0, bool inplace = false) => hardtanh(x, min_val, max_val, inplace);
             }
         }

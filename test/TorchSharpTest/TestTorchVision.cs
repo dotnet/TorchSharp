@@ -302,22 +302,22 @@ namespace TorchVision
 
             {
                 // With p == 0, nothing should happen
-                using var output = stochastic_depth(input, 0, torchvision.StochasticDepth.Mode.Batch, true);
+                using var output = stochastic_depth(input, 0, TorchSharp.torchvision.StochasticDepth.Mode.Batch, true);
                 Assert.Equal(size, output.count_nonzero().item<long>());
             }
             {
                 // With training == false, nothing should happen
-                using var output = stochastic_depth(input, 1, torchvision.StochasticDepth.Mode.Batch, false);
+                using var output = stochastic_depth(input, 1, TorchSharp.torchvision.StochasticDepth.Mode.Batch, false);
                 Assert.Equal(size, output.count_nonzero().item<long>());
             }
             {
                 // If training and p == 1, then all elements should be cleared.
-                using var output = stochastic_depth(input, 1, torchvision.StochasticDepth.Mode.Batch, true);
+                using var output = stochastic_depth(input, 1, TorchSharp.torchvision.StochasticDepth.Mode.Batch, true);
                 Assert.Equal(0, output.count_nonzero().item<long>());
             }
             {
                 // If training and p in ]0,1[, either all or none of the elements should be cleared.
-                using var output = stochastic_depth(input, 0.5, torchvision.StochasticDepth.Mode.Batch, true);
+                using var output = stochastic_depth(input, 0.5, TorchSharp.torchvision.StochasticDepth.Mode.Batch, true);
                 var nz = output.count_nonzero().item<long>();
                 Assert.True(nz == 0 || nz == size);
             }
@@ -809,17 +809,17 @@ namespace TorchVision
             if (System.IO.File.Exists(outName1)) System.IO.File.Delete(outName1);
             if (System.IO.File.Exists(outName2)) System.IO.File.Delete(outName2);
 
-            torchvision.io.DefaultImager = new torchvision.io.SkiaImager(100);
+            TorchSharp.torchvision.io.DefaultImager = new TorchSharp.torchvision.io.SkiaImager(100);
 
-            using var img = torchvision.io.read_image(fileName);
+            using var img = TorchSharp.torchvision.io.read_image(fileName);
             Assert.NotNull(img);
             Assert.Equal(uint8, img.dtype);
             //Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
 
-            torchvision.io.write_image(img, outName1, torchvision.ImageFormat.Jpeg);
+            TorchSharp.torchvision.io.write_image(img, outName1, TorchSharp.torchvision.ImageFormat.Jpeg);
             Assert.True(System.IO.File.Exists(outName1));
 
-            using var img2 = torchvision.io.read_image(outName1);
+            using var img2 = TorchSharp.torchvision.io.read_image(outName1);
             Assert.NotNull(img2);
             Assert.Equal(uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
@@ -827,7 +827,7 @@ namespace TorchVision
             using var grey = functional.rgb_to_grayscale(img);
             Assert.Equal(float32, grey.dtype);
 
-            torchvision.io.write_jpeg(functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
+            TorchSharp.torchvision.io.write_jpeg(functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
             Assert.True(System.IO.File.Exists(outName2));
 
             System.IO.File.Delete(outName1);
@@ -842,7 +842,7 @@ namespace TorchVision
             double[] stdevs = { 0.229, 0.224, 0.225, 0.222 }; // Different length
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => Normalize(means, stdevs));
+            Assert.Throws<ArgumentException>(() => TorchSharp.torchvision.transforms.Normalize(means, stdevs));
         }
 
         [Fact]
@@ -853,7 +853,7 @@ namespace TorchVision
             double[] stdevs = { 0.229, 0.224 }; // Not 1 or 3
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => Normalize(means, stdevs));
+            Assert.Throws<ArgumentException>(() => TorchSharp.torchvision.transforms.Normalize(means, stdevs));
         }
 
         [Fact]
@@ -864,7 +864,7 @@ namespace TorchVision
             double[] stdevs = { 0.229, 0.224, 0.225 };
 
             // Act
-            var result = Normalize(means, stdevs);
+            var result = TorchSharp.torchvision.transforms.Normalize(means, stdevs);
 
             // Assert
             Assert.NotNull(result);
@@ -876,7 +876,7 @@ namespace TorchVision
             // Arrange
             double[] means = { 0.485, 0.456, 0.406 };
             double[] stdevs = { 0.229, 0.224, 0.225 };
-            var sut = Normalize(means, stdevs);
+            var sut = TorchSharp.torchvision.transforms.Normalize(means, stdevs);
             var wrongSizeInput = torch.rand(new long[] { 1, 4, 32, 32 }); // wrong number of input channels
 
             // Act & Assert
@@ -889,7 +889,7 @@ namespace TorchVision
             // Arrange
             double[] means = { 0.485, 0.456, 0.406 };
             double[] stdevs = { 0.229, 0.224, 0.225 };
-            var sut = Normalize(means, stdevs);
+            var sut = TorchSharp.torchvision.transforms.Normalize(means, stdevs);
             var inputChannels = 3;
             var input = torch.rand(new long[] { 1, inputChannels, 32, 32 }, dtype: float64);
 
@@ -905,11 +905,12 @@ namespace TorchVision
         [Fact]
         public void Call_ThrowsException_WithWrongNumberOfChannels()
         {
-            Assert.Throws<ArgumentException>(() => Grayscale(outputChannels: 2));
+            // Act
+            Assert.Throws<ArgumentException>(() => TorchSharp.torchvision.transforms.Grayscale(outputChannels: 2));
 
             Tensor input = torch.rand(new long[] { 1, 2, 128, 128 });
 
-            var tfrm = Grayscale(outputChannels: 1);
+            var tfrm = TorchSharp.torchvision.transforms.Grayscale(outputChannels: 1);
 
             Assert.Throws<ArgumentException>(() => tfrm.call(input));
         }
@@ -921,7 +922,7 @@ namespace TorchVision
             int height = 20;
             int width = 30;
             var input = torch.randn(1, 3, 256, 256);
-            var transform = Resize(height, width);
+            var transform = TorchSharp.torchvision.transforms.Resize(height, width);
 
             //Act
             var result = transform.call(input);
@@ -938,7 +939,7 @@ namespace TorchVision
             int size = 20;
             int? maxSize = 30;
             var input = torch.randn(1, 3, 256, 256);
-            var transform = Resize(size, maxSize);
+            var transform = TorchSharp.torchvision.transforms.Resize(size, maxSize);
 
             //Act
             var result = transform.call(input);
@@ -1264,384 +1265,9 @@ namespace TorchVision
         public void Adjust_Contrast_ReturnsTensorWithCorrectDtype()
         {
             var img1 = torch.randn(1, 32, 32).to(torch.uint8);
-            var img2 = torchvision.transforms.functional.adjust_contrast(img1, 2);
+            
+            var img2 = TorchSharp.torchvision.transforms.functional.adjust_contrast(img1, 2);
             Assert.Equal(img1.dtype, img2.dtype);
-        }
-
-        
-        [Fact]
-        public void RgbToGrayscale_ReturnsCorrectNumberOfChannels()
-        {
-            int numChannels = 3;
-            int numOutputChannels = 1;
-            var shape = new long[] { numChannels, 10, 10 };
-
-            var input = torch.rand(shape);
-
-            var output = functional.rgb_to_grayscale(input, numOutputChannels);
-
-            Assert.Equal(numOutputChannels, output.shape[0]);
-        }
-
-        [Fact]
-        public void RgbToGrayscale_ThrowsArgumentException_ForInvalidOutputChannels()
-        {
-            int numChannels = 3;
-            int numOutputChannels = 2;
-            var shape = new long[] { numChannels, 10, 10 };
-
-            var input = torch.rand(shape);
-
-            Assert.Throws<ArgumentException>(() => functional.rgb_to_grayscale(input, numOutputChannels));
-        }
-
-        [Fact]
-        public void RgbToGrayscale_AlreadyGrayscale_ReturnsInputTensorAsIs()
-        {
-            int numChannels = 1;
-            int numOutputChannels = 1;
-            var shape = new long[] { numChannels, 10, 10 };
-
-            var input = torch.rand(shape);
-
-            var output = functional.rgb_to_grayscale(input, numOutputChannels);
-
-            Assert.Equal(input, output);
-        }
-
-        [Fact]
-        public void RgbToGrayscale_ConvertsInputToFloatTensor()
-        {
-            int numChannels = 3;
-            int numOutputChannels = 1;
-            var shape = new long[] { numChannels, 10, 10 };
-
-            var input = torch.randint(0, 255, shape, dtype:ScalarType.Byte);
-
-            var output = functional.rgb_to_grayscale(input, numOutputChannels);
-
-            Assert.True(output.is_floating_point());
-        }
-
-        [Fact]
-        public void RgbToGrayscale_ReturnsTensorWithCorrectShape()
-        {
-            int numChannels = 3;
-            int numOutputChannels = 1;
-            var shape = new long[] { numChannels, 10, 10 };
-
-            var input = torch.rand(shape);
-
-            var output = functional.rgb_to_grayscale(input, numOutputChannels);
-
-            Assert.Equal(new long[] { numOutputChannels, 10, 10  }, output.shape);
-        }
-
-        [Fact]
-        public void Resize_WhenSizeNotChanged_ReturnsSameTensor()
-        {
-            // Arrange
-            var input = torch.rand( 3, 2, 2 );
-            int height = 2;
-            int width = 2;
-
-            // Act
-            var output = functional.resize(input, height, width);
-
-            // Assert
-            Assert.Equal(input.Dimensions, output.Dimensions);
-            Assert.Equal(input.shape, output.shape);
-            Assert.Equal(input, output);
-        }
-
-        [Fact]
-        public void Resize_WhenWidthChange_ReturnsTensorWithSameHeight()
-        {
-            // Arrange
-            var input = torch.rand( 3, 2, 4 );
-            int height = 2;
-            int width = 3;
-
-            // Act
-            var output = functional.resize(input, height, width);
-
-            // Assert
-            Assert.Equal(input.Dimensions, output.Dimensions);
-            Assert.Equal(input.shape[0], output.shape[0]);
-            Assert.Equal(height, output.shape[1]);
-            Assert.Equal(width, output.shape[2]);
-        }
-
-        [Fact]
-        public void Resize_WhenHeightChange_ReturnsTensorWithSameWidth()
-        {
-            // Arrange
-            var input = torch.rand( 3, 4, 2);
-            int height = 3;
-            int width = 2;
-
-            // Act
-            var output = functional.resize(input, height, width);
-
-            // Assert
-            Assert.Equal(input.Dimensions, output.Dimensions);
-            Assert.Equal(input.shape[0], output.shape[0]);
-            Assert.Equal(height, output.shape[1]);
-            Assert.Equal(width, output.shape[2]);
-        }
-
-        [Fact]
-        public void Resize_WhenMaxSizeNotMet_ThrowsArgumentException()
-        {
-            // Arrange
-            var input = torch.rand( 3, 5, 4 );
-            int height = 10;
-            int? maxSize = 8;
-
-            // Act + Assert
-            Assert.Throws<System.ArgumentException>(() => functional.resize(input, height, -1, maxSize));
-        }
-
-        [Fact]
-        public void Resize_WhenMaxSizeMet_DoesNotThrowException()
-        {
-            // Arrange
-            var input = torch.rand( 3, 5, 4 );
-            int height = 8;
-            int? maxSize = 10;
-
-            // Act + Assert
-            functional.resize(input, height, -1, maxSize);
-        }
-
-
-
-        [Fact]
-        public void CanApplyPerspective()
-        {
-            using var tensor = torch.rand(new long[] { 3, 256, 256 });
-
-            var startpoints = new List<IList<int>>()
-            {
-                new List<int>(){ 10, 10 },
-                new List<int>(){ 10, 246 },
-                new List<int>(){ 246, 10 },
-                new List<int>(){ 246, 246 },
-            };
-            var endpoints = new List<IList<int>>()
-            {
-                new List<int>(){ 0, 0 },
-                new List<int>(){ 0, 256 },
-                new List<int>(){ 256, 0 },
-                new List<int>(){ 256, 256 },
-            };
-
-            using var output = functional.perspective(tensor, startpoints, endpoints);
-
-            Assert.NotNull(output);
-            Assert.Equal(tensor.shape, output.shape);
-        }
-
-        [Fact]
-        public void CanApplyPerspectiveWithInterpolation()
-        {
-            using var tensor = torch.rand(new long[] { 3, 256, 256 });
-
-            var startpoints = new List<IList<int>>()
-            {
-                new List<int>(){ 10, 10 },
-                new List<int>(){ 10, 246 },
-                new List<int>(){ 246, 10 },
-                new List<int>(){ 246, 246 },
-            };
-            var endpoints = new List<IList<int>>()
-            {
-                new List<int>(){ 0, 0 },
-                new List<int>(){ 0, 256 },
-                new List<int>(){ 256, 0 },
-                new List<int>(){ 256, 256 },
-            };
-            var interpolation = InterpolationMode.Nearest;
-
-            using var output = functional.perspective(tensor, startpoints, endpoints, interpolation);
-
-            Assert.NotNull(output);
-            Assert.Equal(tensor.shape, output.shape);
-        }
-
-        [Fact]
-        public void CanApplyPerspectiveWithFill()
-        {
-            using var tensor = torch.rand(new long[] { 3, 256, 256 });
-
-            var startpoints = new List<IList<int>>()
-            {
-                new List<int>(){ 10, 10 },
-                new List<int>(){ 10, 246 },
-                new List<int>(){ 246, 10 },
-                new List<int>(){ 246, 246 },
-            };
-            var endpoints = new List<IList<int>>()
-            {
-                new List<int>(){ 0, 0 },
-                new List<int>(){ 0, 256 },
-                new List<int>(){ 256, 0 },
-                new List<int>(){ 256, 256 },
-            };
-            var fill = new List<float>() { 0.5f };
-
-            using var output = functional.perspective(tensor, startpoints, endpoints, fill: fill);
-
-            Assert.NotNull(output);
-            Assert.Equal(tensor.shape, output.shape);
-        }
-
-        [Fact]
-        public void TestPadZeroes()
-        {
-            var input = torch.ones(3, 3, dtype: int64);
-            {
-                var padding = new long[] { 1, 2 };
-                var padding_mode = PaddingModes.Zeros;
-
-                var expectedOutput = torch.tensor(new long[,] {
-                    {0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0},
-                    {0, 1, 1, 1, 0},
-                    {0, 1, 1, 1, 0},
-                    {0, 1, 1, 1, 0},
-                    {0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0}
-                });
-
-                var actualOutput = functional.pad(input, padding, padding_mode: padding_mode);
-
-                Assert.Equal(expectedOutput, actualOutput);
-            }
-            {
-                var padding = new long[] { 1, 1, 2, 2 };
-                var padding_mode = PaddingModes.Zeros;
-
-                var expectedOutput = torch.tensor(new long[,] {
-                    {0, 0, 0, 0, 0, 0},
-                    {0, 1, 1, 1, 0, 0},
-                    {0, 1, 1, 1, 0, 0},
-                    {0, 1, 1, 1, 0, 0},
-                    {0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0}
-                });
-
-                var actualOutput = functional.pad(input, padding, padding_mode: padding_mode);
-
-                Assert.Equal(expectedOutput, actualOutput);
-            }
-        }
-
-        [Fact]
-        public void TestPadConstant()
-        {
-            var input = torch.ones(3, 3, dtype: int64);
-            {
-                var padding = new long[] { 1, 2 };
-                var fill = 0;
-                var padding_mode = PaddingModes.Constant;
-
-                var expectedOutput = torch.tensor(new long[,] {
-                    {0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0},
-                    {0, 1, 1, 1, 0},
-                    {0, 1, 1, 1, 0},
-                    {0, 1, 1, 1, 0},
-                    {0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0}
-                });
-
-                var actualOutput = functional.pad(input, padding, fill, padding_mode);
-
-                Assert.Equal(expectedOutput, actualOutput);
-            }
-            {
-                var padding = new long[] { 1, 1, 2, 2 };
-                var fill = 0;
-                var padding_mode = PaddingModes.Constant;
-
-                var expectedOutput = torch.tensor(new long[,] {
-                    {0, 0, 0, 0, 0, 0},
-                    {0, 1, 1, 1, 0, 0},
-                    {0, 1, 1, 1, 0, 0},
-                    {0, 1, 1, 1, 0, 0},
-                    {0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0}
-                });
-
-                var actualOutput = functional.pad(input, padding, fill, padding_mode);
-
-                Assert.Equal(expectedOutput, actualOutput);
-            }
-        }
-
-        [Fact]
-        public void TestPadReflect()
-        {
-            var input = torch.arange(1, 10, dtype:float32).reshape(1, 3, 3);
-            {
-                var padding = new long[] { 1, 2 };
-                var padding_mode = PaddingModes.Reflect;
-
-                var expectedOutput = torch.tensor(new float[,] {
-                    {8, 7, 8, 9, 8},
-                    {5, 4, 5, 6, 5},
-                    {2, 1, 2, 3, 2},
-                    {5, 4, 5, 6, 5},
-                    {8, 7, 8, 9, 8},
-                    {5, 4, 5, 6, 5},
-                    {2, 1, 2, 3, 2}
-                }).reshape(1, 7, 5);
-
-                var actualOutput = functional.pad(input, padding, padding_mode: padding_mode);
-
-                Assert.Equal(expectedOutput, actualOutput);
-            }
-            {
-                var padding = new long[] { 1, 1, 2, 2 };
-                var padding_mode = PaddingModes.Reflect;
-
-                var expectedOutput = torch.tensor(new float[,] {
-                    {5, 4, 5, 6, 5, 4},
-                    {2, 1, 2, 3, 2, 1},
-                    {5, 4, 5, 6, 5, 4},
-                    {8, 7, 8, 9, 8, 7},
-                    {5, 4, 5, 6, 5, 4},
-                    {2, 1, 2, 3, 2, 1}
-                }).reshape(1, 6, 6);
-
-                var actualOutput = functional.pad(input, padding, padding_mode: padding_mode);
-
-                Assert.Equal(expectedOutput, actualOutput);
-            }
-        }
-
-        [Fact]
-        public void TestGaussianBlur()
-        {
-            var input = torch.arange(1 * 3 * 3 * 5).reshape(1, 3, 3, 5).to(float32) / 5.0f;
-            var kernelSize = new List<long> { 3, 5 };
-            var sigma = new List<float> { 1.0f, 2.0f };
-
-            var actual = functional.gaussian_blur(input, kernelSize, sigma);
-            var expected = torch.tensor(new float[]{
-                2f, 2f, 2.2f, 2.4f, 2.4f,
-                1.2f, 1.2f, 1.4f, 1.6f, 1.6f,
-                0.4f, 0.4f, 0.6f, 0.8f, 0.8f,
-                5f, 5f, 5.2f, 5.4f, 5.4f,
-                4.2f, 4.2f, 4.4f, 4.6f, 4.6f,
-                3.4f, 3.4f, 3.6f, 3.8f, 3.8f,
-                8f, 8f, 8.2f, 8.4f, 8.4f,
-                7.2f, 7.2f, 7.4f, 7.6f, 7.6f,
-                6.4f, 6.4f, 6.6f, 6.8f, 6.8f
-            }).reshape(1, 3, 3, 5);
-
-            Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
         }
     }
 }

@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 using static TorchSharp.torch;
@@ -33,7 +33,8 @@ namespace TorchSharp
             {
                 byte[] data;
 
-                using (FileStream stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+                //FileShare.ReadWrite allow another process read or write this file
+                using (FileStream stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                     data = new byte[stream.Length];
                     await stream.ReadAsync(data, 0, data.Length);
                 }

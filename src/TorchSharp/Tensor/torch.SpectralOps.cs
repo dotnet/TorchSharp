@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 
 using System;
@@ -64,8 +64,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_bartlett_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.blackman_window
@@ -87,8 +87,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_blackman_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.hamming_window
@@ -111,8 +111,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hamming_window(len, periodic, alpha, beta, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.hann_window
@@ -134,8 +134,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hann_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.kaiser_window
@@ -157,8 +157,8 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_kaiser_window(len, periodic, beta, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+            return ReturnCheckForErrors(handle);
         }
     }
 }

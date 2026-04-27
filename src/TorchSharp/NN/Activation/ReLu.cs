@@ -24,7 +24,7 @@ namespace TorchSharp
                 return torch.nn.functional.relu(tensor, inplace);
             }
 
-            public bool inplace {get; set; }
+            public bool inplace { get; set; }
         }
     }
     public static partial class torch

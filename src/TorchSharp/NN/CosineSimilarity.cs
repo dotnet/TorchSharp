@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using TorchSharp.Amp;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -58,6 +59,7 @@ namespace TorchSharp
                 public static Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
                 {
                     var res = THSNN_cosine_similarity(x1.Handle, x2.Handle, dim, eps);
+                    res = AutocastMode.AutoCast(res, ScalarType.Float32);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
