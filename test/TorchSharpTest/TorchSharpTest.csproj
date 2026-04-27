@@ -13,7 +13,7 @@
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
     <LangVersion>10.0</LangVersion>
-    <CustomLibTorchFullPath>K:\FrameworksForC\LibTorch\libtorch-win-shared-with-deps-2.11.0+cpu\libtorch\share\cmake\Torch</CustomLibTorchFullPath>
+    <CustomLibTorchFullPath></CustomLibTorchFullPath>
   </PropertyGroup>
 
   <ItemGroup>
