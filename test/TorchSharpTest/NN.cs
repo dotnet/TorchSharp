@@ -621,7 +621,7 @@ namespace TorchSharp
         [Fact]
         public void EvaluateGELUWithTanhApproximate()
         {
-            var rel = GELU(GELUApproximate.tanh);
+            var rel = GELU(Modules.GELU.Approximate.tanh);
 
             foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
@@ -636,12 +636,12 @@ namespace TorchSharp
             // Verify that tanh approximate produces different results from exact
             var x = torch.tensor(new float[] { -1.0f, 0.0f, 1.0f, 2.0f });
             var exact = torch.nn.functional.gelu(x);
-            var approx = torch.nn.functional.gelu(x, GELUApproximate.tanh);
+            var approx = torch.nn.functional.gelu(x, Modules.GELU.Approximate.tanh);
             Assert.False(exact.allclose(approx, rtol: 1e-5, atol: 1e-5));
 
             // Verify that the in-place tanh approximate matches the out-of-place result
             var xInPlace = x.clone();
-            xInPlace.gelu_(GELUApproximate.tanh);
+            xInPlace.gelu_(Modules.GELU.Approximate.tanh);
             Assert.True(approx.allclose(xInPlace, rtol: 1e-5, atol: 1e-5));
         }
 

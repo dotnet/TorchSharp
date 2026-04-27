@@ -2983,11 +2983,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public Tensor gelu(GELUApproximate approximate)
+            public Tensor gelu(Modules.GELU.Approximate approximate)
             {
                 var approximateStr = approximate switch {
-                    GELUApproximate.none => "none",
-                    GELUApproximate.tanh => "tanh",
+                    Modules.GELU.Approximate.none => "none",
+                    Modules.GELU.Approximate.tanh => "tanh",
                     _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
                 };
                 var res = NativeMethods.THSTensor_gelu_with_approximate(Handle, approximateStr);
@@ -3004,11 +3004,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public Tensor gelu_(GELUApproximate approximate)
+            public Tensor gelu_(Modules.GELU.Approximate approximate)
             {
                 var approximateStr = approximate switch {
-                    GELUApproximate.none => "none",
-                    GELUApproximate.tanh => "tanh",
+                    Modules.GELU.Approximate.none => "none",
+                    Modules.GELU.Approximate.tanh => "tanh",
                     _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
                 };
                 var res = NativeMethods.THSTensor_gelu_with_approximate_(Handle, approximateStr);
