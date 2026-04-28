@@ -76,8 +76,16 @@ Tensor THSTensor_hfftn(const Tensor tensor, const int64_t* s, const int s_length
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
-    int64_t defaultDim[] = { -2, -1 };
-    c10::IntArrayRef dArg = (dim == nullptr) ? c10::IntArrayRef(defaultDim, 2) : c10::IntArrayRef(dim, dim_length);
+
+    // hfftn takes IntArrayRef (not optional) for dim. When dim is null,
+    // use all dimensions to match Python's dim=None behavior.
+    std::vector<int64_t> allDims;
+    if (dim == nullptr) {
+        auto ndim = (*tensor).dim();
+        allDims.resize(ndim);
+        for (int64_t i = 0; i < ndim; i++) allDims[i] = i;
+    }
+    auto dArg = (dim == nullptr) ? c10::IntArrayRef(allDims) : c10::IntArrayRef(dim, dim_length);
 
     CATCH_TENSOR(torch::fft::hfftn(*tensor, sArg, dArg, normArg));
 }
@@ -102,8 +110,14 @@ Tensor THSTensor_ihfftn(const Tensor tensor, const int64_t* s, const int s_lengt
 {
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
-    int64_t defaultDim[] = { -2, -1 };
-    c10::IntArrayRef dArg = (dim == nullptr) ? c10::IntArrayRef(defaultDim, 2) : c10::IntArrayRef(dim, dim_length);
+
+    std::vector<int64_t> allDims;
+    if (dim == nullptr) {
+        auto ndim = (*tensor).dim();
+        allDims.resize(ndim);
+        for (int64_t i = 0; i < ndim; i++) allDims[i] = i;
+    }
+    auto dArg = (dim == nullptr) ? c10::IntArrayRef(allDims) : c10::IntArrayRef(dim, dim_length);
 
     CATCH_TENSOR(torch::fft::ihfftn(*tensor, sArg, dArg, normArg));
 }
