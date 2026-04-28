@@ -43,7 +43,7 @@ EXPORT_API(void) THSJIT_Module_invoke(const JITModule module, const char* name, 
 
 EXPORT_API(void) THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx);
 
-EXPORT_API(int) THSJIT_Module_is_training(JITModule module);
+EXPORT_API(bool) THSJIT_Module_is_training(JITModule module);
 EXPORT_API(void) THSJIT_Module_zero_grad(const JITModule module, bool set_to_none);
 EXPORT_API(void) THSJIT_Module_train(JITModule module, bool on);
 EXPORT_API(void) THSJIT_Module_eval(JITModule module);
