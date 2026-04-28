@@ -649,7 +649,10 @@ namespace TorchSharp
         static torch()
         {
             deleters = new ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter>();
-            TryInitializeDeviceType(DeviceType.CUDA);
+            if (!TryInitializeDeviceType(DeviceType.CUDA)) {
+                // CUDA not available, ensure CPU backend is loaded
+                LoadNativeBackend(false, out _);
+            }
         }
         #endregion
     }
