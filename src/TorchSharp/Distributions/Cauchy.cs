@@ -78,7 +78,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value) =>
-                WrappedTensorDisposeScope(() => -Math.Log(Math.PI) - scale.log() - (((value - loc) / scale).pow(2)).log1p());            
+                WrappedTensorDisposeScope(() => -Math.Log(Math.PI) - scale.log() - (((value - loc) / scale).square()).log1p());
 
             /// <summary>
             /// Returns entropy of distribution, batched over batch_shape.

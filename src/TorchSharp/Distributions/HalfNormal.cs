@@ -26,7 +26,7 @@ namespace TorchSharp
 
             public override Tensor mode => torch.zeros_like(scale);
 
-            public override Tensor variance => scale.pow(2) * (1 - 2 / Math.PI);
+            public override Tensor variance => scale.square() * (1 - 2 / Math.PI);
 
             public override Tensor log_prob(Tensor value)
             {

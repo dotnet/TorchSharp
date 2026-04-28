@@ -149,11 +149,11 @@ namespace TorchSharp
 
         public static Tensor clamp_max(Tensor input, Scalar max) => input.clamp_max(max);
 
-        public static Tensor clamp_max_(Tensor input, Scalar max) => input.clamp_max(max);
+        public static Tensor clamp_max_(Tensor input, Scalar max) => input.clamp_max_(max);
 
         public static Tensor clamp_min(Tensor input, Scalar min) => input.clamp_min(min);
 
-        public static Tensor clamp_min_(Tensor input, Scalar min) => input.clamp_min(min);
+        public static Tensor clamp_min_(Tensor input, Scalar min) => input.clamp_min_(min);
 
         /// <summary>
         /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.

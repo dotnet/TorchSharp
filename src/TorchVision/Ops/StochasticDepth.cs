@@ -53,7 +53,8 @@ namespace TorchSharp
                 noise.bernoulli_(survival_rate);
 
                 if (survival_rate > 0) {
-                    noise.div_(survival_rate);
+                    using var survival_rate_scalar = survival_rate.ToScalar();
+                    noise.div_(survival_rate_scalar);
                 }
                 return input * noise;
             }

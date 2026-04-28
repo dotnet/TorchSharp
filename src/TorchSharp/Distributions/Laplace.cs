@@ -31,7 +31,7 @@ namespace TorchSharp
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => 2 * scale.pow(2);
+            public override Tensor variance => 2 * scale.square();
 
 
             /// <summary>
