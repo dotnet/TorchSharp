@@ -63,7 +63,7 @@ void THSJIT_save_byte_array(JITModule module, char* bytes, int64_t size)
     );
 }
 
-int THSJIT_Module_is_training(JITModule module)
+bool THSJIT_Module_is_training(JITModule module)
 {
     return (*module)->is_training();
 }
