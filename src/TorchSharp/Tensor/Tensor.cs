@@ -371,7 +371,7 @@ namespace TorchSharp
                     throw new InvalidOperationException("is_nonzero() called on non-singleton tensor");
                 var res = NativeMethods.THSTensor_is_nonzero(Handle);
                 CheckForErrors();
-                return res != 0;
+                return res;
             }
 
             public bool is_cuda => device.type == DeviceType.CUDA;
@@ -383,7 +383,7 @@ namespace TorchSharp
             /// For Tensors that have requires_grad which is true, they will be leaf Tensors if they were created by the user.This means that they are not the result of an operation and so grad_fn is None.
             /// Only leaf Tensors will have their grad populated during a call to backward(). To get grad populated for non-leaf Tensors, you can use retain_grad().
             /// </summary>
-            public bool is_leaf { get => NativeMethods.THSTensor_is_leaf(Handle) != 0; }
+            public bool is_leaf { get => NativeMethods.THSTensor_is_leaf(Handle); }
 
 
             /// <summary>
@@ -1407,7 +1407,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_is_contiguous(Handle);
                 CheckForErrors();
-                return res != 0;
+                return res;
             }
 
             /// <summary>
@@ -1429,7 +1429,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_is_pinned(Handle);
                 CheckForErrors();
-                return res != 0;
+                return res;
             }
 
             /// <summary>

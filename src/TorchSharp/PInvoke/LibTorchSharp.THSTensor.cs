@@ -247,7 +247,8 @@ namespace TorchSharp.PInvoke
         internal static extern long THSTensor_numel(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern long THSTensor_is_leaf(IntPtr handle);
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSTensor_is_leaf(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_alias(IntPtr handle);
@@ -386,13 +387,15 @@ namespace TorchSharp.PInvoke
         internal static extern long THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
-        internal static extern int THSTensor_is_contiguous(IntPtr handle);
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSTensor_is_contiguous(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_contiguous(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern long THSTensor_is_pinned(IntPtr handle);
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSTensor_is_pinned(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_pin_memory(IntPtr handle);
@@ -773,7 +776,8 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_isnan(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern long THSTensor_is_nonzero(IntPtr handle);
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSTensor_is_nonzero(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_isreal(IntPtr tensor);
