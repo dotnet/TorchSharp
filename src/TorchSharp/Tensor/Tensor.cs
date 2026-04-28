@@ -272,6 +272,95 @@ namespace TorchSharp
             public bool is_complex() => torch.is_complex(dtype);
 
             /// <summary>
+            /// Returns True if the data type of input is a quantized data type i.e., one of torch.qint8, torch.quint8, and torch.qint32.
+            /// </summary>
+            public bool is_quantized() => torch.is_quantized(dtype);
+
+            /// <summary>
+            /// Given a quantized Tensor, returns a dequantized (float) Tensor.
+            /// </summary>
+            public Tensor dequantize()
+            {
+                var res = NativeMethods.THSTensor_dequantize(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor, returns the scale of the quantization as a double.
+            /// </summary>
+            public double q_scale()
+            {
+                var res = NativeMethods.THSTensor_q_scale(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor, returns the zero_point of the quantization as a long.
+            /// </summary>
+            public long q_zero_point()
+            {
+                var res = NativeMethods.THSTensor_q_zero_point(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor, returns a Tensor of the underlying integer representation.
+            /// </summary>
+            public Tensor int_repr()
+            {
+                var res = NativeMethods.THSTensor_int_repr(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor quantized per channel, returns a Tensor of the scales of the quantization for each channel.
+            /// </summary>
+            public Tensor q_per_channel_scales()
+            {
+                var res = NativeMethods.THSTensor_q_per_channel_scales(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor quantized per channel, returns a Tensor of the zero points of the quantization for each channel.
+            /// </summary>
+            public Tensor q_per_channel_zero_points()
+            {
+                var res = NativeMethods.THSTensor_q_per_channel_zero_points(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Given a quantized Tensor quantized per channel, returns the axis along which per channel quantization is applied.
+            /// </summary>
+            public long q_per_channel_axis()
+            {
+                var res = NativeMethods.THSTensor_q_per_channel_axis(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            internal Tensor _quantize_per_tensor(double scale, long zero_point, ScalarType dtype)
+            {
+                var res = NativeMethods.THSTensor_quantize_per_tensor(Handle, scale, zero_point, (sbyte)dtype);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            internal Tensor _quantize_per_channel(Tensor scales, Tensor zero_points, long axis, ScalarType dtype)
+            {
+                var res = NativeMethods.THSTensor_quantize_per_channel(Handle, scales.Handle, zero_points.Handle, axis, (sbyte)dtype);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns True if the input is a single element tensor which is not equal to zero after type conversions,
             /// i.e. not equal to torch.tensor([0.]) or torch.tensor([0]) or torch.tensor([False]).
             /// Throws an InvalidOperationException if torch.numel() != 1.
@@ -386,7 +475,9 @@ namespace TorchSharp
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.BFloat16:
-                    throw new ArgumentException($"No support for {dtype.ToString()} in TorchSharp");
+                    if (dotnetType != typeof(BFloat16))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
+                    break;
                 case ScalarType.Float16:
 #if NET6_0_OR_GREATER
                     if (dotnetType != typeof(Half))
@@ -2543,6 +2634,16 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Convert each element from degrees to radians, in-place.
+            /// </summary>
+            public Tensor deg2rad_()
+            {
+                NativeMethods.THSTensor_deg2rad_(Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            /// <summary>
             /// Convert each element from radians to degrees.
             /// </summary>
             public Tensor rad2deg()
@@ -2551,6 +2652,16 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Convert each element from radians to degrees, in-place.
+            /// </summary>
+            public Tensor rad2deg_()
+            {
+                NativeMethods.THSTensor_rad2deg_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2565,6 +2676,18 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Copies the signs of other to input, in-place.
+            /// </summary>
+            /// <param name="other">contains value(s) whose signbit(s) are applied to the magnitudes in input.</param>
+            /// <returns>this tensor</returns>
+            public Tensor copysign_(Tensor other)
+            {
+                NativeMethods.THSTensor_copysign_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2931,6 +3054,17 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the Heaviside step function for each element in input, in-place.
+            /// </summary>
+            /// <param name="other">The values to use where input is zero.</param>
+            public Tensor heaviside_(Tensor other)
+            {
+                NativeMethods.THSTensor_heaviside_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
+            }
+
+            /// <summary>
             /// Computes the regularized lower incomplete gamma function
             /// </summary>
             /// <param name="other">The second non-negative input tensor</param>
@@ -2966,6 +3100,16 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the zeroth order modified Bessel function of the first kind for each element of input, in-place.
+            /// </summary>
+            public Tensor i0_()
+            {
+                NativeMethods.THSTensor_i0_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -6031,6 +6175,23 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Replaces NaN, positive infinity, and negative infinity values in input, in-place.
+            /// </summary>
+            public Tensor nan_to_num_(double nan = 0d, double? posinf = null, double? neginf = null)
+            {
+                var _nan = new double[] { nan };
+                var _posinf = posinf.HasValue ? new double[] { posinf.Value } : null;
+                var _neginf = neginf.HasValue ? new double[] { neginf.Value } : null;
+                unsafe {
+                    fixed (double* pnan = _nan, pposinf = _posinf, pneginf = _neginf) {
+                        NativeMethods.THSTensor_nan_to_num_(Handle, (IntPtr)pnan, (IntPtr)pposinf, (IntPtr)pneginf);
+                        CheckForErrors();
+                        return this;
+                    }
+                }
+            }
+
+            /// <summary>
             /// Return the next floating-point value after input towards other, elementwise.
             /// </summary>
             public Tensor nextafter(Tensor other)
@@ -6038,6 +6199,16 @@ namespace TorchSharp
                 var res = NativeMethods.THSTensor_nextafter(Handle, other.Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Return the next floating-point value after input towards other, elementwise, in-place.
+            /// </summary>
+            public Tensor nextafter_(Tensor other)
+            {
+                NativeMethods.THSTensor_nextafter_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -6717,6 +6888,14 @@ namespace TorchSharp
                 case ScalarType.Float64:
                     if (top) sb.Append("double ");
                     break;
+                case ScalarType.BFloat16:
+                    if (top) sb.Append("bfloat16 ");
+                    appendChar = "f";
+                    break;
+                case ScalarType.Float16:
+                    if (top) sb.Append("float16 ");
+                    appendChar = "f";
+                    break;
                 case ScalarType.ComplexFloat32:
                     if (top) sb.Append("complex32 ");
                     break;
@@ -6997,6 +7176,7 @@ namespace TorchSharp
                 case ScalarType.Bool:
                     builder.Append(value.ToBoolean().ToString(cultureInfo));
                     break;
+                case ScalarType.BFloat16:
                 case ScalarType.Float16:
                     builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));
                     break;
@@ -7279,9 +7459,9 @@ namespace TorchSharp
             ComplexFloat32 = 9,
             ComplexFloat64 = 10,
             Bool = 11,
-            //QInt8 = 12,
-            //QUInt8 = 13,
-            //QUInt32 = 14,
+            QInt8 = 12,
+            QUInt8 = 13,
+            QInt32 = 14,
             BFloat16 = 15
         }
 
@@ -7293,6 +7473,7 @@ namespace TorchSharp
             { typeof(short), ScalarType.Int16 },
             { typeof(int), ScalarType.Int32 },
             { typeof(long), ScalarType.Int64 },
+            { typeof(BFloat16), ScalarType.BFloat16 },
 #if NET6_0_OR_GREATER
             { typeof(Half), ScalarType.Float16 },
 #endif
@@ -7413,6 +7594,18 @@ namespace TorchSharp
             }
         }
 
+        public static bool is_quantized(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.QInt8:
+            case ScalarType.QUInt8:
+            case ScalarType.QInt32:
+                return true;
+            default:
+                return false;
+            }
+        }
+
         public static long max_int_value(ScalarType type)
         {
             switch (type) {
@@ -7462,6 +7655,10 @@ namespace TorchSharp
 
         public static ScalarType cfloat = ScalarType.ComplexFloat32;
         public static ScalarType cdouble = ScalarType.ComplexFloat64;
+
+        public static ScalarType qint8 = ScalarType.QInt8;
+        public static ScalarType quint8 = ScalarType.QUInt8;
+        public static ScalarType qint32 = ScalarType.QInt32;
 
         /// <summary>
         /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will

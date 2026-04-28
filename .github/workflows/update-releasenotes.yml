@@ -1,0 +1,137 @@
+name: Update RELEASENOTES.md
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-releasenotes:
+    if: >-
+      github.event.pull_request.merged == true &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-changelog')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Get current version
+        id: version
+        shell: bash
+        run: |
+          FILE="RELEASENOTES.md"
+          LATEST=$(grep -oP '(?<=^# NuGet Version )\d+\.\d+\.\d+' "$FILE" | head -1)
+          if [ -z "$LATEST" ]; then
+            echo "::error::Could not find any version heading in RELEASENOTES.md"
+            exit 1
+          fi
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "Detected latest version: $LATEST"
+
+      - name: Determine category from labels
+        id: category
+        shell: bash
+        run: |
+          LABELS='${{ toJson(github.event.pull_request.labels.*.name) }}'
+          if echo "$LABELS" | grep -qiE '"breaking-change"'; then
+            echo "section=__Breaking Changes__" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -qiE '"bug"|"fix"'; then
+            echo "section=__Bug Fixes__" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -qiE '"enhancement"|"api-change"|"Missing Feature"'; then
+            echo "section=__API Changes__" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -qiE '"build"|"ci"|"infra"'; then
+            echo "section=__Build/Infrastructure__" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -qiE '"issue-fixed"'; then
+            echo "section=__Issues Fixed__" >> "$GITHUB_OUTPUT"
+          else
+            echo "section=__Other Changes__" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update RELEASENOTES.md
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          SECTION: ${{ steps.category.outputs.section }}
+          CURRENT_VERSION: ${{ steps.version.outputs.latest }}
+        run: |
+          export FILE="RELEASENOTES.md"
+          export VERSION_HEADER="# NuGet Version ${CURRENT_VERSION}"
+
+          python3 - <<'PYEOF'
+          import os, sys
+
+          file_path = os.environ['FILE']
+          ver_header = os.environ['VERSION_HEADER']
+          section = os.environ['SECTION']
+          pr_number = os.environ['PR_NUMBER']
+          pr_title = os.environ['PR_TITLE']
+          entry = f"#{pr_number} {pr_title}<br/>"
+
+          with open(file_path, 'r') as f:
+              content = f.read()
+              lines = content.splitlines(keepends=True)
+
+          # Find the version block and insert the entry
+          result = []
+          in_version_block = False
+          section_found = False
+          inserted = False
+
+          for i, line in enumerate(lines):
+              stripped = line.rstrip('\n')
+
+              if stripped == ver_header:
+                  in_version_block = True
+                  result.append(line)
+                  continue
+
+              if in_version_block and stripped.startswith('# NuGet Version ') and stripped != ver_header:
+                  # Reached next version block without finding/creating section
+                  if not inserted:
+                      result.append('\n' + section + ':\n\n' + entry + '\n\n')
+                      inserted = True
+                  in_version_block = False
+                  result.append(line)
+                  continue
+
+              if in_version_block and not inserted and stripped == section + ':':
+                  section_found = True
+                  result.append(line)
+                  continue
+
+              if section_found and not inserted:
+                  # Insert after the blank line following the section heading
+                  if stripped == '':
+                      result.append(line)
+                      result.append(entry + '\n')
+                      inserted = True
+                      continue
+
+              result.append(line)
+
+          # If we reached EOF still inside the version block
+          if in_version_block and not inserted:
+              result.append('\n' + section + ':\n\n' + entry + '\n')
+
+          with open(file_path, 'w') as f:
+              f.writelines(result)
+          PYEOF
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add RELEASENOTES.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: add PR #${{ github.event.pull_request.number }} to RELEASENOTES.md [skip ci]"
+            git push
+          fi

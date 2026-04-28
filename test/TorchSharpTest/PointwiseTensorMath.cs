@@ -675,6 +675,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.deg2rad_))]
+        public void Deg2RadInPlaceTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(angl => (angl * MathF.PI) / 180.0f).ToArray();
+            var input = torch.tensor(data);
+            {
+                var res = input.deg2rad_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var input2 = torch.tensor(data);
+                var res = torch.deg2rad_(input2);
+                Assert.Same(input2, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.clamp))]
         [TestOf(nameof(Tensor.clamp_))]
         public void ClampTest1()
@@ -735,6 +755,26 @@ namespace TorchSharp
             var expected = data.Select(angl => (angl * 180.0f) / MathF.PI).ToArray();
             var res = torch.tensor(data).rad2deg();
             Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.rad2deg_))]
+        public void Rad2DegInPlaceTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(angl => (angl * 180.0f) / MathF.PI).ToArray();
+            var input = torch.tensor(data);
+            {
+                var res = input.rad2deg_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var input2 = torch.tensor(data);
+                var res = torch.rad2deg_(input2);
+                Assert.Same(input2, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -875,6 +915,28 @@ namespace TorchSharp
             var data = torch.arange(0, 5, 1, float32);
             var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
             var res = data.i0();
+            Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.i0_))]
+        public void I0InPlaceTest()
+        {
+            var data = torch.arange(0, 5, 1, float32);
+            var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
+            var res = data.i0_();
+            Assert.Same(data, res);
+            Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.i0_))]
+        public void I0InPlaceTorchTest()
+        {
+            var data = torch.arange(0, 5, 1, float32);
+            var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
+            var res = torch.i0_(data);
+            Assert.Same(data, res);
             Assert.True(res.allclose(torch.tensor(expected)));
         }
 
@@ -1228,6 +1290,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.exp2_))]
+        public void Exp2InPlaceTest()
+        {
+            var x = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = new float[] { 2.0f, 4.0f, 8.0f };
+            var input = torch.tensor(x);
+            {
+                var res = input.exp2_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var input2 = torch.tensor(x);
+                var res = torch.exp2_(input2);
+                Assert.Same(input2, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.floor))]
         public void FloorTest()
         {
@@ -1406,6 +1488,101 @@ namespace TorchSharp
             Assert.Same(x, w);
 
             Assert.Equal(x, z);
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.copysign))]
+        public void CopysignTest()
+        {
+            var a = torch.tensor(new float[] { 1.0f, -2.0f, 3.0f });
+            var b = torch.tensor(new float[] { -1.0f, 1.0f, -1.0f });
+            var expected = torch.tensor(new float[] { -1.0f, 2.0f, -3.0f });
+            var res = a.copysign(b);
+            Assert.True(res.allclose(expected));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.copysign_))]
+        public void CopysignInPlaceTest()
+        {
+            var a = torch.tensor(new float[] { 1.0f, -2.0f, 3.0f });
+            var b = torch.tensor(new float[] { -1.0f, 1.0f, -1.0f });
+            var expected = torch.tensor(new float[] { -1.0f, 2.0f, -3.0f });
+            {
+                var res = a.copysign_(b);
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var input2 = torch.tensor(new float[] { 1.0f, -2.0f, 3.0f });
+                var res = torch.copysign_(input2, b);
+                Assert.Same(input2, res);
+                Assert.True(res.allclose(expected));
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.float_power))]
+        public void FloatPowerTest()
+        {
+            var a = torch.tensor(new float[] { 2.0f, 3.0f, 4.0f });
+            var b = torch.tensor(new float[] { 3.0f, 2.0f, 1.0f });
+            var expected = torch.tensor(new double[] { 8.0, 9.0, 4.0 });
+            var res = a.float_power(b);
+            Assert.True(res.allclose(expected));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.float_power_))]
+        public void FloatPowerInPlaceTest()
+        {
+            var b = torch.tensor(new float[] { 3.0f, 2.0f, 1.0f });
+            var expected = torch.tensor(new double[] { 8.0, 9.0, 4.0 });
+            {
+                var a = torch.tensor(new double[] { 2.0, 3.0, 4.0 });
+                var res = a.float_power_(torch.tensor(new double[] { 3.0, 2.0, 1.0 }));
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var a = torch.tensor(new double[] { 2.0, 3.0, 4.0 });
+                var res = torch.float_power_(a, torch.tensor(new double[] { 3.0, 2.0, 1.0 }));
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.nextafter))]
+        public void NextafterTest()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 2.0f });
+            var b = torch.tensor(new float[] { 2.0f, 1.0f });
+            var res = a.nextafter(b);
+            Assert.True(res[0].item<float>() > 1.0f);
+            Assert.True(res[1].item<float>() < 2.0f);
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.nextafter_))]
+        public void NextafterInPlaceTest()
+        {
+            {
+                var a = torch.tensor(new float[] { 1.0f, 2.0f });
+                var b = torch.tensor(new float[] { 2.0f, 1.0f });
+                var res = a.nextafter_(b);
+                Assert.Same(a, res);
+                Assert.True(res[0].item<float>() > 1.0f);
+                Assert.True(res[1].item<float>() < 2.0f);
+            }
+            {
+                var a = torch.tensor(new float[] { 1.0f, 2.0f });
+                var b = torch.tensor(new float[] { 2.0f, 1.0f });
+                var res = torch.nextafter_(a, b);
+                Assert.Same(a, res);
+                Assert.True(res[0].item<float>() > 1.0f);
+                Assert.True(res[1].item<float>() < 2.0f);
+            }
         }
     }
 }

@@ -102,6 +102,91 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void TestBFloat16ScalarToString()
+        {
+            // Scalar (0-d tensor)
+            {
+                var t = torch.tensor(3.14f, torch.bfloat16);
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[], type = BFloat16, device = cpu, value = 3.1406", str);
+            }
+            {
+                var t = torch.tensor(3.14f, torch.bfloat16);
+                var str = t.npstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("3.1406", str);
+            }
+            {
+                var t = torch.tensor(3.14f, torch.bfloat16);
+                var str = t.cstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[], type = BFloat16, device = cpu, value = 3.1406", str);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void TestBFloat16TensorToString()
+        {
+            // 1-D tensor
+            {
+                var t = torch.zeros(4, torch.bfloat16);
+                var str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[0, 0, 0, 0]", str);
+            }
+            // 1-D Julia
+            {
+                var t = torch.zeros(4, torch.bfloat16);
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[4], type = BFloat16, device = cpu{Environment.NewLine} 0 0 0 0{Environment.NewLine}", str);
+            }
+            // 1-D CSharp
+            {
+                var t = torch.zeros(4, torch.bfloat16);
+                var str = t.cstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[4], type = BFloat16, device = cpu, value = bfloat16 [] {0f, 0f, 0f, 0f}", str);
+            }
+            // 2-D tensor
+            {
+                var t = torch.ones(2, 3, torch.bfloat16);
+                var str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[[1, 1, 1]{Environment.NewLine} [1, 1, 1]]", str);
+            }
+            // print() should not throw
+            {
+                var t = torch.randn(3, 3).to(torch.bfloat16);
+                var originalOut = Console.Out;
+                using (var sw = new StringWriter()) {
+                    try {
+                        Console.SetOut(sw);
+                        t.print(cultureInfo: CultureInfo.InvariantCulture);
+                        var result = sw.ToString();
+                        Assert.False(string.IsNullOrEmpty(result));
+                    } finally {
+                        Console.SetOut(originalOut);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void TestFloat16TensorToString()
+        {
+            // 1-D CSharp
+            {
+                var t = torch.zeros(4, torch.float16);
+                var str = t.cstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[4], type = Float16, device = cpu, value = float16 [] {0f, 0f, 0f, 0f}", str);
+            }
+            // 1-D Numpy
+            {
+                var t = torch.zeros(4, torch.float16);
+                var str = t.npstr(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal("[0, 0, 0, 0]", str);
+            }
+        }
+
         private string _sep = Environment.NewLine;
 
         [Fact]
@@ -609,6 +694,154 @@ namespace TorchSharp
 #else
             x.data<float>();
 #endif
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.ones))]
+        public void DataBFloat16()
+        {
+            var x = torch.ones(5, torch.bfloat16);
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            var accessor = x.data<BFloat16>();
+            Assert.Equal(5, accessor.Count);
+            Assert.Equal((BFloat16)1.0f, accessor[0]);
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void DataBFloat16Item()
+        {
+            // item<BFloat16> on scalar tensor
+            var t = torch.tensor(3.14f, torch.bfloat16);
+            var val = t.item<BFloat16>();
+            Assert.Equal(3.140625f, val.ToSingle());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor))]
+        public void DataBFloat16RoundTrip()
+        {
+            // Create tensor from BFloat16 array, read back
+            var input = new BFloat16[] { (BFloat16)1.0f, (BFloat16)2.0f, (BFloat16)3.0f, (BFloat16)0.5f };
+            var t = torch.tensor(input);
+            Assert.Equal(ScalarType.BFloat16, t.dtype);
+            Assert.Equal(4, t.NumberOfElements);
+            var output = t.data<BFloat16>().ToArray();
+            Assert.Equal(input, output);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.tensor))]
+        public void MDTensorFactoryBFloat16()
+        {
+            {
+                var array = new BFloat16[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.BFloat16, t.dtype);
+            }
+
+            {
+                var array = new BFloat16[8];
+                var t = torch.tensor(array, new long[] { 8 });
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.BFloat16, t.dtype);
+            }
+
+            {
+                var array = new BFloat16[1, 2];
+                var t = torch.tensor(array);
+                Assert.Equal(2, t.ndim);
+                Assert.Equal(new long[] { 1, 2 }, t.shape);
+                Assert.Equal(ScalarType.BFloat16, t.dtype);
+            }
+
+            {
+                var array = new BFloat16[1, 2, 3];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.BFloat16, t.dtype);
+            }
+
+            {
+                var array = new BFloat16[1, 2, 3, 4];
+                var t = torch.tensor(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.BFloat16, t.dtype);
+            }
+
+            {
+                var array = new BFloat16[,,] { { { (BFloat16)1f, (BFloat16)2f }, { (BFloat16)3f, (BFloat16)4f } }, { { (BFloat16)5f, (BFloat16)6f }, { (BFloat16)7f, (BFloat16)8f } } };
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
+                Assert.Equal(ScalarType.BFloat16, t.dtype);
+                Assert.Equal(array.Cast<BFloat16>().ToArray(), t.data<BFloat16>().ToArray());
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToBFloat16))]
+        public void TensorToBFloat16Extension()
+        {
+            var t = torch.tensor(3.14f, torch.bfloat16);
+            var bf = t.ToBFloat16();
+            Assert.Equal(3.140625f, bf.ToSingle());
+        }
+
+        [Fact]
+        [TestOf(nameof(BFloat16))]
+        public void BFloat16StructBasics()
+        {
+            // Size must be 2 bytes
+            Assert.Equal(2, Marshal.SizeOf<BFloat16>());
+
+            // Precision loss: 333.0f -> BFloat16 -> float (matching PyTorch)
+            var bf = (BFloat16)333.0f;
+            Assert.Equal(332.0f, bf.ToSingle());
+
+            // Round-to-nearest-even: 3.14f → BFloat16 matches PyTorch native conversion
+            var bf_rne = (BFloat16)3.14f;
+            Assert.Equal(3.140625f, bf_rne.ToSingle());
+
+            // Round-trip for a value that fits exactly
+            var bf2 = (BFloat16)1.0f;
+            Assert.Equal(1.0f, bf2.ToSingle());
+
+            // Special values
+            Assert.True(BFloat16.IsNaN(BFloat16.NaN));
+            Assert.True(BFloat16.IsPositiveInfinity(BFloat16.PositiveInfinity));
+            Assert.True(BFloat16.IsNegativeInfinity(BFloat16.NegativeInfinity));
+            Assert.True(BFloat16.IsFinite(BFloat16.One));
+            Assert.False(BFloat16.IsFinite(BFloat16.NaN));
+
+            // Arithmetic
+            var a = (BFloat16)2.0f;
+            var b = (BFloat16)3.0f;
+            Assert.Equal(5.0f, (a + b).ToSingle());
+            Assert.Equal(-1.0f, (a - b).ToSingle());
+            Assert.Equal(6.0f, (a * b).ToSingle());
+
+            // Comparison
+            Assert.True(a < b);
+            Assert.True(b > a);
+            Assert.True(a == (BFloat16)2.0f);
+            Assert.True(a != b);
+
+            // Equality
+            Assert.Equal((BFloat16)1.5f, (BFloat16)1.5f);
+            Assert.NotEqual((BFloat16)1.5f, (BFloat16)2.0f);
         }
 
         [Fact]
@@ -4825,6 +5058,27 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.heaviside_))]
+        public void HeavisideInPlaceTest()
+        {
+            var input = new float[] { -1.0f, 0.0f, 3.0f };
+            var values = new float[] { 1.0f, 2.0f, 1.0f };
+            var expected = new float[] { 0.0f, 2.0f, 1.0f };
+            {
+                var t = torch.tensor(input);
+                var res = t.heaviside_(torch.tensor(values));
+                Assert.Same(t, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var t = torch.tensor(input);
+                var res = torch.heaviside_(t, torch.tensor(values));
+                Assert.Same(t, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.maximum))]
         public void MaximumTest()
         {
@@ -4955,6 +5209,26 @@ namespace TorchSharp
             var expected = new float[] { -0.946446538f, 2.635313f, 0.6128909f, -1.71667457f, 0.6260796f };
             var res = torch.tensor(data).logit(eps: 1f - 6);
             Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.logit_))]
+        public void LogitInPlaceTest()
+        {
+            var data = new float[] { 0.2796f, 0.9331f, 0.6486f, 0.1523f, 0.6516f };
+            var expected = new float[] { -0.946446538f, 2.635313f, 0.6128909f, -1.71667457f, 0.6260796f };
+            {
+                var input = torch.tensor(data);
+                var res = input.logit_(eps: 1f - 6);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var input = torch.tensor(data);
+                var res = torch.logit_(input, eps: 1f - 6);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -6714,6 +6988,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.nan_to_num_))]
+        public void NanToNumInPlaceTest()
+        {
+            {
+                var a = torch.tensor(new float[] { Single.NaN, Single.PositiveInfinity, Single.NegativeInfinity, MathF.PI });
+                var expected = torch.tensor(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
+                var res = a.nan_to_num_(nan: 2.0f, posinf: 3.0f, neginf: -13.0f);
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var a = torch.tensor(new float[] { Single.NaN, Single.PositiveInfinity, Single.NegativeInfinity, MathF.PI });
+                var expected = torch.tensor(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
+                var res = torch.nan_to_num_(a, nan: 2.0f, posinf: 3.0f, neginf: -13.0f);
+                Assert.Same(a, res);
+                Assert.True(res.allclose(expected));
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.diff))]
         public void TensorDiffTest()
         {
@@ -7989,6 +8283,20 @@ namespace TorchSharp
 
             Assert.Equal(data, st.ToArray());
             Assert.Equal(data, x.data<long>().ToArray());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.storage))]
+        public void Storage_DataPtr()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f, 4.0f };
+            var x = torch.tensor(data);
+
+            var st = x.storage<float>();
+            Assert.NotNull(st);
+
+            var ptr = st.data_ptr();
+            Assert.NotEqual(IntPtr.Zero, ptr);
         }
 
         [Fact]

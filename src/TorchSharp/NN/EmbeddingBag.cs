@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Diagnostics.CodeAnalysis;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -82,6 +83,7 @@ namespace TorchSharp
                 return base.call(input, null, null);
             }
 
+            [DisallowNull]
             public Parameter? weight {
                 get {
                     var res = THSNN_EmbeddingBag_weight(handle);
@@ -89,9 +91,7 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
-                    THSNN_EmbeddingBag_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
+                    THSNN_EmbeddingBag_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }

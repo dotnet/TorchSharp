@@ -333,6 +333,11 @@ Tensor THSTensor_copysign(const Tensor input, const Tensor other)
     CATCH_TENSOR(input->copysign(*other));
 }
 
+void THSTensor_copysign_(const Tensor input, const Tensor other)
+{
+    CATCH(input->copysign_(*other);)
+}
+
 Tensor THSTensor_corrcoef(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->corrcoef());
@@ -675,6 +680,11 @@ Tensor THSTensor_heaviside(const Tensor left, const Tensor right)
     CATCH_TENSOR(torch::heaviside(*left, *right));
 }
 
+void THSTensor_heaviside_(const Tensor left, const Tensor right)
+{
+    CATCH(left->heaviside_(*right);)
+}
+
 Tensor THSTensor_hypot(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(torch::hypot(*left, *right));
@@ -683,6 +693,11 @@ Tensor THSTensor_hypot(const Tensor left, const Tensor right)
 Tensor THSTensor_i0(const Tensor tensor)
 {
     CATCH_TENSOR(torch::i0(*tensor));
+}
+
+void THSTensor_i0_(const Tensor tensor)
+{
+    CATCH(torch::i0_(*tensor);)
 }
 
 Tensor THSTensor_igamma(const Tensor tensor, const Tensor other)
@@ -738,13 +753,14 @@ Tensor THSTensor_isreal(const Tensor tensor)
     CATCH_TENSOR(torch::isreal(*tensor));
 }
 
-void completeTensorIndices(const int64_t* indexStarts,
+std::vector<at::indexing::TensorIndex> completeTensorIndices(const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
-    at::indexing::TensorIndex* indicesArray,
     const int indicesLength)
 {
+    std::vector<at::indexing::TensorIndex> indices;
+    indices.reserve(indicesLength);
     // The indexStart encodes the kind of slice being performed for each dimension
     // range INT64_MIN..INT64_MIN+5 is for various singleton cases
     // range INT64_MIN+6 is for slice with absent start
@@ -755,56 +771,41 @@ void completeTensorIndices(const int64_t* indexStarts,
         auto n = indexStarts[i];
         if (n == INT64_MIN) // TensorIndex 'Null'
         {
-            at::indexing::TensorIndex idx(c10::nullopt);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(c10::nullopt);
         }
         else if (n == INT64_MIN + 1) // TensorIndex 'False'
         {
-            at::indexing::TensorIndex idx(false);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(false);
         }
         else if (n == INT64_MIN + 2) // TensorIndex 'True'
         {
-            at::indexing::TensorIndex idx(true);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(true);
         }
         else if (n == INT64_MIN + 3) // TensorIndex '...'
         {
-            at::indexing::TensorIndex idx(at::indexing::Ellipsis);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(at::indexing::Ellipsis);
         }
         else if (n == INT64_MIN + 4) // TensorIndex 'None'
         {
-            at::indexing::TensorIndex idx(at::indexing::None);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(at::indexing::None);
         }
         else if (n == INT64_MIN + 5) // TensorIndex by tensor
         {
-            at::indexing::TensorIndex idx(*indexTensors[i]);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(*indexTensors[i]);
         }
         else if (n > INT64_MIN / 4) // TensorIndex by integer
         {
-            at::indexing::TensorIndex idx(n);
-            // The '=' copy constructor for TensorIndex doesn't work
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(n);
         }
         else // TensorIndex by Slice
         {
-            // slice
             auto start = (n == INT64_MIN + 6) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n - INT64_MIN / 2);
             auto end = (indexEnds == nullptr || indexEnds[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexEnds[i]);
             auto step = (indexSteps == nullptr || indexSteps[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexSteps[i]);
-            at::indexing::TensorIndex idx(at::indexing::Slice(start, end, step));
-            memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
+            indices.emplace_back(at::indexing::Slice(start, end, step));
         }
     }
+    return indices;
 }
 
 Tensor THSTensor_index(Tensor tensor,
@@ -814,11 +815,8 @@ Tensor THSTensor_index(Tensor tensor,
     const Tensor* indexTensors,
     const int indicesLength)
 {
-    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
-    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
-    // The indexStart encodes the kind of slice being performed for each dimension
-    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
-    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    auto indicesVec = completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesVec.data(), indicesVec.size());
     CATCH_TENSOR(tensor->index(indices));
 }
 
@@ -830,10 +828,8 @@ void THSTensor_index_put_(Tensor tensor,
     const int indicesLength,
     const Tensor value)
 {
-    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
-    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
-    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
-    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    auto indicesVec = completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesVec.data(), indicesVec.size());
     CATCH(tensor->index_put_(indices, *value););
 }
 
@@ -846,10 +842,8 @@ void THSTensor_index_put_(Tensor tensor,
     const Tensor value,
     const bool accumulate)
 {
-    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
-    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
-    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
-    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    auto indicesVec = completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesVec.data(), indicesVec.size());
     if (accumulate) {
         c10::List<std::optional<at::Tensor>> indicesList = c10::List<std::optional<at::Tensor>>();
         for (int i = 0; i < indicesLength; i++) {
@@ -870,10 +864,8 @@ void THSTensor_index_put_scalar_(Tensor tensor,
     const int indicesLength,
     const Scalar value)
 {
-    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
-    memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
-    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
-    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    auto indicesVec = completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesVec.data(), indicesVec.size());
     CATCH(tensor->index_put_(indices, *value););
 }
 
@@ -1129,6 +1121,14 @@ Tensor THSTensor_nan_to_num(const Tensor input, double* _nan, double* _posinf, d
     CATCH_TENSOR(torch::nan_to_num(*input, nan, posinf, neginf));
 }
 
+void THSTensor_nan_to_num_(const Tensor input, double* _nan, double* _posinf, double* _neginf)
+{
+    c10::optional<double> nan = (_nan != nullptr) ? *_nan : c10::optional<double>(c10::nullopt);
+    c10::optional<double> posinf = (_posinf != nullptr) ? *_posinf : c10::optional<double>(c10::nullopt);
+    c10::optional<double> neginf = (_neginf != nullptr) ? *_neginf : c10::optional<double>(c10::nullopt);
+    CATCH(torch::nan_to_num_(*input, nan, posinf, neginf);)
+}
+
 Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length)
 {
     CATCH_TENSOR(tensor->narrow(dim, start, length))
@@ -1137,6 +1137,11 @@ Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t
 Tensor THSTensor_nextafter(const Tensor input, const Tensor other)
 {
     CATCH_TENSOR(torch::nextafter(*input, *other));
+}
+
+void THSTensor_nextafter_(const Tensor input, const Tensor other)
+{
+    CATCH(input->nextafter_(*other);)
 }
 
 int64_t THSTensor_ndimension(const Tensor tensor)
@@ -2277,4 +2282,49 @@ Tensor THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_
     );
 
     return nullptr;
+}
+
+Tensor THSTensor_quantize_per_tensor(const Tensor tensor, double scale, int64_t zero_point, int8_t scalar_type)
+{
+    CATCH_TENSOR(torch::quantize_per_tensor(*tensor, scale, zero_point, at::ScalarType(scalar_type)));
+}
+
+Tensor THSTensor_quantize_per_channel(const Tensor tensor, const Tensor scales, const Tensor zero_points, int64_t axis, int8_t scalar_type)
+{
+    CATCH_TENSOR(torch::quantize_per_channel(*tensor, *scales, *zero_points, axis, at::ScalarType(scalar_type)));
+}
+
+Tensor THSTensor_dequantize(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->dequantize());
+}
+
+double THSTensor_q_scale(const Tensor tensor)
+{
+    CATCH_RETURN(double, 0.0, tensor->q_scale());
+}
+
+int64_t THSTensor_q_zero_point(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->q_zero_point());
+}
+
+Tensor THSTensor_int_repr(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->int_repr());
+}
+
+Tensor THSTensor_q_per_channel_scales(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->q_per_channel_scales());
+}
+
+Tensor THSTensor_q_per_channel_zero_points(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->q_per_channel_zero_points());
+}
+
+int64_t THSTensor_q_per_channel_axis(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->q_per_channel_axis());
 }

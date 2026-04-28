@@ -155,6 +155,9 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion> <!-- default to allowing all language features -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- CS8981: Lowercase type names may conflict with future C# keywords. Suppressed because
+         TorchSharp intentionally uses lowercase names (torch, nn, optim, etc.) to mirror PyTorch's Python API. -->
+    <NoWarn>$(NoWarn);CS8981</NoWarn>
   </PropertyGroup>
 
   <!-- Need to explicitly set these properties for the -Intrinsics or -Netfx configurations becuase they are typically based off 'Debug' or 'Release' configs -->
