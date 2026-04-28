@@ -153,11 +153,11 @@ namespace TorchSharp
                         TryLoadNativeLibraryByName("cusolver64_11", typeof(torch).Assembly, trace);
                     }
 
-                    TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
-                    ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 } else {
-                    TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
-                    ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
+                    ok &= TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 }
 
                 trace.AppendLine($"    Result from regular native load of backend libraries (CUDA preloads + torch_* + LibTorchSharp) is {ok}");
