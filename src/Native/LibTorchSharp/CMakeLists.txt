@@ -1,6 +1,6 @@
 project(LibTorchSharp)
 
-find_package(CUDA)
+find_package(CUDA QUIET)
 if(CUDA_FOUND)
 	include_directories(${CUDA_INCLUDE_DIRS})
 	link_directories(${CUDA_LIBRARY_DIRS})
