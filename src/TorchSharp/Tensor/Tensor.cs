@@ -3008,9 +3008,35 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor gelu(Modules.GELU.Approximate approximate)
+            {
+                var approximateStr = approximate switch {
+                    Modules.GELU.Approximate.none => "none",
+                    Modules.GELU.Approximate.tanh => "tanh",
+                    _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
+                };
+                var res = NativeMethods.THSTensor_gelu_with_approximate(Handle, approximateStr);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
             public Tensor gelu_()
             {
                 var res = NativeMethods.THSTensor_gelu_(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor gelu_(Modules.GELU.Approximate approximate)
+            {
+                var approximateStr = approximate switch {
+                    Modules.GELU.Approximate.none => "none",
+                    Modules.GELU.Approximate.tanh => "tanh",
+                    _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
+                };
+                var res = NativeMethods.THSTensor_gelu_with_approximate_(Handle, approximateStr);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

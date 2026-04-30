@@ -718,6 +718,12 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_gelu_(IntPtr tensor);
 
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern IntPtr THSTensor_gelu_with_approximate(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string approximate);
+
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern IntPtr THSTensor_gelu_with_approximate_(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string approximate);
+
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_glu(IntPtr tensor, long dim);
 
