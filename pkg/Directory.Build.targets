@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <Target Name="GetTargetPath" Returns="@(_updatedTargetPath)">
-    <!-- Repoint up the TargetPath to represent the a matching file from PackagePreparationPath if it exists, otherwise don't return a target path
-         This fakes what the project output would be if we were using real projects (and not package projects) to represent these libraries. -->
+    <!-- Compute a fake target path from PackagePreparationPath so that ProjectReference consumers
+         can resolve a dependency. This replaces the TargetPathWithTargetPlatformMoniker-based approach
+         which is not available under Microsoft.Build.NoTargets. -->
     <ItemGroup>
-      <_targetPathUnderPackagePrep Include="@(TargetPathWithTargetPlatformMoniker->'$(PackagePreparationPath)$(PackageIdFolderName)\lib\$(TargetFramework)\%(FileName)%(Extension)')" />
+      <_targetPathUnderPackagePrep Include="$(PackagePreparationPath)$(PackageIdFolderName)\lib\$(TargetFramework)\$(PackageIdFolderName).dll" />
       <_updatedTargetPath Include="@(_targetPathUnderPackagePrep)" Condition="Exists('%(Identity)')" />
     </ItemGroup>
   </Target>

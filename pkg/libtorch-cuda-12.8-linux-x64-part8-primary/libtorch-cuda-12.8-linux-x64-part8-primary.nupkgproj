@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
+<Project Sdk="Microsoft.Build.NoTargets/3.7.134" DefaultTargets="Pack">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
