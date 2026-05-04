@@ -405,12 +405,12 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
     return nullptr;
 }
 
-c10::impl::GenericList toScalarValueList(const TensorOrScalar* tensorPtrs, const int length)
+c10::impl::GenericList toScalarValueList(const TensorOrScalar* tensorPtrs, const int32_t length)
 {
     auto list = c10::impl::GenericList(c10::ScalarTypeType::get());
 
     if (tensorPtrs != nullptr) {
-        for (int i = 0; i < length; i++)
+        for (int32_t i = 0; i < length; i++)
         {
             switch (tensorPtrs[i].TypeCode) {
             case 1:
@@ -423,12 +423,12 @@ c10::impl::GenericList toScalarValueList(const TensorOrScalar* tensorPtrs, const
     return list;
 }
 
-c10::impl::GenericList toTensorValueList(const TensorOrScalar* tensorPtrs, const int length)
+c10::impl::GenericList toTensorValueList(const TensorOrScalar* tensorPtrs, const int32_t length)
 {
     auto list = c10::impl::GenericList(c10::TensorType::get());
 
     if (tensorPtrs != nullptr) {
-        for (int i = 0; i < length; i++)
+        for (int32_t i = 0; i < length; i++)
         {
             switch (tensorPtrs[i].TypeCode) {
             case 0:
@@ -441,7 +441,7 @@ c10::impl::GenericList toTensorValueList(const TensorOrScalar* tensorPtrs, const
     return list;
 }
 
-std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int length)
+std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int32_t length)
 {
     // TypeCode:
     //
@@ -456,7 +456,7 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
     std::vector<c10::IValue> tensors;
 
     if (tensorPtrs != nullptr) {
-        for (int i = 0; i < length; i++)
+        for (int32_t i = 0; i < length; i++)
         {
             switch (tensorPtrs[i].TypeCode) {
             case 0:
@@ -495,7 +495,7 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
     return tensors;
 }
 
-void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
+void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int32_t length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
 {
     *typeCode = 0;
 
@@ -505,7 +505,7 @@ void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorP
     )
 }
 
-void THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
+void THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int32_t length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
 {
     *typeCode = 0;
 
@@ -516,7 +516,7 @@ void THSJIT_Module_invoke(const JITModule module, const char* name, const Tensor
     )
 }
 
-void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
+void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int32_t length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
 {
     *typeCode = 0;
 
@@ -538,19 +538,19 @@ const char* THSJIT_Method_name(const JITMethod method)
     return make_sharable_string((*method)->name());
 }
 
-int THSJIT_Method_num_inputs(const JITMethod method)
+int32_t THSJIT_Method_num_inputs(const JITMethod method)
 {
-    return (int)(*method)->num_inputs();
+    return (int32_t)(*method)->num_inputs();
 }
 
-int THSJIT_Module_num_inputs(const JITModule module)
+int32_t THSJIT_Module_num_inputs(const JITModule module)
 {
-    return (int)(*module)->get_method("forward").num_inputs() - 1; // Don't count the 'self' argument.
+    return (int32_t)(*module)->get_method("forward").num_inputs() - 1; // Don't count the 'self' argument.
 }
 
-int THSJIT_Module_num_outputs(const JITModule module)
+int32_t THSJIT_Module_num_outputs(const JITModule module)
 {
-    return (int)(*module)->get_method("forward").function().getSchema().returns().size();
+    return (int32_t)(*module)->get_method("forward").function().getSchema().returns().size();
 }
 
 JITFunction THSJIT_Method_function(const JITMethod method)
@@ -567,9 +567,9 @@ void THSJIT_Method_dispose(const JITMethod method)
 //-------------------------------------------------------------------------------------
 // JITFunction
 
-int THSJIT_Function_num_inputs(const JITFunction function)
+int32_t THSJIT_Function_num_inputs(const JITFunction function)
 {
-    return (int)(*function)->num_inputs();
+    return (int32_t)(*function)->num_inputs();
 }
 
 // TODO other function operations

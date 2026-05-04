@@ -25,7 +25,7 @@ EXPORT_API(void)      THSGenerator_dispose(const Generator generator);
 
 EXPORT_API(int) THSTorchCuda_is_available();
 EXPORT_API(int) THSTorchCuda_cudnn_is_available();
-EXPORT_API(int) THSTorchCuda_device_count();
+EXPORT_API(int32_t) THSTorchCuda_device_count();
 EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device);
 
 EXPORT_API(bool)  THSBackend_cublas_get_allow_tf32();
@@ -41,18 +41,18 @@ EXPORT_API(void)  THSBackend_cuda_set_enable_flash_sdp(const bool flag);
 EXPORT_API(bool)  THSBackend_cuda_get_enable_math_sdp();
 EXPORT_API(void)  THSBackend_cuda_set_enable_math_sdp(const bool flag);
 
-EXPORT_API(int) THSTorch_get_num_threads();
-EXPORT_API(void) THSTorch_set_num_threads(const int threads);
+EXPORT_API(int32_t) THSTorch_get_num_threads();
+EXPORT_API(void) THSTorch_set_num_threads(const int32_t threads);
 
-EXPORT_API(int) THSTorch_get_num_interop_threads();
-EXPORT_API(void) THSTorch_set_num_interop_threads(const int threads);
+EXPORT_API(int32_t) THSTorch_get_num_interop_threads();
+EXPORT_API(void) THSTorch_set_num_interop_threads(const int32_t threads);
 
 // Returns the latest error. This is thread-local.
 
 EXPORT_API(const char *) THSTorch_get_and_reset_last_err();
 
-EXPORT_API(int) THSTorch_can_cast(const int type1, const int type2);
-EXPORT_API(int) THSTorch_promote_types(const int type1, const int type2);
+EXPORT_API(int32_t) THSTorch_can_cast(const int32_t type1, const int32_t type2);
+EXPORT_API(int32_t) THSTorch_promote_types(const int32_t type1, const int32_t type2);
 
 EXPORT_API(Scalar) THSTorch_int8_to_scalar(int8_t value);
 EXPORT_API(Scalar) THSTorch_uint8_to_scalar(uint8_t value);
@@ -77,8 +77,8 @@ EXPORT_API(float) THSTorch_scalar_to_float32(Scalar value);
 EXPORT_API(double) THSTorch_scalar_to_float64(Scalar value);
 EXPORT_API(bool) THSTorch_scalar_to_bool(Scalar value);
 
-EXPORT_API(void) THSTorch_scalar_to_bfloat16(Scalar value, unsigned short* res);
-EXPORT_API(void) THSTorch_scalar_to_float16(Scalar value, unsigned short* res);
+EXPORT_API(void) THSTorch_scalar_to_bfloat16(Scalar value, uint16_t* res);
+EXPORT_API(void) THSTorch_scalar_to_float16(Scalar value, uint16_t* res);
 
 EXPORT_API(void) THSTorch_scalar_to_complex32(Scalar value, float* real, float* imaginary);
 EXPORT_API(void) THSTorch_scalar_to_complex64(Scalar value, double* real, double* imaginary);
