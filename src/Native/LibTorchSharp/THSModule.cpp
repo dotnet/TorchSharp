@@ -161,12 +161,12 @@ void THSNN_Module_get_named_modules(const NNModule module, NNModule* (*allocator
     }
 }
 
-long THSNN_Module_children_size(const NNModule module)
+size_t THSNN_Module_children_size(const NNModule module)
 {
     return (*module)->children().size();
 }
 
-NNModule THSNN_Module_child(const NNModule module, const int index)
+NNModule THSNN_Module_child(const NNModule module, const int32_t index)
 {
     return new std::shared_ptr<torch::nn::Module>((*module)->children()[index]);
 }
