@@ -5,7 +5,7 @@
 
 // General Module functions
 
-int THSNN_Module_is_training(NNModule module)
+bool THSNN_Module_is_training(NNModule module)
 {
     return (*module)->is_training();
 }
@@ -88,9 +88,9 @@ void THSNN_Module_register_buffer(const NNModule module, const char* name, const
     );
 }
 
-int THSNN_Module_has_parameter(const NNModule module, const char* name)
+bool THSNN_Module_has_parameter(const NNModule module, const char* name)
 {
-    CATCH_RETURN(int, 0, (*module)->named_parameters().contains(name));
+    CATCH_RETURN(bool, false, (*module)->named_parameters().contains(name));
 }
 
 Tensor THSNN_Module_get_parameter(const NNModule module, const char* name)
