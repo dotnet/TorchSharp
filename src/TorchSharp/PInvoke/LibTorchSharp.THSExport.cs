@@ -17,12 +17,12 @@ namespace TorchSharp.PInvoke
 
         // Dispose ExportedProgram module
         [DllImport("LibTorchSharp")]
-        internal static extern void THSExport_Module_dispose(IntPtr handle);
+        internal static extern void THSExport_Module_dispose(ExportedProgram.HType handle);
 
         // Execute forward pass (inference only)
         [DllImport("LibTorchSharp")]
         internal static extern void THSExport_Module_run(
-            IntPtr module,
+            ExportedProgram.HType module,
             IntPtr[] input_tensors,
             int input_length,
             out IntPtr result_tensors,

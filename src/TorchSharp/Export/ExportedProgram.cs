@@ -1,4 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+#nullable enable
 
 using System;
 using System.Runtime.InteropServices;
@@ -85,7 +86,7 @@ namespace TorchSharp
             {
                 if (!IsInvalid)
                 {
-                    THSExport_Module_dispose(handle);
+                    THSExport_Module_dispose(this);
                 }
                 SetHandle(IntPtr.Zero);
                 return true;
@@ -124,15 +125,19 @@ namespace TorchSharp
             if (handle.IsInvalid)
                 throw new ObjectDisposedException(nameof(ExportedProgram));
 
-            // Convert managed tensors to IntPtr array
+            // Validate inputs
             IntPtr[] input_handles = new IntPtr[inputs.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
+                if (inputs[i] is null)
+                    throw new ArgumentNullException($"inputs[{i}]");
+                if (inputs[i].Handle == IntPtr.Zero)
+                    throw new ObjectDisposedException($"Input tensor at index {i}");
                 input_handles[i] = inputs[i].Handle;
             }
 
             // Call native run method
-            THSExport_Module_run(handle.DangerousGetHandle(), input_handles, inputs.Length, out IntPtr result_ptr, out long result_length);
+            THSExport_Module_run(handle, input_handles, inputs.Length, out IntPtr result_ptr, out long result_length);
             torch.CheckForErrors();
 
             // Marshal result array
@@ -237,7 +242,7 @@ namespace TorchSharp
 
                     if (results.Length != 2)
                         throw new InvalidOperationException($"Expected 2 output tensors, got {results.Length}");
-                    return (TResult)Activator.CreateInstance(resultType, results[0], results[1]);
+                    return (TResult)Activator.CreateInstance(resultType, results[0], results[1])!;
                 }
 
                 if (genericType == typeof(ValueTuple<,,>))
@@ -249,7 +254,7 @@ namespace TorchSharp
 
                     if (results.Length != 3)
                         throw new InvalidOperationException($"Expected 3 output tensors, got {results.Length}");
-                    return (TResult)Activator.CreateInstance(resultType, results[0], results[1], results[2]);
+                    return (TResult)Activator.CreateInstance(resultType, results[0], results[1], results[2])!;
                 }
             }
 

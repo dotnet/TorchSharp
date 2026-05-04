@@ -32,6 +32,9 @@ void THSExport_Module_run(
     *result_tensors = nullptr;
     *result_length = 0;
 
+    if (module == nullptr)
+        return;
+
     CATCH(
         // Convert input tensor pointers to std::vector<torch::Tensor>
         std::vector<torch::Tensor> inputs;
