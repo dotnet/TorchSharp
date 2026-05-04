@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets/3.7.134">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
