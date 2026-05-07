@@ -3,6 +3,6 @@
     <MajorVersion>0</MajorVersion>
     <MinorVersion>107</MinorVersion>
     <PatchVersion>0</PatchVersion>
-    <PreviousPackageVersion>0.106.1</PreviousPackageVersion>
+    <PreviousPackageVersion>0.106.0</PreviousPackageVersion>
   </PropertyGroup>
 </Project>
