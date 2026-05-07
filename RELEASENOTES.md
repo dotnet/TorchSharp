@@ -2,6 +2,39 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.107.0
+
+__Bug Fixes__:
+
+#1536 Fix modules ignoring default device when created via native P/Invoke. Modules like Embedding, LSTM, GRU, RNN, and their cell variants now correctly respect `torch.get_default_device()`.<br/>
+#1547 Fix `affine()` IndexError with boolean mask indexing.<br/>
+#1563 Fix `hfftn`/`ihfftn` passing garbage dim values when dim is null.<br/>
+
+__API Changes__:
+
+#1529 Add missing in-place tensor operations.<br/>
+#1530 Move null checking to compiler-side using nullable annotations.<br/>
+#1531 Add QInt8, QUInt8, QInt32 quantized scalar types with full quantization support.<br/>
+#1544 Add support for bfloat16 type.<br/>
+#1554 Expose `Storage.data_ptr()` as public API.<br/>
+#1525 Add `Tensor.to_sparse()` API for sparse COO tensor conversion.<br/>
+#1548 Add approximate parameter to GELU activation function.<br/>
+#1528 Replace deprecated libtorch APIs with `torch::linalg` equivalents.<br/>
+#1538 Ensure that integers in native function definitions have fixed sizes.<br/>
+#1537 Use boolean return values in native code instead of integers.<br/>
+
+__Build/Infrastructure__:
+
+#1520 Fix a typo in TestTorchTensor.cs.<br/>
+#1523 Automate release notes generation.<br/>
+#1527 Fix flaky TestLoadJIT_3 by relaxing allclose tolerances.<br/>
+#1534 Fix and rename update-releasenotes workflow.<br/>
+#1540 Fix releasenotes formatting.<br/>
+#1543 Fix releasenotes formatting.<br/>
+#1549 Add Windows ARM64 CPU support for TorchSharp.<br/>
+#1552 Update CI pipeline from Ubuntu 20.04 (EOL) to Ubuntu 26.04.<br/>
+#1553 Fix/remove Ubuntu 20.04 EOL references.<br/>
+
 # NuGet Version 0.106.1
 
 __Build/Infrastructure__:
