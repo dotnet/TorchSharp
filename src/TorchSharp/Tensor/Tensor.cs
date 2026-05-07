@@ -371,7 +371,7 @@ namespace TorchSharp
                     throw new InvalidOperationException("is_nonzero() called on non-singleton tensor");
                 var res = NativeMethods.THSTensor_is_nonzero(Handle);
                 CheckForErrors();
-                return res != 0;
+                return res;
             }
 
             public bool is_cuda => device.type == DeviceType.CUDA;
@@ -383,7 +383,7 @@ namespace TorchSharp
             /// For Tensors that have requires_grad which is true, they will be leaf Tensors if they were created by the user.This means that they are not the result of an operation and so grad_fn is None.
             /// Only leaf Tensors will have their grad populated during a call to backward(). To get grad populated for non-leaf Tensors, you can use retain_grad().
             /// </summary>
-            public bool is_leaf { get => NativeMethods.THSTensor_is_leaf(Handle) != 0; }
+            public bool is_leaf { get => NativeMethods.THSTensor_is_leaf(Handle); }
 
 
             /// <summary>
@@ -1379,6 +1379,29 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Converts a dense tensor to a sparse COO tensor.
+            /// </summary>
+            public Tensor to_sparse()
+            {
+                var res = NativeMethods.THSTensor_to_sparse(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Converts a dense tensor to a sparse COO tensor with the specified number of sparse dimensions.
+            /// </summary>
+            /// <param name="sparse_dim">The number of sparse dimensions.</param>
+            public Tensor to_sparse(int sparse_dim)
+            {
+                var res = NativeMethods.THSTensor_to_sparse_with_dims(Handle, sparse_dim);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns a copy of the tensor input.
             /// </summary>
             public Tensor clone()
@@ -1407,7 +1430,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_is_contiguous(Handle);
                 CheckForErrors();
-                return res != 0;
+                return res;
             }
 
             /// <summary>
@@ -1429,7 +1452,7 @@ namespace TorchSharp
             {
                 var res = NativeMethods.THSTensor_is_pinned(Handle);
                 CheckForErrors();
-                return res != 0;
+                return res;
             }
 
             /// <summary>
@@ -2985,9 +3008,35 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor gelu(Modules.GELU.Approximate approximate)
+            {
+                var approximateStr = approximate switch {
+                    Modules.GELU.Approximate.none => "none",
+                    Modules.GELU.Approximate.tanh => "tanh",
+                    _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
+                };
+                var res = NativeMethods.THSTensor_gelu_with_approximate(Handle, approximateStr);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
             public Tensor gelu_()
             {
                 var res = NativeMethods.THSTensor_gelu_(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public Tensor gelu_(Modules.GELU.Approximate approximate)
+            {
+                var approximateStr = approximate switch {
+                    Modules.GELU.Approximate.none => "none",
+                    Modules.GELU.Approximate.tanh => "tanh",
+                    _ => throw new ArgumentOutOfRangeException(nameof(approximate), approximate, "Unsupported GELU approximation method.")
+                };
+                var res = NativeMethods.THSTensor_gelu_with_approximate_(Handle, approximateStr);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

@@ -95,6 +95,7 @@
     <None Update="tuple_out.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="*.export.pt2" CopyToOutputDirectory="PreserveNewest" />
     <None Update="vslogo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
