@@ -1,5 +1,12 @@
 project(LibTorchSharp)
 
+find_package(CUDA QUIET)
+if(CUDA_FOUND)
+	include_directories(${CUDA_INCLUDE_DIRS})
+	link_directories(${CUDA_LIBRARY_DIRS})
+	add_compile_definitions(TORCHSHARP_CUDA_TOOLKIT_FOUND)
+endif()
+
 if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
@@ -71,6 +78,10 @@ endif()
 include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
+
+if(CUDA_FOUND)
+target_link_libraries(LibTorchSharp ${CUDA_LIBRARIES})
+endif()
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
