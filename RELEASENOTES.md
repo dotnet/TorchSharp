@@ -25,23 +25,13 @@ __API Changes__:
 
 __Build/Infrastructure__:
 
+#1526 Upgrade target framework from .NET 6 to .NET 8.<br/>
 #1520 Fix a typo in TestTorchTensor.cs.<br/>
-#1523 Automate release notes generation.<br/>
 #1527 Fix flaky TestLoadJIT_3 by relaxing allclose tolerances.<br/>
-#1534 Fix and rename update-releasenotes workflow.<br/>
-#1540 Fix releasenotes formatting.<br/>
-#1543 Fix releasenotes formatting.<br/>
 #1549 Add Windows ARM64 CPU support for TorchSharp.<br/>
 #1552 Update CI pipeline from Ubuntu 20.04 (EOL) to Ubuntu 26.04.<br/>
 #1553 Fix/remove Ubuntu 20.04 EOL references.<br/>
 
-# NuGet Version 0.106.1
-
-__Build/Infrastructure__:
-
-Upgrade target framework from .NET 6 to .NET 8.<br/>
-Suppress CS8981 warning for intentional lowercase type names (e.g. `torch`, `nn`, `optim`) that mirror PyTorch's Python API.<br/>
-Update CI pipelines to use .NET 8 SDK.<br/>
 
 # NuGet Version 0.106.0
 
