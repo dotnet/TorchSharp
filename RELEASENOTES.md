@@ -26,16 +26,11 @@ __API Changes__:
 
 __Build/Infrastructure__:
 
-#1523 Automate release notes generation.<br/>
 #1527 Fix flaky TestLoadJIT_3 by relaxing allclose tolerances.<br/>
-#1534 Fix and rename update-releasenotes workflow.<br/>
-#1540 Fix releasenotes formatting.<br/>
 #1526 Upgrade target framework from .NET 6 to .NET 8.<br/>
-#1543 Fix releasenotes formatting.<br/>
 #1552 Update CI pipeline from Ubuntu 20.04 (EOL) to Ubuntu 26.04.<br/>
 #1553 Fix/remove Ubuntu 20.04 EOL references.<br/>
 #1549 Add Windows ARM64 CPU support for TorchSharp.<br/>
-
 
 # NuGet Version 0.106.0
 
