@@ -789,10 +789,6 @@ EXPORT_API(Tensor) THSTensor_logcumsumexp(const Tensor tensor, const int64_t dim
 
 EXPORT_API(Tensor) THSTensor_logsumexp(const Tensor tensor, const int64_t dimension, const bool keepdim);
 
-EXPORT_API(Tensor) THSTensor_log1p(const Tensor tensor);
-
-EXPORT_API(void) THSTensor_log1p_(const Tensor tensor);
-
 EXPORT_API(Tensor) THSTensor_logical_and(const Tensor tensor, const Tensor other);
 
 EXPORT_API(void) THSTensor_logical_and_(const Tensor tensor, const Tensor other);
