@@ -36,18 +36,19 @@ safe-outputs:
     report-as-issue: false
   create-pull-request:
     title-prefix: "[libtorch-bump] "
-    labels: [build, area-packaging, untriaged]
+    labels: [dependencies]
     draft: true
     max: 1
     allowed-files:
-      - "Directory.Packages.props"
+      - "build/Dependencies.props"
+      - "Directory.Build.props"
       - "linux_cuda.txt"
       - "windows_cuda.txt"
       - "pkg/**"
       - "build/**"
   create-issue:
     title-prefix: "[libtorch-bump] "
-    labels: [build, area-packaging, untriaged]
+    labels: [dependencies]
     max: 1
 ---
 
@@ -59,16 +60,21 @@ Detect a new stable libtorch release in `pytorch/pytorch` and open a scoped PR u
 
 1. Do not modify `src/Native/` or `src/TorchSharp/PInvoke/`. Bindings work belongs in a separate human-driven PR.
 2. Do not bump across a libtorch major version. File an issue instead.
-3. One PR per run. If a bump PR for the same version is already open, `noop`.
+3. One PR per run. If a bump PR for the same version is already open (search by title prefix `[libtorch-bump] <version>`), `noop`.
+4. **Issue idempotency.** If a major-bump issue with title containing `<major.minor>` and the `[libtorch-bump]` prefix already exists open OR was closed in the last 90 days, `noop` on the issue path.
+5. **Never touch the mac x64 conditional pin.** Both `build/Dependencies.props` and `Directory.Build.props` carry a separate override gated on `'$(TargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'` (currently `2.2.2` / `2.2.2.0`). Leave those lines alone. Replace only the unconditional `<LibTorchVersion>` and `<LibTorchPackageVersion>` lines.
 
 ## Steps
 
-1. **Read pin.** Get current `libtorch-cpu` Version from `Directory.Packages.props`.
-2. **Latest stable.** `gh api repos/pytorch/pytorch/releases` filtered to `^v\d+\.\d+\.\d+$` (no pre-release).
+1. **Read pin.** Get the unconditional `<LibTorchVersion>` from `build/Dependencies.props` (e.g. `2.10.0`) and `<LibTorchPackageVersion>` from `Directory.Build.props` (e.g. `2.10.0.0`). Confirm both exist and the conditional mac x64 overrides are present on the next line; record them but never modify them.
+2. **Latest stable.** Bind the URL first, then call: `url="repos/pytorch/pytorch/releases?per_page=20"; gh api "$url"` filtered to `^v\d+\.\d+\.\d+$` (no pre-release, no rc).
 3. **Compare.** Pin equals latest: `noop`.
-4. **Major change.** `major.minor` differs: file an issue summarizing the upstream release notes and likely breaking changes. Stop.
-5. **Patch bump.** Same `major.minor`:
+4. **Idempotency check (PR).** Search existing PRs: `gh pr list --repo dotnet/TorchSharp --state all --limit 50 --search "[libtorch-bump] <new-version> in:title"`. If any open or merged in the last 30 days matches: `noop`.
+5. **Major change.** `major.minor` differs: file an issue summarizing the upstream release notes and likely breaking changes. Body MUST contain the marker `<!-- libtorch-bump:major:<new-major.minor> -->`. Before filing, search open and recently-closed issues for that marker; on hit: `noop`. Stop.
+6. **Patch bump.** Same `major.minor`:
    - Branch `libtorch-bump/<new>`.
-   - Replace exact version strings in the allowed file set. Verify no stale references remain.
+   - In `build/Dependencies.props`, replace the unconditional `<LibTorchVersion>OLD</LibTorchVersion>` line. Do NOT touch the next line (the conditional mac x64 override).
+   - In `Directory.Build.props`, replace the unconditional `<LibTorchPackageVersion>OLD.0</LibTorchPackageVersion>` line. Do NOT touch the next line (the conditional mac x64 override).
+   - Verify with `grep -n LibTorchVersion build/Dependencies.props` and `grep -n LibTorchPackageVersion Directory.Build.props`: both must still have two entries each (one unconditional updated, one conditional unchanged).
    - `dotnet restore && dotnet build TorchSharp.sln --no-restore --configuration Debug`.
-   - Open a draft PR. Body lists: source release link, files updated, build outcome (success or first 50 lines of the first error). Remind reviewers to verify CUDA matrix legs are green before merging.
+   - Open a draft PR. Body lists: source release link, exact lines updated, mac x64 override preserved, build outcome (success or first 50 lines of the first error). Remind reviewers to verify CUDA matrix legs are green before merging.

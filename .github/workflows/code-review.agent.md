@@ -64,8 +64,8 @@ Review PR #${{ github.event.pull_request.number }} and post one comment using th
 | `src/TorchSharp/PInvoke/**` | `[DllImport]` signature mismatch with the C++ shim. Marshalling correctness (`IntPtr` vs `byte*`, `bool` blittability). |
 | `src/TorchSharp/Tensor/**` | Tensor ownership / `IDisposable` correctness. Any new `tensor` allocation must either be returned, disposed, or wrapped in a `using`. |
 | `src/TorchSharp/NN/**` | Module subclasses must call `RegisterComponents()` if they hold submodules or parameters. |
-| `pkg/**`, `Directory.Packages.props`, `Directory.Build.props` | Packaging changes. Flag any version bump that crosses a libtorch major; flag changes to `TorchSharp-cpu` / `TorchSharp-cuda-*` package layouts. |
-| `src/TorchVision/**`, `src/TorchAudio/**` | New transforms must have unit tests in `test/TorchSharpTest` or `test/TorchVisionTest`. |
+| `pkg/**`, `build/Dependencies.props`, `Directory.Build.props` | Packaging changes. Flag any version bump that crosses a libtorch major; flag changes to `TorchSharp-cpu` / `TorchSharp-cuda-*` package layouts. |
+| `src/TorchVision/**`, `src/TorchAudio/**` | New transforms must have unit tests in `test/TorchSharpTest`. |
 | `test/**` | Missing assertions, missing dispose, missing edge cases (empty tensor, CPU vs CUDA, dtype mismatch). |
 
 ## Process

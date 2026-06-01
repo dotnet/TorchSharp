@@ -10,7 +10,9 @@ on:
   workflow_dispatch:
   roles: [admin, maintain, write]
 
-if: github.repository == 'dotnet/TorchSharp'
+if: |
+  github.repository == 'dotnet/TorchSharp' &&
+  hashFiles('.github/SCOPE.md') != ''
 
 timeout-minutes: 20
 

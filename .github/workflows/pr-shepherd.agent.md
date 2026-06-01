@@ -36,9 +36,6 @@ checkout:
 safe-outputs:
   noop:
     report-as-issue: false
-  add-labels:
-    allowed: [merge-ready, needs-author-response, needs-rebase]
-    max: 10
   add-comment:
     target: "*"
     max: 5
@@ -48,18 +45,18 @@ safe-outputs:
 # PR Shepherd (TorchSharp)
 
 Walk non-draft open PRs once a day. For each PR, decide one of:
-- `merge-ready` -> apply label, post short summary, hand off to maintainers.
-- `needs-author-response` -> label and ping author once per fortnight at most.
-- `needs-rebase` -> label and post one-line conflict note.
+- `merge-ready` -> post short summary, hand off to maintainers.
+- `needs-author-response` -> ping author once per fortnight at most.
+- `needs-rebase` -> post one-line conflict note.
 - `noop` -> no signal change.
 
-Labels and comments only. Never push, rebase, approve, merge, close, or reopen.
+Comments only. This repo's label vocabulary has no shepherd-suitable labels, so no labels are applied. Never push, rebase, approve, merge, close, or reopen.
 
 ## Hard rules
 
-1. **No writes to code.** No `push-to-pull-request-branch`, no `create-pull-request`.
+1. **No writes to code.** No `push-to-pull-request-branch`, no `create-pull-request`. No labels.
 2. **Cap 5 comments per run.** On cap, record `skipped: cap reached` and stop.
-3. **Cap one ping per PR per fortnight per category.** Look for `<!-- pr-shepherd:<category>:<sha> -->` in your prior bot comments. If your last marker for the same category was within 14 days, skip the comment (still update label if needed).
+3. **Cap one ping per PR per fortnight per category.** Look for `<!-- pr-shepherd:<category>:<sha> -->` in your prior bot comments. If your last marker for the same category was within 14 days, skip the comment.
 4. **Read `.github/SCOPE.md` if present.** If a PR's title or diff path is listed under `## Out of scope`, skip the PR (do not label, do not comment).
 5. **Skip drafts. Skip fork PRs from external authors. Skip PRs opened <3 days ago.** Bot-author PRs (`dotnet-maestro[bot]`, `dependabot[bot]`, `app/copilot-swe-agent`) are exempt from the 3-day rule.
 6. **Skip protected labels: `do-not-merge`, `WIP`, `blocked`.**
@@ -70,12 +67,12 @@ Labels and comments only. Never push, rebase, approve, merge, close, or reopen.
 
 | Category | Conditions (all must hold) | Action |
 |---|---|---|
-| `merge-ready` | `mergeable == MERGEABLE`, all required checks `SUCCESS`, has `>= 1` approval, no `CHANGES_REQUESTED` review since head sha, no merge conflicts. | Label `merge-ready`. Comment: short summary linking the approval and check run. |
-| `needs-author-response` | Most recent review is `CHANGES_REQUESTED` OR most recent non-bot comment requests author action AND author has not pushed since. PR is `>= 14d` old. | Label `needs-author-response`. Comment: ping author by `@handle`, link the unresolved review, ask for a status update. |
-| `needs-rebase` | `mergeable == CONFLICTING`. | Label `needs-rebase`. Comment: list the conflicting paths from `gh pr view --json mergeStateStatus,files`. |
-| `noop` | None of the above, OR conditions hold but the same-category marker is within 14 days. | No label change, no comment. |
+| `merge-ready` | `mergeable == MERGEABLE`, all required checks `SUCCESS`, has `>= 1` approval, no `CHANGES_REQUESTED` review since head sha, no merge conflicts. | Comment: short summary linking the approval and check run. |
+| `needs-author-response` | Most recent review is `CHANGES_REQUESTED` OR most recent non-bot comment requests author action AND author has not pushed since. PR is `>= 14d` old. | Comment: ping author by `@handle`, link the unresolved review, ask for a status update. |
+| `needs-rebase` | `mergeable == CONFLICTING`. | Comment: list the conflicting paths from `gh pr view --json mergeStateStatus,files`. |
+| `noop` | None of the above, OR conditions hold but the same-category marker is within 14 days. | No comment. |
 
-When a PR transitions to `merge-ready` from a different category, remove the old category label only if it was applied by this workflow (check that the most recent label-event for that label was by the workflow's bot identity). Otherwise leave it alone.
+When a PR transitions between categories, the new comment carries the new marker; older markers are not removed.
 
 ## Process
 
@@ -84,7 +81,7 @@ When a PR transitions to `merge-ready` from a different category, remove the old
 3. Read `.github/SCOPE.md` (rule 4 gate).
 4. Resolve category via the table above. If `noop`, move on.
 5. For non-`noop`: fetch prior bot comments, locate the most recent `<!-- pr-shepherd:<category>:* -->` marker, apply rule 3.
-6. Apply label change first, then post comment if rule 3 permits.
+6. Post comment if rule 3 permits.
 
 ## Comment templates
 
