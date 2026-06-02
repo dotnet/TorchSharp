@@ -30,7 +30,7 @@ network:
 tools:
   github:
     toolsets: [repos, issues, search]
-  bash: ["git", "find", "ls", "cat", "grep", "head", "tail", "wc", "jq", "tee", "sed", "awk", "tr", "cut", "sort", "uniq", "xargs", "echo", "date", "test"]
+  bash: ["git", "find", "ls", "cat", "grep", "head", "tail", "wc", "jq", "tee", "sed", "awk", "tr", "cut", "sort", "uniq", "xargs", "echo", "date", "test", "gh"]
 
 checkout:
   fetch-depth: 1
