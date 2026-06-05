@@ -86,7 +86,7 @@ Classify issue #${{ github.event.issue.number }} into exactly one of TorchSharp'
    - Title or body mentions `TorchSharp.Examples`, `models/`, pretrained, model zoo -> `zoo`.
    - Title or body mentions `libtorch`, version bump, NuGet, dependency -> `dependencies`.
 4. Decide whether to comment. Comment ONLY if:
-   - `bug` and (no code block in body OR no stack trace OR no version info), OR
+   - `bug` and (no minimal repro / code block in body OR no version info OR (the issue describes a crash or exception AND no stack trace is included)). Do not demand a stack trace for non-crash bugs such as numerical regressions or incorrect output.
    - `enhancement` / `Missing Feature` and the body has no concrete proposal (no method signature, no PyTorch link, no concrete use case).
 5. Apply labels; post the comment if step 4 says to.
 

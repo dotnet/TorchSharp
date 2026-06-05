@@ -1,9 +1,9 @@
 ---
 description: |
   Daily. Reads `.github/SCOPE.md`. For each non-draft open PR, categorizes
-  status and applies one of `merge-ready` / `needs-author-response` /
-  `needs-rebase`. Posts at most one ping per category per PR per
-  fortnight. Labels and comments only; never rebases or pushes.
+  status as `merge-ready` / `needs-author-response` / `needs-rebase` and posts
+  at most one ping per category per PR per fortnight. Comments only; never
+  applies labels, rebases, or pushes.
 
 on:
   schedule: daily
@@ -69,7 +69,7 @@ Comments only. This repo's label vocabulary has no shepherd-suitable labels, so 
 |---|---|---|
 | `merge-ready` | `mergeable == MERGEABLE`, all required checks `SUCCESS`, has `>= 1` approval, no `CHANGES_REQUESTED` review since head sha, no merge conflicts. | Comment: short summary linking the approval and check run. |
 | `needs-author-response` | Most recent review is `CHANGES_REQUESTED` OR most recent non-bot comment requests author action AND author has not pushed since. PR is `>= 14d` old. | Comment: ping author by `@handle`, link the unresolved review, ask for a status update. |
-| `needs-rebase` | `mergeable == CONFLICTING`. | Comment: list the conflicting paths from `gh pr view --json mergeStateStatus,files`. |
+| `needs-rebase` | `mergeable == CONFLICTING`. | Comment: note the conflict with `main`. GitHub does not expose the exact conflicting paths via the API, so do not enumerate them; point the author at the PR's "Resolve conflicts" view instead. |
 | `noop` | None of the above, OR conditions hold but the same-category marker is within 14 days. | No comment. |
 
 When a PR transitions between categories, the new comment carries the new marker; older markers are not removed.
@@ -79,9 +79,10 @@ When a PR transitions between categories, the new comment carries the new marker
 1. `gh pr list --repo dotnet/TorchSharp --state open --limit 50 --json number,title,author,isDraft,mergeable,mergeStateStatus,reviewDecision,headRefOid,createdAt,updatedAt,labels,headRepository,files`.
 2. For each PR, apply rule 5 filters. Skip silently on any fail.
 3. Read `.github/SCOPE.md` (rule 4 gate).
-4. Resolve category via the table above. If `noop`, move on.
-5. For non-`noop`: fetch prior bot comments, locate the most recent `<!-- pr-shepherd:<category>:* -->` marker, apply rule 3.
-6. Post comment if rule 3 permits.
+4. For any PR that is a `merge-ready` or `needs-author-response` candidate, fetch the detail the list call does not provide before classifying: `gh pr view <N> --json statusCheckRollup,reviewDecision,latestReviews,reviews,mergeable,mergeStateStatus,commits`. Do not claim `merge-ready` unless `statusCheckRollup` shows all required checks `SUCCESS`.
+5. Resolve category via the table above. If `noop`, move on.
+6. For non-`noop`: fetch prior bot comments, locate the most recent `<!-- pr-shepherd:<category>:* -->` marker, apply rule 3.
+7. Post comment if rule 3 permits.
 
 ## Comment templates
 
@@ -117,11 +118,7 @@ Posted by [`pr-shepherd`](https://github.com/dotnet/TorchSharp/blob/main/.github
 <!-- pr-shepherd:needs-rebase:<head-sha> -->
 🤖 PR Shepherd: this PR has merge conflicts with `main`.
 
-Conflicting paths:
-- `<path1>`
-- `<path2>`
-
-Please rebase or merge `main` into the branch.
+GitHub reports this branch as conflicting. Please rebase on or merge `main`, resolving conflicts via the PR's "Resolve conflicts" view or locally.
 
 Posted by [`pr-shepherd`](https://github.com/dotnet/TorchSharp/blob/main/.github/workflows/pr-shepherd.agent.md).
 ```

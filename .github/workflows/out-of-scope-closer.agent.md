@@ -54,12 +54,12 @@ Read `.github/SCOPE.md` and close open issues that match its explicit "Out of sc
 
 1. **`.github/SCOPE.md` must exist.** If missing, `noop` and stop.
 2. **Cap 5 closes per run.** On cap, record `skipped: cap reached` and stop.
-3. **Never close an issue without first posting the closing comment.** The comment cites the scope entry. Order matters.
+3. **Never close an issue without a closing comment present.** Post the comment (citing the scope entry) before closing, unless rule 8 already placed it on a prior failed run. Order matters: comment, then close.
 4. **Skip protected labels: `bug`, `Known Build Error`, `blocking-clean-ci`, `help wanted`, `good first issue`.** A scope match against any of these is a false positive; skip silently.
 5. **Skip active discussion.** Any issue with a non-bot comment in the last 30 days: skip silently.
 6. **Skip issues opened in the last 14 days.** New issues deserve a triage pass first.
 7. **Match only against explicit `## Out of scope` entries in `SCOPE.md`.** Each entry must be a bullet point with a clear keyword or symbol. Fuzzy matches that require interpretation: skip.
-8. **Idempotency.** If the issue already has a bot close comment containing `<!-- out-of-scope-closer -->`, skip.
+8. **Idempotency.** If the issue already has a bot close comment containing `<!-- out-of-scope-closer -->` AND the issue is already closed, skip. If the marker is present but the issue is still open (a prior run posted the comment then failed before closing), close it as `not planned` without posting the comment again.
 
 ## Expected `SCOPE.md` shape
 
@@ -82,15 +82,17 @@ Anything outside that section is ignored.
    test -f .github/SCOPE.md || { echo "SCOPE.md missing - noop"; exit 0; }
    ```
 2. Parse the `## Out of scope` section into `/tmp/gh-aw/agent/scope-entries.txt` (one entry per line, literal or `regex:` prefix).
-3. For each entry, search open issues:
-   ```bash
-   gh issue list --repo dotnet/TorchSharp --state open --limit 100 \
-     --search "$query in:title,body" \
-     --json number,title,labels,createdAt,updatedAt,comments
-   ```
-4. For each match, apply the filters in rules 4-7 in order. First failure -> skip.
+3. For each entry, gather candidate open issues:
+   - **Literal entry:** search directly:
+     ```bash
+     gh issue list --repo dotnet/TorchSharp --state open --limit 100 \
+       --search "$query in:title,body" \
+       --json number,title,labels,createdAt,updatedAt
+     ```
+   - **`regex:` entry:** GitHub search does not evaluate regex. Pull a bounded candidate set (e.g. the most recently updated open issues) and apply the pattern locally to each title/body; only keep matches.
+4. For each candidate, fetch full detail before deciding: `gh issue view <N> --json number,title,body,state,labels,createdAt,updatedAt,comments`. Apply the filters in rules 4-7 in order (the `comments` array gives author logins and timestamps needed for the rule-5 "active discussion" check). First failure -> skip.
 5. For each surviving match (up to 5):
-   - Post the closing comment (template below).
+   - Apply the rule-8 idempotency check. If the marker is already present, close without reposting; otherwise post the closing comment (template below) first.
    - Close as `not planned`.
    - Append `<issue#> <entry>` to `/tmp/gh-aw/agent/closed.txt`.
 6. At end of run, print the closed list to the agent log.
