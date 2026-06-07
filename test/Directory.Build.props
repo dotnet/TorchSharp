@@ -6,7 +6,7 @@
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
+    <CustomLibTorchFullPath></CustomLibTorchFullPath>
     <!--
       Don't warn about missing documentation in test projects.
 

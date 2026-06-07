@@ -437,33 +437,34 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.histogram
         [Obsolete("not implemented", true)]
-        static Tensor histogram(
-            Tensor input,
+        static Tensor histogram(Tensor input,
             long bins,
             (float min, float max)? range = null,
             Tensor? weight = null,
-            bool density = false)
-            => throw new NotImplementedException();
+            bool density = false)=> throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.histogram
         [Obsolete("not implemented", true)]
-        static Tensor histogram(
-            Tensor input,
+        static Tensor histogram(Tensor input,
             long[] bins,
             (float min, float max)? range = null,
             Tensor? weight = null,
             bool density = false)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
+
 
         // https://pytorch.org/docs/stable/generated/torch.histogram
         [Obsolete("not implemented", true)]
-        static Tensor histogram(
-            Tensor input,
+        static Tensor histogram(Tensor input,
             Tensor[] bins,
             (float min, float max)? range = null,
             Tensor? weight = null,
             bool density = false)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.histogramdd
         [Obsolete("not implemented", true)]
