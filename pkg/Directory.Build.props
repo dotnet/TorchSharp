@@ -51,6 +51,7 @@
     <IncludeSymbols>false</IncludeSymbols>
     <IsSymbolsPackage Condition="$(MSBuildProjectName.Contains('.symbols'))">true</IsSymbolsPackage>
     <PackageIdFolderName>$(MSBuildProjectName.Replace('.symbols', ''))</PackageIdFolderName>
+    <PackageReadmeFile Condition="'$(IsSymbolsPackage)' != 'true' AND Exists('$(MSBuildProjectDirectory)\README.md')">README.md</PackageReadmeFile>
 
     <!--
     Our .nupkgproj files have conflicting names with src projects, which puts their intermediate
@@ -74,6 +75,10 @@
     <Content Remove="$(PackagePreparationPath)$(PackageIdFolderName)\**\*.pdb" />
     <Content Remove="$(PackagePreparationPath)$(PackageIdFolderName)\**\*.dwarf" />
     <Content Remove="$(PackagePreparationPath)$(PackageIdFolderName)\**\*.dbg" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PackageReadmeFile)' != ''">
+    <Content Include="$(MSBuildProjectDirectory)\README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <!-- Work around https://github.com/NuGet/Home/issues/6091 -->
