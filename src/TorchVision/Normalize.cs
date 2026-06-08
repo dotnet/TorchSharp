@@ -7,62 +7,32 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-        internal class Normalize : ITransform, IDisposable
+        internal class Normalize : ITransform
         {
-            internal Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device? device = null)
+            internal Normalize(double[] means, double[] stdevs,bool inplace = false)
             {
                 if (means is null) throw new ArgumentNullException(nameof(means));
                 if (stdevs is null) throw new ArgumentNullException(nameof(stdevs));
                 if (means.Length != stdevs.Length)
                     throw new ArgumentException($"{nameof(means)} and {nameof(stdevs)} must be the same length in call to Normalize");
-                if (means.Length != 1 && means.Length != 3)
-                    throw new ArgumentException($"Since they correspond to the number of channels in an image, {nameof(means)} and {nameof(stdevs)} must both be either 1 or 3 long");
+                this.means = means;
+                this.stdevs = stdevs;
+                this.inplace = inplace;
 
-                this.means = means.ToTensor(new long[] { 1, means.Length, 1, 1 });     // Assumes NxCxHxW
-                this.stdevs = stdevs.ToTensor(new long[] { 1, stdevs.Length, 1, 1 });  // Assumes NxCxHxW
-
-                if (dtype != ScalarType.Float64) {
-                    this.means = this.means.to_type(dtype);
-                    this.stdevs = this.stdevs.to_type(dtype);
-                }
-
-                if (device != null && device.type != DeviceType.CPU) {
-                    this.means = this.means.to(device);
-                    this.stdevs = this.stdevs.to(device);
-                }
             }
 
             public Tensor call(Tensor input)
             {
-                if (means.size(1) != input.size(1)) throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
-                return (input - means) / stdevs;
+                var expectedChannels = transforms.functional.get_image_num_channels(input);
+                if (expectedChannels != means.Length)
+                    throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
+                return transforms.functional.normalize(input, means, stdevs, inplace);
             }
 
-            private Tensor means;
-            private Tensor stdevs;
-            bool disposedValue;
-
-            protected virtual void Dispose(bool disposing)
-            {
-                if (!disposedValue) {
-                    means?.Dispose();
-                    stdevs?.Dispose();
-                    disposedValue = true;
-                }
-            }
-
-            ~Normalize()
-            {
-                // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-                Dispose(disposing: false);
-            }
-
-            public void Dispose()
-            {
-                // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-                Dispose(disposing: true);
-                GC.SuppressFinalize(this);
-            }
+            private readonly double[] means;
+            private readonly double[] stdevs;
+            private readonly bool inplace;
+         
         }
 
         public static partial class transforms
@@ -72,12 +42,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="means">Sequence of means for each channel.</param>
             /// <param name="stdevs">Sequence of standard deviations for each channel.</param>
-            /// <param name="dtype">Bool to make this operation inplace.</param>
-            /// <param name="device">The device to place the output tensor on.</param>
+            /// <param name="inplace">Bool to make this operation inplace.</param>
             /// <returns></returns>
-            static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device? device = null)
+            static public ITransform Normalize(double[] means, double[] stdevs, bool inplace = false)
             {
-                return new Normalize(means, stdevs, dtype, device);
+                return new Normalize(means, stdevs, inplace);
             }
         }
     }
