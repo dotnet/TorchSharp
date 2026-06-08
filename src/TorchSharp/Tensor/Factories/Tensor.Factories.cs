@@ -117,8 +117,10 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor normal(double mean, double std, ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
+            using var mean_scalar = mean.ToScalar();
+            using var std_scalar = std.ToScalar();
             return randn(size, dtype, device, requires_grad: false, generator, names)
-                .mul_(std).add_(mean).requires_grad_(requires_grad);
+                .mul_(std_scalar).add_(mean_scalar).requires_grad_(requires_grad);
         }
 
         /// <summary>

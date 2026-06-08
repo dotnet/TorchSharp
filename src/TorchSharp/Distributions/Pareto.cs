@@ -25,7 +25,8 @@ namespace TorchSharp
             public override Tensor mean {
                 get {
                     using var _ = torch.NewDisposeScope();
-                    var a = alpha.clamp(min: 1);
+                    using var one_scalar = 1.ToScalar();
+                    var a = alpha.clamp(min: one_scalar);
                     return (a * scale / (a - 1)).MoveToOuterDisposeScope();
                 }
             }
@@ -35,8 +36,9 @@ namespace TorchSharp
             public override Tensor variance {
                 get {
                     using var _ = torch.NewDisposeScope();
-                    var a = alpha.clamp(min: 2);
-                    return (scale.pow(2) * a / ((a - 1).pow(2) * (a - 2))).MoveToOuterDisposeScope();
+                    using var two_scalar = 2.ToScalar();
+                    var a = alpha.clamp(min: two_scalar);
+                    return (scale.square() * a / ((a - 1).square() * (a - 2))).MoveToOuterDisposeScope();
                 }
             }
 

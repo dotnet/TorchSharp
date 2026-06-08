@@ -87,8 +87,11 @@ namespace TorchSharp
                     tensor = tensor.clone();  // avoid modifying tensor in-place
                     void norm_ip(Tensor img, double low, double high)
                     {
-                        img.clamp_(min: low, max: high);
-                        img.sub_(low).div_(Math.Max(high - low, 1e-5));
+                        using var low_scalar = low.ToScalar();
+                        using var high_scalar = high.ToScalar();
+                        using var denom_scalar = Math.Max(high - low, 1e-5).ToScalar();
+                        img.clamp_(min: low_scalar, max: high_scalar);
+                        img.sub_(low_scalar).div_(denom_scalar);
                     }
 
                     void norm_range(Tensor t, (double low, double high)? range)
@@ -129,7 +132,8 @@ namespace TorchSharp
                 var height = tensor.size(2) + padding;
                 var num_channels = tensor.size(1);
 
-                var grid = tensor.new_full(new[] { num_channels, height * ymaps + padding, width * xmaps + padding }, pad_value);
+                using var pad_value_scalar = pad_value.ToScalar();
+                var grid = tensor.new_full(new[] { num_channels, height * ymaps + padding, width * xmaps + padding }, pad_value_scalar);
                 var k = 0L;
                 for (long y = 0; y < ymaps; ++y)
                 {
@@ -217,7 +221,11 @@ namespace TorchSharp
                 using var _ = torch.NewDisposeScope();
                 var grid = make_grid(tensor, nrow, padding, normalize, value_range, scale_each, pad_value);
                 // Add 0.5 after unnormalizing to [0, 255] to round to nearest integer
-                var narr = grid.mul(255).add_(0.5).clamp_(0, 255).to(uint8, CPU);
+                // FIXME: Why not torch.Tensor.round_?
+                using var uint8_min_scalar = 0.ToScalar(); // FIXME: No torch.min_int_value?
+                using var uint8_max_scalar = torch.max_int_value(uint8).ToScalar();
+                using var eps_scalar = 0.5.ToScalar();
+                var narr = grid.mul(uint8_max_scalar).add_(eps_scalar).clamp_(uint8_min_scalar, uint8_max_scalar).to(uint8, CPU);
                 (imager ?? DefaultImager).EncodeImage(narr, format, filestream);
             }
         }

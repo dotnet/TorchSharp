@@ -96,18 +96,19 @@ namespace TorchSharp
                     learningRate: 0.1, momentum: 0.9);
 
                 var loss = float.PositiveInfinity;
+                using var zero_scalar = 0.ToScalar();
                 for (long i = 0; i < this.max_iter; i++) {
                     using var d2 = torch.NewDisposeScope();
 
                     optim.zero_grad();
                     var diff = melspec - specgram.matmul(this.fb);
-                    var new_loss = diff.pow(2).sum(dim: -1).mean();
+                    var new_loss = diff.square().sum(dim: -1).mean();
                     // take sum over mel-frequency then average over other dimensions
                     // so that loss threshold is applied par unit timeframe
                     new_loss.backward();
                     optim.step();
                     using (torch.no_grad())
-                        specgram.set_(specgram.clamp(min: 0));
+                        specgram.set_(specgram.clamp(min: zero_scalar));
 
                     var new_loss_value = new_loss.item<float>();
                     if (new_loss_value < this.tolerance_loss || Math.Abs(loss - new_loss_value) < this.tolerance_change) {
@@ -117,7 +118,7 @@ namespace TorchSharp
                 }
 
                 specgram.requires_grad_(false);
-                var specgram_tensor = specgram.clamp(min: 0).transpose(-1, -2);
+                var specgram_tensor = specgram.clamp(min: zero_scalar).transpose(-1, -2);
 
                 // unpack batch
                 shape[shape.Length - 2] = freq;

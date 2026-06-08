@@ -34,7 +34,7 @@ namespace TorchSharp
             /// The variance of the distribution
             /// </summary>
             public override Tensor variance =>
-                WrappedTensorDisposeScope(() => _unbroadcasted_scale_tril.pow(2).sum(-1).expand(batch_shape + event_shape));
+                WrappedTensorDisposeScope(() => _unbroadcasted_scale_tril.square().sum(-1).expand(batch_shape + event_shape));
 
             /// <summary>
             /// Constructor
@@ -241,7 +241,7 @@ namespace TorchSharp
                 var flat_x = bx.reshape(-1, flat_L.size(0), n);
                 var flat_x_swap = flat_x.permute(1, 2, 0);
 
-                var M_swap = torch.linalg.solve_triangular(flat_L, flat_x_swap, upper: false).pow(2).sum(-2);
+                var M_swap = torch.linalg.solve_triangular(flat_L, flat_x_swap, upper: false).square().sum(-2);
                 var M = M_swap.t();
 
                 var permuted_M = M.reshape(TakeAllBut(bx.shape, 1));

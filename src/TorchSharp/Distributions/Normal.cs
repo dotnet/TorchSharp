@@ -31,7 +31,7 @@ namespace TorchSharp
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => scale.pow(2);
+            public override Tensor variance => scale.square();
 
             /// <summary>
             /// Constructor
@@ -91,9 +91,9 @@ namespace TorchSharp
             public override Tensor log_prob(Tensor value)
             {
                 using var _ = NewDisposeScope();
-                var v = scale.pow(2);
+                var v = scale.square();
                 var log_scale = scale.log();
-                return (-((value - loc).pow(2)) / (2 * v) - log_scale - Math.Log(Math.Sqrt(2 * Math.PI))).MoveToOuterDisposeScope();
+                return (-((value - loc).square()) / (2 * v) - log_scale - Math.Log(Math.Sqrt(2 * Math.PI))).MoveToOuterDisposeScope();
             }
 
             /// <summary>

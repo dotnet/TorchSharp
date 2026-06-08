@@ -147,8 +147,16 @@ namespace TorchSharp
                     var options = group.Options as Options;
                     var beta1 = options.beta1.Value;
                     var beta2 = options.beta2.Value;
-                    var eps = options.eps.Value;
+                    using var beta1_scalar = beta1.ToScalar();
+                    using var beta2_scalar = beta2.ToScalar();
+                    var beta1_bar = 1 - beta1;
+                    var beta2_bar = 1 - beta2;
+                    using var beta1_bar_scalar = beta1_bar.ToScalar();
+                    using var beta2_bar_scalar = beta2_bar.ToScalar();
+                    using var eps_scalar = options.eps.Value.ToScalar();
                     var weight_decay = options.weight_decay.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
                     var momentum_decay = options.momentum_decay.Value;
                     var lr = options.LearningRate.Value;
 
@@ -166,9 +174,10 @@ namespace TorchSharp
                         var exp_avg_sq = state.exp_avg_sq;
 
                         var bias_correction2 = 1 - Math.Pow(beta2, state.step);
+                        using var bias_correction2_scalar = bias_correction2.ToScalar();
 
-                        grad = (weight_decay != 0)
-                            ? grad.add(param, alpha: weight_decay)
+                        grad = (need_weight_decay)
+                            ? grad.add(param, alpha: weight_decay_scalar)
                             : grad.alias();
 
                         var mu = beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * momentum_decay));
@@ -177,13 +186,17 @@ namespace TorchSharp
                         var mu_product = state.mu_product * mu;
                         var mu_product_next = mu_product * mu_next;
 
-                        exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                        exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
+                        exp_avg.mul_(beta1_scalar).add_(grad, alpha: beta1_bar_scalar);
+                        exp_avg_sq.mul_(beta2_scalar).addcmul_(grad, grad, value: beta2_bar_scalar);
 
-                        var denom = exp_avg_sq.div(bias_correction2).sqrt_().add_(eps);
+                        var denom = exp_avg_sq.div(bias_correction2_scalar).sqrt_().add_(eps_scalar); // FIXME: Need dispose?
 
-                        param.addcdiv_(grad, denom, value: -lr * (1 - mu) / (1 - mu_product));
-                        param.addcdiv_(exp_avg, denom, value: -lr * mu_next / (1 - mu_product_next));
+                        var scaled_lr = lr * (1 - mu) / (1 - mu_product);
+                        using var negative_scaled_scalar = (-scaled_lr).ToScalar();
+                        param.addcdiv_(grad, denom, value: negative_scaled_scalar);
+                        var scaled_lr_next = lr * mu_next / (1 - mu_product_next);
+                        using var negative_scaled_lr_next_scalar = (-scaled_lr_next).ToScalar();
+                        param.addcdiv_(exp_avg, denom, value: negative_scaled_lr_next_scalar);
 
                         state.mu_product = mu_product;
                     }

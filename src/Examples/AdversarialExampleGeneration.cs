@@ -105,7 +105,9 @@ namespace TorchSharp.Examples
         private static Tensor Attack(Tensor image, double ε, Tensor data_grad)
         {
             using (var sign = data_grad.sign()) {
-                var perturbed = (image + ε * sign).clamp(0.0, 1.0);
+                using var zero_scalar = 0.0.ToScalar();
+                using var one_scalar = 1.0.ToScalar();
+                var perturbed = (image + ε * sign).clamp(zero_scalar, one_scalar);
                 return perturbed;
             }
         }

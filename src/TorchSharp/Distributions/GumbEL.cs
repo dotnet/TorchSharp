@@ -30,7 +30,7 @@ namespace TorchSharp
 
             public override Tensor mode => loc;
 
-            public override Tensor variance => stddev.pow(2);
+            public override Tensor variance => stddev.square();
 
             public override Tensor stddev => pioversqrtsix * scale;
 

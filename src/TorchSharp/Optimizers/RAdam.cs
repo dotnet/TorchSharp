@@ -141,9 +141,19 @@ namespace TorchSharp
                     var options = group.Options as Options;
                     var beta1 = options.beta1.Value;
                     var beta2 = options.beta2.Value;
-                    var eps = options.eps.Value;
+                    using var beta1_scalar = beta1.ToScalar();
+                    using var beta2_scalar = beta2.ToScalar();
+                    var beta1_bar = 1 - beta1;
+                    var beta2_bar = 1 - beta2;
+                    using var beta1_bar_scalar = beta1_bar.ToScalar();
+                    using var beta2_bar_scalar = beta2_bar.ToScalar();
+                    using var eps_scalar = options.eps.Value.ToScalar();
                     var weight_decay = options.weight_decay.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
                     var lr = options.LearningRate.Value;
+                    using var lr_scalar = lr.ToScalar();
+                    using var negative_one_scalar = (-1.0).ToScalar(); // FIXME: Use torch.Tensor.sub_ instead?
 
                     foreach (var param in group.Parameters) {
 
@@ -161,27 +171,27 @@ namespace TorchSharp
                         var bias_correction1 = 1 - Math.Pow(beta1, state.step);
                         var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                        grad = (weight_decay != 0)
-                            ? grad.add(param, alpha: weight_decay)
+                        grad = (need_weight_decay)
+                            ? grad.add(param, alpha: weight_decay_scalar)
                             : grad.alias();
 
-                        exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                        exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
+                        exp_avg.mul_(beta1_scalar).add_(grad, alpha: beta1_bar_scalar);
+                        exp_avg_sq.mul_(beta2_scalar).addcmul_(grad, grad, value: beta2_bar_scalar);
 
-                        var bias_corrected_exp_avg = exp_avg / bias_correction1;
+                        var bias_corrected_exp_avg = exp_avg / bias_correction1; // FIXME: Need dispose?
 
                         var rho_inf = 2 / (1 - beta2) - 1;
                         var rho_t = rho_inf - 2 * state.step * Math.Pow(beta2, state.step) / bias_correction2;
 
-                        var t6 = bias_corrected_exp_avg * lr;
+                        var t6 = bias_corrected_exp_avg.mul(lr_scalar); // FIXME: Need dispose?
 
                         if (rho_t > 5) {
                             var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
-                            var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(eps);
+                            var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(eps_scalar); // FIXME: Need dispose?
 
-                            param.add_(t6 * lr * adaptive_lr * rect, alpha: -1.0);
+                            param.add_(t6 * lr * adaptive_lr * rect, alpha: negative_one_scalar); // FIXME: Need dispose? Use inplace ops?
                         } else {
-                            param.add_(t6, alpha: -1.0);
+                            param.add_(t6, alpha: negative_one_scalar);
                         }
                     }
                 }, closure);

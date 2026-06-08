@@ -234,10 +234,14 @@ namespace TorchSharp.Examples
 
             public Tensor GenerateSquareSubsequentMask(long size)
             {
-                var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
+                using var zero_scalar = 0.ToScalar();
+                using var one_scalar = 1.ToScalar();
+                using var float_negative_infinity_scalar = float.NegativeInfinity.ToScalar();
+                using var float_zero_scalar = 0.0f.ToScalar(); // FIXME: Equivalent to zero_scalar?
+                var mask = (torch.ones(new long[] { size, size }) == one_scalar).triu().transpose(0, 1);
                 return mask.to_type(ScalarType.Float32)
-                    .masked_fill(mask == 0, float.NegativeInfinity)
-                    .masked_fill(mask == 1, 0.0f).to(device);
+                    .masked_fill(mask == zero_scalar, float_negative_infinity_scalar)
+                    .masked_fill(mask == one_scalar, float_zero_scalar).to(device);
             }
 
             private void InitWeights()

@@ -137,8 +137,10 @@ namespace TorchSharp
 
                     public override Tensor check(Tensor value)
                     {
-                        var is_boolean = (value == 0) | (value == 1);
-                        var is_normalized = value.sum(-1).eq(1);
+                        using var zero_scalar = 0.ToScalar();
+                        using var one_scalar = 1.ToScalar();
+                        var is_boolean = (value == zero_scalar) | (value == one_scalar);
+                        var is_normalized = value.sum(-1).eq(one_scalar);
                         return is_boolean.all(-1) & is_normalized;
                     }
                 }
@@ -433,9 +435,9 @@ namespace TorchSharp
 
                     public override Tensor check(Tensor value)
                     {
-                        var tol = torch.finfo(value.dtype).eps * value.size(-1) * 10;  // 10 is an adjustable fudge factor
+                        using var tol_scalar = (torch.finfo(value.dtype).eps * value.size(-1) * 10).ToScalar();  // 10 is an adjustable fudge factor
                         var row_norm = torch.linalg.norm(value.detach(), dims: new[] { -1L });
-                        var unit_row_norm = (row_norm - 1.0).abs().le(tol).all(dim: -1);
+                        var unit_row_norm = (row_norm - 1.0).abs().le(tol_scalar).all(dim: -1);
                         return lc.check(value) & unit_row_norm;
                     }
 
@@ -489,7 +491,8 @@ namespace TorchSharp
                         var sym_check = base.check(value);
                         if (!sym_check.all().item<bool>())
                             return sym_check;
-                        return torch.linalg.eigvalsh(value).ge(0).all(-1);
+                        using var zero_scalar = 0.ToScalar();
+                        return torch.linalg.eigvalsh(value).ge(zero_scalar).all(-1);
                     }
                 }
 
@@ -503,7 +506,8 @@ namespace TorchSharp
                         var sym_check = base.check(value);
                         if (!sym_check.all().item<bool>())
                             return sym_check;
-                        return torch.linalg.cholesky_ex(value).info.eq(0);
+                        using var zero_scalar = 0.ToScalar();
+                        return torch.linalg.cholesky_ex(value).info.eq(zero_scalar);
                     }
                 }
 

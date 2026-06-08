@@ -134,7 +134,9 @@ namespace TorchSharp
                 var logitsValue = broadcast_tensors(_logits, value);
                 var logits = logitsValue[0];
                 value = logitsValue[1];
-                var log_scale = (torch.full_like(_temperature, K).lgamma() - _temperature.log().mul(-(K - 1)));
+                using var K_scalar = K.ToScalar();
+                using var negative_Ksub1_scalar = (-(K - 1)).ToScalar();
+                var log_scale = torch.full_like(_temperature, K_scalar).lgamma() - _temperature.log().mul(negative_Ksub1_scalar); // FIXME: Use inplace ops?
                 var score = logits - value.mul(_temperature);
                 score = (score - score.logsumexp(dim: -1, keepdim: true)).sum(-1);
                 return (score + log_scale).MoveToOuterDisposeScope();

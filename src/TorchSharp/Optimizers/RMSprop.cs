@@ -152,11 +152,20 @@ namespace TorchSharp
                     var options = group.Options as Options;
                     var maximize = options.maximize.Value;
                     var momentum = options.momentum.Value;
+                    var need_momentum = momentum > 0;
+                    using var momentum_scalar = momentum.ToScalar(); // FIXME: Omit if not need_momentum?
                     var alpha = options.alpha.Value;
+                    var alpha_bar = 1 - alpha;
+                    using var alpha_scalar = alpha.ToScalar();
+                    using var alpha_bar_scalar = alpha_bar.ToScalar();
                     var weight_decay = options.weight_decay.Value;
+                    var need_weight_decay = weight_decay != 0;
+                    using var weight_decay_scalar = weight_decay.ToScalar(); // FIXME: Omit if not need_weight_decay?
                     var centered = options.centered.Value;
-                    var eps = options.eps.Value;
+                    using var negative_one_scalar = (-1).ToScalar();
+                    using var eps_scalar = options.eps.Value.ToScalar();
                     var lr = options.LearningRate.Value;
+                    using var negative_lr_scalar = (-lr).ToScalar();
 
                     foreach (var param in group.Parameters) {
 
@@ -170,28 +179,26 @@ namespace TorchSharp
 
                         state.step += 1;
 
-                        if (weight_decay != 0) {
-                            grad = grad.add(param, alpha: weight_decay);
-                        }
+                        if (need_weight_decay) grad = grad.add(param, alpha: weight_decay_scalar);
 
-                        state.square_avg.mul_(alpha).addcmul_(grad, grad, value: 1 - alpha);
+                        state.square_avg.mul_(alpha_scalar).addcmul_(grad, grad, value: alpha_bar_scalar);
 
-                        Tensor avg = null;
+                        Tensor avg = null; // FIXME: Need dispose?
 
                         if (centered) {
                             var grad_avg = state.grad_avg;
-                            grad_avg.mul_(alpha).add_(grad, alpha: 1 - alpha);
-                            avg = state.square_avg.addcmul(grad_avg, grad_avg, value: -1).sqrt_().add_(eps);
+                            grad_avg.mul_(alpha_scalar).add_(grad, alpha: alpha_bar_scalar);
+                            avg = state.square_avg.addcmul(grad_avg, grad_avg, value: negative_one_scalar).sqrt_().add_(eps_scalar);
                         } else {
-                            avg = state.square_avg.sqrt().add_(eps);
+                            avg = state.square_avg.sqrt().add_(eps_scalar);
                         }
 
-                        if (momentum > 0) {
+                        if (need_momentum) {
                             var buf = state.momentum_buffer;
-                            buf.mul_(momentum).addcdiv_(grad, avg);
-                            param.add_(buf, alpha: -lr);
+                            buf.mul_(momentum_scalar).addcdiv_(grad, avg);
+                            param.add_(buf, alpha: negative_lr_scalar);
                         } else {
-                            param.addcdiv_(grad, avg, -lr);
+                            param.addcdiv_(grad, avg, negative_lr_scalar);
                         }
                     }
                 }, closure);

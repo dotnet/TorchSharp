@@ -37,7 +37,8 @@ namespace TorchSharp
                 {
                     if (num_batches_tracked is not null)
                     {
-                        num_batches_tracked.add_(1);
+                        using var one_scalar = 1.ToScalar(); // FIXME: Cache over training?
+                        num_batches_tracked.add_(one_scalar);
                         exponential_average_factor = (this.momentum is null) ? (1.0 / (double)num_batches_tracked) : momentum.Value;
                     }
                 }

@@ -76,7 +76,7 @@ namespace TorchSharp
                         var input = torch.tensor(new float[] { i, j }, device: device).unsqueeze(0);
                         var output = LinearFunction.apply(input, weight1);
                         output = LinearFunction.apply(torch.nn.functional.tanh(input), weight2);
-                        var loss = (output - (i ^ j)).pow(2);
+                        var loss = (output - (i ^ j)).square();
                         loss.backward();
                         optim.step();
                         lastLoss = loss.item<float>();
