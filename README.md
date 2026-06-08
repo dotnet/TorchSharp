@@ -32,7 +32,7 @@ TorchSharp is a .NET library that provides access to the library that powers PyT
 
 The focus is to bind the API surfaced by LibTorch with a particular focus on tensors. The design intent is to stay as close as possible to the Pytorch experience, while still taking advantage of the benefits of the .NET static type system where it makes sense. For example: method overloading is relied on when Pytorch defines multiple valid types for a particular parameter.
 
-The technology is a "wrapper library": no more, no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
+The technology is a "wrapper library": no more, no less. [Furnace](https://github.com/fsprojects/Furnace/) uses this
 repository extensively and has been a major factor in iterating support.
 
 Things that you can try:
@@ -145,5 +145,5 @@ See [DEVGUIDE.md](DEVGUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 # Uses
 
-[DiffSharp](https://github.com/DiffSharp/DiffSharp/) also uses this
+[Furnace](https://github.com/fsprojects/Furnace/) also uses this
 repository extensively and has been a major factor in iterating support.
