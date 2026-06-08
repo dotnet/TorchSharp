@@ -40,7 +40,7 @@ namespace TorchSharp
             /// Return an enumeration of the ParameterDict key/value pairs.
             /// </summary>
             /// <returns></returns>
-            public IEnumerator<(string, Parameter)> items() => _list.GetEnumerator();
+            public new IEnumerator<(string, Parameter)> items() => _list.GetEnumerator();
 
             /// <summary>
             /// Return the ParameterDict keys.
