@@ -65,26 +65,26 @@ EXPORT_API(void) THSJIT_TensorType_dispose(const JITTensorType type);
 
 EXPORT_API(void) THSJIT_Module_modules(const JITModule module, JITModule* (*allocator)(size_t length));
 EXPORT_API(void) THSJIT_Module_named_modules(const JITModule module,
-    JITModule* (*allocator)(size_t length),
+    JITModule* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length));
 
 EXPORT_API(void) THSJIT_Module_named_children(const JITModule module,
-    JITModule* (*allocator)(size_t length),
+    JITModule* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length));
 
 EXPORT_API(JITMethod) THSJIT_Module_get_method(const JITModule module, const char* name);
 
 EXPORT_API(void) THSJIT_Module_parameters(const JITModule module, Tensor* (*allocator)(size_t length));
 EXPORT_API(void) THSJIT_Module_named_parameters(const JITModule module,
-    Tensor* (*allocator)(size_t length),
+    Tensor* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length));
 
 EXPORT_API(void) THSJIT_Module_named_buffers(const JITModule module,
-    Tensor* (*allocator)(size_t length),
+    Tensor* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length));
 
 EXPORT_API(void) THSJIT_Module_named_attributes(const JITModule module, bool recurse,
-    Tensor* (*allocator)(size_t length),
+    Tensor* (*allocator1)(size_t length),
     const char** (*allocator2)(size_t length));
 
 EXPORT_API(void) THSJIT_Module_set_attribute(const JITModule module, const char* name, Tensor tensor);
