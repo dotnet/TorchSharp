@@ -7,4 +7,4 @@
 # in Unix via a file share from Windows, the scripts will work.
 *.sh text eol=lf
 
-.github/workflows/*.lock.yml linguist-generated=true merge=ours
+.github/workflows/*.lock.yml linguist-generated=true

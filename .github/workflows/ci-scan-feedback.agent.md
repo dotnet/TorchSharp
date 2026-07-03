@@ -89,7 +89,8 @@ The scanner's methodology lives in [`shared/ci-scan.instructions.md`](shared/ci-
 
    ```bash
    mkdir -p /tmp/gh-aw/agent
-   gh api "/repos/dotnet/TorchSharp/actions/workflows/ci-scan.agent.lock.yml/runs?per_page=10" \
+   url="/repos/dotnet/TorchSharp/actions/workflows/ci-scan.agent.lock.yml/runs?per_page=10"
+   gh api "$url" \
      | tee /tmp/gh-aw/agent/runs.json \
      | jq -r '.workflow_runs[] | "\(.id) \(.conclusion) \(.head_branch) \(.event) \(.created_at) \(.html_url)"'
    ```

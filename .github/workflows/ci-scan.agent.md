@@ -40,10 +40,6 @@ safe-outputs:
     title-prefix: "[ci-scan] "
     allowed-labels: ["bug"]
     max: 3
-  add-comment:
-    target: "*"
-    max: 5
-    hide-older-comments: true
 ---
 
 # CI Failure Scanner (TorchSharp)

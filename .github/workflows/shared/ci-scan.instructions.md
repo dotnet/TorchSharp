@@ -201,7 +201,7 @@ verbatim from logs and may carry whitespace that would corrupt the TSV).
 ```bash
 signature_norm=$(printf '%s' "<signature>" | tr -d '\t\n\r')
 test -f /tmp/gh-aw/agent/filed.tsv && cut -f1 /tmp/gh-aw/agent/filed.tsv | grep -Fxq -- "$signature_norm"   # dup if exit 0
-printf '%s\t%s\n' "$signature_norm" "aw_<id>" >> /tmp/gh-aw/agent/filed.tsv                                   # append after every emit
+printf '%s\t%s\n' "$signature_norm" "aw_<id>" | tee -a /tmp/gh-aw/agent/filed.tsv                            # append after every emit
 ```
 
 On a cache hit record `dup of filed-issue #aw_<id> earlier in this run` and stop for that
