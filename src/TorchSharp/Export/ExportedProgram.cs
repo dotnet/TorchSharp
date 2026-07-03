@@ -37,6 +37,8 @@ namespace TorchSharp
             ///     package_path="model.pt2"
             /// )
             /// </code>
+            /// 
+            /// Only load models from trusted sources. Loading models from untrusted sources is a security risk.
             /// </remarks>
             public static ExportedProgram load(string filename)
             {
@@ -46,6 +48,7 @@ namespace TorchSharp
             /// <summary>
             /// Load a PyTorch ExportedProgram with typed output.
             /// </summary>
+            /// <remarks>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</remarks>
             public static ExportedProgram<TResult> load<TResult>(string filename)
             {
                 return new ExportedProgram<TResult>(filename);

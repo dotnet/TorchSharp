@@ -854,7 +854,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename, DeviceType device_type = DeviceType.CPU, long device_index = -1)
@@ -870,7 +871,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule load(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
@@ -884,7 +886,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename, Device map_location)
@@ -899,7 +902,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule load(byte[] bytes, Device map_location)
             {
@@ -912,7 +916,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename, string map_location)
@@ -927,7 +932,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule load(byte[] bytes, string map_location)
             {
@@ -943,7 +949,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<TResult> load<TResult>(string filename, DeviceType device_type = DeviceType.CPU, long device_index = -1)
@@ -960,7 +967,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<TResult> load<TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
@@ -975,7 +983,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<TResult> load<TResult>(string filename, Device map_location)
@@ -991,7 +1000,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<TResult> load<TResult>(byte[] bytes, Device map_location)
             {
@@ -1006,7 +1016,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<TResult> load<TResult>(string filename, string map_location)
@@ -1022,7 +1033,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<TResult> load<TResult>(byte[] bytes, string map_location)
             {
@@ -1039,7 +1051,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, TResult> load<T1, TResult>(string filename, DeviceType device_type = DeviceType.CPU, long device_index = -1)
@@ -1057,7 +1070,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<T1, TResult> load<T1, TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
@@ -1073,7 +1087,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, TResult> load<T1, TResult>(string filename, Device map_location)
@@ -1090,7 +1105,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<T1, TResult> load<T1, TResult>(byte[] bytes, Device map_location)
             {
@@ -1106,7 +1122,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, TResult> load<T1, TResult>(string filename, string map_location)
@@ -1123,7 +1140,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<T1, TResult> load<T1, TResult>(byte[] bytes, string map_location)
             {
@@ -1141,7 +1159,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename, DeviceType device_type = DeviceType.CPU, long device_index = -1)
@@ -1160,7 +1179,8 @@ namespace TorchSharp
             /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
@@ -1177,7 +1197,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename, Device map_location)
@@ -1195,7 +1216,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, Device map_location)
             {
@@ -1212,7 +1234,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename, string map_location)
@@ -1230,7 +1253,8 @@ namespace TorchSharp
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
-            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// <para>All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from. If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.</para>
+            /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
             /// </remarks>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, string map_location)
             {
