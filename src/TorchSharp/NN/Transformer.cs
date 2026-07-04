@@ -114,9 +114,9 @@ namespace TorchSharp
                 public static Tensor scaled_dot_product_attention(Tensor query, Tensor key, Tensor value, Tensor? attn_mask = null, double p = 0.0, [MarshalAs(UnmanagedType.U1)] bool is_causal = false, double? scale = null, bool enable_gqa = false)
                 {
                     if (p < 0) throw new ArgumentException("Dropout probability must be greater than or equal to zero.");
-                    if (is_causal && attn_mask is not null) throw new ArgumentException("Casual attention masking cannot pass a mask.");
+                    if (is_causal && attn_mask is not null) throw new ArgumentException("Causal attention masking cannot be used together with an attention mask.");
                     if (query.dim() < 2 || key.dim() < 2 || value.dim() < 2) throw new ArgumentException("Query, key, and value must have at least 2 dimensions.");
-                    if (!enable_gqa && (query.size(-3) != key.size(-3) || query.size(-3) != value.size(-3))) throw new InvalidOperationException("Query and key/value heads must be equal when Group Query Attention is not enabled.");
+                    if (!enable_gqa && query.dim() >= 4 && key.dim() >= 4 && value.dim() >= 4 && (query.size(-3) != key.size(-3) || query.size(-3) != value.size(-3))) throw new ArgumentException("Query and key/value heads must be equal when Group Query Attention is not enabled.");
 
                     var _scale = scale.HasValue ? scale.Value : default;
 
