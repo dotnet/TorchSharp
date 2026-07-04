@@ -60,8 +60,8 @@ jobs:
           SECTION: ${{ steps.category.outputs.section }}
           CURRENT_VERSION: ${{ steps.version.outputs.latest }}
         run: |
-          FILE="RELEASENOTES.md"
-          VERSION_HEADER="# NuGet Version ${CURRENT_VERSION}"
+          export FILE="RELEASENOTES.md"
+          export VERSION_HEADER="# NuGet Version ${CURRENT_VERSION}"
 
           python3 - <<'PYEOF'
           import os, sys

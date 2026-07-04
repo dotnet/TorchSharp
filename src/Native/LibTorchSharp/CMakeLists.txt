@@ -11,6 +11,7 @@ set(SOURCES
 	crc32c.h
     THSAutograd.h
     THSData.h
+    THSExport.h
     THSJIT.h
     THSNN.h
 	THSStorage.h
@@ -23,6 +24,7 @@ set(SOURCES
 	THSActivation.cpp
     THSAutograd.cpp
 	THSData.cpp
+	THSExport.cpp
 	THSFFT.cpp
     THSJIT.cpp
 	THSLinearAlgebra.cpp

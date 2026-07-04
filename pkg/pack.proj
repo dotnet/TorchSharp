@@ -24,6 +24,8 @@
              Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\linux-x64\native\libLibTorchSharp.so')" />
     <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines."
              Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\win-x64\native\LibTorchSharp.dll')" />
+    <Warning Text="Packages will be incomplete and unusable on win-arm64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines."
+             Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\win-arm64\native\LibTorchSharp.dll')" />
 
     <MSBuild Projects="%(PackProject.Identity)" Targets="Pack" />
 

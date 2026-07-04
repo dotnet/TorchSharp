@@ -946,9 +946,10 @@ namespace TorchSharp
                 /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
-                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// <para>Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
-                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.</para>
+                /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
                 /// </remarks>
                 public virtual Module load(string location, bool strict = true, IList<string>? skip = null, Dictionary<string, bool>? loadedParameters = null)
                 {
@@ -975,9 +976,10 @@ namespace TorchSharp
                 /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
-                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// <para>Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
-                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.</para>
+                /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
                 /// </remarks>
                 public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string>? skip = null, Dictionary<string, bool>? loadedParameters = null)
                 {
@@ -1034,9 +1036,10 @@ namespace TorchSharp
                 /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
-                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// <para>Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
-                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.</para>
+                /// <para>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</para>
                 /// </remarks>
                 public Module load(System.IO.Stream stream, bool strict = true, IList<string>? skip = null, Dictionary<string, bool>? loadedParameters = null)
                 {
@@ -1047,9 +1050,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Create a module and load its weights from disk.
                 /// </summary>
-                /// <typeparam name="T"></typeparam>
-                /// <param name="path"></param>
-                /// <returns></returns>
+                /// <remarks>Only load models from trusted sources. Loading models from untrusted sources is a security risk.</remarks>
                 public static Module Create<T>(string path)
                     where T : Module, new()
                 {

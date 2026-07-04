@@ -82,6 +82,15 @@ namespace TorchSharp
 #endif
 
         /// <summary>
+        /// Implicitly convert a BFloat16 value to Scalar
+        /// </summary>
+        /// <param name="value">The scalar value.</param>
+        public static implicit operator Scalar(BFloat16 value)
+        {
+            return value.ToScalar();
+        }
+
+        /// <summary>
         /// Implicitly convert a .NET scalar value to Scalar
         /// </summary>
         /// <param name="value">The scalar value.</param>
@@ -282,6 +291,16 @@ namespace TorchSharp
             return new Scalar(THSTorch_bfloat16_to_scalar(value));
         }
 
+        /// <summary>
+        /// Explicitly construct a Scalar from a BFloat16 value.
+        /// </summary>
+        /// <param name="value">The input scalar value</param>
+        public static Scalar ToScalar(this BFloat16 value)
+        {
+            torch.InitializeDeviceType(DeviceType.CPU);
+            return new Scalar(THSTorch_bfloat16_to_scalar(value.ToSingle()));
+        }
+
 #if NET6_0_OR_GREATER
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
@@ -294,6 +313,16 @@ namespace TorchSharp
             return res;
         }
 #endif
+
+        /// <summary>
+        /// Explicitly convert a Scalar value to a BFloat16.
+        /// </summary>
+        /// <param name="value">The input value.</param>
+        public static BFloat16 ToBFloat16(this Scalar value)
+        {
+            THSTorch_scalar_to_bfloat16(value.Handle, out ushort res);
+            return BFloat16.FromRawValue(res);
+        }
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar

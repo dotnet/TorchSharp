@@ -23,6 +23,7 @@ if /i [%1] == [Debug]       ( set CMAKE_BUILD_TYPE=Debug&&shift&goto Arg_Loop)
 if /i [%1] == [x86]         ( set __BuildArch=x86&&set __VCBuildArch=x86&&shift&goto Arg_Loop)
 if /i [%1] == [x64]         ( set __BuildArch=x64&&set __VCBuildArch=x86_amd64&&shift&goto Arg_Loop)
 if /i [%1] == [amd64]       ( set __BuildArch=x64&&set __VCBuildArch=x86_amd64&&shift&goto Arg_Loop)
+if /i [%1] == [arm64]       ( set __BuildArch=ARM64&&set __VCBuildArch=amd64_arm64&&shift&goto Arg_Loop)
 
 if /i [%1] == [--libtorchpath] ( set LIBTORCH_PATH=%2&&shift&goto Arg_Loop)
 
@@ -66,50 +67,39 @@ exit /b 1
 :: Setup vars for VS2026
 set __PlatformToolset=v145
 set __VSVersion=18 2026
-if NOT "%__BuildArch%" == "arm64" (
-    :: Set the environment for the native build
-    call "%VS180COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
-)
+:: Set the environment for the native build (including cross-compilation for ARM64)
+call "%VS180COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 goto :SetupDirs
 
 :VS2022
 :: Setup vars for VS2022
 set __PlatformToolset=v143
 set __VSVersion=17 2022
-if NOT "%__BuildArch%" == "arm64" (
-    :: Set the environment for the native build
-    call "%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
-)
+:: Set the environment for the native build (including cross-compilation for ARM64)
+call "%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 goto :SetupDirs
 
 :VS2019
 :: Setup vars for VS2019
 set __PlatformToolset=v142
 set __VSVersion=16 2019
-if NOT "%__BuildArch%" == "arm64" (
-    :: Set the environment for the native build
-    call "%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
-)
+:: Set the environment for the native build (including cross-compilation for ARM64)
+call "%VS160COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 goto :SetupDirs
 
 :VS2017
 :: Setup vars for VS2017
 set __PlatformToolset=v141
 set __VSVersion=15 2017
-if NOT "%__BuildArch%" == "arm64" (
-    :: Set the environment for the native build
-    call "%VS150COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
-)
+:: Set the environment for the native build (including cross-compilation for ARM64)
+call "%VS150COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 goto :SetupDirs
 
 :VS2015
 :: Setup vars for VS2015build
 set __PlatformToolset=v140
 set __VSVersion=14 2015
-if NOT "%__BuildArch%" == "arm64" (
-    :: Set the environment for the native build
-    call "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" %__VCBuildArch%
-)
+call "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" %__VCBuildArch%
 
 :SetupDirs
 :: Setup to cmake the native components

@@ -18,6 +18,16 @@
     <NativeAssemblyReference Include="uv" />
   </ItemGroup>
 
+  <!-- Windows ARM64 CPU libtorch binary list used for examples and testing -->
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="armpl_lp64" />
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="uv" />
+  </ItemGroup>
+
   <!-- Windows CUDA 12.1 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" Variant="cuda\" />

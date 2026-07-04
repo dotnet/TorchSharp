@@ -121,5 +121,15 @@ namespace TorchSharp
         {
             return torch.from_array(rawArray, dtype, device);
         }
+
+        public static Tensor as_tensor(IList<BFloat16> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(BFloat16[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
     }
 }

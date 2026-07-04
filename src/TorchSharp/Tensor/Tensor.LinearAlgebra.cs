@@ -64,6 +64,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="upper">If upper is true, the returned matrix U is upper-triangular. If upper is false, the returned matrix L is lower-triangular</param>
             /// <returns></returns>
+            [Obsolete("torch.cholesky is deprecated in favor of torch.linalg.cholesky and will be removed in a future release. Use torch.linalg.cholesky instead.", false)]
             public Tensor cholesky(bool upper = false)
             {
                 var res = THSTensor_cholesky(Handle, upper);

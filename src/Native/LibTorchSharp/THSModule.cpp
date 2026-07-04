@@ -5,7 +5,7 @@
 
 // General Module functions
 
-int THSNN_Module_is_training(NNModule module)
+bool THSNN_Module_is_training(NNModule module)
 {
     return (*module)->is_training();
 }
@@ -88,9 +88,9 @@ void THSNN_Module_register_buffer(const NNModule module, const char* name, const
     );
 }
 
-int THSNN_Module_has_parameter(const NNModule module, const char* name)
+bool THSNN_Module_has_parameter(const NNModule module, const char* name)
 {
-    CATCH_RETURN(int, 0, (*module)->named_parameters().contains(name));
+    CATCH_RETURN(bool, false, (*module)->named_parameters().contains(name));
 }
 
 Tensor THSNN_Module_get_parameter(const NNModule module, const char* name)
@@ -161,12 +161,12 @@ void THSNN_Module_get_named_modules(const NNModule module, NNModule* (*allocator
     }
 }
 
-long THSNN_Module_children_size(const NNModule module)
+size_t THSNN_Module_children_size(const NNModule module)
 {
     return (*module)->children().size();
 }
 
-NNModule THSNN_Module_child(const NNModule module, const int index)
+NNModule THSNN_Module_child(const NNModule module, const int32_t index)
 {
     return new std::shared_ptr<torch::nn::Module>((*module)->children()[index]);
 }
