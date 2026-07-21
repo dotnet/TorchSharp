@@ -54,21 +54,6 @@ curl -s "$url" | tee /tmp/torchsharp-ci-scan/timeline.json | jq '.records | leng
 
 Reconstruct `Stage -> Phase -> Job -> Task` using `parentId`. A failed record with non-null `log.id` is a leaf.
 
-| Leg | Where the signature comes from |
-|---|---|
-| `Ubuntu_x64` | xUnit test log or compile error |
-| `MacOS_arm64` | xUnit test log or compile error |
-| `Windows_x64_NetCore` | xUnit test log or compile error |
-| `Windows_x64_NetFX` | xUnit test log or compile error |
-| `Windows_arm64` | compile error |
-| `Linux_Native_Build_For_Packages` | native CMake or compiler error |
-| `Windows_Native_Build_For_Packages` | native CMake or compiler error |
-| `Windows_arm64_Native_Build_For_Packages` | native CMake or compiler error |
-| `MacOS_arm64_Native_Build_For_Packages` | native CMake or compiler error |
-| `Build_TorchSharp_And_libtorch_cpu_Packages` | managed build or packaging error |
-| `Build_libtorch_cuda_linux_Packages`, `Build_libtorch_cuda_win_Packages` | usually large-download infrastructure noise |
-| `Push_*`, `CodeSign_*` | infrastructure noise |
-
 ## Step 3 - Classify each failure
 
 Classify every failed leaf using [Failure classification](ci-scan.instructions.md#classification). Save the canonical task log to `/tmp/torchsharp-ci-scan/failure.log`, count occurrences by distinct build ID, and apply the stability gate from [Occurrence counting and window widening](ci-scan.instructions.md#occurrence-counting).
