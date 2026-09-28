@@ -8,6 +8,16 @@ namespace TorchSharp.PInvoke
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTorch_autocast_begin(sbyte device_type, sbyte dtype);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_autocast_end(IntPtr guard);
+
+        [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSTorch_autocast_is_enabled(sbyte device_type);
+
+        [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSTorch_scalar_to_bool(IntPtr handle);
 

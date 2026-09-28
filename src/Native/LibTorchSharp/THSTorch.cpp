@@ -3,6 +3,67 @@
 
 #include "torch/torch.h"
 #include "torch/cuda.h"
+#include <ATen/autocast_mode.h>
+
+namespace {
+
+at::DeviceType autocast_device(int8_t device_type)
+{
+    TORCH_CHECK(device_type == 0 || device_type == 1, "autocast supports CPU and CUDA only");
+    return device_type == 1 ? at::kCUDA : at::kCPU;
+}
+
+class AutocastGuard
+{
+public:
+    AutocastGuard(at::DeviceType device, at::ScalarType dtype)
+        : device_(device), previous_enabled_(at::autocast::is_autocast_enabled(device)),
+          previous_dtype_(at::autocast::get_autocast_dtype(device)),
+          dtype_changed_(previous_dtype_ != dtype)
+    {
+        TORCH_CHECK(dtype == at::kBFloat16 || dtype == at::kHalf,
+                    "autocast dtype must be bfloat16 or float16");
+        // Cached parameter casts are keyed by tensor, not by the requested dtype.
+        // A nested scope changing dtype must discard casts from its outer scope.
+        if (dtype_changed_)
+            at::autocast::clear_cache();
+        at::autocast::set_autocast_dtype(device_, dtype);
+        at::autocast::set_autocast_enabled(device_, true);
+        at::autocast::increment_nesting();
+    }
+
+    ~AutocastGuard()
+    {
+        if (at::autocast::decrement_nesting() == 0 || dtype_changed_)
+            at::autocast::clear_cache();
+        at::autocast::set_autocast_enabled(device_, previous_enabled_);
+        at::autocast::set_autocast_dtype(device_, previous_dtype_);
+    }
+
+private:
+    at::DeviceType device_;
+    bool previous_enabled_;
+    at::ScalarType previous_dtype_;
+    bool dtype_changed_;
+};
+
+} // namespace
+
+void* THSTorch_autocast_begin(int8_t device_type, int8_t dtype)
+{
+    CATCH_RETURN_RES(void*, nullptr,
+        res = new AutocastGuard(autocast_device(device_type), static_cast<at::ScalarType>(dtype)));
+}
+
+void THSTorch_autocast_end(void* guard)
+{
+    CATCH(delete static_cast<AutocastGuard*>(guard);)
+}
+
+bool THSTorch_autocast_is_enabled(int8_t device_type)
+{
+    CATCH_RETURN(bool, false, at::autocast::is_autocast_enabled(autocast_device(device_type)));
+}
 
 void THSTorch_manual_seed(const int64_t seed)
 {
