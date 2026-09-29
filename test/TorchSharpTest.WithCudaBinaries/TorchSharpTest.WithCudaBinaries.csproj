@@ -8,6 +8,7 @@
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net8.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
+    <DefineConstants Condition="'$(SkipCuda)' != 'true'">$(DefineConstants);TORCHSHARP_CUDA_TESTS</DefineConstants>
     <IsPackable>false</IsPackable>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <VSTestLogger>trx</VSTestLogger>
@@ -23,6 +24,7 @@
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
     <Compile Include="..\TorchSharpTest\PointwiseTensorMath.cs" Link="PointwiseTensorMath.cs" />
     <Compile Include="..\TorchSharpTest\TestAutogradFunction.cs" Link="TestAutogradFunction.cs" />
+    <Compile Include="..\TorchSharpTest\TestAutocast.cs" Link="TestAutocast.cs" />
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -144,6 +146,8 @@
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Tensors" Version="7.0.0-rtm.22518.5" />
+    <PackageReference Include="libtorch-cuda-$(CudaVersionDot)-linux-x64" Version="$(LibTorchPackageVersion)"
+                      Condition="'$(TargetOS)' == 'linux' and '$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup>

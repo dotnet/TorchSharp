@@ -79,7 +79,11 @@
   </ItemGroup>
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'
+                        and $([MSBuild]::IsOSPlatform('linux'))
+                        and '$(TestUsesLibTorch)' == 'true'
+                        and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true')
+                        and '$(SkipNative)' != 'true'">
     <NativeAssemblyReference Include="aoti_custom_ops" />
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />

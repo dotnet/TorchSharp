@@ -72,7 +72,22 @@ include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
-target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
+# LibTorch 2.10 supplies DLL import libraries on Windows. Whole-archiving
+# torch.lib and torch_cpu.lib duplicates their import descriptors at link time.
+if(WIN32)
+    set(_torch_link_libraries "")
+    foreach(_torch_lib IN LISTS TORCH_LIBRARIES)
+        string(REPLACE "\\" "/" _torch_lib_normalized "${_torch_lib}")
+        if(_torch_lib_normalized MATCHES "^-WHOLEARCHIVE:.*/torch(_cpu)?\\.lib$")
+            string(REPLACE "-WHOLEARCHIVE:" "" _torch_lib "${_torch_lib}")
+        endif()
+        list(APPEND _torch_link_libraries "${_torch_lib}")
+    endforeach()
+else()
+    set(_torch_link_libraries ${TORCH_LIBRARIES})
+endif()
+
+target_link_libraries(LibTorchSharp ${_torch_link_libraries})
 
 set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 
